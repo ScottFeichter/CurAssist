@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/scottfeichter/Dropbox/____DEV 2025/V__Volunteering/shelterTech/CurAssist/logs/error/.40e9b0e45d0f356d20307cbd74dd25d80beb8dc7-audit.json",
+    "files": [
+        {
+            "date": 1770929950604,
+            "name": "/Users/scottfeichter/Dropbox/____DEV 2025/V__Volunteering/shelterTech/CurAssist/logs/error/error-2026-02-12.log",
+            "hash": "a26484d069f85bbb673305209615568e5548b8631aa50d906442fd924798b14c"
+        }
+    ],
+    "hashType": "sha256"
+}
