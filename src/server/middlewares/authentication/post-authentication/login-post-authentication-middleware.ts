@@ -1,9 +1,9 @@
 import { extendedConsole as console } from '@/streams/consoles/customConsoles';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { BaseCustomError } from '../../custom-errors/base-custom-error';
-import { generateJWT, verifyJWT } from './jwt.service';
-import { JWT_ACCESS_TOKEN_SECRET } from '../../../../config/env-module';
-import { JwtPayload } from 'jsonwebtoken';
+// import { generateJWT, verifyJWT } from './jwt.service';
+// import { JWT_ACCESS_TOKEN_SECRET } from '../../../../config/env-module';
+// import { JwtPayload } from 'jsonwebtoken';
 import { Session } from 'express-session';
 
 console.enter();
@@ -15,31 +15,33 @@ console.enter();
 
         /**
          * Sets the JWT cookie after successful authentication
+         * COMMENTED OUT - Not using JWT authentication in file-based app
          */
         export const setAuthenticationCookie: RequestHandler = async (req, res, next) => {
-          try {
-            const payload: Omit<Express.Request['user'], 'hashedPassword' | 'iat' | 'exp'> = {
-              id: req.body.id,
-              username: req.body.username,
-              email: req.body.email
-            };
+          // try {
+          //   const payload: Omit<Express.Request['user'], 'hashedPassword' | 'iat' | 'exp'> = {
+          //     id: req.body.id,
+          //     username: req.body.username,
+          //     email: req.body.email
+          //   };
 
-            const token = await generateJWT(payload, JWT_ACCESS_TOKEN_SECRET as string);
+          //   const token = await generateJWT(payload, JWT_ACCESS_TOKEN_SECRET as string);
 
-            res.cookie('token', token, {
-              httpOnly: true,
-              secure: process.env.NODE_ENV === 'production',
-              sameSite: 'lax',
-              maxAge: 24 * 60 * 60 * 1000 // 24 hours
-            });
+          //   res.cookie('token', token, {
+          //     httpOnly: true,
+          //     secure: process.env.NODE_ENV === 'production',
+          //     sameSite: 'lax',
+          //     maxAge: 24 * 60 * 60 * 1000 // 24 hours
+          //   });
 
-            next();
-          } catch (error) {
-            next(new BaseCustomError('Error setting token cookie', {
-              status: 500,
-              title: 'Authentication Error'
-            }));
-          }
+          //   next();
+          // } catch (error) {
+          //   next(new BaseCustomError('Error setting token cookie', {
+          //     status: 500,
+          //     title: 'Authentication Error'
+          //   }));
+          // }
+          next();
         };
 
     // #endregion ------------------------------------------------------------------
@@ -51,25 +53,27 @@ console.enter();
         /**
          * This verifies the existing jwt token and sets the user on the req object
          * Should run on every request
+         * COMMENTED OUT - Not using JWT authentication in file-based app
          */
         export const restoreAuthentication = async (
           req: Request,
           _res: Response,
           next: NextFunction
         ): Promise<void> => {
-          try {
-            const { token } = req.cookies;
-            if (!token) return next();
+          // try {
+          //   const { token } = req.cookies;
+          //   if (!token) return next();
 
-            const decoded = await verifyJWT(token, JWT_ACCESS_TOKEN_SECRET as string) as NonNullable<Express.Request['user']>;
-            if (!decoded) return next();
+          //   const decoded = await verifyJWT(token, JWT_ACCESS_TOKEN_SECRET as string) as NonNullable<Express.Request['user']>;
+          //   if (!decoded) return next();
 
-            req.user = decoded;
-            return next();
-          } catch (error) {
-            // Don't throw error, just continue without user
-            return next();
-          }
+          //   req.user = decoded;
+          //   return next();
+          // } catch (error) {
+          //   // Don't throw error, just continue without user
+          //   return next();
+          // }
+          return next();
         };
     // #endregion ------------------------------------------------------------------
 
@@ -106,39 +110,41 @@ console.enter();
          * This checks if the jwt token is nearing expiration and issues new one if needed
          * Will generate and set a new token if the current on is close to expiring
          * Typically used to extend the user's session without requiring re-login
+         * COMMENTED OUT - Not using JWT authentication in file-based app
          */
         export const refreshAuthenticationToken = async (
           req: Request,
           res: Response,
           next: NextFunction
         ): Promise<void> => {
-          try {
-            const { token } = req.cookies;
-            if (!token) return next();
+          // try {
+          //   const { token } = req.cookies;
+          //   if (!token) return next();
 
-            const decoded = await verifyJWT(token, JWT_ACCESS_TOKEN_SECRET as string) as NonNullable<Express.Request['user']>;
-            if (!decoded) return next();
+          //   const decoded = await verifyJWT(token, JWT_ACCESS_TOKEN_SECRET as string) as NonNullable<Express.Request['user']>;
+          //   if (!decoded) return next();
 
-            // Check if token is close to expiration (e.g., less than 1 hour remaining)
-            const tokenExp = decoded.exp || 0;
-            const hourFromNow = Math.floor(Date.now() / 1000) + 3600;
+          //   // Check if token is close to expiration (e.g., less than 1 hour remaining)
+          //   const tokenExp = decoded.exp || 0;
+          //   const hourFromNow = Math.floor(Date.now() / 1000) + 3600;
 
-            if (tokenExp < hourFromNow) {
-              // Instead of calling setAuthenticationCookie directly,
-              // we should set the body data and call it as middleware
-              req.body = {
-                id: decoded.id,
-                username: decoded.username,
-                email: decoded.email
-              };
+          //   if (tokenExp < hourFromNow) {
+          //     // Instead of calling setAuthenticationCookie directly,
+          //     // we should set the body data and call it as middleware
+          //     req.body = {
+          //       id: decoded.id,
+          //       username: decoded.username,
+          //       email: decoded.email
+          //     };
 
-              await setAuthenticationCookie(req, res, next);
-            }
+          //     await setAuthenticationCookie(req, res, next);
+          //   }
 
-            next();
-          } catch (error) {
-            next();
-          }
+          //   next();
+          // } catch (error) {
+          //   next();
+          // }
+          next();
         };
     // #endregion ------------------------------------------------------------------
 

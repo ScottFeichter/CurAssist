@@ -6,54 +6,54 @@
   <title>CurAssist Workflow</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
+    body {
       font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
-      display: flex; 
-      flex-direction: column; 
-      height: 100vh; 
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
     }
-    
-    #header { 
-      height: 60px; 
-      background: #276CE5; 
-      color: white; 
-      padding: 0 20px; 
-      display: flex; 
+
+    #header {
+      height: 60px;
+      background: #276CE5;
+      color: white;
+      padding: 0 20px;
+      display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: center;
     }
-    
-    #main { 
-      display: flex; 
-      flex: 1; 
-      overflow: hidden; 
+
+    #main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
     }
-    
-    #sidebar { 
-      width: 250px; 
-      background: #f0f0f0; 
-      padding: 20px; 
-      display: flex; 
-      flex-direction: column; 
+
+    #sidebar {
+      width: 250px;
+      background: #f0f0f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
       gap: 15px;
       border-right: 1px solid #ccc;
     }
-    
-    #content { 
-      flex: 1; 
+
+    #content {
+      flex: 1;
       overflow: auto;
       padding: 20px;
       background: white;
     }
-    
-    iframe { 
-      width: 100%; 
-      height: 100%; 
-      border: none; 
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
     }
-    
-    button { 
-      padding: 12px 20px; 
+
+    button {
+      padding: 12px 20px;
       cursor: pointer;
       border: 1px solid #ccc;
       background: white;
@@ -61,35 +61,74 @@
       font-size: 14px;
       transition: all 0.2s;
     }
-    
-    button:hover { 
-      background: #f5f5f5; 
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-buttons button {
+      flex: 1;
+    }
+
+    button:hover {
+      background: #f5f5f5;
       border-color: #276CE5;
     }
-    
+
     button:disabled {
       opacity: 0.5;
       cursor: not-allowed;
     }
-    
-    .primary-btn {
+
+    .save-btn {
       background: #276CE5;
       color: white;
       font-weight: 600;
     }
-    
-    .primary-btn:hover {
+
+    .save-btn:hover {
       background: #1a5bb8;
     }
-    
+
+
+    .submit-btn {
+      background: red;
+      color: white;
+      font-weight: 600;
+    }
+
+    .submit-btn:hover {
+      background: darkred;
+    }
+
     #fileInfo {
-      padding: 10px;
+      padding: 8px;
       background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    #fileCount {
+      text-align: center;
+      padding: 1px;
+      /* background: white; */
       border-radius: 4px;
       font-size: 13px;
       color: #666;
     }
-    
+
+    #fileMove {
+      text-align: center;
+      padding: 1px;
+      /* background: white; */
+      border-radius: 4px;
+      font-size: 13px;
+      color: #666;
+    }
+
     .section-title {
       font-size: 12px;
       font-weight: 600;
@@ -97,50 +136,108 @@
       text-transform: uppercase;
       margin-top: 10px;
     }
-    
+
     select {
       padding: 8px;
       border: 1px solid #ccc;
       border-radius: 4px;
       font-size: 14px;
     }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 15% auto;
+      padding: 30px;
+      border-radius: 8px;
+      width: 400px;
+      text-align: center;
+    }
+
+    .modal-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      max-width: 180px;
+    }
   </style>
 </head>
 <body>
   <div id="header">
-    <h2 id="bucketName">CurAssist Workflow</h2>
-    <div id="headerInfo"></div>
+    <h2>CurAssist WorkFlow</h2>
   </div>
-  
+
   <div id="main">
     <div id="sidebar">
       <div class="section-title">Bucket</div>
       <select id="bucketSelect" onchange="loadBucket()">
         <option value="">Select bucket...</option>
       </select>
-      
+
       <div class="section-title">Subdirectory</div>
       <select id="subdirSelect" onchange="loadSubdir()">
         <option value="">Select subdirectory...</option>
       </select>
-      
-      <div id="fileInfo"></div>
-      
-      <button onclick="loadPrevious()">← Previous</button>
-      <button onclick="loadNext()">Next →</button>
-      
-      <div class="section-title">Actions</div>
-      <button class="primary-btn" onclick="saveFile()">Save Changes</button>
-      
-      <div class="section-title">Move To</div>
+
+
+      <div class="section-title">File</div>
+      <select id="fileInfo" onchange="loadSelectedFile()">
+        <option value="">Select file...</option>
+      </select>
+      <div id="fileCount"></div>
+
+      <div class="nav-buttons">
+        <button onclick="loadPrevious()">← Prev</button>
+        <button onclick="loadNext()">Next →</button>
+      </div>
+
+      <div class="section-title">Move File</div>
       <select id="moveToSubdir">
         <option value="">Select destination...</option>
       </select>
       <button onclick="moveFile()">Move File</button>
+
+      <div class="section-title">Actions</div>
+      <button class="save-btn" onclick="saveFile()">Save Changes</button>
+      <button class="submit-btn" onclick="submitFile()">Submit</button>
+
+
     </div>
-    
+
     <div id="content">
       <iframe id="formFrame" src=""></iframe>
+    </div>
+  </div>
+
+  <!-- Move confirmation modal -->
+  <div id="moveModal" class="modal">
+    <div class="modal-content">
+      <p>Do you want to save changes before moving?</p>
+      <div class="modal-buttons">
+        <button class="save-btn" onclick="confirmMove(true)">Save And Move</button>
+        <button onclick="confirmMove(false)">Move Without Saving</button>
+      </div>
     </div>
   </div>
 
