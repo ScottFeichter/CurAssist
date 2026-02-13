@@ -33,6 +33,10 @@ export const start = async (SERVER: Application) => {
 
   try {
 
+    // Middleware
+    SERVER.use(cors());
+    SERVER.use(express.json({ limit: '50mb' }));
+
     // Add setup middleware and set up routes
     setupPreRouteMiddleware(SERVER);
     setupRoutes(SERVER);
@@ -44,15 +48,8 @@ export const start = async (SERVER: Application) => {
     // log.infor('Database connection has been established successfully!');
 
 
-    // Middleware
-    SERVER.use(cors());
-    SERVER.use(express.json({ limit: '50mb' }));
-
     // Routes
     SERVER.use('/api', apiRoutes);
-
-    // Static files (after routes so API takes precedence)
-    SERVER.use(express.static(path.join(__dirname, '../../public')));
 
     SERVER.listen(SERVER_PORT, () => {
       log.blank();

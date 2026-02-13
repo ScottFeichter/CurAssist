@@ -106,7 +106,8 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
       secure: process.env.NODE_ENV === 'production',
       sameSite: process.env.NODE_ENV === 'production' ? 'lax' : undefined,
       httpOnly: true
-    }
+    },
+    ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
     });
 
     SERVER.use(csrfProtection as express.RequestHandler);
@@ -136,8 +137,8 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
 
 
   // #region =============== STATIC FILE MIDDLEWARE ============================
-    // If you need to serve static files
-    SERVER.use(express.static(join(__dirname, 'static')));
+    // Serve frontend UI
+    SERVER.use(express.static(join(__dirname, '../../public/frontend')));
   // #endregion ----------------------------------------------------------------
 
 
