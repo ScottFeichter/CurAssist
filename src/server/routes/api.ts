@@ -1,11 +1,7 @@
 import { Router } from 'express';
 import { promises as fs } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
-import { logger } from '@/utils/logger/logger.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import logger from '@/utils/logger/logger';
 
 const router = Router();
 const BUCKETS_DIR = path.join(__dirname, '../../../content/Buckets');

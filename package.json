@@ -2,12 +2,11 @@
   "name": "curassist-backend",
   "version": "1.0.0",
   "description": "Backend for CurAssist workflow app",
-  "type": "module",
   "main": "dist/entry.js",
   "scripts": {
-    "build": "tsc && tsc-alias",
+    "build": "tsc && tsc-alias && cp -r src/views dist/ && cp -r src/public dist/",
     "start": "node dist/entry.js",
-    "dev": "tsc && tsc-alias && nodemon dist/entry.js",
+    "dev": "npm run build && nodemon dist/entry.js",
     "watch": "tsc --watch",
     "clean": "rm -rf dist"
   },

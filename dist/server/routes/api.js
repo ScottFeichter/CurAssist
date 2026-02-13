@@ -1,73 +1,75 @@
-import { Router } from 'express';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { logger } from '../../utils/logger/logger.js';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const router = Router();
-const BUCKETS_DIR = path.join(__dirname, '../../../content/Buckets');
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const fs_1 = require("fs");
+const path_1 = __importDefault(require("path"));
+const logger_1 = __importDefault(require("../../utils/logger/logger"));
+const router = (0, express_1.Router)();
+const BUCKETS_DIR = path_1.default.join(__dirname, '../../../content/Buckets');
 // List all buckets
 router.get('/buckets', async (req, res) => {
     try {
-        const buckets = await fs.readdir(BUCKETS_DIR);
+        const buckets = await fs_1.promises.readdir(BUCKETS_DIR);
         const bucketDirs = [];
         for (const bucket of buckets) {
-            const stat = await fs.stat(path.join(BUCKETS_DIR, bucket));
+            const stat = await fs_1.promises.stat(path_1.default.join(BUCKETS_DIR, bucket));
             if (stat.isDirectory())
                 bucketDirs.push(bucket);
         }
-        logger.info(`Listed ${bucketDirs.length} buckets`);
+        logger_1.default.info(`Listed ${bucketDirs.length} buckets`);
         res.json(bucketDirs);
     }
     catch (err) {
-        logger.error(`Error listing buckets: ${err.message}`);
+        logger_1.default.error(`Error listing buckets: ${err.message}`);
         res.status(500).json({ error: err.message });
     }
 });
 // List subdirectories in a bucket
 router.get('/bucket/:name/subdirs', async (req, res) => {
     try {
-        const bucketPath = path.join(BUCKETS_DIR, req.params.name);
-        const items = await fs.readdir(bucketPath);
+        const bucketPath = path_1.default.join(BUCKETS_DIR, req.params.name);
+        const items = await fs_1.promises.readdir(bucketPath);
         const subdirs = [];
         for (const item of items) {
-            const stat = await fs.stat(path.join(bucketPath, item));
+            const stat = await fs_1.promises.stat(path_1.default.join(bucketPath, item));
             if (stat.isDirectory())
                 subdirs.push(item);
         }
-        logger.info(`Listed ${subdirs.length} subdirs in bucket: ${req.params.name}`);
+        logger_1.default.info(`Listed ${subdirs.length} subdirs in bucket: ${req.params.name}`);
         res.json(subdirs);
     }
     catch (err) {
-        logger.error(`Error listing subdirs: ${err.message}`);
+        logger_1.default.error(`Error listing subdirs: ${err.message}`);
         res.status(500).json({ error: err.message });
     }
 });
 // List files in bucket/subdir
 router.get('/bucket/:bucket/:subdir/files', async (req, res) => {
     try {
-        const dirPath = path.join(BUCKETS_DIR, req.params.bucket, req.params.subdir);
-        const files = await fs.readdir(dirPath);
+        const dirPath = path_1.default.join(BUCKETS_DIR, req.params.bucket, req.params.subdir);
+        const files = await fs_1.promises.readdir(dirPath);
         const htmlFiles = files.filter(f => f.endsWith('.html'));
-        logger.info(`Listed ${htmlFiles.length} files in ${req.params.bucket}/${req.params.subdir}`);
+        logger_1.default.info(`Listed ${htmlFiles.length} files in ${req.params.bucket}/${req.params.subdir}`);
         res.json(htmlFiles);
     }
     catch (err) {
-        logger.error(`Error listing files: ${err.message}`);
+        logger_1.default.error(`Error listing files: ${err.message}`);
         res.status(500).json({ error: err.message });
     }
 });
 // Get file content
 router.get('/file/:bucket/:subdir/:filename', async (req, res) => {
     try {
-        const filePath = path.join(BUCKETS_DIR, req.params.bucket, req.params.subdir, req.params.filename);
-        const content = await fs.readFile(filePath, 'utf8');
-        logger.info(`Loaded file: ${req.params.filename}`);
+        const filePath = path_1.default.join(BUCKETS_DIR, req.params.bucket, req.params.subdir, req.params.filename);
+        const content = await fs_1.promises.readFile(filePath, 'utf8');
+        logger_1.default.info(`Loaded file: ${req.params.filename}`);
         res.send(content);
     }
     catch (err) {
-        logger.error(`Error reading file: ${err.message}`);
+        logger_1.default.error(`Error reading file: ${err.message}`);
         res.status(500).json({ error: err.message });
     }
 });
@@ -75,13 +77,13 @@ router.get('/file/:bucket/:subdir/:filename', async (req, res) => {
 router.post('/file/save', async (req, res) => {
     try {
         const { bucket, subdir, filename, content } = req.body;
-        const filePath = path.join(BUCKETS_DIR, bucket, subdir, filename);
-        await fs.writeFile(filePath, content, 'utf8');
-        logger.info(`Saved file: ${filename}`);
+        const filePath = path_1.default.join(BUCKETS_DIR, bucket, subdir, filename);
+        await fs_1.promises.writeFile(filePath, content, 'utf8');
+        logger_1.default.info(`Saved file: ${filename}`);
         res.json({ success: true });
     }
     catch (err) {
-        logger.error(`Error saving file: ${err.message}`);
+        logger_1.default.error(`Error saving file: ${err.message}`);
         res.status(500).json({ error: err.message });
     }
 });
@@ -89,15 +91,15 @@ router.post('/file/save', async (req, res) => {
 router.post('/file/move', async (req, res) => {
     try {
         const { fromBucket, fromSubdir, toBucket, toSubdir, filename } = req.body;
-        const oldPath = path.join(BUCKETS_DIR, fromBucket, fromSubdir, filename);
-        const newPath = path.join(BUCKETS_DIR, toBucket, toSubdir, filename);
-        await fs.rename(oldPath, newPath);
-        logger.info(`Moved file: ${filename} from ${fromSubdir} to ${toSubdir}`);
+        const oldPath = path_1.default.join(BUCKETS_DIR, fromBucket, fromSubdir, filename);
+        const newPath = path_1.default.join(BUCKETS_DIR, toBucket, toSubdir, filename);
+        await fs_1.promises.rename(oldPath, newPath);
+        logger_1.default.info(`Moved file: ${filename} from ${fromSubdir} to ${toSubdir}`);
         res.json({ success: true });
     }
     catch (err) {
-        logger.error(`Error moving file: ${err.message}`);
+        logger_1.default.error(`Error moving file: ${err.message}`);
         res.status(500).json({ error: err.message });
     }
 });
-export default router;
+exports.default = router;

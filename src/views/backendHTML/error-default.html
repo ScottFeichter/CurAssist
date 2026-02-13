@@ -1,0 +1,20 @@
+<!-- views/backendHTML/error-default.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error</title>
+</head>
+<body>
+    <div class="error-container">
+        <h1>An Error Occurred</h1>
+        <div class="error-details">
+            <p>Status: <%= txReport.RESPONSE.status %></p>
+            <p>Message: <%= txReport.RESPONSE.message %></p>
+        </div>
+        <div id="tx-report-container"></div>
+    </div>
+    <%- script %>
+</body>
+</html>

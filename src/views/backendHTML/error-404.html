@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Transaction Report Display</title>
+    <style>
+
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+          line-height: 1.6;
+        }
+        h1 {
+          color: red;
+        }
+        h2 {
+          color: green;
+        }
+        body p a {
+            color: #0066cc !important; /* Use !important if needed */
+            text-decoration: none;
+            display: inline-block; /* This can help with hover effects */
+        }
+        body p a:hover {
+            text-decoration: underline;
+            color: #0052a3 !important; /* Slightly darker on hover */
+        }
+
+        .tx-report {
+            font-family: 'Consolas', 'Monaco', monospace;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            margin: 20px;
+            overflow-x: auto;
+        }
+
+        /* Styling for different parts of the JSON */
+        .key {
+            color: #9cdcfe;
+        }
+
+        .string {
+            color: #ce9178;
+        }
+
+        .number {
+            color: #b5cea8;
+        }
+
+        .boolean {
+            color: #569cd6;
+        }
+
+        /* Section headers */
+        .section-header {
+            color: #569cd6;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>There was a problem handling your request...</h1>
+    <h2>Please use the information below to trouble shoot.</h2>
+    <p>
+        To return to the root click here:
+        <a href="/">http://localhost:5555/</a>
+    </p>
+    <pre class="tx-report" id="txReport"></pre>
+
+    <script>
+        // Function to syntax highlight the JSON
+        function highlightJSON(jsonData) {
+            const pre = document.getElementById('txReport');
+            let json = JSON.stringify(jsonData, null, 4);
+
+            // Add syntax highlighting
+            json = json.replace(/"([^"]+)":/g, '<span class="key">"$1"</span>:');
+            json = json.replace(/"([^"]+)"(?=,|\n|\s*})/g, '<span class="string">"$1"</span>');
+            json = json.replace(/\b(\d+\.?\d*)\b/g, '<span class="number">$1</span>');
+            json = json.replace(/\b(true|false)\b/g, '<span class="boolean">$1</span>');
+
+            pre.innerHTML = json;
+        }
+
+        // Function to display the report
+        function displayTxReport(txReport) {
+            highlightJSON(txReport);
+        }
+    </script>
+
+    <%- script %>
+</body>
+</html>

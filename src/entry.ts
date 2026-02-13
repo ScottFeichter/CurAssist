@@ -1,7 +1,7 @@
-import { logger } from '@/utils/logger/logger.js';
-import { start } from '@/server/server.js';
+import logger from '@/utils/logger/logger';
+import { start, SERVER } from '@/server/routes/server';
 
-logger.info('=== CurAssist Starting ===');
-logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+logger.infor('=== CurAssist Starting ===');
+logger.infor(`Environment: ${process.env.NODE_ENV || 'development'}`);
 
-start();
+start(SERVER);
