@@ -1,8 +1,8 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
-import { log } from '@/utils/logger/logger-setup/logger-wrapper';
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
+import { log } from '../../../utils/logger/logger-setup/logger-wrapper';
 import { Request, Response, NextFunction } from 'express';
 import { BaseCustomError } from './base-custom-error';
-import { CSRFError } from '@/types/ts-definitions';
+import { CSRFError } from '../../../types/ts-definitions';
 
 console.enter();
 

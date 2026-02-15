@@ -1,9 +1,9 @@
-// import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+// import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
 // import { Router, Request, Response, NextFunction } from 'express';
 // import { signupMiddleware } from '../../../middlewares/authentication/authentication-middleware';
 // import { BaseCustomError } from '../../../middlewares/custom-errors/base-custom-error';
-// import { clearAuthenticationCookie } from '@/server/middlewares/authentication/post-authentication/login-post-authentication-middleware';
-// import DemoUser from '@/database/models/DemoUser';
+// import { clearAuthenticationCookie } from '../../../middlewares/authentication/post-authentication/login-post-authentication-middleware';
+// import DemoUser from '../../../../database/models/DemoUser';
 
 // console.enter();
 /*

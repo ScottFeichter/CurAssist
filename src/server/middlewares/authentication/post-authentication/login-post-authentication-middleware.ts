@@ -1,4 +1,4 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { BaseCustomError } from '../../custom-errors/base-custom-error';
 // import { generateJWT, verifyJWT } from './jwt.service';

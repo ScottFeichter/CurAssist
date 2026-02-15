@@ -1,7 +1,7 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
-import { log } from '@/utils/logger/logger-setup/logger-wrapper';
-import { StackFrame } from '@/types/ts-definitions';
-import { ResponseDetails } from '@/types/ts-definitions';
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
+import { StackFrame } from '../../../../types/ts-definitions';
+import { ResponseDetails } from '../../../../types/ts-definitions';
 
 console.enter();
 

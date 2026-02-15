@@ -23,7 +23,7 @@ function runProcess(command, args, prefix) {
   return proc;
 }
 
-const tsc = runProcess('npx', ['ttsc', '--watch', '--preserveWatchOutput'], 'tsc');
+const tsc = runProcess('npx', ['tsc', '--watch', '--preserveWatchOutput'], 'tsc');
 const app = runProcess('npx', ['nodemon', '--delay', '1', '-w', 'dist', 'dist/entry.js'], 'app');
 
 process.on('SIGINT', () => {

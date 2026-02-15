@@ -1,5 +1,5 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
-import { log } from '@/utils/logger/logger-setup/logger-wrapper';
+import { extendedConsole as console } from '../streams/consoles/customConsoles';
+import { log } from '../utils/logger/logger-setup/logger-wrapper';
 console.enter();
 
 // !!! THIS FILE IS NOT MEANT TO BE RUN
@@ -118,8 +118,13 @@ export interface CSRFError extends Error {
   code?: string;
 }
 
-export interface Request extends Express.Request {
-  csrfToken(): string;
+// Augment Express Request to include csrfToken method
+declare global {
+  namespace Express {
+    interface Request {
+      csrfToken(): string;
+    }
+  }
 }
 
 // No need for a custom interface if you're just using default Express functionality.

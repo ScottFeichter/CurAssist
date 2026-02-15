@@ -1,8 +1,8 @@
-// import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+// import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
 // import { RequestHandler } from "express-serve-static-core";
 // import { BaseCustomError } from "../../custom-errors/base-custom-error";
 // import bcrypt from 'bcrypt';
-// import DemoUser from '@/database/models/DemoUser';
+// import DemoUser from '../../../../database/models/DemoUser';
 
 // console.enter();
 

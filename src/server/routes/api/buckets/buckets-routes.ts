@@ -1,5 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
 import fs from 'fs/promises';
 import path from 'path';
 
@@ -94,6 +94,29 @@ bucketsRouter.post('/move', async (req: Request, res: Response, next: NextFuncti
     }
     
     await fs.rename(fromPath, toPath);
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/buckets/delete - Delete file
+bucketsRouter.delete('/delete', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { bucket, subdir, filename } = req.body;
+    const filePath = path.join(BUCKETS_PATH, bucket, subdir, filename);
+    await fs.unlink(filePath);
+    res.json({ success: true });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/buckets/:bucket - Delete entire bucket
+bucketsRouter.delete('/:bucket', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const bucketPath = path.join(BUCKETS_PATH, req.params.bucket);
+    await fs.rm(bucketPath, { recursive: true, force: true });
     res.json({ success: true });
   } catch (error) {
     next(error);

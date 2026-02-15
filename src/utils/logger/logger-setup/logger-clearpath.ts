@@ -1,5 +1,5 @@
 import path from 'path';
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 
 console.enter();
 

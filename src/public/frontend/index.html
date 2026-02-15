@@ -81,25 +81,56 @@
       cursor: not-allowed;
     }
 
-    .save-btn {
-      background: #276CE5;
+
+    .createBucket-btn {
+      background: green;
       color: white;
       font-weight: 600;
     }
 
-    .save-btn:hover {
-      background: #1a5bb8;
+    .createBucket-btn:hover {
+      background: darkgreen;
     }
 
-
-    .submit-btn {
+    .deleteBucket-btn {
       background: red;
       color: white;
       font-weight: 600;
     }
 
-    .submit-btn:hover {
+    .deleteBucket-btn:hover {
       background: darkred;
+    }
+
+
+    .saveFile-btn {
+      background: #276CE5;
+      color: white;
+      font-weight: 600;
+    }
+
+    .saveFile-btn:hover {
+      background: #1a5bb8;
+    }
+
+    .deleteFile-btn {
+      background: red;
+      color: white;
+      font-weight: 600;
+    }
+
+    .deleteFile-btn:hover {
+      background: darkred;
+    }
+
+    .submitFile-btn {
+      background: plum;
+      color: white;
+      font-weight: 600;
+    }
+
+    .submitFile-btn:hover {
+      background: purple;
     }
 
     #fileInfo {
@@ -181,6 +212,45 @@
       flex: 1;
       max-width: 180px;
     }
+
+    .delete-btn {
+      background: red;
+      color: white;
+      font-weight: 600;
+    }
+
+    .delete-btn:hover {
+      background: darkred;
+    }
+
+    .cancel-btn {
+      background: #276CE5;
+      color: white;
+      font-weight: 600;
+    }
+
+    .cancel-btn:hover {
+      background: #1a5bb8;
+    }
+
+    .submit-btn {
+      background: plum;
+      color: white;
+      font-weight: 600;
+    }
+
+    .submit-btn:hover {
+      background: purple;
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
@@ -190,6 +260,13 @@
 
   <div id="main">
     <div id="sidebar">
+      <div class="section-title">Bucket Actions</div>
+      <button class="createBucket-btn" onclick="createBucket()">Create Bucket</button>
+      <button class="deleteBucket-btn" onclick="deleteBucket()">Delete Bucket</button>
+
+
+
+
       <div class="section-title">Bucket</div>
       <select id="bucketSelect" onchange="loadBucket()">
         <option value="">Select bucket...</option>
@@ -218,9 +295,10 @@
       </select>
       <button onclick="moveFile()">Move File</button>
 
-      <div class="section-title">Actions</div>
-      <button class="save-btn" onclick="saveFile()">Save Changes</button>
-      <button class="submit-btn" onclick="submitFile()">Submit</button>
+      <div class="section-title">File Actions</div>
+      <button class="saveFile-btn" onclick="saveFile()">Save Changes</button>
+      <button class="deleteFile-btn" onclick="deleteFile()">Delete File</button>
+      <button class="submitFile-btn" onclick="submitFile()">Submit</button>
 
 
     </div>
@@ -237,6 +315,66 @@
       <div class="modal-buttons">
         <button class="save-btn" onclick="confirmMove(true)">Save And Move</button>
         <button onclick="confirmMove(false)">Move Without Saving</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation modal - Step 1 -->
+  <div id="deleteModal1" class="modal">
+    <div class="modal-content">
+      <p>This will delete the file permanently - would you like to proceed?</p>
+      <div class="modal-buttons">
+        <button class="delete-btn" onclick="confirmDelete()">Yes Delete</button>
+        <button class="cancel-btn" onclick="cancelDelete()">Cancel Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete confirmation modal - Step 2 -->
+  <div id="deleteModal2" class="modal">
+    <div class="modal-content">
+      <p>Are you sure you want to delete? If so type "delete" and press the delete button</p>
+      <input type="text" id="deleteConfirmInput" class="modal-input" placeholder='Type "delete" to confirm'>
+      <div class="modal-buttons">
+        <button class="delete-btn" onclick="finalDelete()">Delete</button>
+        <button class="cancel-btn" onclick="cancelDelete()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit confirmation modal -->
+  <div id="submitModal" class="modal">
+    <div class="modal-content">
+      <p>This will submit the information in the file to the live database. You will not be able to resubmit this file again. Would you like to proceed?</p>
+      <div class="modal-buttons">
+        <button class="submit-btn" onclick="confirmSubmit()">Submit</button>
+        <button class="cancel-btn" onclick="cancelSubmit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete bucket modal - Step 1 -->
+  <div id="deleteBucketModal1" class="modal">
+    <div class="modal-content">
+      <p>Select Bucket To Delete</p>
+      <select id="deleteBucketSelect" class="modal-input">
+        <option value="">Select bucket...</option>
+      </select>
+      <div class="modal-buttons">
+        <button class="delete-btn" onclick="confirmDeleteBucket()">Delete</button>
+        <button class="cancel-btn" onclick="cancelDeleteBucket()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete bucket modal - Step 2 -->
+  <div id="deleteBucketModal2" class="modal">
+    <div class="modal-content">
+      <p id="deleteBucketWarning"></p>
+      <input type="text" id="deleteBucketConfirmInput" class="modal-input" placeholder='Type "delete" to confirm'>
+      <div class="modal-buttons">
+        <button class="delete-btn" onclick="finalDeleteBucket()">Delete</button>
+        <button class="cancel-btn" onclick="cancelDeleteBucket()">Cancel</button>
       </div>
     </div>
   </div>

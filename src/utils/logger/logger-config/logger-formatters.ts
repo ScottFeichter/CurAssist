@@ -1,4 +1,4 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 import winston from 'winston';
 
 console.enter();

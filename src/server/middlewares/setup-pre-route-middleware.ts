@@ -1,5 +1,5 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
-import { log } from '@/utils/logger/logger-setup/logger-wrapper';
+import { extendedConsole as console } from '../../streams/consoles/customConsoles';
+import { log } from '../../utils/logger/logger-setup/logger-wrapper';
 import { join } from 'path';
 import express from 'express';
 import { Request, Response, NextFunction, Application } from 'express';
@@ -10,7 +10,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import csrf from 'csurf';
 import { CSRFError } from '../../types/ts-definitions';
-import { morganMiddleware } from '@/utils/logger/logger-middleware/logger-morganMiddleware';
+import { morganMiddleware } from '../../utils/logger/logger-middleware/logger-morganMiddleware';
 import { checkSessionExpiry, refreshAuthenticationToken, restoreAuthentication } from './authentication/post-authentication/login-post-authentication-middleware'
 import timeout from 'connect-timeout';
 import { handleCSRFError } from './custom-errors/error-CSRF';

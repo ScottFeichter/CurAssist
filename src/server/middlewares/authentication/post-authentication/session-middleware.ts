@@ -1,9 +1,9 @@
-// import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+// import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
 // import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 // import { Request, Response, NextFunction } from 'express';
 // import { BaseCustomError } from '../../custom-errors/base-custom-error';
-// import loginRouter from '@/server/routes/api/login/login-routes';
-// import logoutRouter from '@/server/routes/api/login/logout-routes';
+// import loginRouter from '../../../routes/api/login/login-routes';
+// import logoutRouter from '../../../routes/api/login/logout-routes';
 // import {
 //   checkUserExists,
 //   verifyPassword,

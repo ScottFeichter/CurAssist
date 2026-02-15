@@ -1,7 +1,7 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
-import { log } from '@/utils/logger/logger-setup/logger-wrapper';
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
+import { log } from '../../../utils/logger/logger-setup/logger-wrapper';
 import { Request, Response, NextFunction } from 'express';
-import { BaseCustomError } from '@/server/middlewares/custom-errors/base-custom-error';
+import { BaseCustomError } from '../../middlewares/custom-errors/base-custom-error';
 
 
 console.enter();

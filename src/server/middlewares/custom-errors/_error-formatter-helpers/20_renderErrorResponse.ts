@@ -1,7 +1,7 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
-import { log } from '@/utils/logger/logger-setup/logger-wrapper';
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { Response } from 'express';
-import { TransactionReport } from '@/types/ts-definitions';
+import { TransactionReport } from '../../../../types/ts-definitions';
 
 console.enter();
 

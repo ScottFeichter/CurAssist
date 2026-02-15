@@ -1,6 +1,6 @@
 // #region ===================== IMPORTS =======================================
 import path from 'path';
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../streams/consoles/customConsoles';
 import { error } from 'console';
 import { config } from 'dotenv';
 // #endregion ------------------------------------------------------------------

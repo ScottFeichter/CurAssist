@@ -1,5 +1,5 @@
 // #region ===================== IMPORTS =======================================
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 import winston from "winston";
 // #endregion ------------------------------------------------------------------
 

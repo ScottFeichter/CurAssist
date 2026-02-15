@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import { BaseCustomError } from '../custom-errors/base-custom-error';
 // import { verifyJWT } from '../authentication/post-authentication/jwt.service';
 // import { JWT_ACCESS_TOKEN_SECRET } from '../../../config/env-module';
-import { CustomUser } from '@/types/ts-definitions';
+import { CustomUser } from '../../../types/ts-definitions';
 
 // #region ====================== TYPES ========================================
 

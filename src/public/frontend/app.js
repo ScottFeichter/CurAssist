@@ -245,3 +245,158 @@ async function confirmMove(shouldSave) {
 
 // Initialize on load
 init();
+
+// Delete file - Step 1: Show first confirmation
+function deleteFile() {
+  if (!currentFiles[currentIndex]) {
+    alert('No file selected');
+    return;
+  }
+  document.getElementById('deleteModal1').style.display = 'block';
+}
+
+// Delete file - Step 2: Show second confirmation with text input
+function confirmDelete() {
+  document.getElementById('deleteModal1').style.display = 'none';
+  document.getElementById('deleteModal2').style.display = 'block';
+  document.getElementById('deleteConfirmInput').value = '';
+}
+
+// Delete file - Step 3: Validate and execute delete
+async function finalDelete() {
+  const input = document.getElementById('deleteConfirmInput').value;
+  
+  if (input !== 'delete') {
+    alert('You must type "delete" exactly to confirm');
+    return;
+  }
+
+  try {
+    const response = await fetch(`${API_BASE}/buckets/delete`, {
+      method: 'DELETE',
+      headers: { 
+        'Content-Type': 'application/json',
+        'XSRF-Token': getCsrfToken()
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        bucket: currentBucket,
+        subdir: currentSubdir,
+        filename: currentFiles[currentIndex]
+      })
+    });
+
+    if (response.ok) {
+      alert('File deleted successfully');
+      document.getElementById('deleteModal2').style.display = 'none';
+      loadSubdir();
+    } else {
+      alert('Failed to delete file');
+    }
+  } catch (error) {
+    alert('Error deleting file: ' + error.message);
+  }
+}
+
+// Cancel delete - close all modals
+function cancelDelete() {
+  document.getElementById('deleteModal1').style.display = 'none';
+  document.getElementById('deleteModal2').style.display = 'none';
+  document.getElementById('deleteConfirmInput').value = '';
+}
+
+// Submit file - Show confirmation modal
+function submitFile() {
+  if (!currentFiles[currentIndex]) {
+    alert('No file selected');
+    return;
+  }
+  document.getElementById('submitModal').style.display = 'block';
+}
+
+// Confirm submit - placeholder for future implementation
+function confirmSubmit() {
+  document.getElementById('submitModal').style.display = 'none';
+  alert('Functionality not implemented yet');
+}
+
+// Cancel submit - close modal
+function cancelSubmit() {
+  document.getElementById('submitModal').style.display = 'none';
+}
+
+// Create bucket - placeholder
+function createBucket() {
+  alert('Functionality not implemented yet');
+}
+
+// Delete bucket - Step 1: Show bucket selection modal
+async function deleteBucket() {
+  const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
+  const select = document.getElementById('deleteBucketSelect');
+  select.innerHTML = '<option value="">Select bucket...</option>';
+  
+  buckets.forEach(bucket => {
+    const option = document.createElement('option');
+    option.value = bucket;
+    option.textContent = bucket;
+    select.appendChild(option);
+  });
+  
+  document.getElementById('deleteBucketModal1').style.display = 'block';
+}
+
+// Delete bucket - Step 2: Show confirmation with text input
+function confirmDeleteBucket() {
+  const bucketName = document.getElementById('deleteBucketSelect').value;
+  
+  if (!bucketName) {
+    alert('Please select a bucket');
+    return;
+  }
+  
+  document.getElementById('deleteBucketModal1').style.display = 'none';
+  document.getElementById('deleteBucketWarning').textContent = 
+    `This will permanently delete ${bucketName} and all its subdirectories and files contained within. If you are sure you want to proceed type "delete" and press the delete button`;
+  document.getElementById('deleteBucketConfirmInput').value = '';
+  document.getElementById('deleteBucketModal2').style.display = 'block';
+}
+
+// Delete bucket - Step 3: Validate and execute delete
+async function finalDeleteBucket() {
+  const input = document.getElementById('deleteBucketConfirmInput').value;
+  
+  if (input !== 'delete') {
+    alert('You must type "delete" exactly to confirm');
+    return;
+  }
+  
+  const bucketName = document.getElementById('deleteBucketSelect').value;
+  
+  try {
+    const response = await fetch(`${API_BASE}/buckets/${bucketName}`, {
+      method: 'DELETE',
+      headers: { 
+        'XSRF-Token': getCsrfToken()
+      },
+      credentials: 'include'
+    });
+    
+    if (response.ok) {
+      alert('Bucket deleted successfully');
+      document.getElementById('deleteBucketModal2').style.display = 'none';
+      init();
+    } else {
+      alert('Failed to delete bucket');
+    }
+  } catch (error) {
+    alert('Error deleting bucket: ' + error.message);
+  }
+}
+
+// Cancel delete bucket - close all modals
+function cancelDeleteBucket() {
+  document.getElementById('deleteBucketModal1').style.display = 'none';
+  document.getElementById('deleteBucketModal2').style.display = 'none';
+  document.getElementById('deleteBucketConfirmInput').value = '';
+}

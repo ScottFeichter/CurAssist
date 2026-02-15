@@ -1,5 +1,5 @@
 import path from 'path';
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 import winston from 'winston';
 import 'winston-daily-rotate-file';
 import { logPaths, logDir } from '../logger-config/logger-paths';

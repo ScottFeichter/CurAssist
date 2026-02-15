@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { promises as fs } from 'fs';
 import path from 'path';
-import logger from '@/utils/logger/logger';
+import logger from '../../utils/logger/logger';
 
 const router = Router();
 const BUCKETS_DIR = path.join(__dirname, '../../../content/Buckets');

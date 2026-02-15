@@ -1,5 +1,5 @@
 import path from "path";
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 import fs from 'fs';
 import { logDir } from "../logger-config/logger-paths";
 import { getLastThreeLevels } from "./logger-clearpath";

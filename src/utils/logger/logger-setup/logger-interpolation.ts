@@ -1,4 +1,4 @@
-import { extendedConsole as console } from '@/streams/consoles/customConsoles';
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 import logger from "../logger";
 import { log } from "./logger-wrapper";
 import { logDir } from "../logger-config/logger-paths";
