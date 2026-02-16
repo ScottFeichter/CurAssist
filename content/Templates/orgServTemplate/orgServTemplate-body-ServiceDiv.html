@@ -1,0 +1,416 @@
+<!---=========================================================================== EDIT SERVICES STARTS ============================================================================-->
+                <div class="edit--services" id="serviceDiv">
+                  <header class="edit--main--header">
+                    <!-- <h1 class="edit--main--header--title">
+                      Services
+                    </h1> -->
+                  </header>
+                  <div class="edit--sections">
+                    <ul class="edit--section--list">
+                      <li class="edit--section--list--item">
+                        <ul class="edit--section--list--item--sublist edit--service--list">
+                          <li id="-2" class="edit--service edit--section">
+                            <header class="edit--section--header">
+                              <h4>
+                                New Service
+                              </h4>
+                              <!-- <button class="remove-item" type="button" id="service--deactivation">
+                                Remove Service
+                              </button> -->
+                            </header>
+                            <ul class="edit--section--list">
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  <div>
+                                    <p class="internal-note-label-text">
+                                      Internal Notes about Editing this Service
+                                    </p>
+                                    <p class="internal-note-label-subtext">
+                                      (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
+                                    </p>
+                                  </div>
+                                </label>
+                                <textarea class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes.">
+                                </textarea>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Name of the Service
+                                </label>
+                                <input type="text" placeholder="What is this service called?" value="">
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Nickname
+                                </label>
+                                <input type="text" placeholder="What it's known as in the community" value="">
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label>
+                                  Location
+                                  <!-- COMMENTED OUT: Add location from organization dropdown
+                                  <select class="app-components-edit-ProvidedService-module__addressSelect--Q9eih">
+                                    <option value="">
+                                      Add location from organization
+                                    </option>
+                                    <option value="0">
+                                      1925 Lawton Campus
+                                    </option>
+                                    <option value="1">
+                                      Silver Campus
+                                    </option>
+                                    <option value="2">
+                                      1943 Lawton Campus
+                                    </option>
+                                    <option value="3">
+                                      Cambridge Campus
+                                    </option>
+                                  </select>
+                                  -->
+                                </label>
+                                <div class="app-components-edit-ProvidedService-module__addressList--qs9O6" data-field="service_locations">
+                                </div>
+                                <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
+                                  Add Location
+                                </button>
+                              </li>
+                              <li class="edit--section--list--item email">
+                                <label for="input">
+                                  Service E-Mail
+                                </label>
+                                <input type="email" placeholder="Email address for this service" value="">
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Description
+                                </label>
+                                <textarea class="" placeholder="Describe what you'll receive from this service in a few sentences.">
+                                </textarea>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
+                                </label>
+                                <textarea class="" placeholder="Describe what you'll receive from this service in a few sentences.">
+                                </textarea>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Application Process
+                                </label>
+                                <textarea class="" placeholder="How do you apply for this service?">
+                                </textarea>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Required Documents
+                                </label>
+                                <textarea class="" placeholder="What documents do you need to bring to apply?">
+                                </textarea>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Interpretation Services
+                                </label>
+                                <textarea class="" placeholder="What interpretation services do they offer?">
+                                </textarea>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Clinician Actions (Include any COVID Actions)
+                                </label>
+                                <textarea class="" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)">
+                                </textarea>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="categoryDropdown">
+                                  Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="react-select-12--value">
+                                      <div class="Select-placeholder">
+                                        Select...
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categoryDropdown" aria-activedescendant="react-select-12--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Cost
+                                </label>
+                                <input type="text" placeholder="How much does this service cost?" value="">
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Wait Time
+                                </label>
+                                <input type="text" placeholder="Is there a waiting list or wait time?" value="">
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Service's Website
+                                </label>
+                                <input type="text" placeholder="http://" value="">
+                              </li>
+                              <li class="edit--section--list--item hours">
+                                <span class="label">
+                                  Hours
+                                </span>
+                                <div class="inherit-schedule">
+                                  <label for="inherit" class="inline-checkbox">
+                                    <input id="inherit" class="input-checkbox" type="checkbox" checked="">
+                                    Inherit schedule from parent organization
+                                  </label>
+                                </div>
+                              </li>
+                              <li class="edit--section--list--item edit--notes">
+                                <label for="add-note">
+                                  Notes
+                                </label>
+                                <p>
+                                  <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
+                                    Markdown
+                                  </a>
+                                  is also supported for notes.
+                                </p>
+                                <ul class="edit--section--list--item--sublist" data-field="service_notes">
+                                </ul>
+                                <button type="button" class="edit--section--list--item--button">
+                                  <i class="material-symbols-outlined">
+                                    add_box
+                                  </i>
+                                  Add Note
+                                </button>
+                              </li>
+                              <li class="edit--section--list--item">
+                                <label for="categoryDropdown">
+                                  Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="react-select-13--value">
+                                      <div class="Select-placeholder">
+                                        Select...
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categoryDropdown" aria-activedescendant="react-select-13--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: CSS ------------------------------------------------------------------------------->
+
+<style>
+  /* Service Section Modal Styles */
+  #serviceDiv .service-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  #serviceDiv .service-modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    min-width: 400px;
+    max-width: 500px;
+  }
+  #serviceDiv .service-modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  #serviceDiv .service-modal-content input,
+  #serviceDiv .service-modal-content textarea {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  #serviceDiv .service-modal-content textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+  #serviceDiv .service-modal-content button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #serviceDiv .service-modal-content button:first-of-type {
+    background: #276ce5;
+    color: white;
+  }
+  #serviceDiv .service-modal-content button:last-of-type {
+    background: #ddd;
+  }
+</style>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: MODALS ------------------------------------------------------------------------------->
+
+<!-- Service Add Location Modal -->
+<div id="serviceAddLocationModal" class="service-modal" style="display:none;">
+  <div class="service-modal-content">
+    <h3>Add Location</h3>
+    <input type="text" id="serviceLocationName" placeholder="Location Name">
+    <input type="text" id="serviceAddressLine1" placeholder="Address Line 1">
+    <input type="text" id="serviceAddressLine2" placeholder="Address Line 2">
+    <input type="text" id="serviceCity" placeholder="City">
+    <input type="text" id="serviceState" placeholder="State">
+    <input type="text" id="serviceZip" placeholder="Zip">
+    <button id="serviceAddLocationBtn">Add Location</button>
+    <button id="serviceCancelLocationBtn">Cancel</button>
+  </div>
+</div>
+
+<!-- Service Add Phone Modal -->
+<div id="serviceAddPhoneModal" class="service-modal" style="display:none;">
+  <div class="service-modal-content">
+    <h3>Add Phone</h3>
+    <input type="text" id="servicePhoneName" placeholder="Phone Name">
+    <input type="text" id="servicePhoneNumber" placeholder="Number">
+    <button id="serviceAddPhoneBtn">Add Phone</button>
+    <button id="serviceCancelPhoneBtn">Cancel</button>
+  </div>
+</div>
+
+<!-- Service Add Note Modal -->
+<div id="serviceAddNoteModal" class="service-modal" style="display:none;">
+  <div class="service-modal-content">
+    <h3>Add Note</h3>
+    <textarea id="serviceNoteText" placeholder="Enter note (markdown supported)"></textarea>
+    <button id="serviceAddNoteBtn">Add Note</button>
+    <button id="serviceCancelNoteBtn">Cancel</button>
+  </div>
+</div>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: JS ------------------------------------------------------------------------------->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Service Section Modal References
+    const serviceLocationModal = document.getElementById('serviceAddLocationModal');
+    const servicePhoneModal = document.getElementById('serviceAddPhoneModal');
+    const serviceNoteModal = document.getElementById('serviceAddNoteModal');
+
+    // Find all Add buttons in serviceDiv only
+    const serviceButtons = document.querySelectorAll('#serviceDiv button');
+
+    serviceButtons.forEach(btn => {
+      const text = btn.textContent.trim();
+
+      if (text === 'Add Location') {
+        btn.addEventListener('click', () => {
+          serviceLocationModal.style.display = 'flex';
+        });
+      } else if (text === 'Add Phone') {
+        btn.addEventListener('click', () => {
+          servicePhoneModal.style.display = 'flex';
+        });
+      } else if (text === 'Add Note') {
+        btn.addEventListener('click', () => {
+          serviceNoteModal.style.display = 'flex';
+        });
+      }
+    });
+
+    // Service Location modal handlers
+    document.getElementById('serviceCancelLocationBtn').addEventListener('click', () => {
+      serviceLocationModal.style.display = 'none';
+    });
+
+    document.getElementById('serviceAddLocationBtn').addEventListener('click', () => {
+      const name = document.getElementById('serviceLocationName').value;
+      const addr1 = document.getElementById('serviceAddressLine1').value;
+      const addr2 = document.getElementById('serviceAddressLine2').value;
+      const city = document.getElementById('serviceCity').value;
+      const state = document.getElementById('serviceState').value;
+      const zip = document.getElementById('serviceZip').value;
+
+      const locationList = document.querySelector('#serviceDiv .app-components-edit-ProvidedService-module__addressList--qs9O6');
+      const div = document.createElement('div');
+      div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
+      locationList.appendChild(div);
+
+      document.getElementById('serviceLocationName').value = '';
+      document.getElementById('serviceAddressLine1').value = '';
+      document.getElementById('serviceAddressLine2').value = '';
+      document.getElementById('serviceCity').value = '';
+      document.getElementById('serviceState').value = '';
+      document.getElementById('serviceZip').value = '';
+      serviceLocationModal.style.display = 'none';
+    });
+
+    // Service Phone modal handlers
+    document.getElementById('serviceCancelPhoneBtn').addEventListener('click', () => {
+      servicePhoneModal.style.display = 'none';
+    });
+
+    document.getElementById('serviceAddPhoneBtn').addEventListener('click', () => {
+      const name = document.getElementById('servicePhoneName').value;
+      const number = document.getElementById('servicePhoneNumber').value;
+
+      const phoneSublist = document.querySelectorAll('#serviceDiv .edit--section--list--item--sublist')[0];
+      const li = document.createElement('li');
+      li.innerHTML = `<strong>${name}:</strong> ${number}`;
+      phoneSublist.appendChild(li);
+
+      document.getElementById('servicePhoneName').value = '';
+      document.getElementById('servicePhoneNumber').value = '';
+      servicePhoneModal.style.display = 'none';
+    });
+
+    // Service Note modal handlers
+    document.getElementById('serviceCancelNoteBtn').addEventListener('click', () => {
+      serviceNoteModal.style.display = 'none';
+    });
+
+    document.getElementById('serviceAddNoteBtn').addEventListener('click', () => {
+      const note = document.getElementById('serviceNoteText').value;
+
+      const noteSublist = document.querySelectorAll('#serviceDiv .edit--section--list--item--sublist')[1];
+      const li = document.createElement('li');
+      li.textContent = note;
+      noteSublist.appendChild(li);
+
+      document.getElementById('serviceNoteText').value = '';
+      serviceNoteModal.style.display = 'none';
+    });
+  });
+</script>
+
+                </div>
+<!---=========================================================================== EDIT SERVICES ENDS ===========================================================================--->

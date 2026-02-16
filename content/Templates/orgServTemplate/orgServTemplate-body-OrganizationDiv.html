@@ -1,0 +1,485 @@
+<!---=========================================================================== EDIT (ORG) SECTIONS STARTS ===========================================================================-->
+               <div class="edit--sections" id="organizationDiv">
+
+                  <section id="info" class="edit--section">
+                    <header class="edit--section--header">
+                      <h4>
+                        New Organization
+                      </h4>
+                    </header>
+                    <br>
+                    <ul class="edit--section--list">
+                      <li class="edit--section--list--item">
+                        <label for="edit-internal-note-input">
+                          <p class="internal-note-label-text">
+                            Internal Notes about Editing this Organization
+                          </p>
+                          <p class="internal-note-label-subtext">
+                            (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
+                          </p>
+                        </label>
+                        <textarea id="edit-internal-note-input" class="input edit-section-internal-note" placeholder="Add any info that future content editors should be aware of updating this resource. Adding dates to your notes will help with tracking changes." data-field="internal_note">
+                        </textarea>
+                      </li>
+                      <li class="edit--section--list--item">
+                        <label for="edit-name-input">
+                          Name of the Organization
+                        </label>
+                        <input id="edit-name-input" type="text" class="input" placeholder="Organization Name" data-field="name" value="">
+                      </li>
+                      <li class="edit--section--list--item">
+                        <label for="edit-alternate-name-input">
+                          Nickname
+                        </label>
+                        <input id="edit-alternate-name-input" type="text" class="input" placeholder="What it's known as in the community" data-field="alternate_name" value="">
+                      </li>
+                      <li class="edit--section--list--item">
+                        <div class="app-components-edit-EditAddress-module__addressListTitle--Y1zCq">
+                          Location
+                        </div>
+                        <div class="app-components-edit-EditAddress-module__addressList--sQxt1" data-field="locations">
+                        </div>
+                        <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
+                          Add Location
+                        </button>
+                      </li>
+                      <li class="edit--section--list--item edit--notes">
+                        <label for="edit-item">
+                          Phones
+                        </label>
+                        <ul class="edit--section--list--item--sublist" data-field="phones">
+                        </ul>
+                        <button type="button" class="edit--section--list--item--button solid-brand">
+                          Add Phone
+                        </button>
+                      </li>
+                      <li class="edit--section--list--item email">
+                        <label for="edit-website-input">
+                          Website
+                        </label>
+                        <input id="edit-website-input" type="url" class="input" placeholder="http://" data-field="website" value="">
+                      </li>
+                      <li class="edit--section--list--item email">
+                        <label for="edit-email-input">
+                          E-Mail
+                        </label>
+                        <input id="edit-email-input" type="email" class="input" data-field="email" value="">
+                      </li>
+                      <li class="edit--section--list--item">
+                        <label for="edit-description-input">
+                          Description
+                        </label>
+                        <textarea id="edit-description-input" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description">
+                        </textarea>
+                        <p>
+                          If you'd like to add formatting to descriptions, we support&nbsp;
+                          <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
+                            Github Flavored Markdown
+                          </a>
+                          .
+                        </p>
+                      </li>
+                      <li class="edit--section--list--item email">
+                        <label for="edit-legal-status-input">
+                          Legal Status
+                        </label>
+                        <input id="edit-legal-status-input" type="text" class="input" placeholder="ex. non-profit, government, business" data-field="legal_status" value="">
+                      </li>
+                      <li class="edit--section--list--item hours">
+                        <span class="label">
+                          Hours
+                        </span>
+                        <div>
+                          <span class="label open-24-label">
+                            24 hrs?
+                          </span>
+                          <ul class="edit-hours-list">
+                            <div class="day-group">
+                              <div class="hours">
+                                <li>
+                                  <p>
+                                    M
+                                  </p>
+                                  <div>
+                                    <input type="time" value="">
+                                    <input type="time" value="">
+                                  </div>
+                                </li>
+                              </div>
+                              <div class="add-time">
+                                <button type="button" class="icon-button">
+                                  <i class="material-symbols-outlined">
+                                    add
+                                  </i>
+                                </button>
+                              </div>
+                              <div class="is-24-hours">
+                                <input type="checkbox">
+                              </div>
+                            </div>
+                            <div class="day-group">
+                              <div class="hours">
+                                <li>
+                                  <p>
+                                    T
+                                  </p>
+                                  <div>
+                                    <input type="time" value="">
+                                    <input type="time" value="">
+                                  </div>
+                                </li>
+                              </div>
+                              <div class="add-time">
+                                <button type="button" class="icon-button">
+                                  <i class="material-symbols-outlined">
+                                    add
+                                  </i>
+                                </button>
+                              </div>
+                              <div class="is-24-hours">
+                                <input type="checkbox">
+                              </div>
+                            </div>
+                            <div class="day-group">
+                              <div class="hours">
+                                <li>
+                                  <p>
+                                    W
+                                  </p>
+                                  <div>
+                                    <input type="time" value="">
+                                    <input type="time" value="">
+                                  </div>
+                                </li>
+                              </div>
+                              <div class="add-time">
+                                <button type="button" class="icon-button">
+                                  <i class="material-symbols-outlined">
+                                    add
+                                  </i>
+                                </button>
+                              </div>
+                              <div class="is-24-hours">
+                                <input type="checkbox">
+                              </div>
+                            </div>
+                            <div class="day-group">
+                              <div class="hours">
+                                <li>
+                                  <p>
+                                    Th
+                                  </p>
+                                  <div>
+                                    <input type="time" value="">
+                                    <input type="time" value="">
+                                  </div>
+                                </li>
+                              </div>
+                              <div class="add-time">
+                                <button type="button" class="icon-button">
+                                  <i class="material-symbols-outlined">
+                                    add
+                                  </i>
+                                </button>
+                              </div>
+                              <div class="is-24-hours">
+                                <input type="checkbox">
+                              </div>
+                            </div>
+                            <div class="day-group">
+                              <div class="hours">
+                                <li>
+                                  <p>
+                                    F
+                                  </p>
+                                  <div>
+                                    <input type="time" value="">
+                                    <input type="time" value="">
+                                  </div>
+                                </li>
+                              </div>
+                              <div class="add-time">
+                                <button type="button" class="icon-button">
+                                  <i class="material-symbols-outlined">
+                                    add
+                                  </i>
+                                </button>
+                              </div>
+                              <div class="is-24-hours">
+                                <input type="checkbox">
+                              </div>
+                            </div>
+                            <div class="day-group">
+                              <div class="hours">
+                                <li>
+                                  <p>
+                                    S
+                                  </p>
+                                  <div>
+                                    <input type="time" value="">
+                                    <input type="time" value="">
+                                  </div>
+                                </li>
+                              </div>
+                              <div class="add-time">
+                                <button type="button" class="icon-button">
+                                  <i class="material-symbols-outlined">
+                                    add
+                                  </i>
+                                </button>
+                              </div>
+                              <div class="is-24-hours">
+                                <input type="checkbox">
+                              </div>
+                            </div>
+                            <div class="day-group">
+                              <div class="hours">
+                                <li>
+                                  <p>
+                                    Su
+                                  </p>
+                                  <div>
+                                    <input type="time" value="">
+                                    <input type="time" value="">
+                                  </div>
+                                </li>
+                              </div>
+                              <div class="add-time">
+                                <button type="button" class="icon-button">
+                                  <i class="material-symbols-outlined">
+                                    add
+                                  </i>
+                                </button>
+                              </div>
+                              <div class="is-24-hours">
+                                <input type="checkbox">
+                              </div>
+                            </div>
+                          </ul>
+                        </div>
+                      </li>
+                      <li class="edit--section--list--item edit--notes">
+                        <label for="add-note">
+                          Notes
+                        </label>
+                        <p>
+                          <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
+                            Markdown
+                          </a>
+                          is also supported for notes.
+                        </p>
+                        <ul class="edit--section--list--item--sublist" data-field="notes">
+                        </ul>
+                        <button type="button" class="edit--section--list--item--button">
+                          <i class="material-symbols-outlined">
+                            add_box
+                          </i>
+                          Add Note
+                        </button>
+                      </li>
+                    </ul>
+                  </section>
+
+
+
+<!------------------------------------------------------------------------------ CSS ------------------------------------------------------------------------------->
+
+
+<!------------------------------------------------------------------------------ JS -------------------------------------------------------------------------------->
+
+                  <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                      const locationModal = document.getElementById('addLocationModal');
+                      const phoneModal = document.getElementById('addPhoneModal');
+                      const noteModal = document.getElementById('addNoteModal');
+
+                      // Find all Add buttons by their text content
+                      const allButtons = document.querySelectorAll('button');
+
+                      allButtons.forEach(btn => {
+                        const text = btn.textContent.trim();
+
+                        if (text === 'Add Location') {
+                          btn.addEventListener('click', () => {
+                            locationModal.style.display = 'flex';
+                          });
+                        } else if (text === 'Add Phone') {
+                          btn.addEventListener('click', () => {
+                            phoneModal.style.display = 'flex';
+                          });
+                        } else if (text === 'Add Note') {
+                          btn.addEventListener('click', () => {
+                            noteModal.style.display = 'flex';
+                          });
+                        }
+                      });
+
+                      // Location modal handlers
+                      document.getElementById('cancelLocationBtn').addEventListener('click', () => {
+                        locationModal.style.display = 'none';
+                      });
+
+                      document.getElementById('addLocationBtn').addEventListener('click', () => {
+                        const name = document.getElementById('locationName').value;
+                        const addr1 = document.getElementById('addressLine1').value;
+                        const addr2 = document.getElementById('addressLine2').value;
+                        const city = document.getElementById('city').value;
+                        const state = document.getElementById('state').value;
+                        const zip = document.getElementById('zip').value;
+
+                        // Find the location list
+                        const locationList = document.querySelector('.app-components-edit-EditAddress-module__addressList--sQxt1');
+                        const div = document.createElement('div');
+                        div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
+                        locationList.appendChild(div);
+
+                        // Clear and close
+                        document.getElementById('locationName').value = '';
+                        document.getElementById('addressLine1').value = '';
+                        document.getElementById('addressLine2').value = '';
+                        document.getElementById('city').value = '';
+                        document.getElementById('state').value = '';
+                        document.getElementById('zip').value = '';
+                        locationModal.style.display = 'none';
+                      });
+
+                      // Phone modal handlers
+                      document.getElementById('cancelPhoneBtn').addEventListener('click', () => {
+                        phoneModal.style.display = 'none';
+                      });
+
+                      document.getElementById('addPhoneBtn').addEventListener('click', () => {
+                        const name = document.getElementById('phoneName').value;
+                        const number = document.getElementById('phoneNumber').value;
+
+                        // Find the phone sublist
+                        const phoneSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[1];
+                        const li = document.createElement('li');
+                        li.innerHTML = `<strong>${name}:</strong> ${number}`;
+                        phoneSublist.appendChild(li);
+
+                        // Clear and close
+                        document.getElementById('phoneName').value = '';
+                        document.getElementById('phoneNumber').value = '';
+                        phoneModal.style.display = 'none';
+                      });
+
+                      // Note modal handlers
+                      document.getElementById('cancelNoteBtn').addEventListener('click', () => {
+                        noteModal.style.display = 'none';
+                      });
+
+                      document.getElementById('addNoteBtn').addEventListener('click', () => {
+                        const note = document.getElementById('noteText').value;
+
+                        // Find the note sublist
+                        const noteSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[2];
+                        const li = document.createElement('li');
+                        li.textContent = note;
+                        noteSublist.appendChild(li);
+
+                        // Clear and close
+                        document.getElementById('noteText').value = '';
+                        noteModal.style.display = 'none';
+                      });
+                    });
+                  </script>
+
+
+
+
+<!------------------------------------------------------------------------------ MODALS HTML ------------------------------------------------------------------------------->
+
+                  <!-- Add Location Modal -->
+                  <div id="addLocationModal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                      <h3>Add Location</h3>
+                      <input type="text" id="locationName" placeholder="Location Name">
+                      <input type="text" id="addressLine1" placeholder="Address Line 1">
+                      <input type="text" id="addressLine2" placeholder="Address Line 2">
+                      <input type="text" id="city" placeholder="City">
+                      <input type="text" id="state" placeholder="State">
+                      <input type="text" id="zip" placeholder="Zip">
+                      <button id="addLocationBtn">Add Location</button>
+                      <button id="cancelLocationBtn">Cancel</button>
+                    </div>
+                  </div>
+
+                  <!-- Add Phone Modal -->
+                  <div id="addPhoneModal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                      <h3>Add Phone</h3>
+                      <input type="text" id="phoneName" placeholder="Phone Name">
+                      <input type="text" id="phoneNumber" placeholder="Number">
+                      <button id="addPhoneBtn">Add Phone</button>
+                      <button id="cancelPhoneBtn">Cancel</button>
+                    </div>
+                  </div>
+
+                  <!-- Add Note Modal -->
+                  <div id="addNoteModal" class="modal" style="display:none;">
+                    <div class="modal-content">
+                      <h3>Add Note</h3>
+                      <textarea id="noteText" placeholder="Enter note (markdown supported)"></textarea>
+                      <button id="addNoteBtn">Add Note</button>
+                      <button id="cancelNoteBtn">Cancel</button>
+                    </div>
+                  </div>
+
+
+                <!------------------------------------------------------------------------------ MODALS CSS ------------------------------------------------------------------------------->
+
+                  <style>
+                    .modal {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      background: rgba(0,0,0,0.5);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      z-index: 1000;
+                    }
+                    .modal-content {
+                      background: white;
+                      padding: 30px;
+                      border-radius: 8px;
+                      min-width: 400px;
+                      max-width: 500px;
+                    }
+                    .modal-content h3 {
+                      margin-top: 0;
+                      margin-bottom: 20px;
+                    }
+                    .modal-content input,
+                    .modal-content textarea {
+                      width: 100%;
+                      margin-bottom: 15px;
+                      padding: 10px;
+                      border: 1px solid #ddd;
+                      border-radius: 4px;
+                      box-sizing: border-box;
+                    }
+                    .modal-content textarea {
+                      min-height: 150px;
+                      resize: vertical;
+                    }
+                    .modal-content button {
+                      margin-right: 10px;
+                      padding: 10px 20px;
+                      border: none;
+                      border-radius: 4px;
+                      cursor: pointer;
+                    }
+                    .modal-content button:first-of-type {
+                      background: #276ce5;
+                      color: white;
+                    }
+                    .modal-content button:last-of-type {
+                      background: #ddd;
+                    }
+                  </style>
+                </div>
+<!---=========================================================================== EDIT (ORG) SECTIONS END ============================================================================-->

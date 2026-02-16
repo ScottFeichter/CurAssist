@@ -1,0 +1,124 @@
+<!---=========================================================================== HEADER START ===============================================================================--->
+<!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
+                <header class="edit--main--header">
+
+                  <h1 class="edit--main--header--title">
+                    Is this an Organization or a Service?
+                  </h1>
+
+                  <br>
+
+
+                  <div id="OrgServDiv">
+                    <button type="button" id="OrganizationButton" class="toggle-button active">
+                      Organization
+                    </button>
+                    <button type="button" id="ServiceButton" class="toggle-button">
+                      Service
+                    </button>
+                  </div>
+
+
+
+
+
+
+
+<!------------------------------------------------------------------------------ CSS ------------------------------------------------------------------------------->
+                  <style>
+
+                    #OrgServDiv{
+                      display: flex;
+                      align-items: center;
+                      justify-content: space-evenly;
+                      /* border: 1px green dotted; */
+                    }
+
+
+                    .toggle-button {
+                        height: 4rem !important;
+                        width: 20rem !important;
+                        padding: 10px 20px;
+                        border: 2px solid #ccc;
+                        color: #999;
+                        background-color: #fff;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                      }
+
+                      .toggle-button:hover {
+                        color: #276CE5;
+                        background-color: #f0f0f0;
+                        border-color: #276CE5;
+                      }
+
+                      .toggle-button.active {
+                        background-color: #276CE5;
+                        color: white;
+                        font-weight: bold;
+                        border-color: #276CE5;
+                        box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.3); /* inset shadow for pressed effect */
+                        transform: translateY(2px); /* slight downward shift */
+                      }
+
+                      .toggle-button.active:hover {
+                        background-color: #154a8a;; /* darker blue than #276CE5 */
+                      }
+
+
+
+                      #OrganizationButton.active {
+                        background-color: #276CE5;
+                      }
+
+                      #ServiceButton.active {
+                        background-color: #276CE5;
+                      }
+
+                  </style>
+
+
+<!------------------------------------------------------------------------------ JS ------------------------------------------------------------------------------->
+                  <script>
+                    const orgBtn = document.getElementById('OrganizationButton');
+                    const servBtn = document.getElementById('ServiceButton');
+
+                    let Organization = true;
+
+
+                    function toggleView() {
+                      const orgDiv = document.getElementById('organizationDiv');
+                      const servDiv = document.getElementById('serviceDiv');
+
+                      if (Organization) {
+                        orgDiv.style.display = 'block';
+                        servDiv.style.display = 'none';
+                      } else {
+                        orgDiv.style.display = 'none';
+                        servDiv.style.display = 'block';
+                      }
+                    }
+
+                    orgBtn.addEventListener('click', function() {
+                      orgBtn.classList.add('active');
+                      servBtn.classList.remove('active');
+                      Organization = true;
+                      toggleView();
+                    });
+
+                    servBtn.addEventListener('click', function() {
+                      servBtn.classList.add('active');
+                      orgBtn.classList.remove('active');
+                      Organization = false;
+                      toggleView();
+                    });
+
+                    document.addEventListener('DOMContentLoaded', function() {
+                      toggleView();
+                    });
+                  </script>
+
+
+
+                </header>
+<!---=========================================================================== HEADER END ===============================================================================--->

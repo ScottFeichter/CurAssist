@@ -29,14 +29,25 @@ export const orgFieldMap: Record<string, string> = {
   long_description: 'Description',
   legal_status: 'Legal Status',
   internal_note: 'Internal Notes',
+  locations: 'Locations',
+  phones: 'Phones',
+  notes: 'Notes',
 };
 
 // Service section fields (using placeholder text as identifiers)
 export const serviceFieldMap: Record<string, string> = {
-  'What is this service called?': 'Organization Name',
-  'What it\'s known as in the community': 'Alternate Name',
-  'Email address for this service': 'Email',
-  'http://': 'Website',
+  'Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes.': 'Internal Notes',
+  'What is this service called?': 'Service Name',
+  'What it\'s known as in the community': 'Nickname',
+  service_locations: 'Service Locations',
+  'Email address for this service': 'Service Email',
+  'Describe what you\'ll receive from this service in a few sentences.': 'Service Description',
+  'How do you apply for this service?': 'Application Process',
+  'What documents do you need to bring to apply?': 'Required Documents',
+  'What interpretation services do they offer?': 'Interpretation Services',
+  'Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)': 'Clinician Actions',
   'How much does this service cost?': 'Cost',
   'Is there a waiting list or wait time?': 'Wait Time',
+  'http://': 'Service Website',
+  service_notes: 'Service Notes',
 };
