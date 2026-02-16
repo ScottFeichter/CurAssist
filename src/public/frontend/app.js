@@ -326,8 +326,118 @@ function cancelSubmit() {
 }
 
 // Create bucket - placeholder
+let selectedFile = null;
+
 function createBucket() {
-  alert('Functionality not implemented yet');
+  selectedFile = null;
+  document.getElementById('uploadText').textContent = 'Click to select file or drag and drop';
+  document.getElementById('createBucketBtn').disabled = true;
+  document.getElementById('progressContainer').style.display = 'none';
+  document.getElementById('progressBar').style.width = '0%';
+  document.getElementById('progressBar').textContent = '0%';
+  document.getElementById('createBucketModal').style.display = 'block';
+}
+
+function handleFileSelect(event) {
+  const file = event.target.files[0];
+  if (file) {
+    selectedFile = file;
+    document.getElementById('uploadText').textContent = `Selected: ${file.name}`;
+    document.getElementById('createBucketBtn').disabled = false;
+  }
+}
+
+// Drag and drop handlers
+const uploadArea = document.getElementById('fileUploadArea');
+if (uploadArea) {
+  uploadArea.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    uploadArea.classList.add('drag-over');
+  });
+
+  uploadArea.addEventListener('dragleave', () => {
+    uploadArea.classList.remove('drag-over');
+  });
+
+  uploadArea.addEventListener('drop', (e) => {
+    e.preventDefault();
+    uploadArea.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv'))) {
+      selectedFile = file;
+      document.getElementById('uploadText').textContent = `Selected: ${file.name}`;
+      document.getElementById('createBucketBtn').disabled = false;
+    } else {
+      alert('Please upload a valid spreadsheet file (.xlsx, .xls, or .csv)');
+    }
+  });
+}
+
+async function processCreateBucket() {
+  if (!selectedFile) return;
+
+  const formData = new FormData();
+  formData.append('file', selectedFile);
+
+  document.getElementById('createBucketBtn').disabled = true;
+  document.getElementById('progressContainer').style.display = 'block';
+
+  try {
+    const response = await fetch(`${API_BASE}/buckets/create`, {
+      method: 'POST',
+      headers: {
+        'XSRF-Token': getCsrfToken()
+      },
+      credentials: 'include',
+      body: formData
+    });
+
+    if (response.ok) {
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let result = '';
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const chunk = decoder.decode(value);
+        result += chunk;
+        
+        // Parse progress updates
+        const lines = result.split('\n');
+        for (const line of lines) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.substring(6));
+              if (data.progress !== undefined) {
+                document.getElementById('progressBar').style.width = `${data.progress}%`;
+                document.getElementById('progressBar').textContent = `${data.progress}%`;
+              }
+            } catch (e) {
+              // Ignore parse errors
+            }
+          }
+        }
+      }
+
+      alert('Bucket created successfully');
+      document.getElementById('createBucketModal').style.display = 'none';
+      init();
+    } else {
+      const error = await response.json();
+      alert(error.error || 'Failed to create bucket');
+    }
+  } catch (error) {
+    alert('Error creating bucket: ' + error.message);
+  } finally {
+    document.getElementById('createBucketBtn').disabled = false;
+  }
+}
+
+function cancelCreateBucket() {
+  document.getElementById('createBucketModal').style.display = 'none';
+  selectedFile = null;
 }
 
 // Delete bucket - Step 1: Show bucket selection modal

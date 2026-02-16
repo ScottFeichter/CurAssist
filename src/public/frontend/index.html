@@ -251,6 +251,63 @@
       border-radius: 4px;
       font-size: 14px;
     }
+
+    .file-upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .file-upload-area:hover {
+      border-color: #276CE5;
+      background: #f5f5f5;
+    }
+
+    .file-upload-area.drag-over {
+      border-color: #276CE5;
+      background: #e3f2fd;
+    }
+
+    .progress-container {
+      width: 100%;
+      background: #f0f0f0;
+      border-radius: 4px;
+      height: 30px;
+      margin-bottom: 20px;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: #276CE5;
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+    }
+
+    .create-btn {
+      background: green;
+      color: white;
+      font-weight: 600;
+    }
+
+    .create-btn:hover {
+      background: darkgreen;
+    }
+
+    .create-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -375,6 +432,25 @@
       <div class="modal-buttons">
         <button class="delete-btn" onclick="finalDeleteBucket()">Delete</button>
         <button class="cancel-btn" onclick="cancelDeleteBucket()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create bucket modal -->
+  <div id="createBucketModal" class="modal">
+    <div class="modal-content">
+      <p>Upload Spreadsheet to Create Bucket</p>
+      <div id="fileUploadArea" class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+        <p id="uploadText">Click to select file or drag and drop</p>
+        <p style="font-size: 12px; color: #666; margin-top: 10px;">Supported: .xlsx, .xls, .csv</p>
+      </div>
+      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" style="display: none;" onchange="handleFileSelect(event)">
+      <div class="progress-container" id="progressContainer">
+        <div class="progress-bar" id="progressBar">0%</div>
+      </div>
+      <div class="modal-buttons">
+        <button class="create-btn" id="createBucketBtn" onclick="processCreateBucket()" disabled>Create Bucket</button>
+        <button class="cancel-btn" onclick="cancelCreateBucket()">Cancel</button>
       </div>
     </div>
   </div>

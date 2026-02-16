@@ -880,7 +880,210 @@
                     </ul>
                   </section>
                 </div>
+
+
+<!------------------------------------------------------------------------------ CSS ------------------------------------------------------------------------------->
+
+
+
+<!------------------------------------------------------------------------------ MODALS HTML ------------------------------------------------------------------------------->
+
+<!-- Add Location Modal -->
+<div id="addLocationModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Add Location</h3>
+    <input type="text" id="locationName" placeholder="Location Name">
+    <input type="text" id="addressLine1" placeholder="Address Line 1">
+    <input type="text" id="addressLine2" placeholder="Address Line 2">
+    <input type="text" id="city" placeholder="City">
+    <input type="text" id="state" placeholder="State">
+    <input type="text" id="zip" placeholder="Zip">
+    <button id="addLocationBtn">Add Location</button>
+    <button id="cancelLocationBtn">Cancel</button>
+  </div>
+</div>
+
+<!-- Add Phone Modal -->
+<div id="addPhoneModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Add Phone</h3>
+    <input type="text" id="phoneName" placeholder="Phone Name">
+    <input type="text" id="phoneNumber" placeholder="Number">
+    <button id="addPhoneBtn">Add Phone</button>
+    <button id="cancelPhoneBtn">Cancel</button>
+  </div>
+</div>
+
+<!-- Add Note Modal -->
+<div id="addNoteModal" class="modal" style="display:none;">
+  <div class="modal-content">
+    <h3>Add Note</h3>
+    <textarea id="noteText" placeholder="Enter note (markdown supported)"></textarea>
+    <button id="addNoteBtn">Add Note</button>
+    <button id="cancelNoteBtn">Cancel</button>
+  </div>
+</div>
+
+
+<!------------------------------------------------------------------------------ MODALS CSS ------------------------------------------------------------------------------->
+
+<style>
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  .modal-content {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    min-width: 400px;
+    max-width: 500px;
+  }
+  .modal-content h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+  .modal-content input,
+  .modal-content textarea {
+    width: 100%;
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  .modal-content textarea {
+    min-height: 150px;
+    resize: vertical;
+  }
+  .modal-content button {
+    margin-right: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .modal-content button:first-of-type {
+    background: #276ce5;
+    color: white;
+  }
+  .modal-content button:last-of-type {
+    background: #ddd;
+  }
+</style>
+
+<!------------------------------------------------------------------------------ JS -------------------------------------------------------------------------------->
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const locationModal = document.getElementById('addLocationModal');
+    const phoneModal = document.getElementById('addPhoneModal');
+    const noteModal = document.getElementById('addNoteModal');
+
+    // Find all Add buttons by their text content
+    const buttons = document.querySelectorAll('.edit--section--list--item--button');
+
+    buttons.forEach(btn => {
+      const text = btn.textContent.trim();
+
+      if (text.includes('Add Location')) {
+        btn.addEventListener('click', () => {
+          locationModal.style.display = 'flex';
+        });
+      } else if (text.includes('Add Phone')) {
+        btn.addEventListener('click', () => {
+          phoneModal.style.display = 'flex';
+        });
+      } else if (text.includes('Add Note')) {
+        btn.addEventListener('click', () => {
+          noteModal.style.display = 'flex';
+        });
+      }
+    });
+
+    // Location modal handlers
+    document.getElementById('cancelLocationBtn').addEventListener('click', () => {
+      locationModal.style.display = 'none';
+    });
+
+    document.getElementById('addLocationBtn').addEventListener('click', () => {
+      const name = document.getElementById('locationName').value;
+      const addr1 = document.getElementById('addressLine1').value;
+      const addr2 = document.getElementById('addressLine2').value;
+      const city = document.getElementById('city').value;
+      const state = document.getElementById('state').value;
+      const zip = document.getElementById('zip').value;
+
+      // Find the location sublist in organization section
+      const locationSublist = document.querySelector('#organizationDiv .edit--section--list--item--sublist');
+      const li = document.createElement('li');
+      li.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
+      locationSublist.appendChild(li);
+
+      // Clear and close
+      document.getElementById('locationName').value = '';
+      document.getElementById('addressLine1').value = '';
+      document.getElementById('addressLine2').value = '';
+      document.getElementById('city').value = '';
+      document.getElementById('state').value = '';
+      document.getElementById('zip').value = '';
+      locationModal.style.display = 'none';
+    });
+
+    // Phone modal handlers
+    document.getElementById('cancelPhoneBtn').addEventListener('click', () => {
+      phoneModal.style.display = 'none';
+    });
+
+    document.getElementById('addPhoneBtn').addEventListener('click', () => {
+      const name = document.getElementById('phoneName').value;
+      const number = document.getElementById('phoneNumber').value;
+
+      // Find the phone sublist
+      const phoneSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[1];
+      const li = document.createElement('li');
+      li.innerHTML = `<strong>${name}:</strong> ${number}`;
+      phoneSublist.appendChild(li);
+
+      // Clear and close
+      document.getElementById('phoneName').value = '';
+      document.getElementById('phoneNumber').value = '';
+      phoneModal.style.display = 'none';
+    });
+
+    // Note modal handlers
+    document.getElementById('cancelNoteBtn').addEventListener('click', () => {
+      noteModal.style.display = 'none';
+    });
+
+    document.getElementById('addNoteBtn').addEventListener('click', () => {
+      const note = document.getElementById('noteText').value;
+
+      // Find the note sublist
+      const noteSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[2];
+      const li = document.createElement('li');
+      li.textContent = note;
+      noteSublist.appendChild(li);
+
+      // Clear and close
+      document.getElementById('noteText').value = '';
+      noteModal.style.display = 'none';
+    });
+  });
+</script>
+
+
+
 <!---=========================================================================== EDIT (ORG) SECTIONS END ============================================================================-->
+
 
 
 
