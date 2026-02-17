@@ -1,6 +1,9 @@
+// #region ===================== IMPORTS =======================================
 import fs from 'fs';
 import path from 'path';
+// #endregion ------------------------------------------------------------------
 
+// Note: This file sets up the custom console, so it doesn't use console.enter/leave
 
 // #region ====================== START ========================================
 

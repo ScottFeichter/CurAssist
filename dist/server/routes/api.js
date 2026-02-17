@@ -3,10 +3,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+// #region ===================== IMPORTS =======================================
+const customConsoles_1 = require("../../streams/consoles/customConsoles");
 const express_1 = require("express");
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
 const logger_1 = __importDefault(require("../../utils/logger/logger"));
+// #endregion ------------------------------------------------------------------
+customConsoles_1.extendedConsole.enter();
+// #region ===================== ROUTES ========================================
 const router = (0, express_1.Router)();
 const BUCKETS_DIR = path_1.default.join(__dirname, '../../../content/Buckets');
 // List all buckets
@@ -103,3 +108,5 @@ router.post('/file/move', async (req, res) => {
     }
 });
 exports.default = router;
+// #endregion ------------------------------------------------------------------
+customConsoles_1.extendedConsole.leave();

@@ -1,3 +1,11 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
+
+// #region ===================== MIDDLEWARE ====================================
+
 // Commented out - requires Sequelize/DemoUser model which doesn't exist yet
 // May implement similar functionality later with different database solution
 
@@ -11,3 +19,7 @@
 // - checkLoginStatus
 
 export {};
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();

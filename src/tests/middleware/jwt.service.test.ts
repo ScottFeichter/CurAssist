@@ -1,6 +1,12 @@
+// #region ===================== IMPORTS =======================================
 // /// <reference types="jest" />
 // import jwt from 'jsonwebtoken';
 // import { generateJWT, verifyJWT } from '../../server/middlewares/authenticaiton/post-authentication/jwt.service';
+// #endregion ------------------------------------------------------------------
+
+// Note: This file is commented out, so no console.enter/leave
+
+// #region ===================== TESTS =========================================
 
 // jest.mock('jsonwebtoken', () => ({
 //     sign: jest.fn(),
@@ -43,3 +49,5 @@
 //         );
 //     });
 // });
+
+// #endregion ------------------------------------------------------------------

@@ -1,3 +1,4 @@
+// #region ===================== IMPORTS =======================================
 import util from 'util';
 import stripAnsi from 'strip-ansi';
 import {
@@ -12,8 +13,9 @@ import {
     RESET_COLOR,
     BLACK_ON_YELLOW,
 } from './customConsoleSetup';
+// #endregion ------------------------------------------------------------------
 
-
+// Note: This file provides methods for the custom console, so it doesn't use console.enter/leave
 
 // #region ====================== START ========================================
 

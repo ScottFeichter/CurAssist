@@ -1,3 +1,4 @@
+// #region ===================== CONSTANTS =====================================
 const API_BASE = '/api';
 
 let currentBucket = '';
@@ -489,3 +490,5 @@ function cancelDeleteBucket() {
   document.getElementById('deleteBucketModal2').style.display = 'none';
   document.getElementById('deleteBucketConfirmInput').value = '';
 }
+
+// #endregion ------------------------------------------------------------------

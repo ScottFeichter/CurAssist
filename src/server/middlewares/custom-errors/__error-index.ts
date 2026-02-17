@@ -1,3 +1,5 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 import { BaseCustomError } from './base-custom-error';
 import { _errorFormatter } from './_error-formatter';
 import { errorSequelizeConstraint } from './error-sequelize-constraint';
@@ -15,6 +17,11 @@ import { error502_BadGateway } from './error502_BadGateway';
 import { error503_ServiceUnavailable } from './error503_ServiceUnavailable';
 import { error504_GatewayTimeout } from './error504_GatewayTimeout';
 import { error_globalCatchAll } from './error-global-catch-all';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
+
+// #region ===================== EXPORTS ========================================
 
 
 // Export all error handlers
@@ -58,3 +65,7 @@ export default {
     error504_GatewayTimeout,
     error_globalCatchAll
 };
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();

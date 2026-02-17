@@ -1,8 +1,13 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 import { Request, Response, NextFunction } from 'express';
 import { BaseCustomError } from '../custom-errors/base-custom-error';
 // import { verifyJWT } from '../authentication/post-authentication/jwt.service';
 // import { JWT_ACCESS_TOKEN_SECRET } from '../../../config/env-module';
 import { CustomUser } from '../../../types/ts-definitions';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
 
 // #region ====================== TYPES ========================================
 
@@ -84,3 +89,5 @@ export const authorizationMiddleware = async (
     next();
 };
 // #endregion ------------------------------------------------------------------
+
+console.leave();

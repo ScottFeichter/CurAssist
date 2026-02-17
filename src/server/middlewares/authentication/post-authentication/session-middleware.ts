@@ -1,3 +1,4 @@
+// #region ===================== IMPORTS =======================================
 // import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
 // import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 // import { Request, Response, NextFunction } from 'express';
@@ -8,6 +9,11 @@
 //   checkUserExists,
 //   verifyPassword,
 // } from '../pre-authentication/login-pre-authentication-middleware';
+// #endregion ------------------------------------------------------------------
+
+// Note: This file is commented out, so no console.enter/leave
+
+// #region ===================== MIDDLEWARE ====================================
 
 // const MAX_SESSIONS_PER_USER = 2; // Configure max allowed sessions
 
@@ -134,3 +140,5 @@
 
 // // Run cleanup every hour
 // setInterval(cleanupOldSessions, 60 * 60 * 1000);
+
+// #endregion ------------------------------------------------------------------

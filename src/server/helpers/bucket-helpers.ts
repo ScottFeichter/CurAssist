@@ -1,9 +1,16 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../streams/consoles/customConsoles';
 import fs from 'fs/promises';
 import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as XLSX from 'xlsx';
 import { orgFieldMap, serviceFieldMap, OrganizationLocationFieldMap } from './buckets-map';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
+
+// #region ===================== HELPERS =======================================
 
 const execAsync = promisify(exec);
 
@@ -117,3 +124,7 @@ export async function generateHtmlFiles(
     progressCallback(progress);
   }
 }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();

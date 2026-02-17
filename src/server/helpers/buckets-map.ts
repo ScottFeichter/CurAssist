@@ -1,3 +1,11 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../streams/consoles/customConsoles';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
+
+// #region ===================== FIELD MAPS ====================================
+
 /**
  * Maps HTML input identifiers to spreadsheet column names
  *
@@ -76,3 +84,7 @@ export const serviceFieldMap: Record<string, string> = {
   service_markdown_notes: 'Markdown Notes',
   service_categories: 'Categories', // need to work on it
 };
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();

@@ -1,3 +1,4 @@
+// #region ===================== IMPORTS =======================================
 import { Console } from 'console';
 import util from 'util';
 import {
@@ -23,7 +24,9 @@ import {
     logFileNoAnsi,
     logFileWithAnsi
 } from './customConsoleSetup';
+// #endregion ------------------------------------------------------------------
 
+// Note: This file creates the custom console, so it doesn't use console.enter/leave
 
 // #region ====================== START ========================================
 

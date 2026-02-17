@@ -1,6 +1,10 @@
-/**
- * Validates spreadsheet data before HTML generation
- */
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../streams/consoles/customConsoles';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
+
+// #region ===================== VALIDATORS ====================================
 
 export function validateSpreadsheetData(rows: any[]): { valid: boolean; errors: string[] } {
   const errors: string[] = [];
@@ -164,3 +168,7 @@ export function validateServiceMarkdownNotes(value: any): boolean {
 export function validateServiceCategories(value: any): boolean {
   return true;
 }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();

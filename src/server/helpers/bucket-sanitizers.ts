@@ -1,6 +1,10 @@
-/**
- * Sanitizes spreadsheet data before HTML generation
- */
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../streams/consoles/customConsoles';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
+
+// #region ===================== SANITIZERS ====================================
 
 export function sanitizeSpreadsheetData(rows: any[]): any[] {
   return rows.map(row => {
@@ -171,3 +175,7 @@ export function sanitizeServiceMarkdownNotes(value: any): string {
 export function sanitizeServiceCategories(value: any): string {
   return sanitizeValue(value);
 }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();

@@ -1,3 +1,11 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
+
+// #region ===================== ERROR CLASS ===================================
+
 export class BaseCustomError extends Error {
   title: string;
   status: number;
@@ -44,3 +52,7 @@ export class BaseCustomError extends Error {
     };
   }
 }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();

@@ -1,7 +1,14 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../streams/consoles/customConsoles';
 import { Router } from 'express';
 import { promises as fs } from 'fs';
 import path from 'path';
 import logger from '../../utils/logger/logger';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
+
+// #region ===================== ROUTES ========================================
 
 const router = Router();
 const BUCKETS_DIR = path.join(__dirname, '../../../content/Buckets');
@@ -98,3 +105,7 @@ router.post('/file/move', async (req, res) => {
 });
 
 export default router;
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();
