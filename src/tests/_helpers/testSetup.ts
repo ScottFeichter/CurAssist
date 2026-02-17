@@ -1,8 +1,8 @@
 // #region ===================== IMPORTS =======================================
-import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
+// import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 // #endregion ------------------------------------------------------------------
 
-console.enter();
+// console.enter();
 
 // #region ===================== SETUP =========================================
 
@@ -12,4 +12,4 @@ export {};
 
 // #endregion ------------------------------------------------------------------
 
-console.leave();
+// console.leave();

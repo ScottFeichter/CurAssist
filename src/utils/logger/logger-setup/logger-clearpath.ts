@@ -1,13 +1,16 @@
 import path from 'path';
 import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
+import { log } from '../logger-setup/logger-wrapper';
 
 console.enter();
 
 // #region ====================== START ========================================
 
 export const getLastThreeLevels = (fullPath: string): string => {
+    log.enter("getLastThreeLevels()", log.brack);
     try {
         if (!fullPath) {
+            log.retrn("getLastThreeLevels()", log.kcarb);
             return 'No path provided';
         }
 
@@ -17,17 +20,22 @@ export const getLastThreeLevels = (fullPath: string): string => {
 
         // Build the path based on available levels
         if (!parentLevel) {
+            log.retrn("getLastThreeLevels()", log.kcarb);
             return lastLevel;
         }
         if (!grandParentLevel) {
+            log.retrn("getLastThreeLevels()", log.kcarb);
             return path.join(parentLevel, lastLevel);
         }
+        log.retrn("getLastThreeLevels()", log.kcarb);
         return path.join(grandParentLevel, parentLevel, lastLevel);
 
     } catch (error: unknown) {
         if (error instanceof Error) {
+            log.retrn("getLastThreeLevels()", log.kcarb);
             return `Invalid path: ${error.message}`;
         }
+        log.retrn("getLastThreeLevels()", log.kcarb);
         return 'Invalid path: Unknown error';
     }
 };

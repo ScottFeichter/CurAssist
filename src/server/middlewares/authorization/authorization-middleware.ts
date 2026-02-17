@@ -1,5 +1,6 @@
 // #region ===================== IMPORTS =======================================
 import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
+import { log } from '../../../utils/logger/logger-setup/logger-wrapper';
 import { Request, Response, NextFunction } from 'express';
 import { BaseCustomError } from '../custom-errors/base-custom-error';
 // import { verifyJWT } from '../authentication/post-authentication/jwt.service';
@@ -70,6 +71,7 @@ export const authorizationMiddleware = async (
     res: Response,
     next: NextFunction,
 ) => {
+    log.enter("authorizationMiddleware()", log.brack);
     // COMMENTED OUT - Not using JWT authentication in file-based app
     // const { method, path } = req;
 
@@ -86,6 +88,7 @@ export const authorizationMiddleware = async (
     // } catch (error) {
     //     next(error);
     // }
+    log.retrn("authorizationMiddleware()", log.kcarb);
     next();
 };
 // #endregion ------------------------------------------------------------------

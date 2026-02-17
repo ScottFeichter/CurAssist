@@ -1,5 +1,6 @@
 import path from "path";
 import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
+import { log } from '../logger-setup/logger-wrapper';
 import fs from 'fs';
 import { logDir } from "../logger-config/logger-paths";
 import { getLastThreeLevels } from "./logger-clearpath";
@@ -17,6 +18,7 @@ console.infor("shortPath via logDir: ----------> ", shortPath);  // Print the la
 
 // Function to create directories if they don't exist
 export const createLogDirectories = () => {
+    log.enter("createLogDirectories()", log.brack);
     const dirs = [
         logDir,
         path.join(logDir, 'warni'),
@@ -38,6 +40,7 @@ export const createLogDirectories = () => {
             console.error(`[console] ERROR : Error creating directory ${dir}:`, error);
         }
     });
+    log.retrn("createLogDirectories()", log.kcarb);
 };
 
 

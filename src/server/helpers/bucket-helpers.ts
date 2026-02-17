@@ -1,5 +1,6 @@
 // #region ===================== IMPORTS =======================================
 import { extendedConsole as console } from '../../streams/consoles/customConsoles';
+import { log } from '../../utils/logger/logger-setup/logger-wrapper';
 import fs from 'fs/promises';
 import path from 'path';
 import { exec } from 'child_process';
@@ -24,12 +25,14 @@ const BUCKETS_PATH = path.join(process.cwd(), 'content', 'Buckets');
  * - content/Buckets/[bucketName]/pending/
  */
 export async function createBucketStructure(bucketName: string): Promise<void> {
+  log.enter("createBucketStructure()", log.brack);
   const bucketPath = path.join(BUCKETS_PATH, bucketName);
   
   await fs.mkdir(bucketPath, { recursive: true });
   await fs.mkdir(path.join(bucketPath, 'complete'), { recursive: true });
   await fs.mkdir(path.join(bucketPath, 'incomplete'), { recursive: true });
   await fs.mkdir(path.join(bucketPath, 'pending'), { recursive: true });
+  log.retrn("createBucketStructure()", log.kcarb);
 }
 
 /**
@@ -37,6 +40,7 @@ export async function createBucketStructure(bucketName: string): Promise<void> {
  * First row is treated as headers
  */
 export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: string[], rows: any[] }> {
+  log.enter("parseSpreadsheet()", log.brack);
   const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
   const sheetName = workbook.SheetNames[0];
   const sheet = workbook.Sheets[sheetName];
@@ -55,6 +59,7 @@ export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: s
     return obj;
   });
   
+  log.retrn("parseSpreadsheet()", log.kcarb);
   return { headers, rows };
 }
 
@@ -68,6 +73,7 @@ export async function generateHtmlFiles(
   data: any[],
   progressCallback: (progress: number) => void
 ): Promise<void> {
+  log.enter("generateHtmlFiles()", log.brack);
   const incompletePath = path.join(BUCKETS_PATH, bucketName, 'incomplete');
   const buildScriptPath = path.join(process.cwd(), 'content', 'Templates', 'build-template.js');
   
@@ -123,6 +129,7 @@ export async function generateHtmlFiles(
     const progress = Math.round(((i + 1) / data.length) * 100);
     progressCallback(progress);
   }
+  log.retrn("generateHtmlFiles()", log.kcarb);
 }
 
 // #endregion ------------------------------------------------------------------

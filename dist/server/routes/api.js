@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 // #region ===================== IMPORTS =======================================
 const customConsoles_1 = require("../../streams/consoles/customConsoles");
+const logger_wrapper_1 = require("../../utils/logger/logger-setup/logger-wrapper");
 const express_1 = require("express");
 const fs_1 = require("fs");
 const path_1 = __importDefault(require("path"));
@@ -16,6 +17,7 @@ const router = (0, express_1.Router)();
 const BUCKETS_DIR = path_1.default.join(__dirname, '../../../content/Buckets');
 // List all buckets
 router.get('/buckets', async (req, res) => {
+    logger_wrapper_1.log.enter("/buckets GET", logger_wrapper_1.log.brack);
     try {
         const buckets = await fs_1.promises.readdir(BUCKETS_DIR);
         const bucketDirs = [];
@@ -25,15 +27,18 @@ router.get('/buckets', async (req, res) => {
                 bucketDirs.push(bucket);
         }
         logger_1.default.info(`Listed ${bucketDirs.length} buckets`);
+        logger_wrapper_1.log.retrn("/buckets GET", logger_wrapper_1.log.kcarb);
         res.json(bucketDirs);
     }
     catch (err) {
         logger_1.default.error(`Error listing buckets: ${err.message}`);
+        logger_wrapper_1.log.retrn("/buckets GET", logger_wrapper_1.log.kcarb);
         res.status(500).json({ error: err.message });
     }
 });
 // List subdirectories in a bucket
 router.get('/bucket/:name/subdirs', async (req, res) => {
+    logger_wrapper_1.log.enter("/bucket/:name/subdirs GET", logger_wrapper_1.log.brack);
     try {
         const bucketPath = path_1.default.join(BUCKETS_DIR, req.params.name);
         const items = await fs_1.promises.readdir(bucketPath);
@@ -44,66 +49,80 @@ router.get('/bucket/:name/subdirs', async (req, res) => {
                 subdirs.push(item);
         }
         logger_1.default.info(`Listed ${subdirs.length} subdirs in bucket: ${req.params.name}`);
+        logger_wrapper_1.log.retrn("/bucket/:name/subdirs GET", logger_wrapper_1.log.kcarb);
         res.json(subdirs);
     }
     catch (err) {
         logger_1.default.error(`Error listing subdirs: ${err.message}`);
+        logger_wrapper_1.log.retrn("/bucket/:name/subdirs GET", logger_wrapper_1.log.kcarb);
         res.status(500).json({ error: err.message });
     }
 });
 // List files in bucket/subdir
 router.get('/bucket/:bucket/:subdir/files', async (req, res) => {
+    logger_wrapper_1.log.enter("/bucket/:bucket/:subdir/files GET", logger_wrapper_1.log.brack);
     try {
         const dirPath = path_1.default.join(BUCKETS_DIR, req.params.bucket, req.params.subdir);
         const files = await fs_1.promises.readdir(dirPath);
         const htmlFiles = files.filter(f => f.endsWith('.html'));
         logger_1.default.info(`Listed ${htmlFiles.length} files in ${req.params.bucket}/${req.params.subdir}`);
+        logger_wrapper_1.log.retrn("/bucket/:bucket/:subdir/files GET", logger_wrapper_1.log.kcarb);
         res.json(htmlFiles);
     }
     catch (err) {
         logger_1.default.error(`Error listing files: ${err.message}`);
+        logger_wrapper_1.log.retrn("/bucket/:bucket/:subdir/files GET", logger_wrapper_1.log.kcarb);
         res.status(500).json({ error: err.message });
     }
 });
 // Get file content
 router.get('/file/:bucket/:subdir/:filename', async (req, res) => {
+    logger_wrapper_1.log.enter("/file/:bucket/:subdir/:filename GET", logger_wrapper_1.log.brack);
     try {
         const filePath = path_1.default.join(BUCKETS_DIR, req.params.bucket, req.params.subdir, req.params.filename);
         const content = await fs_1.promises.readFile(filePath, 'utf8');
         logger_1.default.info(`Loaded file: ${req.params.filename}`);
+        logger_wrapper_1.log.retrn("/file/:bucket/:subdir/:filename GET", logger_wrapper_1.log.kcarb);
         res.send(content);
     }
     catch (err) {
         logger_1.default.error(`Error reading file: ${err.message}`);
+        logger_wrapper_1.log.retrn("/file/:bucket/:subdir/:filename GET", logger_wrapper_1.log.kcarb);
         res.status(500).json({ error: err.message });
     }
 });
 // Save file
 router.post('/file/save', async (req, res) => {
+    logger_wrapper_1.log.enter("/file/save POST", logger_wrapper_1.log.brack);
     try {
         const { bucket, subdir, filename, content } = req.body;
         const filePath = path_1.default.join(BUCKETS_DIR, bucket, subdir, filename);
         await fs_1.promises.writeFile(filePath, content, 'utf8');
         logger_1.default.info(`Saved file: ${filename}`);
+        logger_wrapper_1.log.retrn("/file/save POST", logger_wrapper_1.log.kcarb);
         res.json({ success: true });
     }
     catch (err) {
         logger_1.default.error(`Error saving file: ${err.message}`);
+        logger_wrapper_1.log.retrn("/file/save POST", logger_wrapper_1.log.kcarb);
         res.status(500).json({ error: err.message });
     }
 });
 // Move file
 router.post('/file/move', async (req, res) => {
+    logger_wrapper_1.log.enter("/file/move POST", logger_wrapper_1.log.brack);
     try {
         const { fromBucket, fromSubdir, toBucket, toSubdir, filename } = req.body;
         const oldPath = path_1.default.join(BUCKETS_DIR, fromBucket, fromSubdir, filename);
         const newPath = path_1.default.join(BUCKETS_DIR, toBucket, toSubdir, filename);
         await fs_1.promises.rename(oldPath, newPath);
         logger_1.default.info(`Moved file: ${filename} from ${fromSubdir} to ${toSubdir}`);
+        logger_wrapper_1.log.retrn("/file/move POST", logger_wrapper_1.log.kcarb);
         res.json({ success: true });
     }
     catch (err) {
         logger_1.default.error(`Error moving file: ${err.message}`);
+        logger_wrapper_1.log.retrn("/file/move POST", logger_wrapper_1.log.kcarb);
         res.status(500).json({ error: err.message });
     }
 });
