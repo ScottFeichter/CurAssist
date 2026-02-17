@@ -363,12 +363,12 @@ if (uploadArea) {
     e.preventDefault();
     uploadArea.classList.remove('drag-over');
     const file = e.dataTransfer.files[0];
-    if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv'))) {
+    if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls') || file.name.endsWith('.csv') || file.name.endsWith('.ods'))) {
       selectedFile = file;
       document.getElementById('uploadText').textContent = `Selected: ${file.name}`;
       document.getElementById('createBucketBtn').disabled = false;
     } else {
-      alert('Please upload a valid spreadsheet file (.xlsx, .xls, or .csv)');
+      alert('Please upload a valid spreadsheet file (.xlsx, .xls, .csv, or .ods)');
     }
   });
 }
@@ -376,8 +376,12 @@ if (uploadArea) {
 async function processCreateBucket() {
   if (!selectedFile) return;
 
+  const bucketName = prompt('Enter bucket name:');
+  if (!bucketName) return;
+
   const formData = new FormData();
-  formData.append('file', selectedFile);
+  formData.append('spreadsheet', selectedFile);
+  formData.append('bucketName', bucketName);
 
   document.getElementById('createBucketBtn').disabled = true;
   document.getElementById('progressContainer').style.display = 'block';
@@ -393,35 +397,10 @@ async function processCreateBucket() {
     });
 
     if (response.ok) {
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder();
-      let result = '';
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        
-        const chunk = decoder.decode(value);
-        result += chunk;
-        
-        // Parse progress updates
-        const lines = result.split('\n');
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            try {
-              const data = JSON.parse(line.substring(6));
-              if (data.progress !== undefined) {
-                document.getElementById('progressBar').style.width = `${data.progress}%`;
-                document.getElementById('progressBar').textContent = `${data.progress}%`;
-              }
-            } catch (e) {
-              // Ignore parse errors
-            }
-          }
-        }
-      }
-
-      alert('Bucket created successfully');
+      const data = await response.json();
+      document.getElementById('progressBar').style.width = '100%';
+      document.getElementById('progressBar').textContent = '100%';
+      alert(data.message || 'Bucket created successfully');
       document.getElementById('createBucketModal').style.display = 'none';
       init();
     } else {

@@ -2,15 +2,20 @@
                <div class="edit--sections" id="organizationDiv">
 
                   <section id="info" class="edit--section">
+
                     <header class="edit--section--header">
                       <h4>
                         New Organization
                       </h4>
                     </header>
                     <br>
+
+
                     <ul class="edit--section--list">
+
+<!--------------------------------------------------------------------- Internal Notes  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item">
-                        <label for="edit-internal-note-input">
+                        <label for="organization_internal_notes">
                           <p class="internal-note-label-text">
                             Internal Notes about Editing this Organization
                           </p>
@@ -18,21 +23,30 @@
                             (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
                           </p>
                         </label>
-                        <textarea id="edit-internal-note-input" class="input edit-section-internal-note" placeholder="Add any info that future content editors should be aware of updating this resource. Adding dates to your notes will help with tracking changes." data-field="internal_note">
+                        <textarea id="organization_internal_notes" class="input edit-section-internal-note" placeholder="Add any info that future content editors should be aware of updating this resource. Adding dates to your notes will help with tracking changes." data-field="internal_note">
                         </textarea>
                       </li>
+
+
+
+<!--------------------------------------------------------------------- Name  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item">
-                        <label for="edit-name-input">
+                        <label for="organization_name">
                           Name of the Organization
                         </label>
-                        <input id="edit-name-input" type="text" class="input" placeholder="Organization Name" data-field="name" value="">
+                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="">
                       </li>
+
+
+<!--------------------------------------------------------------------- Nickname  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item">
-                        <label for="edit-alternate-name-input">
+                        <label for="organization_alternate_name">
                           Nickname
                         </label>
-                        <input id="edit-alternate-name-input" type="text" class="input" placeholder="What it's known as in the community" data-field="alternate_name" value="">
+                        <input id="organization_alternate_name" type="text" class="input" placeholder="What it's known as in the community" data-field="alternate_name" value="">
                       </li>
+
+<!--------------------------------------------------------------------- Locations  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item">
                         <div class="app-components-edit-EditAddress-module__addressListTitle--Y1zCq">
                           Location
@@ -43,6 +57,8 @@
                           Add Location
                         </button>
                       </li>
+
+<!--------------------------------------------------------------------- Phones  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item edit--notes">
                         <label for="edit-item">
                           Phones
@@ -53,23 +69,31 @@
                           Add Phone
                         </button>
                       </li>
+
+
+<!--------------------------------------------------------------------- Website  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item email">
-                        <label for="edit-website-input">
+                        <label for="organization_website">
                           Website
                         </label>
-                        <input id="edit-website-input" type="url" class="input" placeholder="http://" data-field="website" value="">
+                        <input id="organization_website" type="url" class="input" placeholder="http://" data-field="website" value="">
                       </li>
+
+<!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item email">
-                        <label for="edit-email-input">
+                        <label for="organization_email">
                           E-Mail
                         </label>
-                        <input id="edit-email-input" type="email" class="input" data-field="email" value="">
+                        <input id="organization_email" type="email" class="input" data-field="email" value="">
                       </li>
+
+
+<!--------------------------------------------------------------------- Description  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item">
-                        <label for="edit-description-input">
+                        <label for="organization_description">
                           Description
                         </label>
-                        <textarea id="edit-description-input" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description">
+                        <textarea id="organization_description" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description">
                         </textarea>
                         <p>
                           If you'd like to add formatting to descriptions, we support&nbsp;
@@ -79,12 +103,17 @@
                           .
                         </p>
                       </li>
+
+<!--------------------------------------------------------------------- Legal Status  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item email">
-                        <label for="edit-legal-status-input">
+                        <label for="organization_legal_status">
                           Legal Status
                         </label>
-                        <input id="edit-legal-status-input" type="text" class="input" placeholder="ex. non-profit, government, business" data-field="legal_status" value="">
+                        <input id="organization_legal_status" type="text" class="input" placeholder="ex. non-profit, government, business" data-field="legal_status" value="">
                       </li>
+
+
+<!--------------------------------------------------------------------- Hours  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item hours">
                         <span class="label">
                           Hours
@@ -258,11 +287,14 @@
                           </ul>
                         </div>
                       </li>
+
+
+<!--------------------------------------------------------------------- Markdown Notes  ---------------------------------------------------------------------------->
                       <li class="edit--section--list--item edit--notes">
                         <label for="add-note">
                           Notes
                         </label>
-                        <p>
+                        <p id="organization_markdown_notes">
                           <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
                             Markdown
                           </a>

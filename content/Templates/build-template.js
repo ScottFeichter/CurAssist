@@ -1,0 +1,48 @@
+/**
+ * Build Template Script
+ * 
+ * Combines orgServTemplate components into a single HTML file.
+ * 
+ * Usage:
+ *   node build-template.js [filename] [output-path]
+ * 
+ * Arguments:
+ *   filename    - (optional) Name of output file. Default: 'orgServTemplate-combined.html'
+ *   output-path - (optional) Directory for output file. Default: current directory
+ * 
+ * Examples:
+ *   node build-template.js
+ *   node build-template.js myTemplate.html
+ *   node build-template.js myTemplate.html /path/to/output
+ */
+
+const fs = require('fs');
+const path = require('path');
+
+const componentsDir = path.join(__dirname, 'orgServTemplate Components');
+const outputName = process.argv[2] || 'orgServTemplate-combined.html';
+const outputPath = process.argv[3] || __dirname;
+const outputFile = path.join(outputPath, outputName);
+
+// Read all component files
+const html = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-html.html'), 'utf8');
+const head = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-head.html'), 'utf8');
+const bodySkeleton = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-skeleton.html'), 'utf8');
+const header = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-Header.html'), 'utf8');
+const orgDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-OrganizationDiv.html'), 'utf8');
+const servDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv.html'), 'utf8');
+
+// Combine: insert head into html, then insert body components into skeleton
+let combined = html.replace('</html>', head + bodySkeleton);
+
+// Insert the body components where the edit--main div content should go
+// Find the edit--main div and insert components
+const bodyComponents = header + '\n' + orgDiv + '\n' + servDiv;
+combined = combined.replace(
+  /<div class="edit--main">[\s\S]*?<\/div>\s*<!-+\s*EDIT MAIN START/,
+  `<div class="edit--main">\n${bodyComponents}\n              </div>\n<!-------------- EDIT MAIN START`
+);
+
+// Write the combined file
+fs.writeFileSync(outputFile, combined, 'utf8');
+console.log(`✓ Combined template created: ${outputFile}`);

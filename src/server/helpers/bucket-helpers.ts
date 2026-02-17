@@ -1,7 +1,11 @@
 import fs from 'fs/promises';
 import path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
 import * as XLSX from 'xlsx';
-import { orgFieldMap, serviceFieldMap } from './buckets-map';
+import { orgFieldMap, serviceFieldMap, OrganizationLocationFieldMap } from './buckets-map';
+
+const execAsync = promisify(exec);
 
 const BUCKETS_PATH = path.join(process.cwd(), 'content', 'Buckets');
 
@@ -57,35 +61,56 @@ export async function generateHtmlFiles(
   data: any[],
   progressCallback: (progress: number) => void
 ): Promise<void> {
-  const template = await fs.readFile(templatePath, 'utf-8');
   const incompletePath = path.join(BUCKETS_PATH, bucketName, 'incomplete');
+  const buildScriptPath = path.join(process.cwd(), 'content', 'Templates', 'build-template.js');
   
   for (let i = 0; i < data.length; i++) {
     const row = data[i];
-    let html = template;
     
-    // Populate organization section (using data-field attributes)
-    for (const [htmlField, spreadsheetColumn] of Object.entries(orgFieldMap)) {
-      const value = row[spreadsheetColumn] || '';
-      const regex = new RegExp(`(<input[^>]*data-field="${htmlField}"[^>]*value=")[^"]*(")`, 'gi');
-      html = html.replace(regex, `$1${value}$2`);
-    }
-    
-    // Populate service section (using placeholder text)
-    for (const [placeholder, spreadsheetColumn] of Object.entries(serviceFieldMap)) {
-      const value = row[spreadsheetColumn] || '';
-      const escapedPlaceholder = placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(`(<input[^>]*placeholder="${escapedPlaceholder}"[^>]*value=")[^"]*(")`, 'gi');
-      html = html.replace(regex, `$1${value}$2`);
-    }
-    
-    // Generate filename from first column or use index
-    const firstValue = Object.values(row)[0] as string;
-    const filename = firstValue 
-      ? `${firstValue.replace(/[^a-z0-9]/gi, '_')}_${i}.html`
+    // Generate filename from name field or first column
+    const nameValue = row['name'] || row['Name'] || Object.values(row)[0] as string;
+    const filename = nameValue 
+      ? `${nameValue.replace(/[^a-z0-9]/gi, '_')}_${i}.html`
       : `file_${i}.html`;
     
-    await fs.writeFile(path.join(incompletePath, filename), html, 'utf-8');
+    // Run build-template.js to generate the HTML file
+    await execAsync(`node "${buildScriptPath}" "${filename}" "${incompletePath}"`);
+    
+    // Read the generated file and populate with data
+    const filePath = path.join(incompletePath, filename);
+    let html = await fs.readFile(filePath, 'utf-8');
+    
+    // Populate both organization and service sections with same spreadsheet data
+    const allFieldMaps = { ...orgFieldMap, ...serviceFieldMap };
+    
+    for (const [htmlId, spreadsheetColumn] of Object.entries(allFieldMaps)) {
+      const value = row[spreadsheetColumn] || '';
+      
+      // Match input elements by id
+      const inputRegex = new RegExp(`(<input[^>]*id="${htmlId}"[^>]*value=")[^"]*(")`, 'gi');
+      html = html.replace(inputRegex, `$1${value}$2`);
+      
+      // Match textarea elements by id
+      const textareaRegex = new RegExp(`(<textarea[^>]*id="${htmlId}"[^>]*>)[\\s\\S]*?(<\\/textarea>)`, 'gi');
+      html = html.replace(textareaRegex, `$1${value}$2`);
+    }
+    
+    // Handle location data - combine address fields into location list
+    const address = row[OrganizationLocationFieldMap.address] || '';
+    const city = row[OrganizationLocationFieldMap.city] || '';
+    const state = row[OrganizationLocationFieldMap.state] || '';
+    const zip = row[OrganizationLocationFieldMap.zip] || '';
+    
+    if (address || city || state || zip) {
+      const locationHtml = `<div><strong>Location</strong><br>${address}${address ? '<br>' : ''}${city}, ${state} ${zip}</div>`;
+      html = html.replace(
+        /(<div class="app-components-edit-EditAddress-module__addressList--sQxt1" data-field="locations">)([\s\S]*?)(<\/div>)/,
+        `$1${locationHtml}$3`
+      );
+    }
+    
+    // Write the populated HTML back to the file
+    await fs.writeFile(filePath, html, 'utf-8');
     
     // Update progress
     const progress = Math.round(((i + 1) / data.length) * 100);

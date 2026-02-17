@@ -129,16 +129,20 @@ bucketsRouter.delete('/:bucket', async (req: Request, res: Response, next: NextF
 // POST /api/buckets/create - Create bucket from spreadsheet
 bucketsRouter.post('/create', upload.single('spreadsheet'), async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { bucketName, templatePath } = req.body;
+    const { bucketName } = req.body;
     const file = req.file;
     
     if (!file) {
       return res.status(400).json({ success: false, error: 'No spreadsheet file uploaded' });
     }
     
+    if (!bucketName) {
+      return res.status(400).json({ success: false, error: 'Bucket name is required' });
+    }
+    
     await createBucketStructure(bucketName);
     const { rows } = await parseSpreadsheet(file.buffer);
-    await generateHtmlFiles(templatePath, bucketName, rows, (progress) => {
+    await generateHtmlFiles('', bucketName, rows, (progress) => {
       // Progress callback - could emit SSE events here
     });
 
