@@ -6,7 +6,7 @@ import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as XLSX from 'xlsx';
-import { orgFieldMap, serviceFieldMap, OrganizationLocationFieldMap } from './buckets-map';
+import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap } from './buckets-map';
 // #endregion ------------------------------------------------------------------
 
 console.enter();
@@ -108,17 +108,41 @@ export async function generateHtmlFiles(
       html = html.replace(textareaRegex, `$1${value}$2`);
     }
     
-    // Handle location data - combine address fields into location list
-    const address = row[OrganizationLocationFieldMap.address] || '';
-    const city = row[OrganizationLocationFieldMap.city] || '';
-    const state = row[OrganizationLocationFieldMap.state] || '';
-    const zip = row[OrganizationLocationFieldMap.zip] || '';
+    // Handle organization location data - combine address fields into location list
+    const orgLocationName = row[organizationLocationFieldMap.location_name] || '';
+    const orgAddress = row[organizationLocationFieldMap.address] || '';
+    const orgCity = row[organizationLocationFieldMap.city] || '';
+    const orgState = row[organizationLocationFieldMap.state] || '';
+    const orgZip = row[organizationLocationFieldMap.zip] || '';
     
-    if (address || city || state || zip) {
-      const locationHtml = `<div><strong>Location</strong><br>${address}${address ? '<br>' : ''}${city}, ${state} ${zip}</div>`;
+    if (orgAddress || orgCity || orgState || orgZip) {
+      const locationLabel = orgLocationName ? `<strong style="font-weight: bold;">${orgLocationName}</strong>` : '';
+      const locationHtml = `<div>${locationLabel}${locationLabel ? '<br>' : ''}${orgAddress}${orgAddress ? '<br>' : ''}${orgCity}, ${orgState} ${orgZip}</div>`;
       html = html.replace(
-        /(<div class="app-components-edit-EditAddress-module__addressList--sQxt1" data-field="locations">)([\s\S]*?)(<\/div>)/,
+        /(<div[^>]*id="organization_locations"[^>]*>)([\s\S]*?)(<\/div>)/,
         `$1${locationHtml}$3`
+      );
+    }
+    
+    // Handle service location data - use same data as organization
+    if (orgAddress || orgCity || orgState || orgZip) {
+      const locationLabel = orgLocationName ? `<strong style="font-weight: bold;">${orgLocationName}</strong>` : '';
+      const locationHtml = `<div>${locationLabel}${locationLabel ? '<br>' : ''}${orgAddress}${orgAddress ? '<br>' : ''}${orgCity}, ${orgState} ${orgZip}</div>`;
+      html = html.replace(
+        /(<div[^>]*id="service_locations"[^>]*>)([\s\S]*?)(<\/div>)/,
+        `$1${locationHtml}$3`
+      );
+    }
+    
+    // Handle organization phone data - combine phone fields into phone list
+    const orgPhoneName = row[organizationPhoneFieldMap.phone_name] || '';
+    const orgPhone = row[organizationPhoneFieldMap.phone] || '';
+    
+    if (orgPhoneName || orgPhone) {
+      const phoneHtml = `<li><strong>${orgPhoneName}:</strong> ${orgPhone}</li>`;
+      html = html.replace(
+        /(<ul[^>]*id="organization_phones"[^>]*>)([\s\S]*?)(<\/ul>)/,
+        `$1${phoneHtml}$3`
       );
     }
     

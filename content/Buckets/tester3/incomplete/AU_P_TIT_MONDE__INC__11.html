@@ -618,7 +618,7 @@
                         <label for="organization_name">
                           Name of the Organization
                         </label>
-                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="BAMBINI MONTESSORI SCHOOL">
+                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="AU P'TIT MONDE, INC.">
                       </li>
 
 
@@ -635,7 +635,7 @@
                         <div class="app-components-edit-EditAddress-module__addressListTitle--Y1zCq">
                           Location
                         </div>
-                        <div class="app-components-edit-EditAddress-module__addressList--sQxt1" data-field="locations"><div><strong>Location</strong><br>2042 CLEMENT STREET<br>SAN FRANCISCO, CA 94121</div></div>
+                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1"><div>1100 DIVISADERO STREET<br>SAN FRANCISCO, CA 94115</div></div>
                         <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
                           Add Location
                         </button>
@@ -646,7 +646,7 @@
                         <label for="edit-item">
                           Phones
                         </label>
-                        <ul class="edit--section--list--item--sublist" data-field="phones">
+                        <ul id="organization_phones" class="edit--section--list--item--sublist">
                         </ul>
                         <button type="button" class="edit--section--list--item--button solid-brand">
                           Add Phone
@@ -876,13 +876,13 @@
                         <label for="add-note">
                           Notes
                         </label>
-                        <p id="organization_markdown_notes">
+                        <p>
                           <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
                             Markdown
                           </a>
                           is also supported for notes.
                         </p>
-                        <ul class="edit--section--list--item--sublist" data-field="notes">
+                        <ul id="organization_markdown_notes" class="edit--section--list--item--sublist">
                         </ul>
                         <button type="button" class="edit--section--list--item--button">
                           <i class="material-symbols-outlined">
@@ -942,7 +942,7 @@
                         const zip = document.getElementById('zip').value;
 
                         // Find the location list
-                        const locationList = document.querySelector('.app-components-edit-EditAddress-module__addressList--sQxt1');
+                        const locationList = document.getElementById('organization_locations');
                         const div = document.createElement('div');
                         div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
                         locationList.appendChild(div);
@@ -1147,7 +1147,7 @@
                                 <label for="service_name">
                                   Name of the Service
                                 </label>
-                                <input id="service_name" type="text" placeholder="What is this service called?" value="BAMBINI MONTESSORI SCHOOL">
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="AU P'TIT MONDE, INC.">
                               </li>
 
 <!--------------------------------------------------------------------- Nickname ---------------------------------------------------------------------------->
@@ -1182,8 +1182,7 @@
                                   </select>
                                   -->
                                 </label>
-                                <div class="app-components-edit-ProvidedService-module__addressList--qs9O6" data-field="service_locations">
-                                </div>
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6"><div>1100 DIVISADERO STREET<br>SAN FRANCISCO, CA 94115</div></div>
 
 
                                 <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
@@ -1321,13 +1320,13 @@
                                 <label for="add-note">
                                   Notes
                                 </label>
-                                <p id="service_markdown_notes">
+                                <p>
                                   <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
                                     Markdown
                                   </a>
                                   is also supported for notes.
                                 </p>
-                                <ul class="edit--section--list--item--sublist" data-field="service_notes">
+                                <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
                                 </ul>
                                 <button type="button" class="edit--section--list--item--button">
                                   <i class="material-symbols-outlined">
@@ -1505,7 +1504,7 @@
       const state = document.getElementById('serviceState').value;
       const zip = document.getElementById('serviceZip').value;
 
-      const locationList = document.querySelector('#serviceDiv .app-components-edit-ProvidedService-module__addressList--qs9O6');
+      const locationList = document.getElementById('service_locations');
       const div = document.createElement('div');
       div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
       locationList.appendChild(div);

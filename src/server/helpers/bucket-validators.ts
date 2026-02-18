@@ -25,77 +25,66 @@ export function validateSpreadsheetData(rows: any[]): { valid: boolean; errors: 
 }
 
 // ============================================================================
-// ORGANIZATION FIELD VALIDATORS
+// SHARED FIELD VALIDATORS (used by both organization and service)
 // ============================================================================
 
-export function validateOrganizationInternalNotes(value: any): boolean {
-  log.enter("validateOrganizationInternalNotes()", log.brack);
-  log.retrn("validateOrganizationInternalNotes()", log.kcarb);
+export function validateInternalNotes(value: any): boolean {
+  log.enter("validateInternalNotes()", log.brack);
+  log.retrn("validateInternalNotes()", log.kcarb);
   return true;
 }
 
-export function validateOrganizationName(value: any): boolean {
-  log.enter("validateOrganizationName()", log.brack);
-  log.retrn("validateOrganizationName()", log.kcarb);
+export function validateName(value: any): boolean {
+  log.enter("validateName()", log.brack);
+  log.retrn("validateName()", log.kcarb);
   return true;
 }
 
-export function validateOrganizationAlternateName(value: any): boolean {
-  log.enter("validateOrganizationAlternateName()", log.brack);
-  log.retrn("validateOrganizationAlternateName()", log.kcarb);
+export function validateAlternateName(value: any): boolean {
+  log.enter("validateAlternateName()", log.brack);
+  log.retrn("validateAlternateName()", log.kcarb);
   return true;
 }
 
-export function validateOrganizationLocations(value: any): boolean {
-  log.enter("validateOrganizationLocations()", log.brack);
-  log.retrn("validateOrganizationLocations()", log.kcarb);
+
+export function validateWebsite(value: any): boolean {
+  log.enter("validateWebsite()", log.brack);
+  log.retrn("validateWebsite()", log.kcarb);
   return true;
 }
 
-export function validateOrganizationPhones(value: any): boolean {
-  log.enter("validateOrganizationPhones()", log.brack);
-  log.retrn("validateOrganizationPhones()", log.kcarb);
+export function validateEmail(value: any): boolean {
+  log.enter("validateEmail()", log.brack);
+  log.retrn("validateEmail()", log.kcarb);
   return true;
 }
 
-export function validateOrganizationWebsite(value: any): boolean {
-  log.enter("validateOrganizationWebsite()", log.brack);
-  log.retrn("validateOrganizationWebsite()", log.kcarb);
+export function validateDescription(value: any): boolean {
+  log.enter("validateDescription()", log.brack);
+  log.retrn("validateDescription()", log.kcarb);
   return true;
 }
 
-export function validateOrganizationEmail(value: any): boolean {
-  log.enter("validateOrganizationEmail()", log.brack);
-  log.retrn("validateOrganizationEmail()", log.kcarb);
+export function validateHours(value: any): boolean {
+  log.enter("validateHours()", log.brack);
+  log.retrn("validateHours()", log.kcarb);
   return true;
 }
 
-export function validateOrganizationDescription(value: any): boolean {
-  log.enter("validateOrganizationDescription()", log.brack);
-  log.retrn("validateOrganizationDescription()", log.kcarb);
+export function validateMarkdownNotes(value: any): boolean {
+  log.enter("validateMarkdownNotes()", log.brack);
+  log.retrn("validateMarkdownNotes()", log.kcarb);
   return true;
 }
 
-export function validateOrganizationLegalStatus(value: any): boolean {
-  log.enter("validateOrganizationLegalStatus()", log.brack);
-  log.retrn("validateOrganizationLegalStatus()", log.kcarb);
-  return true;
-}
-
-export function validateOrganizationHours(value: any): boolean {
-  log.enter("validateOrganizationHours()", log.brack);
-  log.retrn("validateOrganizationHours()", log.kcarb);
-  return true;
-}
-
-export function validateOrganizationMarkdownNotes(value: any): boolean {
-  log.enter("validateOrganizationMarkdownNotes()", log.brack);
-  log.retrn("validateOrganizationMarkdownNotes()", log.kcarb);
+export function validateLocations(value: any): boolean {
+  log.enter("validateLocations()", log.brack);
+  log.retrn("validateLocations()", log.kcarb);
   return true;
 }
 
 // ============================================================================
-// ORGANIZATION LOCATION FIELD VALIDATORS
+// LOCATION FIELD MAP VALIDATORS (shared)
 // ============================================================================
 
 export function validateLocationName(value: any): boolean {
@@ -128,45 +117,37 @@ export function validateZip(value: any): boolean {
   return true;
 }
 
+
 // ============================================================================
-// SERVICE FIELD VALIDATORS
+// PHONES FIELD MAP VALIDATORS (organizations only)
 // ============================================================================
 
-export function validateServiceInternalNotes(value: any): boolean {
-  log.enter("validateServiceInternalNotes()", log.brack);
-  log.retrn("validateServiceInternalNotes()", log.kcarb);
+export function validateOrganizationPhones(value: any): boolean {
+  log.enter("validatePhones()", log.brack);
+  log.retrn("validatePhones()", log.kcarb);
   return true;
 }
 
-export function validateServiceName(value: any): boolean {
-  log.enter("validateServiceName()", log.brack);
-  log.retrn("validateServiceName()", log.kcarb);
+export function validatePhoneName(value: any): boolean {
+  log.enter("validatePhoneName()", log.brack);
+  log.retrn("validatePhoneName()", log.kcarb);
   return true;
 }
 
-export function validateServiceNickname(value: any): boolean {
-  log.enter("validateServiceNickname()", log.brack);
-  log.retrn("validateServiceNickname()", log.kcarb);
+// ============================================================================
+// ORGANIZATION-SPECIFIC FIELD VALIDATORS
+// ============================================================================
+
+export function validateOrganizationLegalStatus(value: any): boolean {
+  log.enter("validateOrganizationLegalStatus()", log.brack);
+  log.retrn("validateOrganizationLegalStatus()", log.kcarb);
   return true;
 }
 
-export function validateServiceLocations(value: any): boolean {
-  log.enter("validateServiceLocations()", log.brack);
-  log.retrn("validateServiceLocations()", log.kcarb);
-  return true;
-}
 
-export function validateServiceEmail(value: any): boolean {
-  log.enter("validateServiceEmail()", log.brack);
-  log.retrn("validateServiceEmail()", log.kcarb);
-  return true;
-}
-
-export function validateServiceDescription(value: any): boolean {
-  log.enter("validateServiceDescription()", log.brack);
-  log.retrn("validateServiceDescription()", log.kcarb);
-  return true;
-}
+// ============================================================================
+// SERVICE-SPECIFIC FIELD VALIDATORS
+// ============================================================================
 
 export function validateServiceShortDescription(value: any): boolean {
   log.enter("validateServiceShortDescription()", log.brack);
@@ -213,24 +194,6 @@ export function validateServiceCost(value: any): boolean {
 export function validateServiceWaitTime(value: any): boolean {
   log.enter("validateServiceWaitTime()", log.brack);
   log.retrn("validateServiceWaitTime()", log.kcarb);
-  return true;
-}
-
-export function validateServiceWebsite(value: any): boolean {
-  log.enter("validateServiceWebsite()", log.brack);
-  log.retrn("validateServiceWebsite()", log.kcarb);
-  return true;
-}
-
-export function validateServiceHours(value: any): boolean {
-  log.enter("validateServiceHours()", log.brack);
-  log.retrn("validateServiceHours()", log.kcarb);
-  return true;
-}
-
-export function validateServiceMarkdownNotes(value: any): boolean {
-  log.enter("validateServiceMarkdownNotes()", log.brack);
-  log.retrn("validateServiceMarkdownNotes()", log.kcarb);
   return true;
 }
 

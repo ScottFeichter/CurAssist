@@ -11,11 +11,11 @@ export function sanitizeSpreadsheetData(rows: any[]): any[] {
   log.enter("sanitizeSpreadsheetData()", log.brack);
   const result = rows.map(row => {
     const sanitized: any = {};
-    
+
     for (const [key, value] of Object.entries(row)) {
       sanitized[key] = sanitizeValue(value);
     }
-    
+
     return sanitized;
   });
   log.retrn("sanitizeSpreadsheetData()", log.kcarb);
@@ -28,83 +28,73 @@ function sanitizeValue(value: any): string {
     log.retrn("sanitizeValue()", log.kcarb);
     return '';
   }
-  
+
   log.retrn("sanitizeValue()", log.kcarb);
   return String(value).trim();
 }
 
 // ============================================================================
-// ORGANIZATION FIELD SANITIZERS
+// SHARED FIELD SANITIZERS (used by both organization and service)
 // ============================================================================
 
-export function sanitizeOrganizationInternalNotes(value: any): string {
-  log.enter("sanitizeOrganizationInternalNotes()", log.brack);
-  log.retrn("sanitizeOrganizationInternalNotes()", log.kcarb);
+export function sanitizeInternalNotes(value: any): string {
+  log.enter("sanitizeInternalNotes()", log.brack);
+  log.retrn("sanitizeInternalNotes()", log.kcarb);
   return sanitizeValue(value);
 }
 
-export function sanitizeOrganizationName(value: any): string {
-  log.enter("sanitizeOrganizationName()", log.brack);
-  log.retrn("sanitizeOrganizationName()", log.kcarb);
+export function sanitizeName(value: any): string {
+  log.enter("sanitizeName()", log.brack);
+  const cleaned = sanitizeValue(value);
+  const sentenceCase = cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase() : '';
+  log.retrn("sanitizeName()", log.kcarb);
+  return sentenceCase;
+}
+
+export function sanitizeAlternateName(value: any): string {
+  log.enter("sanitizeAlternateName()", log.brack);
+  log.retrn("sanitizeAlternateName()", log.kcarb);
   return sanitizeValue(value);
 }
 
-export function sanitizeOrganizationAlternateName(value: any): string {
-  log.enter("sanitizeOrganizationAlternateName()", log.brack);
-  log.retrn("sanitizeOrganizationAlternateName()", log.kcarb);
+export function sanitizeWebsite(value: any): string {
+  log.enter("sanitizeWebsite()", log.brack);
+  log.retrn("sanitizeWebsite()", log.kcarb);
   return sanitizeValue(value);
 }
 
-export function sanitizeOrganizationLocations(value: any): string {
-  log.enter("sanitizeOrganizationLocations()", log.brack);
-  log.retrn("sanitizeOrganizationLocations()", log.kcarb);
+export function sanitizeEmail(value: any): string {
+  log.enter("sanitizeEmail()", log.brack);
+  log.retrn("sanitizeEmail()", log.kcarb);
   return sanitizeValue(value);
 }
 
-export function sanitizeOrganizationPhones(value: any): string {
-  log.enter("sanitizeOrganizationPhones()", log.brack);
-  log.retrn("sanitizeOrganizationPhones()", log.kcarb);
+export function sanitizeDescription(value: any): string {
+  log.enter("sanitizeDescription()", log.brack);
+  log.retrn("sanitizeDescription()", log.kcarb);
   return sanitizeValue(value);
 }
 
-export function sanitizeOrganizationWebsite(value: any): string {
-  log.enter("sanitizeOrganizationWebsite()", log.brack);
-  log.retrn("sanitizeOrganizationWebsite()", log.kcarb);
+export function sanitizeHours(value: any): string {
+  log.enter("sanitizeHours()", log.brack);
+  log.retrn("sanitizeHours()", log.kcarb);
   return sanitizeValue(value);
 }
 
-export function sanitizeOrganizationEmail(value: any): string {
-  log.enter("sanitizeOrganizationEmail()", log.brack);
-  log.retrn("sanitizeOrganizationEmail()", log.kcarb);
+export function sanitizeMarkdownNotes(value: any): string {
+  log.enter("sanitizeMarkdownNotes()", log.brack);
+  log.retrn("sanitizeMarkdownNotes()", log.kcarb);
   return sanitizeValue(value);
 }
 
-export function sanitizeOrganizationDescription(value: any): string {
-  log.enter("sanitizeOrganizationDescription()", log.brack);
-  log.retrn("sanitizeOrganizationDescription()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeOrganizationLegalStatus(value: any): string {
-  log.enter("sanitizeOrganizationLegalStatus()", log.brack);
-  log.retrn("sanitizeOrganizationLegalStatus()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeOrganizationHours(value: any): string {
-  log.enter("sanitizeOrganizationHours()", log.brack);
-  log.retrn("sanitizeOrganizationHours()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeOrganizationMarkdownNotes(value: any): string {
-  log.enter("sanitizeOrganizationMarkdownNotes()", log.brack);
-  log.retrn("sanitizeOrganizationMarkdownNotes()", log.kcarb);
+export function sanitizeLocations(value: any): string {
+  log.enter("sanitizeLocations()", log.brack);
+  log.retrn("sanitizeLocations()", log.kcarb);
   return sanitizeValue(value);
 }
 
 // ============================================================================
-// ORGANIZATION LOCATION FIELD SANITIZERS
+// LOCATION FIELD MAP SANITIZERS (shared)
 // ============================================================================
 
 export function sanitizeLocationName(value: any): string {
@@ -115,14 +105,18 @@ export function sanitizeLocationName(value: any): string {
 
 export function sanitizeAddress(value: any): string {
   log.enter("sanitizeAddress()", log.brack);
+  const cleaned = sanitizeValue(value);
+  const sentenceCase = cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase() : '';
   log.retrn("sanitizeAddress()", log.kcarb);
-  return sanitizeValue(value);
+  return sentenceCase;
 }
 
 export function sanitizeCity(value: any): string {
   log.enter("sanitizeCity()", log.brack);
+  const cleaned = sanitizeValue(value);
+  const sentenceCase = cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase() : '';
   log.retrn("sanitizeCity()", log.kcarb);
-  return sanitizeValue(value);
+  return sentenceCase;
 }
 
 export function sanitizeState(value: any): string {
@@ -137,45 +131,38 @@ export function sanitizeZip(value: any): string {
   return sanitizeValue(value);
 }
 
+export function sanitizePhoneName(value: any): string {
+  log.enter("sanitizePhoneName()", log.brack);
+  const cleaned = sanitizeValue(value);
+  const sentenceCase = cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase() : '';
+  log.retrn("sanitizePhoneName()", log.kcarb);
+  return sentenceCase;
+}
+
 // ============================================================================
-// SERVICE FIELD SANITIZERS
+// ORGANIZATION-SPECIFIC FIELD SANITIZERS
 // ============================================================================
 
-export function sanitizeServiceInternalNotes(value: any): string {
-  log.enter("sanitizeServiceInternalNotes()", log.brack);
-  log.retrn("sanitizeServiceInternalNotes()", log.kcarb);
+export function sanitizeOrganizationLegalStatus(value: any): string {
+  log.enter("sanitizeOrganizationLegalStatus()", log.brack);
+  log.retrn("sanitizeOrganizationLegalStatus()", log.kcarb);
   return sanitizeValue(value);
 }
 
-export function sanitizeServiceName(value: any): string {
-  log.enter("sanitizeServiceName()", log.brack);
-  log.retrn("sanitizeServiceName()", log.kcarb);
-  return sanitizeValue(value);
+export function sanitizeOrganizationPhones(value: any): string {
+  log.enter("sanitizePhones()", log.brack);
+  const cleaned = sanitizeValue(value);
+  const digits = cleaned.replace(/\D/g, '');
+  const formatted = digits.length === 10
+    ? `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`
+    : cleaned;
+  log.retrn("sanitizePhones()", log.kcarb);
+  return formatted;
 }
 
-export function sanitizeServiceNickname(value: any): string {
-  log.enter("sanitizeServiceNickname()", log.brack);
-  log.retrn("sanitizeServiceNickname()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeServiceLocations(value: any): string {
-  log.enter("sanitizeServiceLocations()", log.brack);
-  log.retrn("sanitizeServiceLocations()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeServiceEmail(value: any): string {
-  log.enter("sanitizeServiceEmail()", log.brack);
-  log.retrn("sanitizeServiceEmail()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeServiceDescription(value: any): string {
-  log.enter("sanitizeServiceDescription()", log.brack);
-  log.retrn("sanitizeServiceDescription()", log.kcarb);
-  return sanitizeValue(value);
-}
+// ============================================================================
+// SERVICE-SPECIFIC FIELD SANITIZERS
+// ============================================================================
 
 export function sanitizeServiceShortDescription(value: any): string {
   log.enter("sanitizeServiceShortDescription()", log.brack);
@@ -222,24 +209,6 @@ export function sanitizeServiceCost(value: any): string {
 export function sanitizeServiceWaitTime(value: any): string {
   log.enter("sanitizeServiceWaitTime()", log.brack);
   log.retrn("sanitizeServiceWaitTime()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeServiceWebsite(value: any): string {
-  log.enter("sanitizeServiceWebsite()", log.brack);
-  log.retrn("sanitizeServiceWebsite()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeServiceHours(value: any): string {
-  log.enter("sanitizeServiceHours()", log.brack);
-  log.retrn("sanitizeServiceHours()", log.kcarb);
-  return sanitizeValue(value);
-}
-
-export function sanitizeServiceMarkdownNotes(value: any): string {
-  log.enter("sanitizeServiceMarkdownNotes()", log.brack);
-  log.retrn("sanitizeServiceMarkdownNotes()", log.kcarb);
   return sanitizeValue(value);
 }
 

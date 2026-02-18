@@ -36,8 +36,8 @@ export const orgFieldMap: Record<string, string> = {
   organization_internal_notes: 'Internal Notes',
   organization_name: 'Name',
   organization_alternate_name: 'Nickname',
-  organization_locations: 'Locations', // Special: uses OrganizationLocationFieldMap for actual data
-  organization_phones: 'Phone', // Special: uses OrganizationPhonenFieldMap for actual data
+  organization_locations: 'Locations', // Special: uses organizationLocationFieldMap for actual data
+  organization_phones: 'Phone', // Special: uses organizationPhonenFieldMap for actual data
   organization_website: 'Website',
   organization_email: 'Email',
   organization_description: 'Description',
@@ -47,7 +47,7 @@ export const orgFieldMap: Record<string, string> = {
 };
 
 // Location fields mapping (special handling required)
-export const OrganizationLocationFieldMap = {
+export const organizationLocationFieldMap = {
   location_name: "Location Name",
   address: 'Address',
   city: 'City',
@@ -55,8 +55,15 @@ export const OrganizationLocationFieldMap = {
   zip: 'Zip',
 };
 
+// Phone fields mapping (special handling required)
+export const organizationPhoneFieldMap = {
+  phone_name: "Phone Name",
+  phone: 'Phone',
+};
+
 // Service location fields mapping (uses same columns as organization locations)
 export const serviceLocationFieldMap = {
+  location_name: "Location Name",
   address: 'Address',
   city: 'City',
   state: 'State',
@@ -67,7 +74,7 @@ export const serviceLocationFieldMap = {
 export const serviceFieldMap: Record<string, string> = {
   service_internal_notes: 'Internal Notes',
   service_name: 'Name',
-  service_nickname: 'Nickname',
+  service_alternate_name: 'Nickname',
   service_locations: 'Locations', // Special: uses ServiceLocationFieldMap for actual data
   service_email: 'Email',
   service_description: 'Description',
