@@ -216,10 +216,20 @@ export function sanitizeServiceWaitTime(value: any): string {
   return sanitizeValue(value);
 }
 
-export function sanitizeServiceCategories(value: any): string {
+export function sanitizeServiceCategories(value: any): string[] {
   log.enter("sanitizeServiceCategories()", log.brack);
+  const cleaned = sanitizeValue(value);
+  const items = cleaned ? cleaned.split(', ').map(item => item.trim()).filter(item => item) : [];
   log.retrn("sanitizeServiceCategories()", log.kcarb);
-  return sanitizeValue(value);
+  return items;
+}
+
+export function sanitizeServiceEligibilitiesList(value: any): string[] {
+  log.enter("sanitizeServiceEligibilitiesList()", log.brack);
+  const cleaned = sanitizeValue(value);
+  const items = cleaned ? cleaned.split(', ').map(item => item.trim()).filter(item => item) : [];
+  log.retrn("sanitizeServiceEligibilitiesList()", log.kcarb);
+  return items;
 }
 
 // #endregion ------------------------------------------------------------------

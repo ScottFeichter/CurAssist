@@ -32,7 +32,8 @@ import {
   sanitizeServiceEligibilities,
   sanitizeServiceCost,
   sanitizeServiceWaitTime,
-  sanitizeServiceCategories
+  sanitizeServiceCategories,
+  sanitizeServiceEligibilitiesList
 } from './bucket-sanitizers';
 // #endregion ------------------------------------------------------------------
 
@@ -148,11 +149,15 @@ export async function generateHtmlFiles(
       service_cost: sanitizeServiceCost,
       service_wait_time: sanitizeServiceWaitTime,
       service_website: sanitizeWebsite,
-      service_markdown_notes: sanitizeMarkdownNotes,
-      service_categories: sanitizeServiceCategories
+      service_markdown_notes: sanitizeMarkdownNotes
     };
     
     for (const [htmlId, spreadsheetColumn] of Object.entries(allFieldMaps)) {
+      // Skip the multi-select fields, handle them separately
+      if (['service_top_categories', 'service_sub_categories', 'service_top_eligibilities', 'service_sub_eligibilities'].includes(htmlId)) {
+        continue;
+      }
+      
       const rawValue = row[spreadsheetColumn] || '';
       const value = sanitizers[htmlId] ? sanitizers[htmlId](rawValue) : rawValue;
       
@@ -204,6 +209,55 @@ export async function generateHtmlFiles(
     }
     
     // Write the populated HTML back to the file
+    await fs.writeFile(filePath, html, 'utf-8');
+    
+    // Handle multi-select fields (categories and eligibilities)
+    const multiSelectFields = [
+      { id: 'service_top_categories', column: serviceFieldMap.service_top_categories },
+      { id: 'service_sub_categories', column: serviceFieldMap.service_sub_categories },
+      { id: 'service_top_eligibilities', column: serviceFieldMap.service_top_eligibilities },
+      { id: 'service_sub_eligibilities', column: serviceFieldMap.service_sub_eligibilities }
+    ];
+    
+    for (const field of multiSelectFields) {
+      const rawValue = row[field.column] || '';
+      const items = field.id.includes('categories') 
+        ? sanitizeServiceCategories(rawValue)
+        : sanitizeServiceEligibilitiesList(rawValue);
+      
+      if (items.length > 0) {
+        // Generate pills HTML
+        const pillsHtml = items.map(item => 
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${item}</span></div>`
+        ).join('');
+        
+        // Find the wrapper div and insert pills before the input
+        const wrapperRegex = new RegExp(
+          `(<div[^>]*id="${field.id}"[^>]*>)([\\s\\S]*?)(<div class="Select-placeholder">)`,
+          'i'
+        );
+        
+        html = html.replace(wrapperRegex, `$1${pillsHtml}$3`);
+        
+        // Hide the placeholder
+        html = html.replace(
+          new RegExp(`(<div[^>]*id="${field.id}"[^>]*>[\\s\\S]*?)(<div class="Select-placeholder">)`, 'i'),
+          '$1<div class="Select-placeholder" style="display: none;">'  
+        );
+        
+        // Update the corresponding object to set selected items to true
+        const objectName = field.id.includes('top_categories') ? 'topCategory' :
+                          field.id.includes('sub_categories') ? 'subCategory' :
+                          field.id.includes('top_eligibilities') ? 'topEligibility' : 'subEligibility';
+        
+        items.forEach(item => {
+          const setTrueRegex = new RegExp(`("${item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}":\s*)false`, 'i');
+          html = html.replace(setTrueRegex, '$1true');
+        });
+      }
+    }
+    
+    // Write the final HTML with pills
     await fs.writeFile(filePath, html, 'utf-8');
     
     // Update progress
