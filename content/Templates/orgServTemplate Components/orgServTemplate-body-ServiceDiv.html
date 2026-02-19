@@ -1,11 +1,11 @@
 <!---=========================================================================== EDIT SERVICES STARTS ============================================================================-->
                 <div class="edit--services" id="serviceDiv">
 
-                  <header class="edit--main--header">
+                  <!-- <header class="edit--main--header"> -->
                     <!-- <h1 class="edit--main--header--title">
                       Services
                     </h1> -->
-                  </header>
+                  <!-- </header> -->
 
                   <div class="edit--sections">
                     <ul class="edit--section--list">
@@ -560,7 +560,7 @@
                       const wrapper = input.closest('.Select-multi-value-wrapper');
                       const placeholder = wrapper.querySelector('.Select-placeholder');
                       const control = input.closest('.Select-control');
-                      
+
                       const suggestionsDiv = document.createElement('div');
                       suggestionsDiv.className = 'category-suggestions';
                       input.closest('.Select').appendChild(suggestionsDiv);
@@ -572,13 +572,13 @@
                       input.addEventListener('input', function() {
                         const query = this.value.toLowerCase();
                         suggestionsDiv.innerHTML = '';
-                        
+
                         if (query.length === 0) {
                           suggestionsDiv.style.display = 'none';
                           return;
                         }
 
-                        const matches = Object.keys(dataObject).filter(item => 
+                        const matches = Object.keys(dataObject).filter(item =>
                           !dataObject[item] && item.toLowerCase().includes(query)
                         );
 
@@ -598,16 +598,16 @@
 
                       function selectItem(item) {
                         dataObject[item] = true;
-                        
+
                         if (placeholder) placeholder.style.display = 'none';
-                        
+
                         const pill = document.createElement('div');
                         pill.className = 'Select-value';
                         pill.innerHTML = `
                           <span class="Select-value-icon" aria-hidden="true">×</span>
                           <span class="Select-value-label">${item}</span>
                         `;
-                        
+
                         pill.querySelector('.Select-value-icon').addEventListener('click', () => {
                           dataObject[item] = false;
                           pill.remove();
@@ -615,7 +615,7 @@
                             placeholder.style.display = 'block';
                           }
                         });
-                        
+
                         wrapper.insertBefore(pill, input.parentElement);
                         input.value = '';
                         suggestionsDiv.style.display = 'none';
