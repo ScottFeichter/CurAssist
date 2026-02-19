@@ -4,6 +4,7 @@ import { extendedConsole as console } from '../../streams/consoles/customConsole
 
 console.enter();
 
+
 // #region ===================== FIELD MAPS ====================================
 
 /**
@@ -46,36 +47,12 @@ export const orgFieldMap: Record<string, string> = {
   organization_markdown_notes: 'Markdown Notes',
 };
 
-// Location fields mapping (special handling required)
-export const organizationLocationFieldMap = {
-  location_name: "Location Name",
-  address: 'Address',
-  city: 'City',
-  state: 'State',
-  zip: 'Zip',
-};
-
-// Phone fields mapping (special handling required)
-export const organizationPhoneFieldMap = {
-  phone_name: "Phone Name",
-  phone: 'Phone',
-};
-
-// Service location fields mapping (uses same columns as organization locations)
-export const serviceLocationFieldMap = {
-  location_name: "Location Name",
-  address: 'Address',
-  city: 'City',
-  state: 'State',
-  zip: 'Zip',
-};
-
 // Service section fields (using id attributes)
 export const serviceFieldMap: Record<string, string> = {
   service_internal_notes: 'Internal Notes',
   service_name: 'Name',
   service_alternate_name: 'Nickname',
-  service_locations: 'Locations', // Special: uses ServiceLocationFieldMap for actual data
+  service_locations: 'Locations', // Special: uses serviceLocationFieldMap for actual data
   service_email: 'Email',
   service_description: 'Description',
   service_short_description: 'Short Description',
@@ -89,8 +66,41 @@ export const serviceFieldMap: Record<string, string> = {
   service_website: 'Website',
   service_hours: "Hours", // need to work on it
   service_markdown_notes: 'Markdown Notes',
-  service_categories: 'Categories', // need to work on it
+  service_top_categories: 'Top Categories', // Special: uses FieldMap for actual data
+  service_sub_categories: 'Sub Categories', //   Special: uses FieldMap for actual data
+  service_top_eligibilities: 'Top Eligibilities', // Special: uses FieldMap for actual data
+  service_sub_eligibilities: 'Sub Eligibilities', //   Special: uses FieldMap for actual data
 };
+
+// Service location fields mapping (uses same columns as organization locations)
+export const organizationLocationFieldMap = {
+  location_name: "Location Name",
+  address: 'Address',
+  city: 'City',
+  state: 'State',
+  zip: 'Zip',
+};
+
+// Service location fields mapping (uses same columns as organization locations)
+export const serviceLocationFieldMap = {
+  location_name: "Location Name",
+  address: 'Address',
+  city: 'City',
+  state: 'State',
+  zip: 'Zip',
+};
+
+// Phone fields mapping (special handling required)
+export const organizationPhoneFieldMap = {
+  phone_name: "Phone Name",
+  phone: 'Phone',
+};
+
+
+
+
+
+
 
 // #endregion ------------------------------------------------------------------
 

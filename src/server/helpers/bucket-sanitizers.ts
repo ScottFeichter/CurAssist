@@ -46,9 +46,13 @@ export function sanitizeInternalNotes(value: any): string {
 export function sanitizeName(value: any): string {
   log.enter("sanitizeName()", log.brack);
   const cleaned = sanitizeValue(value);
-  const sentenceCase = cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase() : '';
+  const titleCase = cleaned
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
   log.retrn("sanitizeName()", log.kcarb);
-  return sentenceCase;
+  return titleCase;
 }
 
 export function sanitizeAlternateName(value: any): string {
@@ -150,13 +154,13 @@ export function sanitizeOrganizationLegalStatus(value: any): string {
 }
 
 export function sanitizeOrganizationPhones(value: any): string {
-  log.enter("sanitizePhones()", log.brack);
+  log.enter("sanitizeOrganizationPhones()", log.brack);
   const cleaned = sanitizeValue(value);
   const digits = cleaned.replace(/\D/g, '');
   const formatted = digits.length === 10
     ? `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`
     : cleaned;
-  log.retrn("sanitizePhones()", log.kcarb);
+  log.retrn("sanitizeOrganizationPhones()", log.kcarb);
   return formatted;
 }
 

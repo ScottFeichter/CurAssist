@@ -7,6 +7,33 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as XLSX from 'xlsx';
 import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap } from './buckets-map';
+import { 
+  sanitizePhoneName, 
+  sanitizeOrganizationPhones,
+  sanitizeLocationName,
+  sanitizeAddress,
+  sanitizeCity,
+  sanitizeState,
+  sanitizeZip,
+  sanitizeName,
+  sanitizeAlternateName,
+  sanitizeWebsite,
+  sanitizeEmail,
+  sanitizeDescription,
+  sanitizeInternalNotes,
+  sanitizeHours,
+  sanitizeMarkdownNotes,
+  sanitizeOrganizationLegalStatus,
+  sanitizeServiceShortDescription,
+  sanitizeServiceApplicationProcess,
+  sanitizeServiceRequiredDocuments,
+  sanitizeServiceInterpretationServices,
+  sanitizeServiceClinicianActions,
+  sanitizeServiceEligibilities,
+  sanitizeServiceCost,
+  sanitizeServiceWaitTime,
+  sanitizeServiceCategories
+} from './bucket-sanitizers';
 // #endregion ------------------------------------------------------------------
 
 console.enter();
@@ -82,8 +109,9 @@ export async function generateHtmlFiles(
     
     // Generate filename from name field or first column
     const nameValue = row['name'] || row['Name'] || Object.values(row)[0] as string;
-    const filename = nameValue 
-      ? `${nameValue.replace(/[^a-z0-9]/gi, '_')}_${i}.html`
+    const sanitizedName = sanitizeName(nameValue || '');
+    const filename = sanitizedName
+      ? `${sanitizedName.replace(/[^a-z0-9]/gi, '_')}_${i}.html`
       : `file_${i}.html`;
     
     // Run build-template.js to generate the HTML file
@@ -96,8 +124,37 @@ export async function generateHtmlFiles(
     // Populate both organization and service sections with same spreadsheet data
     const allFieldMaps = { ...orgFieldMap, ...serviceFieldMap };
     
+    // Map of field IDs to their sanitizer functions
+    const sanitizers: Record<string, (value: any) => string> = {
+      organization_internal_notes: sanitizeInternalNotes,
+      organization_name: sanitizeName,
+      organization_alternate_name: sanitizeAlternateName,
+      organization_website: sanitizeWebsite,
+      organization_email: sanitizeEmail,
+      organization_description: sanitizeDescription,
+      organization_legal_status: sanitizeOrganizationLegalStatus,
+      organization_markdown_notes: sanitizeMarkdownNotes,
+      service_internal_notes: sanitizeInternalNotes,
+      service_name: sanitizeName,
+      service_alternate_name: sanitizeAlternateName,
+      service_email: sanitizeEmail,
+      service_description: sanitizeDescription,
+      service_short_description: sanitizeServiceShortDescription,
+      service_application_process: sanitizeServiceApplicationProcess,
+      service_required_documents: sanitizeServiceRequiredDocuments,
+      service_interpretation_services: sanitizeServiceInterpretationServices,
+      service_clinician_actions: sanitizeServiceClinicianActions,
+      service_eligibilities: sanitizeServiceEligibilities,
+      service_cost: sanitizeServiceCost,
+      service_wait_time: sanitizeServiceWaitTime,
+      service_website: sanitizeWebsite,
+      service_markdown_notes: sanitizeMarkdownNotes,
+      service_categories: sanitizeServiceCategories
+    };
+    
     for (const [htmlId, spreadsheetColumn] of Object.entries(allFieldMaps)) {
-      const value = row[spreadsheetColumn] || '';
+      const rawValue = row[spreadsheetColumn] || '';
+      const value = sanitizers[htmlId] ? sanitizers[htmlId](rawValue) : rawValue;
       
       // Match input elements by id
       const inputRegex = new RegExp(`(<input[^>]*id="${htmlId}"[^>]*value=")[^"]*(")`, 'gi');
@@ -109,11 +166,11 @@ export async function generateHtmlFiles(
     }
     
     // Handle organization location data - combine address fields into location list
-    const orgLocationName = row[organizationLocationFieldMap.location_name] || '';
-    const orgAddress = row[organizationLocationFieldMap.address] || '';
-    const orgCity = row[organizationLocationFieldMap.city] || '';
-    const orgState = row[organizationLocationFieldMap.state] || '';
-    const orgZip = row[organizationLocationFieldMap.zip] || '';
+    const orgLocationName = sanitizeLocationName(row[organizationLocationFieldMap.location_name] || '');
+    const orgAddress = sanitizeAddress(row[organizationLocationFieldMap.address] || '');
+    const orgCity = sanitizeCity(row[organizationLocationFieldMap.city] || '');
+    const orgState = sanitizeState(row[organizationLocationFieldMap.state] || '');
+    const orgZip = sanitizeZip(row[organizationLocationFieldMap.zip] || '');
     
     if (orgAddress || orgCity || orgState || orgZip) {
       const locationLabel = orgLocationName ? `<strong style="font-weight: bold;">${orgLocationName}</strong>` : '';
@@ -135,11 +192,11 @@ export async function generateHtmlFiles(
     }
     
     // Handle organization phone data - combine phone fields into phone list
-    const orgPhoneName = row[organizationPhoneFieldMap.phone_name] || '';
-    const orgPhone = row[organizationPhoneFieldMap.phone] || '';
+    const orgPhoneName = sanitizePhoneName(row[organizationPhoneFieldMap.phone_name] || '');
+    const orgPhone = sanitizeOrganizationPhones(row[organizationPhoneFieldMap.phone] || '');
     
     if (orgPhoneName || orgPhone) {
-      const phoneHtml = `<li><strong>${orgPhoneName}:</strong> ${orgPhone}</li>`;
+      const phoneHtml = `<li><strong>${orgPhoneName}</strong> ${orgPhone}</li>`;
       html = html.replace(
         /(<ul[^>]*id="organization_phones"[^>]*>)([\s\S]*?)(<\/ul>)/,
         `$1${phoneHtml}$3`
