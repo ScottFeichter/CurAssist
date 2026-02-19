@@ -110,23 +110,32 @@ export function sanitizeLocationName(value: any): string {
 export function sanitizeAddress(value: any): string {
   log.enter("sanitizeAddress()", log.brack);
   const cleaned = sanitizeValue(value);
-  const sentenceCase = cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase() : '';
+  const titleCase = cleaned
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
   log.retrn("sanitizeAddress()", log.kcarb);
-  return sentenceCase;
+  return titleCase;
 }
 
 export function sanitizeCity(value: any): string {
   log.enter("sanitizeCity()", log.brack);
   const cleaned = sanitizeValue(value);
-  const sentenceCase = cleaned ? cleaned.charAt(0).toUpperCase() + cleaned.slice(1).toLowerCase() : '';
+  const titleCase = cleaned
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
   log.retrn("sanitizeCity()", log.kcarb);
-  return sentenceCase;
+  return titleCase;
 }
 
 export function sanitizeState(value: any): string {
   log.enter("sanitizeState()", log.brack);
+  const cleaned = sanitizeValue(value);
   log.retrn("sanitizeState()", log.kcarb);
-  return sanitizeValue(value);
+  return cleaned.toUpperCase();
 }
 
 export function sanitizeZip(value: any): string {
