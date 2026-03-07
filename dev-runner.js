@@ -1,5 +1,14 @@
 #!/usr/bin/env node
 
+/**
+ * Development runner that concurrently runs:
+ * 1. TypeScript compiler in watch mode (tsc --watch) - recompiles on .ts file changes
+ * 2. Nodemon watching dist folder - restarts server when compiled files change
+ * 
+ * Adds line numbers and prefixes ([tsc]/[app]) to output for easier debugging.
+ * Handles Ctrl+C to cleanly kill both processes.
+ */
+
 const { spawn } = require('child_process');
 const readline = require('readline');
 
