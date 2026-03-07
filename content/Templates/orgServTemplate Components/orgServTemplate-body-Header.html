@@ -30,8 +30,8 @@
                     #OrgServDiv{
                       display: flex;
                       align-items: center;
-                      justify-content: space-evenly;
-                      /* border: 1px green dotted; */
+                      justify-content: center;
+                      gap: 1rem;
                     }
 
 
@@ -87,14 +87,14 @@
 
 
                     function toggleView() {
-                      const orgDiv = document.getElementById('organizationDiv');
+                      const orgWrapper = document.getElementById('organizationWrapper');
                       const servDiv = document.getElementById('serviceDiv');
 
                       if (Organization) {
-                        orgDiv.style.display = 'block';
+                        orgWrapper.style.display = 'flex';
                         servDiv.style.display = 'none';
                       } else {
-                        orgDiv.style.display = 'none';
+                        orgWrapper.style.display = 'none';
                         servDiv.style.display = 'block';
                       }
                     }

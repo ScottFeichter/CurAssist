@@ -1,0 +1,308 @@
+<!---=========================================================================== VERTICAL LEFT NAV BAR START ============================================================================-->
+<!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
+<!-- Vertical Left Navigation Bar -->
+<nav class="app-components-edit-EditSidebar-module__sidebar--npORK" id="sidebar">
+  <div class="app-components-edit-EditSidebar-module__sidebarContent--zw_PI">
+
+    <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">Organization</h3>
+    <ul class="app-components-edit-EditSidebar-module__list--EdtMl">
+      <li class="app-components-edit-EditSidebar-module__listItem--HBckV app-components-edit-EditSidebar-module__active--IatxP">
+        <a href="#" id="orgNavLink" onclick="searchOrganization(event, this.textContent)">{{organization_name}}</a>
+      </li>
+    </ul>
+
+    <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
+      <a href="#services" onclick="toggleServices(event)">Services</a>
+      <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" onclick="addNewService()">add</button>
+    </h3>
+    <ul class="app-components-edit-EditSidebar-module__list--EdtMl" id="servicesList">
+    </ul>
+
+  </div>
+  <div class="sidebar-resizer" id="sidebarResizer"></div>
+</nav>
+
+<!------------------------------------------------------------------------------ CSS ------------------------------------------------------------------------------->
+<style>
+  .app-components-edit-EditSidebar-module__sidebar--npORK {
+    width: 15.625rem;
+    min-width: 10rem;
+    max-width: 40rem;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 5rem;
+    height: 94vh;
+    transition: width 0.3s ease;
+  }
+
+  .app-components-edit-EditSidebar-module__sidebar--npORK.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .sidebar-toggle {
+    display: block;
+    margin-bottom: 10px;
+    width: 30px;
+    height: 30px;
+    background: #276ce5;
+    color: white;
+    border: 1px solid #1a5bb8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .sidebar-toggle:hover {
+    background: #1a5bb8;
+  }
+
+  .sidebar-resizer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: ew-resize;
+    background: transparent;
+  }
+
+  .sidebar-resizer:hover {
+    background: #276ce5;
+  }
+
+  .app-components-edit-EditSidebar-module__sidebarContent--zw_PI {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .app-components-edit-EditSidebar-module__list--EdtMl {
+    border-bottom: 1px solid #f4f4f4;
+    padding-bottom: 20px;
+    list-style: none;
+  }
+
+  .app-components-edit-EditSidebar-module__list--EdtMl:last-of-type {
+    border-bottom: 0;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh {
+    padding: 20px 25px 10px;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #484848;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh a {
+    color: #484848;
+    text-decoration: none;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh a:hover {
+    color: #276ce5;
+    text-decoration: underline;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV {
+    font-size: 15px;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV a {
+    color: #888;
+    border-left: none !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    padding: 11px 25px 11px 25px;
+    height: 2.5rem;
+    display: block;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV a:hover {
+    text-decoration: none;
+    color: #276ce5;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV.app-components-edit-EditSidebar-module__active--IatxP a {
+    color: #276ce5;
+    border-left: none !important;
+  }
+
+  .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8 {
+    color: #666;
+    background: none;
+    padding: 2px 8px;
+    height: auto;
+    float: right;
+    font-size: 0.75rem;
+    border: 1px solid #666;
+    border-radius: 3px;
+    cursor: pointer;
+  }
+
+  .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8:hover {
+    color: #276ce5;
+    border-color: #276ce5;
+  }
+
+  .collapsed {
+    display: none;
+  }
+</style>
+
+<!------------------------------------------------------------------------------ JS ------------------------------------------------------------------------------->
+<script>
+  function searchOrganization(event, orgName) {
+    event.preventDefault();
+    alert('You are visiting an external site.');
+    const searchUrl = `https://www.sfserviceguide.org/search?query=${encodeURIComponent(orgName)}`;
+    window.open(searchUrl, '_blank');
+  }
+
+  function toggleServices(event) {
+    event.preventDefault();
+    document.getElementById('servicesList').classList.toggle('collapsed');
+  }
+
+  function addNewService() {
+    console.log('addNewService called');
+    
+    // Generate unique service ID
+    const serviceId = 'service-' + Date.now();
+    console.log('serviceId:', serviceId);
+    
+    // Determine next placeholder name
+    const servicesList = document.getElementById('servicesList');
+    const existingLinks = Array.from(servicesList.querySelectorAll('a'));
+    const placeholderPattern = /^New Service (\d+)$/;
+    let maxNum = 0;
+    
+    existingLinks.forEach(link => {
+      const match = link.textContent.match(placeholderPattern);
+      if (match) {
+        maxNum = Math.max(maxNum, parseInt(match[1]));
+      }
+    });
+    
+    const placeholderName = `New Service ${maxNum + 1}`;
+    console.log('placeholderName:', placeholderName);
+    
+    // Add service link to navbar
+    const li = document.createElement('li');
+    li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
+    li.dataset.serviceId = serviceId;
+    const link = document.createElement('a');
+    link.href = `#${serviceId}`;
+    link.textContent = placeholderName;
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetDiv = document.getElementById(serviceId);
+      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
+    };
+    li.appendChild(link);
+    servicesList.appendChild(li);
+    console.log('Added link to navbar');
+    
+    // Find the ServiceDiv template to clone
+    const serviceTemplate = document.getElementById('serviceDiv');
+    console.log('serviceTemplate:', serviceTemplate);
+    if (!serviceTemplate) {
+      console.error('serviceDiv not found');
+      return;
+    }
+    
+    // Clone the entire service div
+    const newServiceDiv = serviceTemplate.cloneNode(true);
+    newServiceDiv.id = serviceId;
+    newServiceDiv.style.display = '';
+    console.log('Cloned service div');
+    
+    // Clear all inputs to make it blank
+    newServiceDiv.querySelectorAll('input, textarea').forEach(input => input.value = '');
+    newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
+    newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
+    console.log('Cleared inputs');
+    
+    // Update navbar when service name changes
+    const serviceNameInput = newServiceDiv.querySelector('#service_name');
+    if (serviceNameInput) {
+      serviceNameInput.addEventListener('input', function() {
+        const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
+        if (navLink) {
+          navLink.textContent = this.value || placeholderName;
+        }
+      });
+    }
+    
+    // Append to orgServicesDiv container
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    console.log('orgServicesDiv:', orgServicesDiv);
+    if (!orgServicesDiv) {
+      console.error('orgServicesDiv container not found');
+      return;
+    }
+    
+    orgServicesDiv.appendChild(newServiceDiv);
+    console.log('Appended to orgServicesDiv');
+    
+    // Scroll to new service
+    setTimeout(() => {
+      newServiceDiv.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+
+  // Update organization name in navbar when input changes
+  document.addEventListener('DOMContentLoaded', function() {
+    const orgNameInput = document.getElementById('organization_name');
+    const orgNavLink = document.getElementById('orgNavLink');
+    
+    if (orgNameInput && orgNavLink) {
+      orgNameInput.addEventListener('input', function() {
+        orgNavLink.textContent = this.value || '{{organization_name}}';
+      });
+    }
+
+    // Sidebar collapse toggle
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    
+    if (sidebar && toggleBtn) {
+      toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+      });
+    }
+
+    // Sidebar resize
+    const resizer = document.getElementById('sidebarResizer');
+    if (sidebar && resizer) {
+      let isResizing = false;
+      
+      resizer.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        document.body.style.cursor = 'ew-resize';
+      });
+      
+      document.addEventListener('mousemove', function(e) {
+        if (!isResizing) return;
+        const newWidth = e.clientX;
+        if (newWidth >= 160 && newWidth <= 640) {
+          sidebar.style.width = newWidth + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', function() {
+        isResizing = false;
+        document.body.style.cursor = '';
+      });
+    }
+  });
+</script>
+<!---=========================================================================== VERTICAL LEFT NAV BAR END =============================================================================-->

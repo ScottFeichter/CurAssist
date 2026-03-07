@@ -29,15 +29,27 @@ const html = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-html.html
 const head = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-head.html'), 'utf8');
 const bodySkeleton = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-skeleton.html'), 'utf8');
 const header = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-Header.html'), 'utf8');
+const navBar = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-navBar.html'), 'utf8');
 const orgDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-OrganizationDiv.html'), 'utf8');
+const orgServicesDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-OrgServicesDiv.html'), 'utf8');
 const servDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv.html'), 'utf8');
 
 // Combine: insert head into html, then insert body components into skeleton
 let combined = html.replace('</html>', head + bodySkeleton);
 
+// Wrap navbar + org content in flex container that gets toggled
+const orgWrapper = `<div id="organizationWrapper" style="display: flex;">
+<nav class="app-components-edit-EditSidebar-module__sidebar--npORK collapsed" id="sidebar">
+${navBar.replace('<nav class="app-components-edit-EditSidebar-module__sidebar--npORK" id="sidebar">', '').replace('</nav>', '')}
+</nav>
+<div style="flex: 1;">
+${orgDiv}
+${orgServicesDiv}
+</div>
+</div>`;
+
 // Insert the body components where the edit--main div content should go
-// Find the edit--main div and insert components
-const bodyComponents = header + '\n' + orgDiv + '\n' + servDiv;
+const bodyComponents = header + '\n' + orgWrapper + '\n' + servDiv;
 combined = combined.replace(
   /<div class="edit--main">[\s\S]*?<\/div>\s*<!-+\s*EDIT MAIN START/,
   `<div class="edit--main">\n${bodyComponents}\n              </div>\n<!-------------- EDIT MAIN START`
