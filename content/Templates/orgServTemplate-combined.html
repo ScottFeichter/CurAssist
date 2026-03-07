@@ -591,7 +591,9 @@
 
   <div class="app-components-edit-EditSidebar-module__sidebarContent--zw_PI">
 
-    <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">Organization</h3>
+    <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
+      <a href="#organization" onclick="scrollToOrganization(event)">Organization</a>
+    </h3>
     <ul class="app-components-edit-EditSidebar-module__list--EdtMl">
       <li class="app-components-edit-EditSidebar-module__listItem--HBckV app-components-edit-EditSidebar-module__active--IatxP">
         <a href="#" id="orgNavLink" onclick="searchOrganization(event, this.textContent)">{{organization_name}}</a>
@@ -599,11 +601,11 @@
     </ul>
 
     <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
-      <a href="#services" onclick="toggleServices(event)">Services</a>
+      <a href="#services" onclick="scrollToFirstService(event)">Services</a>
     </h3>
     <div style="padding: 0 25px 10px; display: flex; gap: 8px;">
       <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_blank" onclick="addNewService()">add blank</button>
-      <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_from">add from</button>
+      <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_from" onclick="addServiceFrom()">add from</button>
     </div>
     <ul class="app-components-edit-EditSidebar-module__list--EdtMl" id="servicesList">
     </ul>
@@ -742,9 +744,7 @@
     border-color: #276ce5;
   }
 
-  .collapsed {
-    display: none;
-  }
+
 </style>
 
 <!------------------------------------------------------------------------------ JS ------------------------------------------------------------------------------->
@@ -756,9 +756,18 @@
     window.open(searchUrl, '_blank');
   }
 
-  function toggleServices(event) {
+  function scrollToOrganization(event) {
     event.preventDefault();
-    document.getElementById('servicesList').classList.toggle('collapsed');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function scrollToFirstService(event) {
+    event.preventDefault();
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    const firstService = orgServicesDiv?.firstElementChild;
+    if (firstService) {
+      firstService.scrollIntoView({ behavior: 'smooth' });
+    }
   }
 
   function addNewService() {
@@ -841,6 +850,130 @@
     
     orgServicesDiv.appendChild(newServiceDiv);
     console.log('Appended to orgServicesDiv');
+    
+    // Scroll to new service
+    setTimeout(() => {
+      newServiceDiv.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+
+  function addServiceFrom() {
+    // Get all available services
+    const serviceTemplate = document.getElementById('serviceDiv');
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    const existingServices = orgServicesDiv ? Array.from(orgServicesDiv.children) : [];
+    
+    // Build list of available services
+    const availableServices = [];
+    
+    // Add original service if it exists
+    if (serviceTemplate) {
+      const serviceName = serviceTemplate.querySelector('#service_name')?.value || 'Original Service';
+      availableServices.push({ id: 'serviceDiv', name: serviceName, element: serviceTemplate });
+    }
+    
+    // Add existing services from orgServicesDiv
+    existingServices.forEach(service => {
+      const serviceName = service.querySelector('#service_name')?.value || 'Unnamed Service';
+      availableServices.push({ id: service.id, name: serviceName, element: service });
+    });
+    
+    if (availableServices.length === 0) {
+      alert('No other services to copy from');
+      return;
+    }
+    
+    // Create modal with dropdown
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999';
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = 'background:white;padding:20px;border-radius:8px;min-width:300px';
+    
+    const label = document.createElement('label');
+    label.textContent = 'Select a service to copy from:';
+    label.style.cssText = 'display:block;margin-bottom:10px;font-weight:600';
+    
+    const select = document.createElement('select');
+    select.style.cssText = 'width:100%;padding:8px;margin-bottom:15px;font-size:14px';
+    availableServices.forEach((service, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = service.name;
+      select.appendChild(option);
+    });
+    
+    const btnContainer = document.createElement('div');
+    btnContainer.style.cssText = 'display:flex;gap:10px;justify-content:center';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText = 'padding:8px 16px;background:white;color:#666;border:1px solid #ccc;cursor:pointer';
+    cancelBtn.onclick = () => modal.remove();
+    
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText = 'padding:8px 16px;background:#276ce5;color:white;border:none;cursor:pointer';
+    copyBtn.onclick = () => {
+      const selectedIndex = parseInt(select.value);
+      const selectedService = availableServices[selectedIndex];
+      modal.remove();
+      cloneService(selectedService);
+    };
+    
+    btnContainer.appendChild(cancelBtn);
+    btnContainer.appendChild(copyBtn);
+    dialog.appendChild(label);
+    dialog.appendChild(select);
+    dialog.appendChild(btnContainer);
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+  }
+  
+  function cloneService(selectedService) {
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    if (!orgServicesDiv) return;
+    
+    // Generate unique service ID
+    const serviceId = 'service-' + Date.now();
+    
+    // Clone the selected service (keeping all values)
+    const newServiceDiv = selectedService.element.cloneNode(true);
+    newServiceDiv.id = serviceId;
+    newServiceDiv.style.display = '';
+    
+    // Get the service name for navbar
+    const serviceName = newServiceDiv.querySelector('#service_name')?.value || 'Copied Service';
+    
+    // Add service link to navbar
+    const servicesList = document.getElementById('servicesList');
+    const li = document.createElement('li');
+    li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
+    li.dataset.serviceId = serviceId;
+    const link = document.createElement('a');
+    link.href = `#${serviceId}`;
+    link.textContent = serviceName;
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetDiv = document.getElementById(serviceId);
+      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
+    };
+    li.appendChild(link);
+    servicesList.appendChild(li);
+    
+    // Update navbar when service name changes
+    const serviceNameInput = newServiceDiv.querySelector('#service_name');
+    if (serviceNameInput) {
+      serviceNameInput.addEventListener('input', function() {
+        const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
+        if (navLink) {
+          navLink.textContent = this.value || 'Copied Service';
+        }
+      });
+    }
+    
+    // Append to orgServicesDiv container
+    orgServicesDiv.appendChild(newServiceDiv);
     
     // Scroll to new service
     setTimeout(() => {
