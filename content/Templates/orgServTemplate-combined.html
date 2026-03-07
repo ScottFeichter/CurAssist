@@ -603,7 +603,7 @@
     <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
       <a href="#services" onclick="scrollToFirstService(event)">Services</a>
     </h3>
-    <div style="padding: 0 25px 10px; display: flex; gap: 8px;">
+    <div style="padding: 0 25px 10px; display: flex; gap: 8px; flex-wrap: nowrap;">
       <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_blank" onclick="addNewService()">add blank</button>
       <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_from" onclick="addServiceFrom()">add from</button>
     </div>
@@ -737,6 +737,8 @@
     border: 1px solid #666;
     border-radius: 3px;
     cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8:hover {
@@ -1174,6 +1176,12 @@
                           <ul class="edit-hours-list">
                             <div class="day-group">
                               <div class="hours">
+                                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
+                                  <label style="margin: 0; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                                    Copy M hours to M - F?
+                                    <input type="checkbox" id="copyMondayHours" style="margin: 0; cursor: pointer;">
+                                  </label>
+                                </div>
                                 <li>
                                   <p>
                                     M
@@ -1463,6 +1471,58 @@
                         document.getElementById('noteText').value = '';
                         noteModal.style.display = 'none';
                       });
+
+                      // Hours: Add datalist for time inputs with 15-min increments
+                      const timeInputs = document.querySelectorAll('.edit--section--list--item.hours input[type="time"]');
+                      const datalist = document.createElement('datalist');
+                      datalist.id = 'time-options';
+                      ['00', '15', '30', '45'].forEach(min => {
+                        for (let h = 0; h < 24; h++) {
+                          const option = document.createElement('option');
+                          option.value = `${String(h).padStart(2, '0')}:${min}`;
+                          datalist.appendChild(option);
+                        }
+                      });
+                      document.body.appendChild(datalist);
+                      timeInputs.forEach(input => input.setAttribute('list', 'time-options'));
+
+                      // Hours: Handle 24-hour checkboxes
+                      const dayGroups = document.querySelectorAll('.day-group');
+                      dayGroups.forEach(group => {
+                        const checkbox = group.querySelector('.is-24-hours input[type="checkbox"]');
+                        const timeInputs = group.querySelectorAll('input[type="time"]');
+                        
+                        checkbox.addEventListener('change', function() {
+                          if (this.checked) {
+                            timeInputs[0].value = '00:00';
+                            timeInputs[1].value = '00:00';
+                          } else {
+                            timeInputs[0].value = '';
+                            timeInputs[1].value = '';
+                          }
+                        });
+                      });
+
+                      // Hours: Copy Monday to weekdays
+                      const copyMondayCheckbox = document.getElementById('copyMondayHours');
+                      const mondayGroup = dayGroups[0];
+                      const mondayTimeInputs = mondayGroup.querySelectorAll('input[type="time"]');
+                      const weekdayGroups = [dayGroups[1], dayGroups[2], dayGroups[3], dayGroups[4]];
+
+                      function copyMondayToWeekdays() {
+                        if (copyMondayCheckbox.checked && (mondayTimeInputs[0].value || mondayTimeInputs[1].value)) {
+                          weekdayGroups.forEach(group => {
+                            const inputs = group.querySelectorAll('input[type="time"]');
+                            inputs[0].value = mondayTimeInputs[0].value;
+                            inputs[1].value = mondayTimeInputs[1].value;
+                          });
+                        }
+                      }
+
+                      copyMondayCheckbox.addEventListener('change', copyMondayToWeekdays);
+                      mondayTimeInputs.forEach(input => {
+                        input.addEventListener('input', copyMondayToWeekdays);
+                      });
                     });
                   </script>
 
@@ -1560,6 +1620,17 @@
                     }
                     .modal-content button:last-of-type {
                       background: #ddd;
+                    }
+                    .is-24-hours input[type="checkbox"] {
+                      margin: 0 !important;
+                      vertical-align: middle;
+                      position: relative;
+                      top: 0;
+                    }
+                    .is-24-hours {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
                     }
                   </style>
 
