@@ -31,12 +31,88 @@
 
     #sidebar {
       width: 250px;
+      min-width: 200px;
+      max-width: 600px;
       background: #f0f0f0;
       padding: 20px;
       display: flex;
       flex-direction: column;
       gap: 15px;
       border-right: 1px solid #ccc;
+      overflow-y: auto;
+      position: relative;
+      transition: margin-left 0.3s, width 0.3s;
+    }
+
+    #sidebar.collapsed {
+      margin-left: -250px;
+      width: 0;
+      min-width: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #resizeHandle {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 60px;
+      background: transparent;
+      cursor: ew-resize;
+      border-radius: 4px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    #resizeHandle::before,
+    #resizeHandle::after {
+      content: '';
+      width: 2px;
+      height: 20px;
+      background: #999;
+      border-radius: 1px;
+    }
+
+    #resizeHandle:hover::before,
+    #resizeHandle:hover::after {
+      background: #276CE5;
+    }
+
+    #collapseBtn {
+      position: absolute;
+      left: 10px;
+      top: 10px;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: #276CE5;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      transition: left 0.3s, opacity 0.3s;
+    }
+
+    #collapseBtn:hover {
+      background: #1a5bb8;
+    }
+
+    #collapseBtn.inactive {
+      opacity: 0.5;
+    }
+
+    #sidebar.collapsed ~ #collapseBtn {
+      left: -240px;
     }
 
     #content {
@@ -44,6 +120,7 @@
       overflow: auto;
       padding: 20px;
       background: white;
+      min-width: 0;
     }
 
     iframe {
@@ -316,7 +393,9 @@
   </div>
 
   <div id="main">
+    <button id="collapseBtn" onclick="toggleSidebar()">☰</button>
     <div id="sidebar">
+      <div id="resizeHandle"></div>
       <div class="section-title">Bucket Actions</div>
       <button class="createBucket-btn" onclick="createBucket()">Create Bucket</button>
       <button class="deleteBucket-btn" onclick="deleteBucket()">Delete Bucket</button>

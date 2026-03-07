@@ -492,3 +492,44 @@ function cancelDeleteBucket() {
 }
 
 // #endregion ------------------------------------------------------------------
+
+// Toggle sidebar collapse/expand
+function toggleSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const btn = document.getElementById('collapseBtn');
+  sidebar.classList.toggle('collapsed');
+  btn.classList.toggle('inactive');
+}
+
+// Sidebar resize functionality
+let isResizing = false;
+let startX = 0;
+let startWidth = 0;
+
+const resizeHandle = document.getElementById('resizeHandle');
+const sidebar = document.getElementById('sidebar');
+
+resizeHandle.addEventListener('mousedown', (e) => {
+  isResizing = true;
+  startX = e.clientX;
+  startWidth = sidebar.offsetWidth;
+  document.body.style.cursor = 'ew-resize';
+  e.preventDefault();
+});
+
+document.addEventListener('mousemove', (e) => {
+  if (!isResizing) return;
+  const width = startWidth + (e.clientX - startX);
+  const minWidth = 200;
+  const maxWidth = 600;
+  if (width >= minWidth && width <= maxWidth) {
+    sidebar.style.width = width + 'px';
+  }
+});
+
+document.addEventListener('mouseup', () => {
+  if (isResizing) {
+    isResizing = false;
+    document.body.style.cursor = '';
+  }
+});
