@@ -1,15 +1,15 @@
 /**
  * Build Template Script
- * 
+ *
  * Combines orgServTemplate components into a single HTML file.
- * 
+ *
  * Usage:
  *   node build-template.js [filename] [output-path]
- * 
+ *
  * Arguments:
  *   filename    - (optional) Name of output file. Default: 'orgServTemplate-combined.html'
  *   output-path - (optional) Directory for output file. Default: current directory
- * 
+ *
  * Examples:
  *   node build-template.js
  *   node build-template.js myTemplate.html
@@ -33,6 +33,8 @@ const navBar = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-navBar.
 const orgDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-OrganizationDiv.html'), 'utf8');
 const orgServicesDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-OrgServicesDiv.html'), 'utf8');
 const servDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv.html'), 'utf8');
+const servDivSpreadsheet = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Spreadsheet.html'), 'utf8');
+const servDivOrganization = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Organization.html'), 'utf8');
 
 // Combine: insert head into html, then insert body components into skeleton
 let combined = html.replace('</html>', head + bodySkeleton);
@@ -49,7 +51,7 @@ ${orgServicesDiv}
 </div>`;
 
 // Insert the body components where the edit--main div content should go
-const bodyComponents = header + '\n' + orgWrapper + '\n' + servDiv;
+const bodyComponents = header + '\n' + orgWrapper + '\n' + servDivSpreadsheet;
 combined = combined.replace(
   /<div class="edit--main">[\s\S]*?<\/div>\s*<!-+\s*EDIT MAIN START/,
   `<div class="edit--main">\n${bodyComponents}\n              </div>\n<!-------------- EDIT MAIN START`

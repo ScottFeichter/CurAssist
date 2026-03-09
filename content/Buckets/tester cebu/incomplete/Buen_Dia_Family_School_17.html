@@ -444,8 +444,6 @@
 
   </head>
 <!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HEAD END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
-
-
 <!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  BODY START  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
   <body style="position: relative; min-height: 100%; top: 0px;">
 <!------------------------------------------------------------------------------ DIV ROOT START --------------------------------------------------------->
@@ -586,455 +584,461 @@
 <!---=========================================================================== HEADER END ===============================================================================--->
 
 <div id="organizationWrapper" style="display: flex;">
-  <nav class="app-components-edit-EditSidebar-module__sidebar--npORK collapsed" id="sidebar">
-  <!---=========================================================================== VERTICAL LEFT NAV BAR START ============================================================================-->
-  <!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
-  <!-- Vertical Left Navigation Bar -->
+<nav class="app-components-edit-EditSidebar-module__sidebar--npORK collapsed" id="sidebar">
+<!---=========================================================================== VERTICAL LEFT NAV BAR START ============================================================================-->
+<!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
+<!-- Vertical Left Navigation Bar -->
 
-    <div class="app-components-edit-EditSidebar-module__sidebarContent--zw_PI">
+  <div class="app-components-edit-EditSidebar-module__sidebarContent--zw_PI">
 
-      <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
-        <a href="#organization" onclick="scrollToOrganization(event)">Organization</a>
-      </h3>
-      <ul class="app-components-edit-EditSidebar-module__list--EdtMl">
-        <li class="app-components-edit-EditSidebar-module__listItem--HBckV app-components-edit-EditSidebar-module__active--IatxP">
-          <a href="#" id="orgNavLink" onclick="searchOrganization(event, this.textContent)">{{organization_name}}</a>
-        </li>
-      </ul>
+    <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
+      <a href="#organization" onclick="scrollToOrganization(event)">Organization</a>
+    </h3>
+    <ul class="app-components-edit-EditSidebar-module__list--EdtMl">
+      <li class="app-components-edit-EditSidebar-module__listItem--HBckV app-components-edit-EditSidebar-module__active--IatxP">
+        <a href="#" id="orgNavLink" onclick="searchOrganization(event, this.textContent)">{{organization_name}}</a>
+      </li>
+    </ul>
 
-      <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
-        <a href="#services" onclick="scrollToFirstService(event)">Services</a>
-      </h3>
-      <div style="padding: 0 25px 10px; display: flex; gap: 8px; flex-wrap: nowrap;">
-        <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_blank" onclick="addNewService()">add blank</button>
-        <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_from" onclick="addServiceFrom()">add from</button>
-      </div>
-      <ul class="app-components-edit-EditSidebar-module__list--EdtMl" id="servicesList">
-      </ul>
-
+    <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
+      <a href="#services" onclick="scrollToFirstService(event)">Services</a>
+    </h3>
+    <div style="padding: 0 25px 10px; display: flex; gap: 8px; flex-wrap: nowrap;">
+      <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_blank" onclick="addNewService()">add blank</button>
+      <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_from" onclick="addServiceFrom()">add from</button>
     </div>
-    <div class="sidebar-resizer" id="sidebarResizer"></div>
+    <ul class="app-components-edit-EditSidebar-module__list--EdtMl" id="servicesList">
+    </ul>
+
+  </div>
+  <div class="sidebar-resizer" id="sidebarResizer"></div>
 
 
-  <!------------------------------------------------------------------------------ CSS ------------------------------------------------------------------------------->
-  <style>
-    .app-components-edit-EditSidebar-module__sidebar--npORK {
-      width: 15.625rem;
-      min-width: 10rem;
-      max-width: 40rem;
-      background-color: #f9f9f9;
-      display: flex;
-      flex-direction: column;
-      position: sticky;
-      top: 5rem;
-      height: 94vh;
-      transition: width 0.3s ease;
+<!------------------------------------------------------------------------------ CSS ------------------------------------------------------------------------------->
+<style>
+  .app-components-edit-EditSidebar-module__sidebar--npORK {
+    width: 15.625rem;
+    min-width: 10rem;
+    max-width: 40rem;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 5rem;
+    height: 94vh;
+    transition: width 0.3s ease;
+  }
+
+  .app-components-edit-EditSidebar-module__sidebar--npORK.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .sidebar-toggle {
+    display: block;
+    margin-bottom: 10px;
+    width: 30px;
+    height: 30px;
+    background: #276ce5;
+    color: white;
+    border: 1px solid #1a5bb8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .sidebar-toggle:hover {
+    background: #1a5bb8;
+  }
+
+  .sidebar-resizer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: ew-resize;
+    background: transparent;
+  }
+
+  .sidebar-resizer:hover {
+    background: #276ce5;
+  }
+
+  .app-components-edit-EditSidebar-module__sidebarContent--zw_PI {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .app-components-edit-EditSidebar-module__list--EdtMl {
+    border-bottom: 1px solid #f4f4f4;
+    padding-bottom: 20px;
+    list-style: none;
+  }
+
+  .app-components-edit-EditSidebar-module__list--EdtMl:last-of-type {
+    border-bottom: 0;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh {
+    padding: 20px 25px 10px;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #484848;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh a {
+    color: #484848;
+    text-decoration: none;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh a:hover {
+    color: #276ce5;
+    text-decoration: underline;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV {
+    font-size: 15px;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV a {
+    color: #888;
+    border-left: none !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    padding: 11px 25px 11px 25px;
+    height: 2.5rem;
+    display: block;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV a:hover {
+    text-decoration: none;
+    color: #276ce5;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV.app-components-edit-EditSidebar-module__active--IatxP a {
+    color: #276ce5;
+    border-left: none !important;
+  }
+
+  .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8 {
+    color: #666;
+    background: none;
+    padding: 2px 8px;
+    height: auto;
+    float: right;
+    font-size: 0.75rem;
+    border: 1px solid #666;
+    border-radius: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8:hover {
+    color: #276ce5;
+    border-color: #276ce5;
+  }
+
+
+</style>
+
+<!------------------------------------------------------------------------------ JS ------------------------------------------------------------------------------->
+<script>
+  function searchOrganization(event, orgName) {
+    event.preventDefault();
+    alert('You are visiting an external site.');
+    const searchUrl = `https://www.sfserviceguide.org/search?query=${encodeURIComponent(orgName)}`;
+    window.open(searchUrl, '_blank');
+  }
+
+  function scrollToOrganization(event) {
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function scrollToFirstService(event) {
+    event.preventDefault();
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    const firstService = orgServicesDiv?.firstElementChild;
+    if (firstService) {
+      firstService.scrollIntoView({ behavior: 'smooth' });
     }
-
-    .app-components-edit-EditSidebar-module__sidebar--npORK.collapsed {
-      width: 0;
-      min-width: 0;
-      overflow: hidden;
-    }
-
-    .sidebar-toggle {
-      display: block;
-      margin-bottom: 10px;
-      width: 30px;
-      height: 30px;
-      background: #276ce5;
-      color: white;
-      border: 1px solid #1a5bb8;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-    }
-
-    .sidebar-toggle:hover {
-      background: #1a5bb8;
-    }
-
-    .sidebar-resizer {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 5px;
-      height: 100%;
-      cursor: ew-resize;
-      background: transparent;
-    }
-
-    .sidebar-resizer:hover {
-      background: #276ce5;
-    }
-
-    .app-components-edit-EditSidebar-module__sidebarContent--zw_PI {
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    .app-components-edit-EditSidebar-module__list--EdtMl {
-      border-bottom: 1px solid #f4f4f4;
-      padding-bottom: 20px;
-      list-style: none;
-    }
-
-    .app-components-edit-EditSidebar-module__list--EdtMl:last-of-type {
-      border-bottom: 0;
-    }
-
-    .app-components-edit-EditSidebar-module__listHeading--pbhfh {
-      padding: 20px 25px 10px;
-      text-transform: uppercase;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: #484848;
-    }
-
-    .app-components-edit-EditSidebar-module__listHeading--pbhfh a {
-      color: #484848;
-      text-decoration: none;
-    }
-
-    .app-components-edit-EditSidebar-module__listHeading--pbhfh a:hover {
-      color: #276ce5;
-      text-decoration: underline;
-    }
-
-    .app-components-edit-EditSidebar-module__listItem--HBckV {
-      font-size: 15px;
-    }
-
-    .app-components-edit-EditSidebar-module__listItem--HBckV a {
-      color: #888;
-      border-left: none !important;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      width: 100%;
-      padding: 11px 25px 11px 25px;
-      height: 2.5rem;
-      display: block;
-    }
-
-    .app-components-edit-EditSidebar-module__listItem--HBckV a:hover {
-      text-decoration: none;
-      color: #276ce5;
-    }
-
-    .app-components-edit-EditSidebar-module__listItem--HBckV.app-components-edit-EditSidebar-module__active--IatxP a {
-      color: #276ce5;
-      border-left: none !important;
-    }
-
-    .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8 {
-      color: #666;
-      background: none;
-      padding: 2px 8px;
-      height: auto;
-      float: right;
-      font-size: 0.75rem;
-      border: 1px solid #666;
-      border-radius: 3px;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8:hover {
-      color: #276ce5;
-      border-color: #276ce5;
-    }
-
-
-  </style>
-
-  <!------------------------------------------------------------------------------ JS ------------------------------------------------------------------------------->
-  <script>
-    function searchOrganization(event, orgName) {
-      event.preventDefault();
-      alert('You are visiting an external site.');
-      const searchUrl = `https://www.sfserviceguide.org/search?query=${encodeURIComponent(orgName)}`;
-      window.open(searchUrl, '_blank');
-    }
-
-    function scrollToOrganization(event) {
-      event.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function scrollToFirstService(event) {
-      event.preventDefault();
-      const orgServicesDiv = document.getElementById('orgServicesDiv');
-      const firstService = orgServicesDiv?.firstElementChild;
-      if (firstService) {
-        firstService.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function addNewService() {
-      console.log('addNewService called');
-
-      // Generate unique service ID
-      const serviceId = 'service-' + Date.now();
-      console.log('serviceId:', serviceId);
-
-      // Determine next placeholder name
-      const servicesList = document.getElementById('servicesList');
-      const existingLinks = Array.from(servicesList.querySelectorAll('a'));
-      const placeholderPattern = /^New Service (\d+)$/;
-      let maxNum = 0;
-
-      existingLinks.forEach(link => {
-        const match = link.textContent.match(placeholderPattern);
-        if (match) {
-          maxNum = Math.max(maxNum, parseInt(match[1]));
-        }
-      });
-
-      const placeholderName = `New Service ${maxNum + 1}`;
-      console.log('placeholderName:', placeholderName);
-
-      // Add service link to navbar
-      const li = document.createElement('li');
-      li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
-      li.dataset.serviceId = serviceId;
-      const link = document.createElement('a');
-      link.href = `#${serviceId}`;
-      link.textContent = placeholderName;
-      link.onclick = (e) => {
-        e.preventDefault();
-        const targetDiv = document.getElementById(serviceId);
-        if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
-      };
-      li.appendChild(link);
-      servicesList.appendChild(li);
-      console.log('Added link to navbar');
-
-      // Find the ServiceDiv template to clone
-      const serviceTemplate = document.getElementById('serviceDiv');
-      console.log('serviceTemplate:', serviceTemplate);
-      if (!serviceTemplate) {
-        console.error('serviceDiv not found');
-        return;
-      }
-
-      // Clone the entire service div
-      const newServiceDiv = serviceTemplate.cloneNode(true);
-      newServiceDiv.id = serviceId;
-      newServiceDiv.style.display = '';
-      console.log('Cloned service div');
-
-      // Clear all inputs to make it blank
-      newServiceDiv.querySelectorAll('input, textarea').forEach(input => input.value = '');
-      newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
-      newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
-      console.log('Cleared inputs');
-
-      // Update navbar when service name changes
-      const serviceNameInput = newServiceDiv.querySelector('#service_name');
-      if (serviceNameInput) {
-        serviceNameInput.addEventListener('input', function() {
-          const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
-          if (navLink) {
-            navLink.textContent = this.value || placeholderName;
-          }
-        });
-      }
-
-      // Append to orgServicesDiv container
-      const orgServicesDiv = document.getElementById('orgServicesDiv');
-      console.log('orgServicesDiv:', orgServicesDiv);
-      if (!orgServicesDiv) {
-        console.error('orgServicesDiv container not found');
-        return;
-      }
-
-      orgServicesDiv.appendChild(newServiceDiv);
-      console.log('Appended to orgServicesDiv');
-
-      // Scroll to new service
-      setTimeout(() => {
-        newServiceDiv.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
-
-    function addServiceFrom() {
-      // Get all available services
-      const serviceTemplate = document.getElementById('serviceDiv');
-      const orgServicesDiv = document.getElementById('orgServicesDiv');
-      const existingServices = orgServicesDiv ? Array.from(orgServicesDiv.children) : [];
-
-      // Build list of available services
-      const availableServices = [];
-
-      // Add original service if it exists
-      if (serviceTemplate) {
-        const serviceName = serviceTemplate.querySelector('#service_name')?.value || 'Original Service';
-        availableServices.push({ id: 'serviceDiv', name: serviceName, element: serviceTemplate });
-      }
-
-      // Add existing services from orgServicesDiv
-      existingServices.forEach(service => {
-        const serviceName = service.querySelector('#service_name')?.value || 'Unnamed Service';
-        availableServices.push({ id: service.id, name: serviceName, element: service });
-      });
-
-      if (availableServices.length === 0) {
-        alert('No other services to copy from');
-        return;
-      }
-
-      // Create modal with dropdown
-      const modal = document.createElement('div');
-      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999';
-
-      const dialog = document.createElement('div');
-      dialog.style.cssText = 'background:white;padding:20px;border-radius:8px;min-width:300px';
-
-      const label = document.createElement('label');
-      label.textContent = 'Select a service to copy from:';
-      label.style.cssText = 'display:block;margin-bottom:10px;font-weight:600';
-
-      const select = document.createElement('select');
-      select.style.cssText = 'width:100%;padding:8px;margin-bottom:15px;font-size:14px';
-      availableServices.forEach((service, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = service.name;
-        select.appendChild(option);
-      });
-
-      const btnContainer = document.createElement('div');
-      btnContainer.style.cssText = 'display:flex;gap:10px;justify-content:center';
-
-      const cancelBtn = document.createElement('button');
-      cancelBtn.textContent = 'Cancel';
-      cancelBtn.style.cssText = 'padding:8px 16px;background:white;color:#666;border:1px solid #ccc;cursor:pointer';
-      cancelBtn.onclick = () => modal.remove();
-
-      const copyBtn = document.createElement('button');
-      copyBtn.textContent = 'Copy';
-      copyBtn.style.cssText = 'padding:8px 16px;background:#276ce5;color:white;border:none;cursor:pointer';
-      copyBtn.onclick = () => {
-        const selectedIndex = parseInt(select.value);
-        const selectedService = availableServices[selectedIndex];
-        modal.remove();
-        cloneService(selectedService);
-      };
-
-      btnContainer.appendChild(cancelBtn);
-      btnContainer.appendChild(copyBtn);
-      dialog.appendChild(label);
-      dialog.appendChild(select);
-      dialog.appendChild(btnContainer);
-      modal.appendChild(dialog);
-      document.body.appendChild(modal);
-    }
-
-    function cloneService(selectedService) {
-      const orgServicesDiv = document.getElementById('orgServicesDiv');
-      if (!orgServicesDiv) return;
-
-      // Generate unique service ID
-      const serviceId = 'service-' + Date.now();
-
-      // Clone the selected service (keeping all values)
-      const newServiceDiv = selectedService.element.cloneNode(true);
-      newServiceDiv.id = serviceId;
-      newServiceDiv.style.display = '';
-
-      // Get the service name for navbar
-      const serviceName = newServiceDiv.querySelector('#service_name')?.value || 'Copied Service';
-
-      // Add service link to navbar
-      const servicesList = document.getElementById('servicesList');
-      const li = document.createElement('li');
-      li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
-      li.dataset.serviceId = serviceId;
-      const link = document.createElement('a');
-      link.href = `#${serviceId}`;
-      link.textContent = serviceName;
-      link.onclick = (e) => {
-        e.preventDefault();
-        const targetDiv = document.getElementById(serviceId);
-        if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
-      };
-      li.appendChild(link);
-      servicesList.appendChild(li);
-
-      // Update navbar when service name changes
-      const serviceNameInput = newServiceDiv.querySelector('#service_name');
-      if (serviceNameInput) {
-        serviceNameInput.addEventListener('input', function() {
-          const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
-          if (navLink) {
-            navLink.textContent = this.value || 'Copied Service';
-          }
-        });
-      }
-
-      // Append to orgServicesDiv container
-      orgServicesDiv.appendChild(newServiceDiv);
-
-      // Scroll to new service
-      setTimeout(() => {
-        newServiceDiv.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
-
-    // Update organization name in navbar when input changes
-    document.addEventListener('DOMContentLoaded', function() {
-      const orgNameInput = document.getElementById('organization_name');
-      const orgNavLink = document.getElementById('orgNavLink');
-
-      if (orgNameInput && orgNavLink) {
-        orgNameInput.addEventListener('input', function() {
-          orgNavLink.textContent = this.value || '{{organization_name}}';
-        });
-      }
-
-      // Sidebar collapse toggle
-      const sidebar = document.getElementById('sidebar');
-      const toggleBtn = document.getElementById('sidebarToggle');
-
-      if (sidebar && toggleBtn) {
-        toggleBtn.addEventListener('click', function() {
-          sidebar.classList.toggle('collapsed');
-          toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
-        });
-      }
-
-      // Sidebar resize
-      const resizer = document.getElementById('sidebarResizer');
-      if (sidebar && resizer) {
-        let isResizing = false;
-
-        resizer.addEventListener('mousedown', function(e) {
-          isResizing = true;
-          document.body.style.cursor = 'ew-resize';
-        });
-
-        document.addEventListener('mousemove', function(e) {
-          if (!isResizing) return;
-          const newWidth = e.clientX;
-          if (newWidth >= 160 && newWidth <= 640) {
-            sidebar.style.width = newWidth + 'px';
-          }
-        });
-
-        document.addEventListener('mouseup', function() {
-          isResizing = false;
-          document.body.style.cursor = '';
-        });
+  }
+
+  function addNewService() {
+    console.log('addNewService called');
+    
+    // Generate unique service ID
+    const serviceId = 'service-' + Date.now();
+    console.log('serviceId:', serviceId);
+    
+    // Determine next placeholder name
+    const servicesList = document.getElementById('servicesList');
+    const existingLinks = Array.from(servicesList.querySelectorAll('a'));
+    const placeholderPattern = /^New Service (\d+)$/;
+    let maxNum = 0;
+    
+    existingLinks.forEach(link => {
+      const match = link.textContent.match(placeholderPattern);
+      if (match) {
+        maxNum = Math.max(maxNum, parseInt(match[1]));
       }
     });
-  </script>
-  <!---=========================================================================== VERTICAL LEFT NAV BAR END =============================================================================-->
+    
+    const placeholderName = `New Service ${maxNum + 1}`;
+    console.log('placeholderName:', placeholderName);
+    
+    // Add service link to navbar
+    const li = document.createElement('li');
+    li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
+    li.dataset.serviceId = serviceId;
+    const link = document.createElement('a');
+    link.href = `#${serviceId}`;
+    link.textContent = placeholderName;
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetDiv = document.getElementById(serviceId);
+      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
+    };
+    li.appendChild(link);
+    servicesList.appendChild(li);
+    console.log('Added link to navbar');
+    
+    // Find the ServiceDiv template to clone
+    const serviceTemplate = document.getElementById('serviceDiv');
+    console.log('serviceTemplate:', serviceTemplate);
+    if (!serviceTemplate) {
+      console.error('serviceDiv not found');
+      return;
+    }
+    
+    // Clone the entire service div
+    const newServiceDiv = serviceTemplate.cloneNode(true);
+    newServiceDiv.id = serviceId;
+    newServiceDiv.style.display = '';
+    console.log('Cloned service div');
+    
+    // Clear all inputs to make it blank
+    newServiceDiv.querySelectorAll('input, textarea').forEach(input => input.value = '');
+    newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
+    newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
+    console.log('Cleared inputs');
+    
+    // Update navbar when service name changes
+    const serviceNameInput = newServiceDiv.querySelector('#service_name');
+    if (serviceNameInput) {
+      serviceNameInput.addEventListener('input', function() {
+        const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
+        if (navLink) {
+          navLink.textContent = this.value || placeholderName;
+        }
+      });
+    }
+    
+    // Append to orgServicesDiv container
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    console.log('orgServicesDiv:', orgServicesDiv);
+    if (!orgServicesDiv) {
+      console.error('orgServicesDiv container not found');
+      return;
+    }
+    
+    orgServicesDiv.appendChild(newServiceDiv);
+    console.log('Appended to orgServicesDiv');
+    
+    // Scroll to new service
+    setTimeout(() => {
+      newServiceDiv.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
 
-  </nav>
+  function addServiceFrom() {
+    // Get all available services
+    const serviceTemplate = document.getElementById('serviceDiv');
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    const existingServices = orgServicesDiv ? Array.from(orgServicesDiv.children) : [];
+    
+    // Build list of available services
+    const availableServices = [];
+    
+    // Add original service if it exists
+    if (serviceTemplate) {
+      const serviceName = serviceTemplate.querySelector('#service_name')?.value || 'Original Service';
+      availableServices.push({ id: 'serviceDiv', name: serviceName, element: serviceTemplate });
+    }
+    
+    // Add existing services from orgServicesDiv
+    existingServices.forEach(service => {
+      const serviceName = service.querySelector('#service_name')?.value || 'Unnamed Service';
+      availableServices.push({ id: service.id, name: serviceName, element: service });
+    });
+    
+    if (availableServices.length === 0) {
+      alert('No other services to copy from');
+      return;
+    }
+    
+    // Create modal with dropdown
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999';
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = 'background:white;padding:20px;border-radius:8px;min-width:300px';
+    
+    const label = document.createElement('label');
+    label.textContent = 'Select a service to copy from:';
+    label.style.cssText = 'display:block;margin-bottom:10px;font-weight:600';
+    
+    const select = document.createElement('select');
+    select.style.cssText = 'width:100%;padding:8px;margin-bottom:15px;font-size:14px';
+    availableServices.forEach((service, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = service.name;
+      select.appendChild(option);
+    });
+    
+    const btnContainer = document.createElement('div');
+    btnContainer.style.cssText = 'display:flex;gap:10px;justify-content:center';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText = 'padding:8px 16px;background:white;color:#666;border:1px solid #ccc;cursor:pointer';
+    cancelBtn.onclick = () => modal.remove();
+    
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText = 'padding:8px 16px;background:#276ce5;color:white;border:none;cursor:pointer';
+    copyBtn.onclick = () => {
+      const selectedIndex = parseInt(select.value);
+      const selectedService = availableServices[selectedIndex];
+      modal.remove();
+      cloneService(selectedService);
+    };
+    
+    btnContainer.appendChild(cancelBtn);
+    btnContainer.appendChild(copyBtn);
+    dialog.appendChild(label);
+    dialog.appendChild(select);
+    dialog.appendChild(btnContainer);
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+  }
+  
+  function cloneService(selectedService) {
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    if (!orgServicesDiv) return;
+    
+    // Generate unique service ID
+    const serviceId = 'service-' + Date.now();
+    
+    // Clone the selected service (keeping all values)
+    const newServiceDiv = selectedService.element.cloneNode(true);
+    newServiceDiv.id = serviceId;
+    newServiceDiv.style.display = '';
+    
+    // Get the service name for navbar
+    const serviceName = newServiceDiv.querySelector('#service_name')?.value || 'Copied Service';
+    
+    // Add service link to navbar
+    const servicesList = document.getElementById('servicesList');
+    const li = document.createElement('li');
+    li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
+    li.dataset.serviceId = serviceId;
+    const link = document.createElement('a');
+    link.href = `#${serviceId}`;
+    link.textContent = serviceName;
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetDiv = document.getElementById(serviceId);
+      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
+    };
+    li.appendChild(link);
+    servicesList.appendChild(li);
+    
+    // Update navbar when service name changes
+    const serviceNameInput = newServiceDiv.querySelector('#service_name');
+    if (serviceNameInput) {
+      serviceNameInput.addEventListener('input', function() {
+        const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
+        if (navLink) {
+          navLink.textContent = this.value || 'Copied Service';
+        }
+      });
+    }
+    
+    // Append to orgServicesDiv container
+    orgServicesDiv.appendChild(newServiceDiv);
+    
+    // Scroll to new service
+    setTimeout(() => {
+      newServiceDiv.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+
+  // Update organization name in navbar when input changes
+  document.addEventListener('DOMContentLoaded', function() {
+    const orgNameInput = document.getElementById('organization_name');
+    const orgNavLink = document.getElementById('orgNavLink');
+    
+    if (orgNameInput && orgNavLink) {
+      // Update immediately on load if there's already a value
+      if (orgNameInput.value) {
+        orgNavLink.textContent = orgNameInput.value;
+      }
+      
+      // Update on input changes
+      orgNameInput.addEventListener('input', function() {
+        orgNavLink.textContent = this.value || '{{organization_name}}';
+      });
+    }
+
+    // Sidebar collapse toggle
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    
+    if (sidebar && toggleBtn) {
+      toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+      });
+    }
+
+    // Sidebar resize
+    const resizer = document.getElementById('sidebarResizer');
+    if (sidebar && resizer) {
+      let isResizing = false;
+      
+      resizer.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        document.body.style.cursor = 'ew-resize';
+      });
+      
+      document.addEventListener('mousemove', function(e) {
+        if (!isResizing) return;
+        const newWidth = e.clientX;
+        if (newWidth >= 160 && newWidth <= 640) {
+          sidebar.style.width = newWidth + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', function() {
+        isResizing = false;
+        document.body.style.cursor = '';
+      });
+    }
+  });
+</script>
+<!---=========================================================================== VERTICAL LEFT NAV BAR END =============================================================================-->
+
+</nav>
 <div style="flex: 1;">
 <!---=========================================================================== EDIT (ORG) SECTIONS STARTS ===========================================================================-->
                <div class="edit--sections" id="organizationDiv">
@@ -1076,8 +1080,7 @@
                             (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
                           </p>
                         </label>
-                        <textarea id="organization_internal_notes" class="input edit-section-internal-note" placeholder="Add any info that future content editors should be aware of updating this resource. Adding dates to your notes will help with tracking changes." data-field="internal_note">
-                        </textarea>
+                        <textarea id="organization_internal_notes" class="input edit-section-internal-note" placeholder="Add any info that future content editors should be aware of updating this resource. Adding dates to your notes will help with tracking changes." data-field="internal_note"></textarea>
                       </li>
 
 
@@ -1087,7 +1090,7 @@
                         <label for="organization_name">
                           Name of the Organization
                         </label>
-                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="">
+                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="Buen Dia Family School">
                       </li>
 
 
@@ -1104,8 +1107,7 @@
                         <div class="app-components-edit-EditAddress-module__addressListTitle--Y1zCq">
                           Location
                         </div>
-                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1">
-                        </div>
+                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1"><div>589 Guerrero St.<br>San Francisco, CA 94110</div></div>
                         <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
                           Add Location
                         </button>
@@ -1116,8 +1118,7 @@
                         <label for="edit-item">
                           Phones
                         </label>
-                        <ul id="organization_phones" class="edit--section--list--item--sublist">
-                        </ul>
+                        <ul id="organization_phones" class="edit--section--list--item--sublist"><li><strong></strong> 415-431-3535</li></ul>
                         <button type="button" class="edit--section--list--item--button solid-brand">
                           Add Phone
                         </button>
@@ -1146,8 +1147,7 @@
                         <label for="organization_description">
                           Description
                         </label>
-                        <textarea id="organization_description" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description">
-                        </textarea>
+                        <textarea id="organization_description" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description"></textarea>
                         <p>
                           If you'd like to add formatting to descriptions, we support&nbsp;
                           <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
@@ -1493,7 +1493,7 @@
                       dayGroups.forEach(group => {
                         const checkbox = group.querySelector('.is-24-hours input[type="checkbox"]');
                         const timeInputs = group.querySelectorAll('input[type="time"]');
-
+                        
                         checkbox.addEventListener('change', function() {
                           if (this.checked) {
                             timeInputs[0].value = '00:00';
@@ -1674,21 +1674,15 @@
                               <h4>
                                 New Service
                               </h4>
-
-
+                              <!-- <button class="remove-item" type="button" id="service--deactivation">
+                                Remove Service
+                              </button> -->
                             </header>
 
 
 
 
                             <ul class="edit--section--list">
-
-<!---------------------------------------------------------------------  Service Org Number ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                  <label for="serviceBelongsToOrg">Service Belongs To Organization:</label>
-                                  <input type="text" class="serviceBelongsToOrg"  id="serviceBelongsToOrg" placeholder="What Is The Number Of The Organization This Service Belongs To?">
-                              </li>
-
 <!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
                               <li class="edit--section--list--item">
                                 <label for="textarea">
@@ -1701,8 +1695,7 @@
                                     </p>
                                   </div>
                                 </label>
-                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes.">
-                                </textarea>
+                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes."></textarea>
                               </li>
 
 <!--------------------------------------------------------------------- Name ---------------------------------------------------------------------------->
@@ -1710,7 +1703,7 @@
                                 <label for="service_name">
                                   Name of the Service
                                 </label>
-                                <input id="service_name" type="text" placeholder="What is this service called?" value="">
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="Buen Dia Family School">
                               </li>
 
 <!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
@@ -1745,8 +1738,7 @@
                                   </select>
                                   -->
                                 </label>
-                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6">
-                                </div>
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6"><div>589 Guerrero St.<br>San Francisco, CA 94110</div></div>
 
 
                                 <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
@@ -1768,8 +1760,7 @@
                                 <label for="textarea">
                                   Service Description
                                 </label>
-                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences.">
-                                </textarea>
+                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences."></textarea>
                               </li>
 
 <!--------------------------------------------------------------------- Short Description  ---------------------------------------------------------------------------->
@@ -1777,8 +1768,7 @@
                                 <label for="textarea">
                                   Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
                                 </label>
-                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences.">
-                                </textarea>
+                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences."></textarea>
                               </li>
 
 <!--------------------------------------------------------------------- Application Process  ---------------------------------------------------------------------------->
@@ -1786,8 +1776,7 @@
                                 <label for="textarea">
                                   Application Process
                                 </label>
-                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?">
-                                </textarea>
+                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?"></textarea>
                               </li>
 
 
@@ -1796,8 +1785,7 @@
                                 <label for="textarea">
                                   Required Documents
                                 </label>
-                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?">
-                                </textarea>
+                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?"></textarea>
                               </li>
 
 <!--------------------------------------------------------------------- Interpretation Services  ---------------------------------------------------------------------------->
@@ -1805,8 +1793,7 @@
                                 <label for="textarea">
                                   Interpretation Services
                                 </label>
-                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?">
-                                </textarea>
+                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?"></textarea>
                               </li>
 
 
@@ -1815,8 +1802,7 @@
                                 <label for="textarea">
                                   Clinician Actions (Include any COVID Actions)
                                 </label>
-                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)">
-                                </textarea>
+                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)"></textarea>
                               </li>
 
 
@@ -1827,8 +1813,7 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
-                                      <div class="Select-placeholder">
+                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Age</span></div><div class="Select-placeholder" style="display: none;">
                                         Select...
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -1852,8 +1837,7 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
-                                      <div class="Select-placeholder">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Infants</span></div><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Toddlers</span></div><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Children</span></div><div class="Select-placeholder" style="display: none;">
                                         Select...
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -1938,8 +1922,7 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
-                                      <div class="Select-placeholder">
+                                    <div class="Select-multi-value-wrapper" id="service_top_categories"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Childcare</span></div><div class="Select-placeholder" style="display: none;">
                                         Select...
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -1963,8 +1946,7 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
-                                      <div class="Select-placeholder">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_categories"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Childcare</span></div><div class="Select-placeholder" style="display: none;">
                                         Select...
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
