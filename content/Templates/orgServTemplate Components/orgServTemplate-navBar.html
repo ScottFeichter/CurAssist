@@ -421,6 +421,7 @@
     const orgNavLink = document.getElementById('orgNavLink');
     
     if (orgNameInput && orgNavLink) {
+      orgNavLink.textContent = orgNameInput.value || '{{organization_name}}';
       orgNameInput.addEventListener('input', function() {
         orgNavLink.textContent = this.value || '{{organization_name}}';
       });
