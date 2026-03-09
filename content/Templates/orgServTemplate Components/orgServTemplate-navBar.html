@@ -243,6 +243,16 @@
     newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
     console.log('Cleared inputs');
     
+    // Wire up Remove Service button
+    const removeBtn = newServiceDiv.querySelector('#service--deactivation');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => {
+        newServiceDiv.remove();
+        const navItem = servicesList.querySelector(`[data-service-id="${serviceId}"]`);
+        if (navItem) navItem.remove();
+      });
+    }
+
     // Update navbar when service name changes
     const serviceNameInput = newServiceDiv.querySelector('#service_name');
     if (serviceNameInput) {
@@ -375,6 +385,16 @@
     li.appendChild(link);
     servicesList.appendChild(li);
     
+    // Wire up Remove Service button
+    const removeBtn = newServiceDiv.querySelector('#service--deactivation');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => {
+        newServiceDiv.remove();
+        const navItem = servicesList.querySelector(`[data-service-id="${serviceId}"]`);
+        if (navItem) navItem.remove();
+      });
+    }
+
     // Update navbar when service name changes
     const serviceNameInput = newServiceDiv.querySelector('#service_name');
     if (serviceNameInput) {
