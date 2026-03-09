@@ -444,8 +444,6 @@
 
   </head>
 <!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HEAD END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
-
-
 <!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  BODY START  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
   <body style="position: relative; min-height: 100%; top: 0px;">
 <!------------------------------------------------------------------------------ DIV ROOT START --------------------------------------------------------->
@@ -550,7 +548,7 @@
 
                     function toggleView() {
                       const orgWrapper = document.getElementById('organizationWrapper');
-                      const servDiv = document.getElementById('serviceDiv');
+                      const servDiv = document.getElementById('serviceDivSpreadsheet');
 
                       if (Organization) {
                         orgWrapper.style.display = 'flex';
@@ -586,455 +584,454 @@
 <!---=========================================================================== HEADER END ===============================================================================--->
 
 <div id="organizationWrapper" style="display: flex;">
-  <nav class="app-components-edit-EditSidebar-module__sidebar--npORK collapsed" id="sidebar">
-  <!---=========================================================================== VERTICAL LEFT NAV BAR START ============================================================================-->
-  <!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
-  <!-- Vertical Left Navigation Bar -->
+<nav class="app-components-edit-EditSidebar-module__sidebar--npORK collapsed" id="sidebar">
+<!---=========================================================================== VERTICAL LEFT NAV BAR START ============================================================================-->
+<!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
+<!-- Vertical Left Navigation Bar -->
 
-    <div class="app-components-edit-EditSidebar-module__sidebarContent--zw_PI">
+  <div class="app-components-edit-EditSidebar-module__sidebarContent--zw_PI">
 
-      <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
-        <a href="#organization" onclick="scrollToOrganization(event)">Organization</a>
-      </h3>
-      <ul class="app-components-edit-EditSidebar-module__list--EdtMl">
-        <li class="app-components-edit-EditSidebar-module__listItem--HBckV app-components-edit-EditSidebar-module__active--IatxP">
-          <a href="#" id="orgNavLink" onclick="searchOrganization(event, this.textContent)">{{organization_name}}</a>
-        </li>
-      </ul>
+    <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
+      <a href="#organization" onclick="scrollToOrganization(event)">Organization</a>
+    </h3>
+    <ul class="app-components-edit-EditSidebar-module__list--EdtMl">
+      <li class="app-components-edit-EditSidebar-module__listItem--HBckV app-components-edit-EditSidebar-module__active--IatxP">
+        <a href="#" id="orgNavLink" onclick="searchOrganization(event, this.textContent)">{{organization_name}}</a>
+      </li>
+    </ul>
 
-      <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
-        <a href="#services" onclick="scrollToFirstService(event)">Services</a>
-      </h3>
-      <div style="padding: 0 25px 10px; display: flex; gap: 8px; flex-wrap: nowrap;">
-        <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_blank" onclick="addNewService()">add blank</button>
-        <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_from" onclick="addServiceFrom()">add from</button>
-      </div>
-      <ul class="app-components-edit-EditSidebar-module__list--EdtMl" id="servicesList">
-      </ul>
-
+    <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
+      <a href="#services" onclick="scrollToFirstService(event)">Services</a>
+    </h3>
+    <div style="padding: 0 25px 10px; display: flex; gap: 8px; flex-wrap: nowrap;">
+      <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_blank" onclick="addNewService()">add blank</button>
+      <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_from" onclick="addServiceFrom()">add from</button>
     </div>
-    <div class="sidebar-resizer" id="sidebarResizer"></div>
+    <ul class="app-components-edit-EditSidebar-module__list--EdtMl" id="servicesList">
+    </ul>
+
+  </div>
+  <div class="sidebar-resizer" id="sidebarResizer"></div>
 
 
-  <!------------------------------------------------------------------------------ CSS ------------------------------------------------------------------------------->
-  <style>
-    .app-components-edit-EditSidebar-module__sidebar--npORK {
-      width: 15.625rem;
-      min-width: 10rem;
-      max-width: 40rem;
-      background-color: #f9f9f9;
-      display: flex;
-      flex-direction: column;
-      position: sticky;
-      top: 5rem;
-      height: 94vh;
-      transition: width 0.3s ease;
+<!------------------------------------------------------------------------------ CSS ------------------------------------------------------------------------------->
+<style>
+  .app-components-edit-EditSidebar-module__sidebar--npORK {
+    width: 15.625rem;
+    min-width: 10rem;
+    max-width: 40rem;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 5rem;
+    height: 94vh;
+    transition: width 0.3s ease;
+  }
+
+  .app-components-edit-EditSidebar-module__sidebar--npORK.collapsed {
+    width: 0;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .sidebar-toggle {
+    display: block;
+    margin-bottom: 10px;
+    width: 30px;
+    height: 30px;
+    background: #276ce5;
+    color: white;
+    border: 1px solid #1a5bb8;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .sidebar-toggle:hover {
+    background: #1a5bb8;
+  }
+
+  .sidebar-resizer {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 5px;
+    height: 100%;
+    cursor: ew-resize;
+    background: transparent;
+  }
+
+  .sidebar-resizer:hover {
+    background: #276ce5;
+  }
+
+  .app-components-edit-EditSidebar-module__sidebarContent--zw_PI {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .app-components-edit-EditSidebar-module__list--EdtMl {
+    border-bottom: 1px solid #f4f4f4;
+    padding-bottom: 20px;
+    list-style: none;
+  }
+
+  .app-components-edit-EditSidebar-module__list--EdtMl:last-of-type {
+    border-bottom: 0;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh {
+    padding: 20px 25px 10px;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #484848;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh a {
+    color: #484848;
+    text-decoration: none;
+  }
+
+  .app-components-edit-EditSidebar-module__listHeading--pbhfh a:hover {
+    color: #276ce5;
+    text-decoration: underline;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV {
+    font-size: 15px;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV a {
+    color: #888;
+    border-left: none !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100%;
+    padding: 11px 25px 11px 25px;
+    height: 2.5rem;
+    display: block;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV a:hover {
+    text-decoration: none;
+    color: #276ce5;
+  }
+
+  .app-components-edit-EditSidebar-module__listItem--HBckV.app-components-edit-EditSidebar-module__active--IatxP a {
+    color: #276ce5;
+    border-left: none !important;
+  }
+
+  .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8 {
+    color: #666;
+    background: none;
+    padding: 2px 8px;
+    height: auto;
+    float: right;
+    font-size: 0.75rem;
+    border: 1px solid #666;
+    border-radius: 3px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8:hover {
+    color: #276ce5;
+    border-color: #276ce5;
+  }
+
+
+</style>
+
+<!------------------------------------------------------------------------------ JS ------------------------------------------------------------------------------->
+<script>
+  function searchOrganization(event, orgName) {
+    event.preventDefault();
+    alert('You are visiting an external site.');
+    const searchUrl = `https://www.sfserviceguide.org/search?query=${encodeURIComponent(orgName)}`;
+    window.open(searchUrl, '_blank');
+  }
+
+  function scrollToOrganization(event) {
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function scrollToFirstService(event) {
+    event.preventDefault();
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    const firstService = orgServicesDiv?.firstElementChild;
+    if (firstService) {
+      firstService.scrollIntoView({ behavior: 'smooth' });
     }
-
-    .app-components-edit-EditSidebar-module__sidebar--npORK.collapsed {
-      width: 0;
-      min-width: 0;
-      overflow: hidden;
-    }
-
-    .sidebar-toggle {
-      display: block;
-      margin-bottom: 10px;
-      width: 30px;
-      height: 30px;
-      background: #276ce5;
-      color: white;
-      border: 1px solid #1a5bb8;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 16px;
-    }
-
-    .sidebar-toggle:hover {
-      background: #1a5bb8;
-    }
-
-    .sidebar-resizer {
-      position: absolute;
-      right: 0;
-      top: 0;
-      width: 5px;
-      height: 100%;
-      cursor: ew-resize;
-      background: transparent;
-    }
-
-    .sidebar-resizer:hover {
-      background: #276ce5;
-    }
-
-    .app-components-edit-EditSidebar-module__sidebarContent--zw_PI {
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
-
-    .app-components-edit-EditSidebar-module__list--EdtMl {
-      border-bottom: 1px solid #f4f4f4;
-      padding-bottom: 20px;
-      list-style: none;
-    }
-
-    .app-components-edit-EditSidebar-module__list--EdtMl:last-of-type {
-      border-bottom: 0;
-    }
-
-    .app-components-edit-EditSidebar-module__listHeading--pbhfh {
-      padding: 20px 25px 10px;
-      text-transform: uppercase;
-      font-size: 0.8125rem;
-      font-weight: 600;
-      color: #484848;
-    }
-
-    .app-components-edit-EditSidebar-module__listHeading--pbhfh a {
-      color: #484848;
-      text-decoration: none;
-    }
-
-    .app-components-edit-EditSidebar-module__listHeading--pbhfh a:hover {
-      color: #276ce5;
-      text-decoration: underline;
-    }
-
-    .app-components-edit-EditSidebar-module__listItem--HBckV {
-      font-size: 15px;
-    }
-
-    .app-components-edit-EditSidebar-module__listItem--HBckV a {
-      color: #888;
-      border-left: none !important;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      width: 100%;
-      padding: 11px 25px 11px 25px;
-      height: 2.5rem;
-      display: block;
-    }
-
-    .app-components-edit-EditSidebar-module__listItem--HBckV a:hover {
-      text-decoration: none;
-      color: #276ce5;
-    }
-
-    .app-components-edit-EditSidebar-module__listItem--HBckV.app-components-edit-EditSidebar-module__active--IatxP a {
-      color: #276ce5;
-      border-left: none !important;
-    }
-
-    .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8 {
-      color: #666;
-      background: none;
-      padding: 2px 8px;
-      height: auto;
-      float: right;
-      font-size: 0.75rem;
-      border: 1px solid #666;
-      border-radius: 3px;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .app-components-edit-EditSidebar-module__serviceActionButton--rxLK8:hover {
-      color: #276ce5;
-      border-color: #276ce5;
-    }
-
-
-  </style>
-
-  <!------------------------------------------------------------------------------ JS ------------------------------------------------------------------------------->
-  <script>
-    function searchOrganization(event, orgName) {
-      event.preventDefault();
-      alert('You are visiting an external site.');
-      const searchUrl = `https://www.sfserviceguide.org/search?query=${encodeURIComponent(orgName)}`;
-      window.open(searchUrl, '_blank');
-    }
-
-    function scrollToOrganization(event) {
-      event.preventDefault();
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function scrollToFirstService(event) {
-      event.preventDefault();
-      const orgServicesDiv = document.getElementById('orgServicesDiv');
-      const firstService = orgServicesDiv?.firstElementChild;
-      if (firstService) {
-        firstService.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-
-    function addNewService() {
-      console.log('addNewService called');
-
-      // Generate unique service ID
-      const serviceId = 'service-' + Date.now();
-      console.log('serviceId:', serviceId);
-
-      // Determine next placeholder name
-      const servicesList = document.getElementById('servicesList');
-      const existingLinks = Array.from(servicesList.querySelectorAll('a'));
-      const placeholderPattern = /^New Service (\d+)$/;
-      let maxNum = 0;
-
-      existingLinks.forEach(link => {
-        const match = link.textContent.match(placeholderPattern);
-        if (match) {
-          maxNum = Math.max(maxNum, parseInt(match[1]));
-        }
-      });
-
-      const placeholderName = `New Service ${maxNum + 1}`;
-      console.log('placeholderName:', placeholderName);
-
-      // Add service link to navbar
-      const li = document.createElement('li');
-      li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
-      li.dataset.serviceId = serviceId;
-      const link = document.createElement('a');
-      link.href = `#${serviceId}`;
-      link.textContent = placeholderName;
-      link.onclick = (e) => {
-        e.preventDefault();
-        const targetDiv = document.getElementById(serviceId);
-        if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
-      };
-      li.appendChild(link);
-      servicesList.appendChild(li);
-      console.log('Added link to navbar');
-
-      // Find the ServiceDiv template to clone
-      const serviceTemplate = document.getElementById('serviceDiv');
-      console.log('serviceTemplate:', serviceTemplate);
-      if (!serviceTemplate) {
-        console.error('serviceDiv not found');
-        return;
-      }
-
-      // Clone the entire service div
-      const newServiceDiv = serviceTemplate.cloneNode(true);
-      newServiceDiv.id = serviceId;
-      newServiceDiv.style.display = '';
-      console.log('Cloned service div');
-
-      // Clear all inputs to make it blank
-      newServiceDiv.querySelectorAll('input, textarea').forEach(input => input.value = '');
-      newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
-      newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
-      console.log('Cleared inputs');
-
-      // Update navbar when service name changes
-      const serviceNameInput = newServiceDiv.querySelector('#service_name');
-      if (serviceNameInput) {
-        serviceNameInput.addEventListener('input', function() {
-          const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
-          if (navLink) {
-            navLink.textContent = this.value || placeholderName;
-          }
-        });
-      }
-
-      // Append to orgServicesDiv container
-      const orgServicesDiv = document.getElementById('orgServicesDiv');
-      console.log('orgServicesDiv:', orgServicesDiv);
-      if (!orgServicesDiv) {
-        console.error('orgServicesDiv container not found');
-        return;
-      }
-
-      orgServicesDiv.appendChild(newServiceDiv);
-      console.log('Appended to orgServicesDiv');
-
-      // Scroll to new service
-      setTimeout(() => {
-        newServiceDiv.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
-
-    function addServiceFrom() {
-      // Get all available services
-      const serviceTemplate = document.getElementById('serviceDiv');
-      const orgServicesDiv = document.getElementById('orgServicesDiv');
-      const existingServices = orgServicesDiv ? Array.from(orgServicesDiv.children) : [];
-
-      // Build list of available services
-      const availableServices = [];
-
-      // Add original service if it exists
-      if (serviceTemplate) {
-        const serviceName = serviceTemplate.querySelector('#service_name')?.value || 'Original Service';
-        availableServices.push({ id: 'serviceDiv', name: serviceName, element: serviceTemplate });
-      }
-
-      // Add existing services from orgServicesDiv
-      existingServices.forEach(service => {
-        const serviceName = service.querySelector('#service_name')?.value || 'Unnamed Service';
-        availableServices.push({ id: service.id, name: serviceName, element: service });
-      });
-
-      if (availableServices.length === 0) {
-        alert('No other services to copy from');
-        return;
-      }
-
-      // Create modal with dropdown
-      const modal = document.createElement('div');
-      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999';
-
-      const dialog = document.createElement('div');
-      dialog.style.cssText = 'background:white;padding:20px;border-radius:8px;min-width:300px';
-
-      const label = document.createElement('label');
-      label.textContent = 'Select a service to copy from:';
-      label.style.cssText = 'display:block;margin-bottom:10px;font-weight:600';
-
-      const select = document.createElement('select');
-      select.style.cssText = 'width:100%;padding:8px;margin-bottom:15px;font-size:14px';
-      availableServices.forEach((service, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = service.name;
-        select.appendChild(option);
-      });
-
-      const btnContainer = document.createElement('div');
-      btnContainer.style.cssText = 'display:flex;gap:10px;justify-content:center';
-
-      const cancelBtn = document.createElement('button');
-      cancelBtn.textContent = 'Cancel';
-      cancelBtn.style.cssText = 'padding:8px 16px;background:white;color:#666;border:1px solid #ccc;cursor:pointer';
-      cancelBtn.onclick = () => modal.remove();
-
-      const copyBtn = document.createElement('button');
-      copyBtn.textContent = 'Copy';
-      copyBtn.style.cssText = 'padding:8px 16px;background:#276ce5;color:white;border:none;cursor:pointer';
-      copyBtn.onclick = () => {
-        const selectedIndex = parseInt(select.value);
-        const selectedService = availableServices[selectedIndex];
-        modal.remove();
-        cloneService(selectedService);
-      };
-
-      btnContainer.appendChild(cancelBtn);
-      btnContainer.appendChild(copyBtn);
-      dialog.appendChild(label);
-      dialog.appendChild(select);
-      dialog.appendChild(btnContainer);
-      modal.appendChild(dialog);
-      document.body.appendChild(modal);
-    }
-
-    function cloneService(selectedService) {
-      const orgServicesDiv = document.getElementById('orgServicesDiv');
-      if (!orgServicesDiv) return;
-
-      // Generate unique service ID
-      const serviceId = 'service-' + Date.now();
-
-      // Clone the selected service (keeping all values)
-      const newServiceDiv = selectedService.element.cloneNode(true);
-      newServiceDiv.id = serviceId;
-      newServiceDiv.style.display = '';
-
-      // Get the service name for navbar
-      const serviceName = newServiceDiv.querySelector('#service_name')?.value || 'Copied Service';
-
-      // Add service link to navbar
-      const servicesList = document.getElementById('servicesList');
-      const li = document.createElement('li');
-      li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
-      li.dataset.serviceId = serviceId;
-      const link = document.createElement('a');
-      link.href = `#${serviceId}`;
-      link.textContent = serviceName;
-      link.onclick = (e) => {
-        e.preventDefault();
-        const targetDiv = document.getElementById(serviceId);
-        if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
-      };
-      li.appendChild(link);
-      servicesList.appendChild(li);
-
-      // Update navbar when service name changes
-      const serviceNameInput = newServiceDiv.querySelector('#service_name');
-      if (serviceNameInput) {
-        serviceNameInput.addEventListener('input', function() {
-          const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
-          if (navLink) {
-            navLink.textContent = this.value || 'Copied Service';
-          }
-        });
-      }
-
-      // Append to orgServicesDiv container
-      orgServicesDiv.appendChild(newServiceDiv);
-
-      // Scroll to new service
-      setTimeout(() => {
-        newServiceDiv.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
-    }
-
-    // Update organization name in navbar when input changes
-    document.addEventListener('DOMContentLoaded', function() {
-      const orgNameInput = document.getElementById('organization_name');
-      const orgNavLink = document.getElementById('orgNavLink');
-
-      if (orgNameInput && orgNavLink) {
-        orgNameInput.addEventListener('input', function() {
-          orgNavLink.textContent = this.value || '{{organization_name}}';
-        });
-      }
-
-      // Sidebar collapse toggle
-      const sidebar = document.getElementById('sidebar');
-      const toggleBtn = document.getElementById('sidebarToggle');
-
-      if (sidebar && toggleBtn) {
-        toggleBtn.addEventListener('click', function() {
-          sidebar.classList.toggle('collapsed');
-          toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
-        });
-      }
-
-      // Sidebar resize
-      const resizer = document.getElementById('sidebarResizer');
-      if (sidebar && resizer) {
-        let isResizing = false;
-
-        resizer.addEventListener('mousedown', function(e) {
-          isResizing = true;
-          document.body.style.cursor = 'ew-resize';
-        });
-
-        document.addEventListener('mousemove', function(e) {
-          if (!isResizing) return;
-          const newWidth = e.clientX;
-          if (newWidth >= 160 && newWidth <= 640) {
-            sidebar.style.width = newWidth + 'px';
-          }
-        });
-
-        document.addEventListener('mouseup', function() {
-          isResizing = false;
-          document.body.style.cursor = '';
-        });
+  }
+
+  function addNewService() {
+    console.log('addNewService called');
+    
+    // Generate unique service ID
+    const serviceId = 'service-' + Date.now();
+    console.log('serviceId:', serviceId);
+    
+    // Determine next placeholder name
+    const servicesList = document.getElementById('servicesList');
+    const existingLinks = Array.from(servicesList.querySelectorAll('a'));
+    const placeholderPattern = /^New Service (\d+)$/;
+    let maxNum = 0;
+    
+    existingLinks.forEach(link => {
+      const match = link.textContent.match(placeholderPattern);
+      if (match) {
+        maxNum = Math.max(maxNum, parseInt(match[1]));
       }
     });
-  </script>
-  <!---=========================================================================== VERTICAL LEFT NAV BAR END =============================================================================-->
+    
+    const placeholderName = `New Service ${maxNum + 1}`;
+    console.log('placeholderName:', placeholderName);
+    
+    // Add service link to navbar
+    const li = document.createElement('li');
+    li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
+    li.dataset.serviceId = serviceId;
+    const link = document.createElement('a');
+    link.href = `#${serviceId}`;
+    link.textContent = placeholderName;
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetDiv = document.getElementById(serviceId);
+      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
+    };
+    li.appendChild(link);
+    servicesList.appendChild(li);
+    console.log('Added link to navbar');
+    
+    // Find the ServiceDiv template to clone
+    const serviceTemplate = document.getElementById('serviceDivOrganization');
+    if (!serviceTemplate) {
+      console.error('serviceDivOrganization not found');
+      return;
+    }
+    
+    // Clone the entire service div
+    const newServiceDiv = serviceTemplate.cloneNode(true);
+    newServiceDiv.id = serviceId;
+    newServiceDiv.style.display = '';
+    console.log('Cloned service div');
+    
+    // Clear all inputs to make it blank
+    newServiceDiv.querySelectorAll('input, textarea').forEach(input => input.value = '');
+    newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
+    newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
+    console.log('Cleared inputs');
+    
+    // Update navbar when service name changes
+    const serviceNameInput = newServiceDiv.querySelector('#service_name');
+    if (serviceNameInput) {
+      serviceNameInput.addEventListener('input', function() {
+        const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
+        if (navLink) {
+          navLink.textContent = this.value || placeholderName;
+        }
+      });
+    }
+    
+    // Append to orgServicesDiv container
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    console.log('orgServicesDiv:', orgServicesDiv);
+    if (!orgServicesDiv) {
+      console.error('orgServicesDiv container not found');
+      return;
+    }
+    
+    orgServicesDiv.appendChild(newServiceDiv);
+    console.log('Appended to orgServicesDiv');
+    
+    // Scroll to new service
+    setTimeout(() => {
+      newServiceDiv.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
 
-  </nav>
+  function addServiceFrom() {
+    // Get all available services
+    const serviceTemplate = document.getElementById('serviceDivOrganization');
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    const existingServices = orgServicesDiv ? Array.from(orgServicesDiv.children) : [];
+    
+    // Build list of available services
+    const availableServices = [];
+    
+    // Add original service if it exists
+    if (serviceTemplate) {
+      const serviceName = serviceTemplate.querySelector('#service_name')?.value || 'Original Service';
+      availableServices.push({ id: 'serviceDivOrganization', name: serviceName, element: serviceTemplate });
+    }
+    
+    // Add existing services from orgServicesDiv
+    existingServices.forEach(service => {
+      const serviceName = service.querySelector('#service_name')?.value || 'Unnamed Service';
+      availableServices.push({ id: service.id, name: serviceName, element: service });
+    });
+    
+    if (availableServices.length === 0) {
+      alert('No other services to copy from');
+      return;
+    }
+    
+    // Create modal with dropdown
+    const modal = document.createElement('div');
+    modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999';
+    
+    const dialog = document.createElement('div');
+    dialog.style.cssText = 'background:white;padding:20px;border-radius:8px;min-width:300px';
+    
+    const label = document.createElement('label');
+    label.textContent = 'Select a service to copy from:';
+    label.style.cssText = 'display:block;margin-bottom:10px;font-weight:600';
+    
+    const select = document.createElement('select');
+    select.style.cssText = 'width:100%;padding:8px;margin-bottom:15px;font-size:14px';
+    availableServices.forEach((service, index) => {
+      const option = document.createElement('option');
+      option.value = index;
+      option.textContent = service.name;
+      select.appendChild(option);
+    });
+    
+    const btnContainer = document.createElement('div');
+    btnContainer.style.cssText = 'display:flex;gap:10px;justify-content:center';
+    
+    const cancelBtn = document.createElement('button');
+    cancelBtn.textContent = 'Cancel';
+    cancelBtn.style.cssText = 'padding:8px 16px;background:white;color:#666;border:1px solid #ccc;cursor:pointer';
+    cancelBtn.onclick = () => modal.remove();
+    
+    const copyBtn = document.createElement('button');
+    copyBtn.textContent = 'Copy';
+    copyBtn.style.cssText = 'padding:8px 16px;background:#276ce5;color:white;border:none;cursor:pointer';
+    copyBtn.onclick = () => {
+      const selectedIndex = parseInt(select.value);
+      const selectedService = availableServices[selectedIndex];
+      modal.remove();
+      cloneService(selectedService);
+    };
+    
+    btnContainer.appendChild(cancelBtn);
+    btnContainer.appendChild(copyBtn);
+    dialog.appendChild(label);
+    dialog.appendChild(select);
+    dialog.appendChild(btnContainer);
+    modal.appendChild(dialog);
+    document.body.appendChild(modal);
+  }
+  
+  function cloneService(selectedService) {
+    const orgServicesDiv = document.getElementById('orgServicesDiv');
+    if (!orgServicesDiv) return;
+    
+    // Generate unique service ID
+    const serviceId = 'service-' + Date.now();
+    
+    // Clone the selected service (keeping all values)
+    const newServiceDiv = selectedService.element.cloneNode(true);
+    newServiceDiv.id = serviceId;
+    newServiceDiv.style.display = '';
+    
+    // Get the service name for navbar
+    const serviceName = newServiceDiv.querySelector('#service_name')?.value || 'Copied Service';
+    
+    // Add service link to navbar
+    const servicesList = document.getElementById('servicesList');
+    const li = document.createElement('li');
+    li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
+    li.dataset.serviceId = serviceId;
+    const link = document.createElement('a');
+    link.href = `#${serviceId}`;
+    link.textContent = serviceName;
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetDiv = document.getElementById(serviceId);
+      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
+    };
+    li.appendChild(link);
+    servicesList.appendChild(li);
+    
+    // Update navbar when service name changes
+    const serviceNameInput = newServiceDiv.querySelector('#service_name');
+    if (serviceNameInput) {
+      serviceNameInput.addEventListener('input', function() {
+        const navLink = servicesList.querySelector(`[data-service-id="${serviceId}"] a`);
+        if (navLink) {
+          navLink.textContent = this.value || 'Copied Service';
+        }
+      });
+    }
+    
+    // Append to orgServicesDiv container
+    orgServicesDiv.appendChild(newServiceDiv);
+    
+    // Scroll to new service
+    setTimeout(() => {
+      newServiceDiv.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  }
+
+  // Update organization name in navbar when input changes
+  document.addEventListener('DOMContentLoaded', function() {
+    const orgNameInput = document.getElementById('organization_name');
+    const orgNavLink = document.getElementById('orgNavLink');
+    
+    if (orgNameInput && orgNavLink) {
+      orgNameInput.addEventListener('input', function() {
+        orgNavLink.textContent = this.value || '{{organization_name}}';
+      });
+    }
+
+    // Sidebar collapse toggle
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('sidebarToggle');
+    
+    if (sidebar && toggleBtn) {
+      toggleBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('collapsed');
+        toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
+      });
+    }
+
+    // Sidebar resize
+    const resizer = document.getElementById('sidebarResizer');
+    if (sidebar && resizer) {
+      let isResizing = false;
+      
+      resizer.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        document.body.style.cursor = 'ew-resize';
+      });
+      
+      document.addEventListener('mousemove', function(e) {
+        if (!isResizing) return;
+        const newWidth = e.clientX;
+        if (newWidth >= 160 && newWidth <= 640) {
+          sidebar.style.width = newWidth + 'px';
+        }
+      });
+      
+      document.addEventListener('mouseup', function() {
+        isResizing = false;
+        document.body.style.cursor = '';
+      });
+    }
+  });
+</script>
+<!---=========================================================================== VERTICAL LEFT NAV BAR END =============================================================================-->
+
+</nav>
 <div style="flex: 1;">
 <!---=========================================================================== EDIT (ORG) SECTIONS STARTS ===========================================================================-->
                <div class="edit--sections" id="organizationDiv">
@@ -1493,7 +1490,7 @@
                       dayGroups.forEach(group => {
                         const checkbox = group.querySelector('.is-24-hours input[type="checkbox"]');
                         const timeInputs = group.querySelectorAll('input[type="time"]');
-
+                        
                         checkbox.addEventListener('change', function() {
                           if (this.checked) {
                             timeInputs[0].value = '00:00';
@@ -1655,7 +1652,7 @@
 </div>
 </div>
 <!---=========================================================================== EDIT SERVICES STARTS ============================================================================-->
-                <div class="edit--services" id="serviceDiv">
+                <div class="edit--services" id="serviceDivSpreadsheet">
 
                   <!-- <header class="edit--main--header"> -->
                     <!-- <h1 class="edit--main--header--title">
@@ -1688,7 +1685,7 @@
                                   <label for="serviceBelongsToOrg">Service Belongs To Organization:</label>
                                   <input type="text" class="serviceBelongsToOrg"  id="serviceBelongsToOrg" placeholder="What Is The Number Of The Organization This Service Belongs To?">
                               </li>
-
+                              
 <!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
                               <li class="edit--section--list--item">
                                 <label for="textarea">
@@ -1993,7 +1990,7 @@
 
                   <style>
                     /* Service Section Modal Styles */
-                    #serviceDiv .service-modal {
+                    #serviceDivSpreadsheet .service-modal {
                       position: fixed;
                       top: 0;
                       left: 0;
@@ -2005,19 +2002,19 @@
                       justify-content: center;
                       z-index: 1000;
                     }
-                    #serviceDiv .service-modal-content {
+                    #serviceDivSpreadsheet .service-modal-content {
                       background: white;
                       padding: 30px;
                       border-radius: 8px;
                       min-width: 400px;
                       max-width: 500px;
                     }
-                    #serviceDiv .service-modal-content h3 {
+                    #serviceDivSpreadsheet .service-modal-content h3 {
                       margin-top: 0;
                       margin-bottom: 20px;
                     }
-                    #serviceDiv .service-modal-content input,
-                    #serviceDiv .service-modal-content textarea {
+                    #serviceDivSpreadsheet .service-modal-content input,
+                    #serviceDivSpreadsheet .service-modal-content textarea {
                       width: 100%;
                       margin-bottom: 15px;
                       padding: 10px;
@@ -2025,22 +2022,22 @@
                       border-radius: 4px;
                       box-sizing: border-box;
                     }
-                    #serviceDiv .service-modal-content textarea {
+                    #serviceDivSpreadsheet .service-modal-content textarea {
                       min-height: 150px;
                       resize: vertical;
                     }
-                    #serviceDiv .service-modal-content button {
+                    #serviceDivSpreadsheet .service-modal-content button {
                       margin-right: 10px;
                       padding: 10px 20px;
                       border: none;
                       border-radius: 4px;
                       cursor: pointer;
                     }
-                    #serviceDiv .service-modal-content button:first-of-type {
+                    #serviceDivSpreadsheet .service-modal-content button:first-of-type {
                       background: #276ce5;
                       color: white;
                     }
-                    #serviceDiv .service-modal-content button:last-of-type {
+                    #serviceDivSpreadsheet .service-modal-content button:last-of-type {
                       background: #ddd;
                     }
 
@@ -2128,7 +2125,7 @@
                     const serviceNoteModal = document.getElementById('serviceAddNoteModal');
 
                     // Find all Add buttons in serviceDiv only
-                    const serviceButtons = document.querySelectorAll('#serviceDiv button');
+                    const serviceButtons = document.querySelectorAll('#serviceDivSpreadsheet button');
 
                     serviceButtons.forEach(btn => {
                       const text = btn.textContent.trim();
@@ -2184,7 +2181,7 @@
                       const name = document.getElementById('servicePhoneName').value;
                       const number = document.getElementById('servicePhoneNumber').value;
 
-                      const phoneSublist = document.querySelectorAll('#serviceDiv .edit--section--list--item--sublist')[0];
+                      const phoneSublist = document.querySelectorAll('#serviceDivSpreadsheet .edit--section--list--item--sublist')[0];
                       const li = document.createElement('li');
                       li.innerHTML = `<strong>${name}:</strong> ${number}`;
                       phoneSublist.appendChild(li);
@@ -2202,7 +2199,7 @@
                     document.getElementById('serviceAddNoteBtn').addEventListener('click', () => {
                       const note = document.getElementById('serviceNoteText').value;
 
-                      const noteSublist = document.querySelectorAll('#serviceDiv .edit--section--list--item--sublist')[1];
+                      const noteSublist = document.querySelectorAll('#serviceDivSpreadsheet .edit--section--list--item--sublist')[1];
                       const li = document.createElement('li');
                       li.textContent = note;
                       noteSublist.appendChild(li);
@@ -2833,6 +2830,1179 @@
               </div>
 <!---=========================================================================== EDIT SERVICES ENDS ===========================================================================--->
 
+<div id="serviceDivOrgTemplate" style="display:none;"><!---=========================================================================== EDIT SERVICES STARTS ============================================================================-->
+                <div class="edit--services" id="serviceDivOrganization">
+
+                  <!-- <header class="edit--main--header"> -->
+                    <!-- <h1 class="edit--main--header--title">
+                      Services
+                    </h1> -->
+                  <!-- </header> -->
+
+                  <div class="edit--sections">
+                    <ul class="edit--section--list">
+                      <li class="edit--section--list--item">
+                        <ul class="edit--section--list--item--sublist edit--service--list">
+                          <li id="-2" class="edit--service edit--section">
+
+
+                            <header class="edit--section--header">
+                              <h4>
+                                New Service
+                              </h4>
+                              <button class="remove-item" type="button" id="service--deactivation">
+                                Remove Service
+                              </button>
+                            </header>
+
+
+
+
+                            <ul class="edit--section--list">
+<!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  <div>
+                                    <p class="internal-note-label-text">
+                                      Internal Notes about Editing this Service
+                                    </p>
+                                    <p class="internal-note-label-subtext">
+                                      (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
+                                    </p>
+                                  </div>
+                                </label>
+                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes.">
+                                </textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_name">
+                                  Name of the Service
+                                </label>
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_alternate_name">
+                                  Alternate Name
+                                </label>
+                                <input id="service_alternate_name" type="text" placeholder="What it's known as in the community" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Location ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label>
+                                  Location
+                                  <!-- COMMENTED OUT: Add location from organization dropdown
+                                  <select class="app-components-edit-ProvidedService-module__addressSelect--Q9eih">
+                                    <option value="">
+                                      Add location from organization
+                                    </option>
+                                    <option value="0">
+                                      1925 Lawton Campus
+                                    </option>
+                                    <option value="1">
+                                      Silver Campus
+                                    </option>
+                                    <option value="2">
+                                      1943 Lawton Campus
+                                    </option>
+                                    <option value="3">
+                                      Cambridge Campus
+                                    </option>
+                                  </select>
+                                  -->
+                                </label>
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6">
+                                </div>
+
+
+                                <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
+                                  Add Location
+                                </button>
+                             </li>
+
+<!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item email">
+                                <label for="input">
+                                  Service E-Mail
+                                </label>
+                                <input id="service_email" type="email" placeholder="Email address for this service" value="">
+                              </li>
+
+
+ <!--------------------------------------------------------------------- Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Description
+                                </label>
+                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences.">
+                                </textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Short Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
+                                </label>
+                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences.">
+                                </textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Application Process  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Application Process
+                                </label>
+                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?">
+                                </textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Required Documents  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Required Documents
+                                </label>
+                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?">
+                                </textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Interpretation Services  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Interpretation Services
+                                </label>
+                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?">
+                                </textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Clinical Actions  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Clinician Actions (Include any COVID Actions)
+                                </label>
+                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)">
+                                </textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Top Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilityTopDropdown">
+                                  Top Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
+                                      <div class="Select-placeholder">
+                                        Select...
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilitySubDropdown">
+                                  Sub Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
+                                      <div class="Select-placeholder">
+                                        Select...
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Cost  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Cost
+                                </label>
+                                <input id="service_cost" type="text" placeholder="How much does this service cost?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Wait Time  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Wait Time
+                                </label>
+                                <input id="service_wait_time" type="text" placeholder="Is there a waiting list or wait time?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Website  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Service's Website
+                                </label>
+                                <input id="service_website" type="text" placeholder="http://" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Hours  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item hours">
+                                <span class="label">
+                                  Hours
+                                </span>
+                                <div class="inherit-schedule">
+                                  <label for="inherit" class="inline-checkbox">
+                                    <input id="inherit" class="input-checkbox" type="checkbox" checked="">
+                                    Inherit schedule from parent organization
+                                  </label>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Markdown Notes  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item edit--notes">
+                                <label for="add-note">
+                                  Notes
+                                </label>
+                                <p>
+                                  <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
+                                    Markdown
+                                  </a>
+                                  is also supported for notes.
+                                </p>
+                                <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
+                                </ul>
+                                <button type="button" class="edit--section--list--item--button">
+                                  <i class="material-symbols-outlined">
+                                    add_box
+                                  </i>
+                                  Add Note
+                                </button>
+                              </li>
+
+<!--------------------------------------------------------------------- Top Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categoryTopDropdown">
+                                  Top Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
+                                      <div class="Select-placeholder">
+                                        Select...
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categorySubDropdown">
+                                  Sub Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
+                                      <div class="Select-placeholder">
+                                        Select...
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: CSS ------------------------------------------------------------------------------->
+
+                  <style>
+                    /* Service Section Modal Styles */
+                    #serviceDivOrganization .service-modal {
+                      position: fixed;
+                      top: 0;
+                      left: 0;
+                      width: 100%;
+                      height: 100%;
+                      background: rgba(0,0,0,0.5);
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      z-index: 1000;
+                    }
+                    #serviceDivOrganization .service-modal-content {
+                      background: white;
+                      padding: 30px;
+                      border-radius: 8px;
+                      min-width: 400px;
+                      max-width: 500px;
+                    }
+                    #serviceDivOrganization .service-modal-content h3 {
+                      margin-top: 0;
+                      margin-bottom: 20px;
+                    }
+                    #serviceDivOrganization .service-modal-content input,
+                    #serviceDivOrganization .service-modal-content textarea {
+                      width: 100%;
+                      margin-bottom: 15px;
+                      padding: 10px;
+                      border: 1px solid #ddd;
+                      border-radius: 4px;
+                      box-sizing: border-box;
+                    }
+                    #serviceDivOrganization .service-modal-content textarea {
+                      min-height: 150px;
+                      resize: vertical;
+                    }
+                    #serviceDivOrganization .service-modal-content button {
+                      margin-right: 10px;
+                      padding: 10px 20px;
+                      border: none;
+                      border-radius: 4px;
+                      cursor: pointer;
+                    }
+                    #serviceDivOrganization .service-modal-content button:first-of-type {
+                      background: #276ce5;
+                      color: white;
+                    }
+                    #serviceDivOrganization .service-modal-content button:last-of-type {
+                      background: #ddd;
+                    }
+
+                    /* Category Autocomplete Styles */
+                    #categoryTopDropdown, #categorySubDropdown, #eligibilityTopDropdown, #eligibilitySubDropdown {
+                      width: 300px !important;
+                      min-width: 300px !important;
+                      pointer-events: auto !important;
+                    }
+                    .Select-control {
+                      cursor: text;
+                    }
+                    .Select {
+                      position: relative;
+                    }
+                    .category-suggestions {
+                      position: absolute;
+                      background: white;
+                      border: 1px solid #ddd;
+                      max-height: 200px;
+                      overflow-y: auto;
+                      z-index: 1000;
+                      width: calc(100% - 2px);
+                      display: none;
+                      top: 100%;
+                      left: 0;
+                    }
+                    .category-suggestion-item {
+                      padding: 8px 12px;
+                      cursor: pointer;
+                    }
+                    .category-suggestion-item:hover {
+                      background: #f0f0f0;
+                    }
+                    .Select-arrow-zone {
+                      display: none;
+                    }
+                  </style>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: MODALS ------------------------------------------------------------------------------->
+
+                  <!-- Service Add Location Modal -->
+                  <div id="serviceAddLocationModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Location</h3>
+                      <input type="text" id="serviceLocationName" placeholder="Location Name">
+                      <input type="text" id="serviceAddressLine1" placeholder="Address Line 1">
+                      <input type="text" id="serviceAddressLine2" placeholder="Address Line 2">
+                      <input type="text" id="serviceCity" placeholder="City">
+                      <input type="text" id="serviceState" placeholder="State">
+                      <input type="text" id="serviceZip" placeholder="Zip">
+                      <button id="serviceAddLocationBtn">Add Location</button>
+                      <button id="serviceCancelLocationBtn">Cancel</button>
+                    </div>
+                  </div>
+
+                  <!-- Service Add Phone Modal -->
+                  <div id="serviceAddPhoneModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Phone</h3>
+                      <input type="text" id="servicePhoneName" placeholder="Phone Name">
+                      <input type="text" id="servicePhoneNumber" placeholder="Number">
+                      <button id="serviceAddPhoneBtn">Add Phone</button>
+                      <button id="serviceCancelPhoneBtn">Cancel</button>
+                    </div>
+                  </div>
+
+                  <!-- Service Add Note Modal -->
+                  <div id="serviceAddNoteModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Note</h3>
+                      <textarea id="serviceNoteText" placeholder="Enter note (markdown supported)"></textarea>
+                      <button id="serviceAddNoteBtn">Add Note</button>
+                      <button id="serviceCancelNoteBtn">Cancel</button>
+                    </div>
+                  </div>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: JS ------------------------------------------------------------------------------->
+
+                <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    // Service Section Modal References
+                    const serviceLocationModal = document.getElementById('serviceAddLocationModal');
+                    const servicePhoneModal = document.getElementById('serviceAddPhoneModal');
+                    const serviceNoteModal = document.getElementById('serviceAddNoteModal');
+
+                    // Find all Add buttons in serviceDiv only
+                    const serviceButtons = document.querySelectorAll('#serviceDivOrganization button');
+
+                    serviceButtons.forEach(btn => {
+                      const text = btn.textContent.trim();
+
+                      if (text === 'Add Location') {
+                        btn.addEventListener('click', () => {
+                          serviceLocationModal.style.display = 'flex';
+                        });
+                      } else if (text === 'Add Phone') {
+                        btn.addEventListener('click', () => {
+                          servicePhoneModal.style.display = 'flex';
+                        });
+                      } else if (text === 'Add Note') {
+                        btn.addEventListener('click', () => {
+                          serviceNoteModal.style.display = 'flex';
+                        });
+                      }
+                    });
+
+                    // Service Location modal handlers
+                    document.getElementById('serviceCancelLocationBtn').addEventListener('click', () => {
+                      serviceLocationModal.style.display = 'none';
+                    });
+
+                    document.getElementById('serviceAddLocationBtn').addEventListener('click', () => {
+                      const name = document.getElementById('serviceLocationName').value;
+                      const addr1 = document.getElementById('serviceAddressLine1').value;
+                      const addr2 = document.getElementById('serviceAddressLine2').value;
+                      const city = document.getElementById('serviceCity').value;
+                      const state = document.getElementById('serviceState').value;
+                      const zip = document.getElementById('serviceZip').value;
+
+                      const locationList = document.getElementById('service_locations');
+                      const div = document.createElement('div');
+                      div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
+                      locationList.appendChild(div);
+
+                      document.getElementById('serviceLocationName').value = '';
+                      document.getElementById('serviceAddressLine1').value = '';
+                      document.getElementById('serviceAddressLine2').value = '';
+                      document.getElementById('serviceCity').value = '';
+                      document.getElementById('serviceState').value = '';
+                      document.getElementById('serviceZip').value = '';
+                      serviceLocationModal.style.display = 'none';
+                    });
+
+                    // Service Phone modal handlers
+                    document.getElementById('serviceCancelPhoneBtn').addEventListener('click', () => {
+                      servicePhoneModal.style.display = 'none';
+                    });
+
+                    document.getElementById('serviceAddPhoneBtn').addEventListener('click', () => {
+                      const name = document.getElementById('servicePhoneName').value;
+                      const number = document.getElementById('servicePhoneNumber').value;
+
+                      const phoneSublist = document.querySelectorAll('#serviceDivOrganization .edit--section--list--item--sublist')[0];
+                      const li = document.createElement('li');
+                      li.innerHTML = `<strong>${name}:</strong> ${number}`;
+                      phoneSublist.appendChild(li);
+
+                      document.getElementById('servicePhoneName').value = '';
+                      document.getElementById('servicePhoneNumber').value = '';
+                      servicePhoneModal.style.display = 'none';
+                    });
+
+                    // Service Note modal handlers
+                    document.getElementById('serviceCancelNoteBtn').addEventListener('click', () => {
+                      serviceNoteModal.style.display = 'none';
+                    });
+
+                    document.getElementById('serviceAddNoteBtn').addEventListener('click', () => {
+                      const note = document.getElementById('serviceNoteText').value;
+
+                      const noteSublist = document.querySelectorAll('#serviceDivOrganization .edit--section--list--item--sublist')[1];
+                      const li = document.createElement('li');
+                      li.textContent = note;
+                      noteSublist.appendChild(li);
+
+                      document.getElementById('serviceNoteText').value = '';
+                      serviceNoteModal.style.display = 'none';
+                    });
+
+                    // Setup all autocomplete fields
+                    setupAutocomplete('categoryTopDropdown', topCategory);
+                    setupAutocomplete('categorySubDropdown', subCategory);
+                    setupAutocomplete('eligibilityTopDropdown', topEligibility);
+                    setupAutocomplete('eligibilitySubDropdown', subEligibility);
+
+                    function setupAutocomplete(inputId, dataObject) {
+                      const input = document.getElementById(inputId);
+                      const wrapper = input.closest('.Select-multi-value-wrapper');
+                      const placeholder = wrapper.querySelector('.Select-placeholder');
+                      const control = input.closest('.Select-control');
+
+                      const suggestionsDiv = document.createElement('div');
+                      suggestionsDiv.className = 'category-suggestions';
+                      input.closest('.Select').appendChild(suggestionsDiv);
+
+                      control.addEventListener('click', () => {
+                        input.focus();
+                      });
+
+                      input.addEventListener('input', function() {
+                        const query = this.value.toLowerCase();
+                        suggestionsDiv.innerHTML = '';
+
+                        if (query.length === 0) {
+                          suggestionsDiv.style.display = 'none';
+                          return;
+                        }
+
+                        const matches = Object.keys(dataObject).filter(item =>
+                          !dataObject[item] && item.toLowerCase().includes(query)
+                        );
+
+                        if (matches.length > 0) {
+                          matches.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'category-suggestion-item';
+                            div.textContent = item;
+                            div.addEventListener('click', () => selectItem(item));
+                            suggestionsDiv.appendChild(div);
+                          });
+                          suggestionsDiv.style.display = 'block';
+                        } else {
+                          suggestionsDiv.style.display = 'none';
+                        }
+                      });
+
+                      function selectItem(item) {
+                        dataObject[item] = true;
+
+                        if (placeholder) placeholder.style.display = 'none';
+
+                        const pill = document.createElement('div');
+                        pill.className = 'Select-value';
+                        pill.innerHTML = `
+                          <span class="Select-value-icon" aria-hidden="true">×</span>
+                          <span class="Select-value-label">${item}</span>
+                        `;
+
+                        pill.querySelector('.Select-value-icon').addEventListener('click', () => {
+                          dataObject[item] = false;
+                          pill.remove();
+                          if (!wrapper.querySelector('.Select-value')) {
+                            placeholder.style.display = 'block';
+                          }
+                        });
+
+                        wrapper.insertBefore(pill, input.parentElement);
+                        input.value = '';
+                        suggestionsDiv.style.display = 'none';
+                      }
+
+                      document.addEventListener('click', (e) => {
+                        if (!input.closest('.Select').contains(e.target)) {
+                          suggestionsDiv.style.display = 'none';
+                        }
+                      });
+                    }
+                  });
+                </script>
+
+
+
+<!------------------------------------------------------------------------------ Categories Eligibilities Object ------------------------------------------------------------------------------->
+
+
+
+                <script>
+                  const topCategory = {
+                    "Arts, Culture &amp; Identity": false,
+                    "Childcare": false,
+                    "Family Support": false,
+                    "Health &amp; Wellness": false,
+                    "sfsg-domesticviolence": false,
+                    "sfsg-finance": false,
+                    "sfsg-food": false,
+                    "sfsg-health": false,
+                    "sfsg-housing": false,
+                    "sfsg-hygiene": false,
+                    "sfsg-internet": false,
+                    "sfsg-jobs": false,
+                    "sfsg-lgbtqa": false,
+                    "sfsg-longtermhousing": false,
+                    "sfsg-shelter": false,
+                    "sfsg-substanceuse": false,
+                    "Sports &amp; Recreation": false,
+                    "Ucsf-foodinsecurity": false,
+                    "ucsf-immigration": false,
+                    "Ucsf-intimatepartnerviolence": false,
+                    "Ucsf-mentalhealth": false,
+                    "Ucsf-shelter": false,
+                    "Ucsf-substanceabuse": false,
+                    "Youth Workforce &amp; Life Skills": false
+                  }
+
+                  const subCategory = {
+                    "12-Step": false,
+                    "Academic Support": false,
+                    "ADA Transit": false,
+                    "Addiction Medicine": false,
+                    "Addiction &amp; Recovery": false,
+                    "Adoption": false,
+                    "Adoption &amp; Foster Care": false,
+                    "Adult Daycare": false,
+                    "Advocacy &amp; Legal Aid": false,
+                    "Affordable Connectivity Program": false,
+                    "After &amp; Before School": false,
+                    "Alternative Education &amp; GED": false,
+                    "Anger Management": false,
+                    "Animal Welfare": false,
+                    "Apprenticeship": false,
+                    "Arts and Creative Expression": false,
+                    "Arts, Culture &amp; Identity": false,
+                    "Assisted Living": false,
+                    "At-Home Support": false,
+                    "At Imminent Risk of Eviction": false,
+                    "Basic Literacy": false,
+                    "Basic Needs &amp; Shelter": false,
+                    "Beacon Community School": false,
+                    "Bereavement": false,
+                    "Birth Control": false,
+                    "Board Games": false,
+                    "Books": false,
+                    "Building Code Enforcement": false,
+                    "Bullying": false,
+                    "Bus Passes": false,
+                    "Care": false,
+                    "Career Exploration": false,
+                    "Caregiver Relief": false,
+                    "Case Manager": false,
+                    "Checkup &amp; Test": false,
+                    "Childcare": false,
+                    "Children&#39;s Care": false,
+                    "Child Welfare Services": false,
+                    "Circus Arts": false,
+                    "Citizenship &amp; Immigration": false,
+                    "Clean Slate": false,
+                    "Clothes": false,
+                    "Clothes for School": false,
+                    "Clothes for Work": false,
+                    "Clothing": false,
+                    "Clothing Vouchers": false,
+                    "Coding": false,
+                    "College Prep": false,
+                    "Computer Access": false,
+                    "Computer Class": false,
+                    "Computer or Internet Access": false,
+                    "Congregate Meals": false,
+                    "Congregate meals for seniors and people with disabilities": false,
+                    "Consult a Crisis Counselor to come ZSFG ED": false,
+                    "Coronavirus (COVID-19) Testing": false,
+                    "Coronavirus-Related Urgent Care": false,
+                    "Counseling": false,
+                    "Counseling Assistance": false,
+                    "Criminal Justice Involvement": false,
+                    "Crisis": false,
+                    "Crisis Intervention": false,
+                    "Culinary Arts": false,
+                    "Culture &amp; Identity": false,
+                    "Cycling": false,
+                    "Daily Free meals for all": false,
+                    "Daily Life Skills": false,
+                    "Day Camp": false,
+                    "Daytime Care": false,
+                    "Dental Care": false,
+                    "Depression": false,
+                    "Detox": false,
+                    "Diaper Bank": false,
+                    "Digital Media Production": false,
+                    "Disability Benefits": false,
+                    "Disability Screening": false,
+                    "Disability Support": false,
+                    "Disaster Assistance": false,
+                    "Discounted Healthcare": false,
+                    "Discount Utilities": false,
+                    "Discrimination &amp; Civil Rights": false,
+                    "Disease Management": false,
+                    "Disease Screening": false,
+                    "Domestic Violence": false,
+                    "Domestic Violence Counseling": false,
+                    "Domestic Violence Hotline": false,
+                    "Domestic Violence Hotlines": false,
+                    "Domestic Violence Shelter": false,
+                    "Domestic Violence Shelters": false,
+                    "Drop in Center": false,
+                    "Drop-In Clinics": false,
+                    "Drug Related Services": false,
+                    "Drug Testing": false,
+                    "Early Childhood": false,
+                    "Early Childhood Education": false,
+                    "Education": false,
+                    "ELA (English Language Arts)": false,
+                    "Emergency": false,
+                    "Emergency Care": false,
+                    "Emergency Financial Assistance": false,
+                    "Emergency Food": false,
+                    "Emergency Rental Assistance": false,
+                    "Emergency Shelters": false,
+                    "Employment": false,
+                    "End of Life Care": false,
+                    "End-of-Life Care": false,
+                    "English as a Second Language": false,
+                    "English as a Second Language (ESL)": false,
+                    "Eviction Legal Aid": false,
+                    "Eviction Prevention": false,
+                    "Family Counseling": false,
+                    "Family Legal Services": false,
+                    "Family Planning": false,
+                    "Family Resource Centers": false,
+                    "Family Shelters": false,
+                    "Family Support": false,
+                    "Fertility": false,
+                    "Financial Aid &amp; Loans": false,
+                    "Financial assistance for living expenses": false,
+                    "Financial Education": false,
+                    "Food": false,
+                    "Food benefits": false,
+                    "Food Benefits": false,
+                    "Food Delivery": false,
+                    "Food for Children": false,
+                    "Food pantries": false,
+                    "Food Pantry": false,
+                    "Foreign Languages": false,
+                    "Foster Care Services": false,
+                    "Free City College": false,
+                    "Free Health Clinics": false,
+                    "Free Meals": false,
+                    "Gardening": false,
+                    "General Help": false,
+                    "General Outpatient Services": false,
+                    "Goods": false,
+                    "Government Benefits": false,
+                    "Government Homelessness Services": false,
+                    "Group Home": false,
+                    "Group Therapy": false,
+                    "Guardianship": false,
+                    "Habitability": false,
+                    "Haircut": false,
+                    "Health": false,
+                    "Health Careers": false,
+                    "Health Education": false,
+                    "Healthier Habits/Safer Use": false,
+                    "Health Insurance": false,
+                    "Health &amp; Medical": false,
+                    "Health &amp; Wellness": false,
+                    "Hearing Tests": false,
+                    "Help Pay for Internet or Device": false,
+                    "HIV Treatment": false,
+                    "Hoarding": false,
+                    "Hoarding &amp; Cluttering": false,
+                    "Home-delivered groceries and home-delivered meals": false,
+                    "Home Delivered Meals": false,
+                    "Home Goods": false,
+                    "Homelessness Essentials": false,
+                    "Home &amp; Renters Insurance": false,
+                    "Home Visiting": false,
+                    "Hospice": false,
+                    "Hospitality": false,
+                    "Hotlines and Case Management": false,
+                    "Hot Meals": false,
+                    "Housing Assistance": false,
+                    "Housing Counseling": false,
+                    "Housing-related Conflict Resolution": false,
+                    "Housing &amp; Rental Assistance": false,
+                    "Housing Rights": false,
+                    "Housing/Tenants Rights": false,
+                    "Housing Vouchers": false,
+                    "HSH Funded": false,
+                    "Hygiene": false,
+                    "Hygiene kits": false,
+                    "Hygiene Supplies": false,
+                    "Identification Recovery": false,
+                    "Immediate Safety": false,
+                    "Immigration Assistance": false,
+                    "Independent Living": false,
+                    "Individual Counseling": false,
+                    "In-Home Support": false,
+                    "Insurance": false,
+                    "Interview Training": false,
+                    "Job Assistance": false,
+                    "Job Board": false,
+                    "Job Placement": false,
+                    "Job Placement Support": false,
+                    "Job Readiness": false,
+                    "Job Training": false,
+                    "Justice Involvement": false,
+                    "Laundry": false,
+                    "Leadership": false,
+                    "Learning English": false,
+                    "Legal": false,
+                    "Legal Assistance": false,
+                    "Legal Representation": false,
+                    "Legal Services": false,
+                    "LGBTQ+ Support": false,
+                    "Loans": false,
+                    "Long-Term Housing": false,
+                    "Long-Term Shelter": false,
+                    "Low-Income Housing": false,
+                    "Maternity Care": false,
+                    "Mediation": false,
+                    "Medical Care": false,
+                    "Medical Supplies": false,
+                    "Medication Management": false,
+                    "Medications": false,
+                    "Medications for Mental Health": false,
+                    "Medication Treatment": false,
+                    "Meditation": false,
+                    "Meetings/Support": false,
+                    "Mental Health Care": false,
+                    "Mental Health Evaluation": false,
+                    "Mental Health Medication": false,
+                    "Mental Health Services": false,
+                    "Mental Health Urgent Care": false,
+                    "Mentorship": false,
+                    "Mindfulness": false,
+                    "MOHCD Funded": false,
+                    "Money": false,
+                    "Money Management": false,
+                    "More Education": false,
+                    "Navigating Police Involvement": false,
+                    "Navigating the System": false,
+                    "Notary": false,
+                    "Nursing Home": false,
+                    "Nutrition Education": false,
+                    "One-Night Shelter": false,
+                    "One-on-One Support": false,
+                    "Online": false,
+                    "Online Only": false,
+                    "Other Legal Assistance": false,
+                    "Other Medical Services": false,
+                    "Other Mental Health Services": false,
+                    "Outdoors": false,
+                    "Overnight/Prolonged Observation": false,
+                    "Pain Management": false,
+                    "Parenting Education": false,
+                    "Payee Services": false,
+                    "Peer Support": false,
+                    "Personal Hygiene": false,
+                    "Personal Safety": false,
+                    "Personal Safety Items": false,
+                    "Pets": false,
+                    "Physical Fitness": false,
+                    "Physical Therapy": false,
+                    "Pilates": false,
+                    "Playgroups": false,
+                    "Portable Toilets and Hand-Washing Stations": false,
+                    "Postnatal Care": false,
+                    "Pregnancy Tests": false,
+                    "Pregnancy Wraparound Services": false,
+                    "Preschool": false,
+                    "Prescription Assistance": false,
+                    "Prevent &amp; Treat": false,
+                    "Primary Care": false,
+                    "Prison/Jail Related Services": false,
+                    "Probation &amp; Parole": false,
+                    "Probation and Parole": false,
+                    "Programs Integrated into School Day": false,
+                    "Psychiatric Emergency Services": false,
+                    "Public Housing": false,
+                    "Public Schools": false,
+                    "Reading &amp; Literacy": false,
+                    "Recreation": false,
+                    "Re-entry Services": false,
+                    "Relief for Caregivers": false,
+                    "Rental Assistance": false,
+                    "Representation": false,
+                    "Residential Care": false,
+                    "Residential Treatment": false,
+                    "Restraining Order": false,
+                    "Resume Development": false,
+                    "Resume Writing": false,
+                    "Retirement Benefits": false,
+                    "Reward Program": false,
+                    "Rock Climbing": false,
+                    "Ropes Course": false,
+                    "Running": false,
+                    "Safe Housing": false,
+                    "Safe place to sober up": false,
+                    "Safety Education": false,
+                    "Scholarship": false,
+                    "School Attendance": false,
+                    "School Supplies": false,
+                    "School Transportation": false,
+                    "Screening &amp; Exams": false,
+                    "Self-esteem": false,
+                    "SEL (Social Emotional Learning)": false,
+                    "Senior Centers": false,
+                    "Seniors": false,
+                    "Services/Urgent Care": false,
+                    "Sex Education": false,
+                    "Sexual Assault Hotlines": false,
+                    "Sexual Exploitation or Trafficking for All Women Hotlines": false,
+                    "Sexual &amp; Reproductive Health": false,
+                    "Sffamilies": false,
+                    "SFUSD Wellness Centers": false,
+                    "Short-Term Housing": false,
+                    "Showers": false,
+                    "Skill Building": false,
+                    "Skills Assessment": false,
+                    "Skills &amp; Training": false,
+                    "Smartphones": false,
+                    "Sober Living": false,
+                    "Social Justice": false,
+                    "Special Education": false,
+                    "Specialized Therapy": false,
+                    "Specialized Training": false,
+                    "Spiritual Support": false,
+                    "Sports Programs": false,
+                    "Sports &amp; Recreation": false,
+                    "STD/STI Treatment &amp; Prevention": false,
+                    "STEM": false,
+                    "Storage": false,
+                    "Storytelling": false,
+                    "Stress": false,
+                    "Subsidized Housing": false,
+                    "Substance Abuse Counseling": false,
+                    "Suicide": false,
+                    "Summer Programs": false,
+                    "Supplies for School": false,
+                    "Supported Employment": false,
+                    "Support Groups": false,
+                    "Support Network": false,
+                    "Support Services": false,
+                    "Tax Preparation": false,
+                    "Team Sports": false,
+                    "Technology": false,
+                    "Teen Parents": false,
+                    "Temporary Shelter": false,
+                    "Temporary Shelter for Women": false,
+                    "Tenant Counseling": false,
+                    "Toilet": false,
+                    "Transit": false,
+                    "Transitional Aged Youth": false,
+                    "Transitional Housing for Women": false,
+                    "Translation &amp; Interpretation": false,
+                    "Transportation for Healthcare": false,
+                    "Transportation for School": false,
+                    "Trauma": false,
+                    "Trauma Informed": false,
+                    "Traumatic Brain Injury": false,
+                    "Truancy Prevention": false,
+                    "Understand Disability": false,
+                    "Understand Government Programs": false,
+                    "Understand Mental Health": false,
+                    "Unemployment Benefits": false,
+                    "Utilities &amp; Insurance Assistance": false,
+                    "Vaccinations": false,
+                    "Virtual Support": false,
+                    "Vision Care": false,
+                    "Vocational Training": false,
+                    "Vocational Training Programs": false,
+                    "We are a family with children under 18 years old.": false,
+                    "Wifi Access": false,
+                    "Workplace Rights": false,
+                    "Year-Round": false,
+                    "Yoga": false,
+                    "Youth": false,
+                    "Youth Jobs": false,
+                    "Youth jobs &amp; Internships": false,
+                    "Youth Leadership": false,
+                    "Youth-Led Philanthropy": false,
+                    "Youth Services": false,
+                    "Youth Workforce &amp; LifeSkills": false,
+                    "Zumba": false
+                  }
+
+                  const topEligibility = {
+                    "Age": false,
+                    "Education Level": false,
+                    "Employment Status": false,
+                    "Ethnicity": false,
+                    "Family Status": false,
+                    "Financial Status": false,
+                    "Gender": false,
+                    "Health Concerns": false,
+                    "Immigration Status": false,
+                    "Housing Status": false,
+                    "Other": false
+                  }
+
+                  const subEligibility = {
+                    "Adolescents": false,
+                    "Limited English": false,
+                    "Active Duty": false,
+                    "African American": false,
+                    "Adoption": false,
+                    "Benefit Recipients": false,
+                    "LGBTQ+": false,
+                    "Abuse or Neglect Survivors": false,
+                    "Immigrants": false,
+                    "Home Owners": false,
+                    "Anyone in Need": false,
+                    "Elderly": false,
+                    "Continuing Education Students": false,
+                    "Employed": false,
+                    "African/Black": false,
+                    "CIP (Children of Incarcerated Parents)": false,
+                    "Low-Income": false,
+                    "Men": false,
+                    "Alcoholic": false,
+                    "Refugees": false,
+                    "Home Renters": false,
+                    "Disaster Victim": false,
+                    "Age 12-17": false,
+                    "ESL/ELL (English Language Learner)": false,
+                    "National Guard": false,
+                    "API": false,
+                    "Foster Youth": false,
+                    "Underinsured": false,
+                    "Non-Binary": false,
+                    "Alzheimers": false,
+                    "Undocumented": false,
+                    "Homeless": false,
+                    "Domestic Violence Survivors": false,
+                    "Age 18-24": false,
+                    "Preschool": false,
+                    "Retired": false,
+                    "API (Asian/Pacific Islander)": false,
+                    "Individuals": false,
+                    "Uninsured": false,
+                    "Transgender and Gender Non-Conforming": false,
+                    "Cancer": false,
+                    "Homeless Youth": false,
+                    "Gender-Based Violence": false,
+                    "All Ages": false,
+                    "Elementary School": false,
+                    "Sex Worker": false,
+                    "Asian": false,
+                    "Single Parent": false,
+                    "Women": false,
+                    "Chronic Illness": false,
+                    "Experiencing Homelessness": false,
+                    "Human Trafficking Survivors": false,
+                    "Middle School Students": false,
+                    "Veterans": false,
+                    "Chinese": false,
+                    "Married no children": false,
+                    "Deaf or Hard of Hearing": false,
+                    "I live with someone under 18 years of age": false,
+                    "Young Adults (18-27 years old)": false,
+                    "High School Students": false,
+                    "Unemployed": false,
+                    "Chinese American": false,
+                    "Developmental Disability": false,
+                    "Imminent Risk of Eviction": false,
+                    "San Francisco Residents": false,
+                    "Young Adults (20-30 years old)": false,
+                    "Post-Grad": false,
+                    "Filipino/a": false,
+                    "Disabled": false,
+                    "In Jail": false,
+                    "Sexual Assault Survivors": false,
+                    "Young Children": false,
+                    "Jewish": false,
+                    "Dual Diagnosis": false,
+                    "Near Homeless": false,
+                    "Trauma Survivors": false,
+                    "Families with children below 18 years old": false,
+                    "Latinx": false,
+                    "HIV/AIDS": false,
+                    "Re-Entry": false,
+                    "Youth (below 21 years old)": false,
+                    "Middle Eastern and North African": false,
+                    "I am someone with disabilities": false,
+                    "Infants": false,
+                    "Native American": false,
+                    "Infectious Disease": false,
+                    "Toddlers": false,
+                    "Pacific Islander": false,
+                    "Learning Disability": false,
+                    "Children": false,
+                    "Samoan": false,
+                    "Limited Mobility": false,
+                    "Pre-Teen": false,
+                    "Mental Illness": false,
+                    "Teens": false,
+                    "Mentally Incapacitated": false,
+                    "Youth": false,
+                    "Opioid Addict": false,
+                    "Transitional Aged Youth (TAY)": false,
+                    "People who use drugs": false,
+                    "Adults": false,
+                    "Pregnant": false,
+                    "Maturing Adult": false,
+                    "PTSD": false,
+                    "Senior": false,
+                    "Seizure Disorder": false,
+                    "Smoker": false,
+                    "Special Needs/Disabilities": false,
+                    "Substance Dependency": false,
+                    "Terminal Illness": false,
+                    "Visual Impairment": false
+                  }
+                </script>
+
+
+
+
+
+              </div>
+<!---=========================================================================== EDIT SERVICES ENDS ===========================================================================--->
+</div>
               </div>
 <!-------------- EDIT MAIN START ------------------------------------------------------------------------------->
             </div>

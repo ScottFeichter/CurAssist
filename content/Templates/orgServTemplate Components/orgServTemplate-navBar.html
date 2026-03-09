@@ -225,10 +225,9 @@
     console.log('Added link to navbar');
     
     // Find the ServiceDiv template to clone
-    const serviceTemplate = document.getElementById('serviceDiv');
-    console.log('serviceTemplate:', serviceTemplate);
+    const serviceTemplate = document.getElementById('serviceDivOrganization');
     if (!serviceTemplate) {
-      console.error('serviceDiv not found');
+      console.error('serviceDivOrganization not found');
       return;
     }
     
@@ -274,7 +273,7 @@
 
   function addServiceFrom() {
     // Get all available services
-    const serviceTemplate = document.getElementById('serviceDiv');
+    const serviceTemplate = document.getElementById('serviceDivOrganization');
     const orgServicesDiv = document.getElementById('orgServicesDiv');
     const existingServices = orgServicesDiv ? Array.from(orgServicesDiv.children) : [];
     
@@ -284,7 +283,7 @@
     // Add original service if it exists
     if (serviceTemplate) {
       const serviceName = serviceTemplate.querySelector('#service_name')?.value || 'Original Service';
-      availableServices.push({ id: 'serviceDiv', name: serviceName, element: serviceTemplate });
+      availableServices.push({ id: 'serviceDivOrganization', name: serviceName, element: serviceTemplate });
     }
     
     // Add existing services from orgServicesDiv

@@ -51,7 +51,7 @@ ${orgServicesDiv}
 </div>`;
 
 // Insert the body components where the edit--main div content should go
-const bodyComponents = header + '\n' + orgWrapper + '\n' + servDivSpreadsheet;
+const bodyComponents = header + '\n' + orgWrapper + '\n' + servDivSpreadsheet + '\n' + '<div id="serviceDivOrgTemplate" style="display:none;">' + servDivOrganization + '</div>';
 combined = combined.replace(
   /<div class="edit--main">[\s\S]*?<\/div>\s*<!-+\s*EDIT MAIN START/,
   `<div class="edit--main">\n${bodyComponents}\n              </div>\n<!-------------- EDIT MAIN START`

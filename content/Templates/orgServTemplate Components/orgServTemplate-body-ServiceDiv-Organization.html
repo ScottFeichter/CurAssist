@@ -1,5 +1,5 @@
 <!---=========================================================================== EDIT SERVICES STARTS ============================================================================-->
-                <div class="edit--services" id="serviceDiv">
+                <div class="edit--services" id="serviceDivOrganization">
 
                   <!-- <header class="edit--main--header"> -->
                     <!-- <h1 class="edit--main--header--title">
@@ -331,7 +331,7 @@
 
                   <style>
                     /* Service Section Modal Styles */
-                    #serviceDiv .service-modal {
+                    #serviceDivOrganization .service-modal {
                       position: fixed;
                       top: 0;
                       left: 0;
@@ -343,19 +343,19 @@
                       justify-content: center;
                       z-index: 1000;
                     }
-                    #serviceDiv .service-modal-content {
+                    #serviceDivOrganization .service-modal-content {
                       background: white;
                       padding: 30px;
                       border-radius: 8px;
                       min-width: 400px;
                       max-width: 500px;
                     }
-                    #serviceDiv .service-modal-content h3 {
+                    #serviceDivOrganization .service-modal-content h3 {
                       margin-top: 0;
                       margin-bottom: 20px;
                     }
-                    #serviceDiv .service-modal-content input,
-                    #serviceDiv .service-modal-content textarea {
+                    #serviceDivOrganization .service-modal-content input,
+                    #serviceDivOrganization .service-modal-content textarea {
                       width: 100%;
                       margin-bottom: 15px;
                       padding: 10px;
@@ -363,22 +363,22 @@
                       border-radius: 4px;
                       box-sizing: border-box;
                     }
-                    #serviceDiv .service-modal-content textarea {
+                    #serviceDivOrganization .service-modal-content textarea {
                       min-height: 150px;
                       resize: vertical;
                     }
-                    #serviceDiv .service-modal-content button {
+                    #serviceDivOrganization .service-modal-content button {
                       margin-right: 10px;
                       padding: 10px 20px;
                       border: none;
                       border-radius: 4px;
                       cursor: pointer;
                     }
-                    #serviceDiv .service-modal-content button:first-of-type {
+                    #serviceDivOrganization .service-modal-content button:first-of-type {
                       background: #276ce5;
                       color: white;
                     }
-                    #serviceDiv .service-modal-content button:last-of-type {
+                    #serviceDivOrganization .service-modal-content button:last-of-type {
                       background: #ddd;
                     }
 
@@ -466,7 +466,7 @@
                     const serviceNoteModal = document.getElementById('serviceAddNoteModal');
 
                     // Find all Add buttons in serviceDiv only
-                    const serviceButtons = document.querySelectorAll('#serviceDiv button');
+                    const serviceButtons = document.querySelectorAll('#serviceDivOrganization button');
 
                     serviceButtons.forEach(btn => {
                       const text = btn.textContent.trim();
@@ -522,7 +522,7 @@
                       const name = document.getElementById('servicePhoneName').value;
                       const number = document.getElementById('servicePhoneNumber').value;
 
-                      const phoneSublist = document.querySelectorAll('#serviceDiv .edit--section--list--item--sublist')[0];
+                      const phoneSublist = document.querySelectorAll('#serviceDivOrganization .edit--section--list--item--sublist')[0];
                       const li = document.createElement('li');
                       li.innerHTML = `<strong>${name}:</strong> ${number}`;
                       phoneSublist.appendChild(li);
@@ -540,7 +540,7 @@
                     document.getElementById('serviceAddNoteBtn').addEventListener('click', () => {
                       const note = document.getElementById('serviceNoteText').value;
 
-                      const noteSublist = document.querySelectorAll('#serviceDiv .edit--section--list--item--sublist')[1];
+                      const noteSublist = document.querySelectorAll('#serviceDivOrganization .edit--section--list--item--sublist')[1];
                       const li = document.createElement('li');
                       li.textContent = note;
                       noteSublist.appendChild(li);
