@@ -32,7 +32,6 @@ const header = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-He
 const navBar = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-navBar.html'), 'utf8');
 const orgDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-OrganizationDiv.html'), 'utf8');
 const orgServicesDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-OrgServicesDiv.html'), 'utf8');
-const servDiv = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv.html'), 'utf8');
 const servDivSpreadsheet = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Spreadsheet.html'), 'utf8');
 const servDivOrganization = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Organization.html'), 'utf8');
 
