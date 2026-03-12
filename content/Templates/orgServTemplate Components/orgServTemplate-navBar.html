@@ -577,11 +577,11 @@
   <div class="app-components-edit-EditSidebar-module__sidebarContent--zw_PI">
 
     <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
-      <a href="#organization" onclick="scrollToOrganization(event)">Organization</a>
+      <a href="#organization" onclick="searchOrganization(event, document.getElementById('orgNavLink').textContent)">Organization</a>
     </h3>
     <ul class="app-components-edit-EditSidebar-module__list--EdtMl">
       <li class="app-components-edit-EditSidebar-module__listItem--HBckV app-components-edit-EditSidebar-module__active--IatxP">
-        <a href="#" id="orgNavLink" onclick="searchOrganization(event, this.textContent)">{{organization_name}}</a>
+        <a href="#" id="orgNavLink" onclick="scrollToOrganization(event)">{{organization_name}}</a>
       </li>
     </ul>
 
