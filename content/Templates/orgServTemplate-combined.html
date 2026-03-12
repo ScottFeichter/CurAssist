@@ -1188,7 +1188,7 @@
     </ul>
 
     <h3 class="app-components-edit-EditSidebar-module__listHeading--pbhfh">
-      <a href="#services" onclick="scrollToFirstService(event)">Services</a>
+      <a href="#services" onclick="searchAllServices(event)">Services</a>
     </h3>
     <div style="padding: 0 25px 10px; display: flex; gap: 8px; flex-wrap: nowrap;">
       <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_blank" onclick="addNewService()">add blank</button>
@@ -1218,13 +1218,17 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  function scrollToFirstService(event) {
+  function searchAllServices(event) {
     event.preventDefault();
-    const orgServicesDiv = document.getElementById('orgServicesDiv');
-    const firstService = orgServicesDiv?.firstElementChild;
-    if (firstService) {
-      firstService.scrollIntoView({ behavior: 'smooth' });
-    }
+    const links = Array.from(document.querySelectorAll('#servicesList a'));
+    console.log('searchAllServices: found', links.length, 'links');
+    links.forEach((link, i) => {
+      const name = link.textContent.trim();
+      if (!name) return;
+      const url = `https://www.sfserviceguide.org/search?query=${encodeURIComponent(name)}`;
+      console.log(`[${i}] ${name}\n${url}`);
+      window.open(url, '_blank');
+    });
   }
 
   function addNewService() {
