@@ -24,9 +24,12 @@ const outputName = process.argv[2] || 'orgServTemplate-combined.html';
 const outputPath = process.argv[3] || __dirname;
 const outputFile = path.join(outputPath, outputName);
 
-// Wraps each <script> block's contents in {} to block-scope const declarations
-function blockScopeScripts(html) {
-  return html.replace(/<script>([\s\S]*?)<\/script>/g, (_, inner) => `<script>{\n${inner}}\n</script>`);
+// In the combined output, converts const->var in sharedServiceData script blocks only
+// so duplicate declarations across ServiceDivs don't error (var re-declaration is allowed)
+function varifySharedData(html) {
+  return html.replace(/(<script>[\s\S]*?)(const topCategory|const subCategory|const topEligibility|const subEligibility)([\s\S]*?<\/script>)/g,
+    (match) => match.replace(/\bconst (topCategory|subCategory|topEligibility|subEligibility)\b/g, 'var $1')
+  );
 }
 
 // Extracts content between <body> and </body> from a full HTML document
@@ -66,8 +69,8 @@ const header = bodyContent(path.join(componentsDir, 'orgServTemplate-body-Header
 const navBar = bodyContent(path.join(componentsDir, 'orgServTemplate-navBar.html'));
 const orgDiv = bodyContent(path.join(componentsDir, 'orgServTemplate-body-OrganizationDiv.html'));
 const orgServicesDiv = bodyContent(path.join(componentsDir, 'orgServTemplate-body-OrgServicesDiv.html'));
-const servDivSpreadsheet = blockScopeScripts(bodyContent(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Spreadsheet.html')));
-const servDivOrganization = blockScopeScripts(bodyContent(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Organization.html')));
+const servDivSpreadsheet = varifySharedData(bodyContent(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Spreadsheet.html')));
+const servDivOrganization = varifySharedData(bodyContent(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Organization.html')));
 
 // Combine: insert head + component-specific styles into html, then insert body components into skeleton
 const allComponentStyles = [

@@ -682,6 +682,11 @@
     newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
     newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
     console.log('Cleared inputs');
+
+    // Wire up autocomplete for category/eligibility fields on this cloned div
+    if (typeof window.setupServiceAutocomplete === 'function') {
+      window.setupServiceAutocomplete(newServiceDiv);
+    }
     
     // Wire up Remove Service button
     const removeBtn = newServiceDiv.querySelector('#service--deactivation');

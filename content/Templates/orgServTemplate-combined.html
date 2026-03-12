@@ -1288,6 +1288,11 @@
     newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
     newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
     console.log('Cleared inputs');
+
+    // Wire up autocomplete for category/eligibility fields on this cloned div
+    if (typeof window.setupServiceAutocomplete === 'function') {
+      window.setupServiceAutocomplete(newServiceDiv);
+    }
     
     // Wire up Remove Service button
     const removeBtn = newServiceDiv.querySelector('#service--deactivation');
@@ -2233,7 +2238,7 @@
                                   <div class="Select-control">
                                     <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
                                       <div class="Select-placeholder">
-                                        Select...
+                                        Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
                                         <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
@@ -2258,7 +2263,7 @@
                                   <div class="Select-control">
                                     <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
                                       <div class="Select-placeholder">
-                                        Select...
+                                        Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
                                         <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
@@ -2344,7 +2349,7 @@
                                   <div class="Select-control">
                                     <div class="Select-multi-value-wrapper" id="service_top_categories">
                                       <div class="Select-placeholder">
-                                        Select...
+                                        Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
                                         <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
@@ -2369,7 +2374,7 @@
                                   <div class="Select-control">
                                     <div class="Select-multi-value-wrapper" id="service_sub_categories">
                                       <div class="Select-placeholder">
-                                        Select...
+                                        Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
                                         <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
@@ -2437,9 +2442,8 @@
 
 <!------------------------------------------------------------------------------ SERVICE SECTION: JS ------------------------------------------------------------------------------->
 
-                <script>{
-
-  const topCategory = {
+                <script>
+  var topCategory = {
     "Arts, Culture &amp; Identity": false,
     "Childcare": false,
     "Family Support": false,
@@ -2466,7 +2470,7 @@
     "Youth Workforce &amp; Life Skills": false
   }
 
-  const subCategory = {
+  var subCategory = {
     "12-Step": false,
     "Academic Support": false,
     "ADA Transit": false,
@@ -2837,7 +2841,7 @@
     "Zumba": false
   }
 
-  const topEligibility = {
+  var topEligibility = {
     "Age": false,
     "Education Level": false,
     "Employment Status": false,
@@ -2851,7 +2855,7 @@
     "Other": false
   }
 
-  const subEligibility = {
+  var subEligibility = {
     "Adolescents": false,
     "Limited English": false,
     "Active Duty": false,
@@ -2964,11 +2968,9 @@
     "Terminal Illness": false,
     "Visual Impairment": false
   }
-}
 </script>
 
-<script>{
-
+<script>
                   document.addEventListener('DOMContentLoaded', function() {
                     // Service Section Modal References
                     const serviceLocationModal = document.getElementById('serviceAddLocationModal');
@@ -3060,13 +3062,14 @@
                     });
 
                     // Setup all autocomplete fields
-                    setupAutocomplete('categoryTopDropdown', topCategory);
-                    setupAutocomplete('categorySubDropdown', subCategory);
-                    setupAutocomplete('eligibilityTopDropdown', topEligibility);
-                    setupAutocomplete('eligibilitySubDropdown', subEligibility);
+                    const serviceRoot = document.getElementById('serviceDivSpreadsheet');
+                    setupAutocomplete('categoryTopDropdown', topCategory, serviceRoot);
+                    setupAutocomplete('categorySubDropdown', subCategory, serviceRoot);
+                    setupAutocomplete('eligibilityTopDropdown', topEligibility, serviceRoot);
+                    setupAutocomplete('eligibilitySubDropdown', subEligibility, serviceRoot);
 
-                    function setupAutocomplete(inputId, dataObject) {
-                      const input = document.getElementById(inputId);
+                    function setupAutocomplete(inputId, dataObject, root) {
+                      const input = root.querySelector('#' + inputId);
                       const wrapper = input.closest('.Select-multi-value-wrapper');
                       const placeholder = wrapper.querySelector('.Select-placeholder');
                       const control = input.closest('.Select-control');
@@ -3077,6 +3080,16 @@
 
                       control.addEventListener('click', () => {
                         input.focus();
+                      });
+
+                      input.addEventListener('focus', function() {
+                        if (placeholder) placeholder.style.display = 'none';
+                      });
+
+                      input.addEventListener('blur', function() {
+                        if (placeholder && !wrapper.querySelector('.Select-value')) {
+                          placeholder.style.display = 'block';
+                        }
                       });
 
                       input.addEventListener('input', function() {
@@ -3138,8 +3151,7 @@
                       });
                     }
                   });
-                }
-</script>
+                </script>
 
 
 
@@ -3316,7 +3328,7 @@
                                   <div class="Select-control">
                                     <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
                                       <div class="Select-placeholder">
-                                        Select...
+                                        Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
                                         <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
@@ -3341,7 +3353,7 @@
                                   <div class="Select-control">
                                     <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
                                       <div class="Select-placeholder">
-                                        Select...
+                                        Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
                                         <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
@@ -3427,7 +3439,7 @@
                                   <div class="Select-control">
                                     <div class="Select-multi-value-wrapper" id="service_top_categories">
                                       <div class="Select-placeholder">
-                                        Select...
+                                        Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
                                         <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
@@ -3452,7 +3464,7 @@
                                   <div class="Select-control">
                                     <div class="Select-multi-value-wrapper" id="service_sub_categories">
                                       <div class="Select-placeholder">
-                                        Select...
+                                        Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
                                         <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
@@ -3520,9 +3532,8 @@
 
 <!------------------------------------------------------------------------------ SERVICE SECTION: JS ------------------------------------------------------------------------------->
 
-                <script>{
-
-  const topCategory = {
+                <script>
+  var topCategory = {
     "Arts, Culture &amp; Identity": false,
     "Childcare": false,
     "Family Support": false,
@@ -3549,7 +3560,7 @@
     "Youth Workforce &amp; Life Skills": false
   }
 
-  const subCategory = {
+  var subCategory = {
     "12-Step": false,
     "Academic Support": false,
     "ADA Transit": false,
@@ -3920,7 +3931,7 @@
     "Zumba": false
   }
 
-  const topEligibility = {
+  var topEligibility = {
     "Age": false,
     "Education Level": false,
     "Employment Status": false,
@@ -3934,7 +3945,7 @@
     "Other": false
   }
 
-  const subEligibility = {
+  var subEligibility = {
     "Adolescents": false,
     "Limited English": false,
     "Active Duty": false,
@@ -4047,11 +4058,9 @@
     "Terminal Illness": false,
     "Visual Impairment": false
   }
-}
 </script>
 
-<script>{
-
+<script>
                   document.addEventListener('DOMContentLoaded', function() {
                     // Service Section Modal References
                     const serviceLocationModal = document.getElementById('serviceAddLocationModal');
@@ -4142,14 +4151,16 @@
                       serviceNoteModal.style.display = 'none';
                     });
 
-                    // Setup all autocomplete fields
-                    setupAutocomplete('categoryTopDropdown', topCategory);
-                    setupAutocomplete('categorySubDropdown', subCategory);
-                    setupAutocomplete('eligibilityTopDropdown', topEligibility);
-                    setupAutocomplete('eligibilitySubDropdown', subEligibility);
+                    // Expose as global so navBar can call it on each cloned service div
+                    window.setupServiceAutocomplete = function(root) {
+                      setupAutocomplete('categoryTopDropdown', topCategory, root);
+                      setupAutocomplete('categorySubDropdown', subCategory, root);
+                      setupAutocomplete('eligibilityTopDropdown', topEligibility, root);
+                      setupAutocomplete('eligibilitySubDropdown', subEligibility, root);
+                    };
 
-                    function setupAutocomplete(inputId, dataObject) {
-                      const input = document.getElementById(inputId);
+                    function setupAutocomplete(inputId, dataObject, root) {
+                      const input = root.querySelector('#' + inputId);
                       const wrapper = input.closest('.Select-multi-value-wrapper');
                       const placeholder = wrapper.querySelector('.Select-placeholder');
                       const control = input.closest('.Select-control');
@@ -4160,6 +4171,16 @@
 
                       control.addEventListener('click', () => {
                         input.focus();
+                      });
+
+                      input.addEventListener('focus', function() {
+                        if (placeholder) placeholder.style.display = 'none';
+                      });
+
+                      input.addEventListener('blur', function() {
+                        if (placeholder && !wrapper.querySelector('.Select-value')) {
+                          placeholder.style.display = 'block';
+                        }
                       });
 
                       input.addEventListener('input', function() {
@@ -4221,8 +4242,7 @@
                       });
                     }
                   });
-                }
-</script>
+                </script>
 
 
 
