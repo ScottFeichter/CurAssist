@@ -100,59 +100,6 @@ async function loadFile(index) {
   const content = await fetch(`${API_BASE}/buckets/${currentBucket}/${currentSubdir}/${filename}`).then(r => r.text());
 
   const iframe = document.getElementById('formFrame');
-
-  let loadCount = 0;
-  iframe.onload = () => {
-    loadCount++;
-    const iDoc = iframe.contentDocument;
-    console.log('[iframe.onload] fired, count:', loadCount);
-    if (!iDoc || !iDoc.getElementById('orgNavLink')) {
-      console.log('[iframe.onload] skipping - doc not ready');
-      return;
-    }
-
-    // Populate org name in navbar
-    const orgNameInput = iDoc.getElementById('organization_name');
-    const orgNavLink = iDoc.getElementById('orgNavLink');
-    console.log('[iframe.onload] orgNameInput:', orgNameInput, 'value attr:', orgNameInput?.getAttribute('value'));
-    console.log('[iframe.onload] orgNavLink:', orgNavLink);
-    if (orgNameInput && orgNavLink) {
-      orgNavLink.textContent = orgNameInput.getAttribute('value') || orgNameInput.value || '{{organization_name}}';
-      console.log('[iframe.onload] set orgNavLink to:', orgNavLink.textContent);
-      orgNameInput.addEventListener('input', function() {
-        orgNavLink.textContent = this.value || '{{organization_name}}';
-      });
-    }
-
-    // Populate servicesList from existing service divs
-    const orgServicesDiv = iDoc.getElementById('orgServicesDiv');
-    const servicesList = iDoc.getElementById('servicesList');
-    console.log('[iframe.onload] orgServicesDiv:', orgServicesDiv, 'children:', orgServicesDiv?.children.length);
-    console.log('[iframe.onload] servicesList:', servicesList);
-    if (orgServicesDiv && servicesList) {
-      Array.from(orgServicesDiv.children).forEach(serviceDiv => {
-        if (!serviceDiv.id || serviceDiv.style.display === 'none') return;
-        const nameInput = serviceDiv.querySelector('#service_name');
-        const serviceName = (nameInput && (nameInput.getAttribute('value') || nameInput.value)) || 'Unnamed Service';
-        console.log('[iframe.onload] adding service to nav:', serviceName);
-        const li = document.createElement('li');
-        li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
-        li.dataset.serviceId = serviceDiv.id;
-        const link = document.createElement('a');
-        link.href = `#${serviceDiv.id}`;
-        link.textContent = serviceName;
-        link.onclick = (e) => { e.preventDefault(); serviceDiv.scrollIntoView({ behavior: 'smooth' }); };
-        li.appendChild(link);
-        servicesList.appendChild(li);
-        if (nameInput) {
-          nameInput.addEventListener('input', function() {
-            link.textContent = this.value || 'Unnamed Service';
-          });
-        }
-      });
-    }
-  };
-
   iframe.srcdoc = content;
 
   const fileSelect = document.getElementById('fileInfo');
@@ -702,11 +649,29 @@ function cancelCreateFile() {
 
 // Toggle sidebars
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('collapsed');
+  const el = document.getElementById('leftSidebar');
+  el.classList.toggle('collapsed');
+  if (el.classList.contains('collapsed')) {
+    if (parseInt(el.style.width) > 0) el.dataset.prevWidth = el.style.width;
+    el.style.width = '';
+    el.style.padding = '';
+  } else {
+    el.style.width = el.dataset.prevWidth || '250px';
+    el.style.padding = '';
+  }
 }
 
 function toggleRightSidebar() {
-  document.getElementById('rightSidebar').classList.toggle('collapsed');
+  const el = document.getElementById('rightSidebar');
+  el.classList.toggle('collapsed');
+  if (el.classList.contains('collapsed')) {
+    if (parseInt(el.style.width) > 0) el.dataset.prevWidth = el.style.width;
+    el.style.width = '';
+    el.style.padding = '';
+  } else {
+    el.style.width = el.dataset.prevWidth || '250px';
+    el.style.padding = '';
+  }
 }
 
 // Sidebar resize functionality
@@ -717,14 +682,18 @@ let startWidth = 0;
 
 const resizeHandle = document.getElementById('resizeHandle');
 const rightResizeHandle = document.getElementById('rightResizeHandle');
-const sidebar = document.getElementById('sidebar');
+const sidebar = document.getElementById('leftSidebar');
 const rightSidebar = document.getElementById('rightSidebar');
 
 resizeHandle.addEventListener('mousedown', (e) => {
   isResizingLeft = true;
   startX = e.clientX;
   startWidth = sidebar.offsetWidth;
+  sidebar.dataset.prevWidth = startWidth + 'px';
+  sidebar.style.transition = 'none';
   document.body.style.cursor = 'ew-resize';
+  document.body.style.userSelect = 'none';
+  document.getElementById('formFrame').style.pointerEvents = 'none';
   e.preventDefault();
 });
 
@@ -732,25 +701,41 @@ rightResizeHandle.addEventListener('mousedown', (e) => {
   isResizingRight = true;
   startX = e.clientX;
   startWidth = rightSidebar.offsetWidth;
+  rightSidebar.dataset.prevWidth = startWidth + 'px';
+  rightSidebar.style.transition = 'none';
   document.body.style.cursor = 'ew-resize';
+  document.body.style.userSelect = 'none';
+  document.getElementById('formFrame').style.pointerEvents = 'none';
   e.preventDefault();
 });
 
 document.addEventListener('mousemove', (e) => {
   if (isResizingLeft) {
-    const width = startWidth + (e.clientX - startX);
-    if (width >= 200 && width <= 600) sidebar.style.width = width + 'px';
+    e.preventDefault();
+    const width = Math.max(0, startWidth + (e.clientX - startX));
+    if (width <= 600) {
+      sidebar.style.width = width + 'px';
+      sidebar.style.padding = width === 0 ? '0' : '';
+    }
   }
   if (isResizingRight) {
-    const width = startWidth - (e.clientX - startX);
-    if (width >= 200 && width <= 600) rightSidebar.style.width = width + 'px';
+    e.preventDefault();
+    const width = Math.max(0, startWidth + (startX - e.clientX));
+    if (width <= 600) {
+      rightSidebar.style.width = width + 'px';
+      rightSidebar.style.padding = width === 0 ? '0' : '';
+    }
   }
 });
 
-document.addEventListener('mouseup', () => {
-  if (isResizingLeft || isResizingRight) {
-    isResizingLeft = false;
-    isResizingRight = false;
-    document.body.style.cursor = '';
-  }
-});
+function stopResize() {
+  if (isResizingLeft) sidebar.style.transition = '';
+  if (isResizingRight) rightSidebar.style.transition = '';
+  isResizingLeft = false;
+  isResizingRight = false;
+  document.body.style.cursor = '';
+  document.body.style.userSelect = '';
+  document.getElementById('formFrame').style.pointerEvents = '';
+}
+
+document.addEventListener('mouseup', stopResize);

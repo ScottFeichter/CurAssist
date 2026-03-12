@@ -600,7 +600,6 @@
   .app-components-edit-EditSidebar-module__sidebar--npORK {
     width: 15.625rem;
     min-width: 10rem;
-    max-width: 40rem;
     background-color: #f9f9f9;
     display: flex;
     flex-direction: column;
@@ -608,6 +607,7 @@
     top: 5rem;
     height: 94vh;
     transition: width 0.3s ease;
+    overflow: hidden;
   }
 
   .app-components-edit-EditSidebar-module__sidebar--npORK.collapsed {
@@ -1470,36 +1470,20 @@
   }
 
   // Update organization name in navbar when input changes
+  console.log('[navBar] script executing, readyState:', document.readyState);
   document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-    // Populate servicesList from existing service divs on load
-    const orgServicesDiv = document.getElementById('orgServicesDiv');
-    const servicesList = document.getElementById('servicesList');
-    if (orgServicesDiv && servicesList) {
-      Array.from(orgServicesDiv.children).forEach(serviceDiv => {
-        if (!serviceDiv.id || serviceDiv.style.display === 'none') return;
-        const nameInput = serviceDiv.querySelector('#service_name');
-        const serviceName = (nameInput && (nameInput.getAttribute('value') || nameInput.value)) || 'Unnamed Service';
-        const li = document.createElement('li');
-        li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
-        li.dataset.serviceId = serviceDiv.id;
-        const link = document.createElement('a');
-        link.href = `#${serviceDiv.id}`;
-        link.textContent = serviceName;
-        link.onclick = (e) => {
-          e.preventDefault();
-          serviceDiv.scrollIntoView({ behavior: 'smooth' });
-        };
-        li.appendChild(link);
-        servicesList.appendChild(li);
-        if (nameInput) {
-          nameInput.addEventListener('input', function() {
-            link.textContent = this.value || 'Unnamed Service';
-          });
-        }
+    console.log('[navBar] DOMContentLoaded fired');
+    const orgNameInput = document.getElementById('organization_name');
+    const orgNavLink = document.getElementById('orgNavLink');
+    console.log('[navBar] orgNameInput:', orgNameInput, 'value:', orgNameInput && orgNameInput.value);
+    console.log('[navBar] orgNavLink:', orgNavLink);
+    if (orgNameInput && orgNavLink) {
+      orgNavLink.textContent = orgNameInput.value || '{{organization_name}}';
+      console.log('[navBar] set orgNavLink to:', orgNavLink.textContent);
+      orgNameInput.addEventListener('input', function() {
+        orgNavLink.textContent = this.value || '{{organization_name}}';
       });
     }
-    }, 0); // end setTimeout
 
     // Sidebar collapse toggle
     const sidebar = document.getElementById('sidebar');
