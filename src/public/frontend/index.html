@@ -71,7 +71,8 @@
       flex-direction: column;
       gap: 15px;
       border-right: 1px solid #ccc;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
       flex-shrink: 0;
     }
@@ -123,9 +124,15 @@
       flex-direction: column;
       gap: 15px;
       border-left: 1px solid #ccc;
-      overflow: hidden;
+      overflow-y: auto;
+      overflow-x: hidden;
       position: relative;
       flex-shrink: 0;
+      direction: rtl;
+    }
+
+    #rightSidebar > * {
+      direction: ltr;
     }
 
     #leftSidebar::-webkit-scrollbar,
@@ -204,8 +211,7 @@
 
     #content {
       flex: 1;
-      overflow-x: auto;
-      overflow-y: hidden;
+      overflow: hidden;
       padding: 20px;
       background: white;
       min-width: 0;
