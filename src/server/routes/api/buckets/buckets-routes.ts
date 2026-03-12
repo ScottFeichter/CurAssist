@@ -5,6 +5,10 @@ import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { createBucketStructure, parseSpreadsheet, generateHtmlFiles } from '../../../helpers/bucket-helpers';
 import fs from 'fs/promises';
 import path from 'path';
+import { exec } from 'child_process';
+import { promisify } from 'util';
+
+const execAsync = promisify(exec);
 
 console.enter();
 
@@ -148,6 +152,49 @@ bucketsRouter.delete('/:bucket', async (req: Request, res: Response, next: NextF
     res.json({ success: true });
   } catch (error) {
     log.retrn("DELETE /api/buckets/:bucket", log.kcarb);
+    next(error);
+  }
+});
+
+// POST /api/buckets/create-file - Create a new file from template or existing file
+bucketsRouter.post('/create-file', async (req: Request, res: Response, next: NextFunction) => {
+  log.enter("POST /api/buckets/create-file", log.brack);
+  try {
+    const { bucket, subdir, filename, fromBucket, fromSubdir, fromFilename } = req.body;
+    if (!bucket || !subdir || !filename) {
+      return res.status(400).json({ success: false, error: 'bucket, subdir, and filename are required' });
+    }
+
+    const destDir = path.join(BUCKETS_PATH, bucket, subdir);
+    const baseName = filename.replace(/\.html$/i, '');
+
+    // Resolve unique filename
+    const existing = await fs.readdir(destDir).catch(() => [] as string[]);
+    let finalName = `${baseName}.html`;
+    if (existing.includes(finalName)) {
+      const numMatch = baseName.match(/^(.+?)_(\d+)$/);
+      let stem = numMatch ? numMatch[1] : baseName;
+      let num = numMatch ? parseInt(numMatch[2]) + 1 : 1;
+      while (existing.includes(`${stem}_${num}.html`)) num++;
+      finalName = `${stem}_${num}.html`;
+    }
+
+    const destPath = path.join(destDir, finalName);
+
+    if (fromBucket && fromSubdir && fromFilename) {
+      // Copy from existing file
+      const srcPath = path.join(BUCKETS_PATH, fromBucket, fromSubdir, fromFilename);
+      await fs.copyFile(srcPath, destPath);
+    } else {
+      // Build from template
+      const buildScriptPath = path.join(process.cwd(), 'content', 'Templates', 'build-template.js');
+      await execAsync(`node "${buildScriptPath}" "${finalName}" "${destDir}"`);
+    }
+
+    log.retrn("POST /api/buckets/create-file", log.kcarb);
+    res.json({ success: true, filename: finalName });
+  } catch (error) {
+    log.retrn("POST /api/buckets/create-file", log.kcarb);
     next(error);
   }
 });

@@ -180,6 +180,17 @@
     }
 
 
+    .createFile-btn {
+      background: green;
+      color: white;
+      font-weight: 600;
+    }
+
+    .createFile-btn:hover {
+      background: darkgreen;
+    }
+
+
     .saveFile-btn {
       background: #276CE5;
       color: white;
@@ -438,6 +449,7 @@
       <button onclick="copyFile()">Copy File</button>
 
       <div class="section-title">File Actions</div>
+      <button class="createFile-btn" onclick="createFile()">Create File</button>
       <button class="saveFile-btn" onclick="saveFile()">Save Changes</button>
       <button class="deleteFile-btn" onclick="deleteFile()">Delete File</button>
       <button class="submitFile-btn" onclick="submitFile()">Submit</button>
@@ -536,6 +548,42 @@
       <div class="modal-buttons">
         <button class="create-btn" id="createBucketBtn" onclick="processCreateBucket()" disabled>Create Bucket</button>
         <button class="cancel-btn" onclick="cancelCreateBucket()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create file modal -->
+  <div id="createFileModal" class="modal">
+    <div class="modal-content" style="width: 480px; text-align: left;">
+      <p style="margin-bottom: 16px; font-size: 16px; font-weight: 600;">Create New File</p>
+
+      <label style="font-size: 13px; color: #666;">File Name</label>
+      <input type="text" id="createFileName" class="modal-input" placeholder="Enter file name (without .html)">
+
+      <label style="font-size: 13px; color: #666;">Destination Bucket</label>
+      <select id="createFileBucket" class="modal-input" onchange="onCreateFileBucketChange()">
+        <option value="">Select bucket...</option>
+      </select>
+
+      <label style="font-size: 13px; color: #666;">Destination Subdirectory</label>
+      <select id="createFileSubdir" class="modal-input">
+        <option value="">Select subdirectory...</option>
+      </select>
+
+      <label style="font-size: 13px; color: #666;">Create From Existing File (optional)</label>
+      <select id="createFileFromBucket" class="modal-input" onchange="onCreateFileFromBucketChange()">
+        <option value="">Select source bucket...</option>
+      </select>
+      <select id="createFileFromSubdir" class="modal-input" onchange="onCreateFileFromSubdirChange()">
+        <option value="">Select source subdirectory...</option>
+      </select>
+      <select id="createFileFromFile" class="modal-input">
+        <option value="">Select source file...</option>
+      </select>
+
+      <div class="modal-buttons" style="margin-top: 8px;">
+        <button class="create-btn" onclick="confirmCreateFile()">Create File</button>
+        <button class="cancel-btn" onclick="cancelCreateFile()">Cancel</button>
       </div>
     </div>
   </div>
