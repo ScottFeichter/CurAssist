@@ -435,7 +435,7 @@
 
   <style>
                     /* Service Section Modal Styles */
-                    #serviceDivOrganization .service-modal {
+                    .service-modal {
                       position: fixed;
                       top: 0;
                       left: 0;
@@ -447,19 +447,19 @@
                       justify-content: center;
                       z-index: 1000;
                     }
-                    #serviceDivOrganization .service-modal-content {
+                    .service-modal-content {
                       background: white;
                       padding: 30px;
                       border-radius: 8px;
                       min-width: 400px;
                       max-width: 500px;
                     }
-                    #serviceDivOrganization .service-modal-content h3 {
+                    .service-modal-content h3 {
                       margin-top: 0;
                       margin-bottom: 20px;
                     }
-                    #serviceDivOrganization .service-modal-content input,
-                    #serviceDivOrganization .service-modal-content textarea {
+                    .service-modal-content input,
+                    .service-modal-content textarea {
                       width: 100%;
                       margin-bottom: 15px;
                       padding: 10px;
@@ -467,22 +467,22 @@
                       border-radius: 4px;
                       box-sizing: border-box;
                     }
-                    #serviceDivOrganization .service-modal-content textarea {
+                    .service-modal-content textarea {
                       min-height: 150px;
                       resize: vertical;
                     }
-                    #serviceDivOrganization .service-modal-content button {
+                    .service-modal-content button {
                       margin-right: 10px;
                       padding: 10px 20px;
                       border: none;
                       border-radius: 4px;
                       cursor: pointer;
                     }
-                    #serviceDivOrganization .service-modal-content button:first-of-type {
+                    .service-modal-content button:first-of-type {
                       background: #276ce5;
                       color: white;
                     }
-                    #serviceDivOrganization .service-modal-content button:last-of-type {
+                    .service-modal-content button:last-of-type {
                       background: #ddd;
                     }
 
@@ -613,7 +613,7 @@
                                 </div>
 
 
-                                <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
+                                <button id="serviceAddLocationTrigger" class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
                                   Add Location
                                 </button>
                              </li>
@@ -781,7 +781,7 @@
                                 </p>
                                 <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
                                 </ul>
-                                <button type="button" class="edit--section--list--item--button">
+                                <button id="serviceAddNoteTrigger" type="button" class="edit--section--list--item--button">
                                   <i class="material-symbols-outlined">
                                     add_box
                                   </i>
@@ -1421,96 +1421,105 @@
 
 <script>
                   document.addEventListener('DOMContentLoaded', function() {
-                    // Service Section Modal References
-                    const serviceLocationModal = document.getElementById('serviceAddLocationModal');
-                    const servicePhoneModal = document.getElementById('serviceAddPhoneModal');
-                    const serviceNoteModal = document.getElementById('serviceAddNoteModal');
+                    const serviceRoot = document.getElementById('serviceDivOrganization');
+                    initServiceModals(serviceRoot);
+                  });
 
-                    // Find all Add buttons in serviceDiv only
-                    const serviceButtons = document.querySelectorAll('#serviceDivOrganization button');
+                  function initServiceModals(root) {
+                    console.log('[initServiceModals] called, root id:', root && root.id);
+                    // Service Section Modal References — scoped to root
+                    const serviceLocationModal = root.querySelector('#serviceAddLocationModal');
+                    const servicePhoneModal = root.querySelector('#serviceAddPhoneModal');
+                    const serviceNoteModal = root.querySelector('#serviceAddNoteModal');
+                    console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
 
-                    serviceButtons.forEach(btn => {
-                      const text = btn.textContent.trim();
-
-                      if (text === 'Add Location') {
-                        btn.addEventListener('click', () => {
-                          serviceLocationModal.style.display = 'flex';
-                        });
-                      } else if (text === 'Add Phone') {
-                        btn.addEventListener('click', () => {
-                          servicePhoneModal.style.display = 'flex';
-                        });
-                      } else if (text === 'Add Note') {
-                        btn.addEventListener('click', () => {
-                          serviceNoteModal.style.display = 'flex';
-                        });
-                      }
-                    });
+                    const locationTrigger = root.querySelector('#serviceAddLocationTrigger');
+                    console.log('[initServiceModals] locationTrigger:', locationTrigger);
+                    if (locationTrigger) {
+                      locationTrigger.addEventListener('click', () => {
+                        console.log('[initServiceModals] Add Location clicked');
+                        serviceLocationModal.style.display = 'flex';
+                      });
+                    }
+                    const noteTrigger = root.querySelector('#serviceAddNoteTrigger');
+                    if (noteTrigger) {
+                      noteTrigger.addEventListener('click', () => {
+                        serviceNoteModal.style.display = 'flex';
+                      });
+                    }
 
                     // Service Location modal handlers
-                    document.getElementById('serviceCancelLocationBtn').addEventListener('click', () => {
+                    const cancelLocationBtn = root.querySelector('#serviceCancelLocationBtn');
+                    if (cancelLocationBtn) cancelLocationBtn.addEventListener('click', () => {
                       serviceLocationModal.style.display = 'none';
                     });
 
-                    document.getElementById('serviceAddLocationBtn').addEventListener('click', () => {
-                      const name = document.getElementById('serviceLocationName').value;
-                      const addr1 = document.getElementById('serviceAddressLine1').value;
-                      const addr2 = document.getElementById('serviceAddressLine2').value;
-                      const city = document.getElementById('serviceCity').value;
-                      const state = document.getElementById('serviceState').value;
-                      const zip = document.getElementById('serviceZip').value;
+                    const addLocationBtn = root.querySelector('#serviceAddLocationBtn');
+                    if (addLocationBtn) addLocationBtn.addEventListener('click', () => {
+                      const name = root.querySelector('#serviceLocationName').value;
+                      const addr1 = root.querySelector('#serviceAddressLine1').value;
+                      const addr2 = root.querySelector('#serviceAddressLine2').value;
+                      const city = root.querySelector('#serviceCity').value;
+                      const state = root.querySelector('#serviceState').value;
+                      const zip = root.querySelector('#serviceZip').value;
 
-                      const locationList = document.getElementById('service_locations');
+                      const locationList = root.querySelector('#service_locations');
                       const div = document.createElement('div');
                       div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
                       locationList.appendChild(div);
 
-                      document.getElementById('serviceLocationName').value = '';
-                      document.getElementById('serviceAddressLine1').value = '';
-                      document.getElementById('serviceAddressLine2').value = '';
-                      document.getElementById('serviceCity').value = '';
-                      document.getElementById('serviceState').value = '';
-                      document.getElementById('serviceZip').value = '';
+                      root.querySelector('#serviceLocationName').value = '';
+                      root.querySelector('#serviceAddressLine1').value = '';
+                      root.querySelector('#serviceAddressLine2').value = '';
+                      root.querySelector('#serviceCity').value = '';
+                      root.querySelector('#serviceState').value = '';
+                      root.querySelector('#serviceZip').value = '';
                       serviceLocationModal.style.display = 'none';
                     });
 
                     // Service Phone modal handlers
-                    document.getElementById('serviceCancelPhoneBtn').addEventListener('click', () => {
+                    const cancelPhoneBtn = root.querySelector('#serviceCancelPhoneBtn');
+                    if (cancelPhoneBtn) cancelPhoneBtn.addEventListener('click', () => {
                       servicePhoneModal.style.display = 'none';
                     });
 
-                    document.getElementById('serviceAddPhoneBtn').addEventListener('click', () => {
-                      const name = document.getElementById('servicePhoneName').value;
-                      const number = document.getElementById('servicePhoneNumber').value;
+                    const addPhoneBtn = root.querySelector('#serviceAddPhoneBtn');
+                    if (addPhoneBtn) addPhoneBtn.addEventListener('click', () => {
+                      const name = root.querySelector('#servicePhoneName').value;
+                      const number = root.querySelector('#servicePhoneNumber').value;
 
-                      const phoneSublist = document.querySelectorAll('#serviceDivOrganization .edit--section--list--item--sublist')[0];
+                      const phoneSublist = root.querySelectorAll('.edit--section--list--item--sublist')[0];
                       const li = document.createElement('li');
                       li.innerHTML = `<strong>${name}:</strong> ${number}`;
                       phoneSublist.appendChild(li);
 
-                      document.getElementById('servicePhoneName').value = '';
-                      document.getElementById('servicePhoneNumber').value = '';
+                      root.querySelector('#servicePhoneName').value = '';
+                      root.querySelector('#servicePhoneNumber').value = '';
                       servicePhoneModal.style.display = 'none';
                     });
 
                     // Service Note modal handlers
-                    document.getElementById('serviceCancelNoteBtn').addEventListener('click', () => {
+                    const cancelNoteBtn = root.querySelector('#serviceCancelNoteBtn');
+                    if (cancelNoteBtn) cancelNoteBtn.addEventListener('click', () => {
                       serviceNoteModal.style.display = 'none';
                     });
 
-                    document.getElementById('serviceAddNoteBtn').addEventListener('click', () => {
-                      const note = document.getElementById('serviceNoteText').value;
+                    const addNoteBtn = root.querySelector('#serviceAddNoteBtn');
+                    if (addNoteBtn) addNoteBtn.addEventListener('click', () => {
+                      const note = root.querySelector('#serviceNoteText').value;
 
-                      const noteSublist = document.querySelectorAll('#serviceDivOrganization .edit--section--list--item--sublist')[1];
+                      const noteSublist = root.querySelectorAll('.edit--section--list--item--sublist')[1];
                       const li = document.createElement('li');
                       li.textContent = note;
                       noteSublist.appendChild(li);
 
-                      document.getElementById('serviceNoteText').value = '';
+                      root.querySelector('#serviceNoteText').value = '';
                       serviceNoteModal.style.display = 'none';
                     });
 
                     // Expose as global so navBar can call it on each cloned service div
+                    window.initServiceModals = initServiceModals;
+
                     window.setupServiceAutocomplete = function(root) {
                       setupAutocomplete('categoryTopDropdown', topCategory, root);
                       setupAutocomplete('categorySubDropdown', subCategory, root);
@@ -1600,7 +1609,7 @@
                         }
                       });
                     }
-                  });
+                  }
                 </script>
 
 

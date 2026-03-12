@@ -58,9 +58,22 @@ function componentStyles(filePath) {
     .join('\n');
 }
 
+// Extracts <style> blocks from a fragment (non-full-HTML file)
+function fragmentStyles(content) {
+  return [...content.matchAll(/<style>([\s\S]*?)<\/style>/g)]
+    .map(m => `<style>${m[1]}</style>`).join('\n');
+}
+
+// Strips <style> blocks from a fragment
+function stripStyles(content) {
+  return content.replace(/<style>[\s\S]*?<\/style>/g, '').trim();
+}
+
 // Read all component files
 // Fragments (not full HTML docs) — read as-is
-const timePicker = fs.readFileSync(path.join(componentsDir, '_timePicker.html'), 'utf8');
+const timePickerRaw = fs.readFileSync(path.join(componentsDir, '_timePicker.html'), 'utf8');
+const timePicker = stripStyles(timePickerRaw);
+const timePickerStyles = fragmentStyles(timePickerRaw);
 const html = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-html.html'), 'utf8');
 const head = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-head.html'), 'utf8');
 const bodySkeleton = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-skeleton.html'), 'utf8');
@@ -81,7 +94,7 @@ const allComponentStyles = [
   'orgServTemplate-body-ServiceDiv-Organization.html',
 ].map(f => componentStyles(path.join(componentsDir, f))).filter(s => s).join('\n');
 
-let combined = html.replace('</html>', head + '\n' + allComponentStyles + '\n' + bodySkeleton + '\n</html>');
+let combined = html.replace('</html>', head.replace('</head>', timePickerStyles + '\n' + allComponentStyles + '\n</head>') + '\n' + bodySkeleton + '\n</html>');
 
 // Wrap navbar + org content in flex container that gets toggled
 const orgWrapper = `<div id="organizationWrapper" style="display: flex;">

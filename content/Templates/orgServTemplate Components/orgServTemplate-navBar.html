@@ -687,6 +687,9 @@
     if (typeof window.setupServiceAutocomplete === 'function') {
       window.setupServiceAutocomplete(newServiceDiv);
     }
+    if (typeof window.initServiceModals === 'function') {
+      window.initServiceModals(newServiceDiv);
+    }
     
     // Wire up Remove Service button
     const removeBtn = newServiceDiv.querySelector('#service--deactivation');

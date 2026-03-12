@@ -1428,9 +1428,10 @@
 <script>
                   document.addEventListener('DOMContentLoaded', function() {
                     // Service Section Modal References
-                    const serviceLocationModal = document.getElementById('serviceAddLocationModal');
-                    const servicePhoneModal = document.getElementById('serviceAddPhoneModal');
-                    const serviceNoteModal = document.getElementById('serviceAddNoteModal');
+                    const serviceRoot = document.getElementById('serviceDivSpreadsheet');
+                    const serviceLocationModal = serviceRoot.querySelector('#serviceAddLocationModal');
+                    const servicePhoneModal = serviceRoot.querySelector('#serviceAddPhoneModal');
+                    const serviceNoteModal = serviceRoot.querySelector('#serviceAddNoteModal');
 
                     // Find all Add buttons in serviceDiv only
                     const serviceButtons = document.querySelectorAll('#serviceDivSpreadsheet button');
@@ -1454,11 +1455,11 @@
                     });
 
                     // Service Location modal handlers
-                    document.getElementById('serviceCancelLocationBtn').addEventListener('click', () => {
+                    serviceRoot.querySelector('#serviceCancelLocationBtn').addEventListener('click', () => {
                       serviceLocationModal.style.display = 'none';
                     });
 
-                    document.getElementById('serviceAddLocationBtn').addEventListener('click', () => {
+                    serviceRoot.querySelector('#serviceAddLocationBtn').addEventListener('click', () => {
                       const name = document.getElementById('serviceLocationName').value;
                       const addr1 = document.getElementById('serviceAddressLine1').value;
                       const addr2 = document.getElementById('serviceAddressLine2').value;
@@ -1481,11 +1482,11 @@
                     });
 
                     // Service Phone modal handlers
-                    document.getElementById('serviceCancelPhoneBtn').addEventListener('click', () => {
+                    serviceRoot.querySelector('#serviceCancelPhoneBtn').addEventListener('click', () => {
                       servicePhoneModal.style.display = 'none';
                     });
 
-                    document.getElementById('serviceAddPhoneBtn').addEventListener('click', () => {
+                    serviceRoot.querySelector('#serviceAddPhoneBtn').addEventListener('click', () => {
                       const name = document.getElementById('servicePhoneName').value;
                       const number = document.getElementById('servicePhoneNumber').value;
 
@@ -1500,11 +1501,11 @@
                     });
 
                     // Service Note modal handlers
-                    document.getElementById('serviceCancelNoteBtn').addEventListener('click', () => {
+                    serviceRoot.querySelector('#serviceCancelNoteBtn').addEventListener('click', () => {
                       serviceNoteModal.style.display = 'none';
                     });
 
-                    document.getElementById('serviceAddNoteBtn').addEventListener('click', () => {
+                    serviceRoot.querySelector('#serviceAddNoteBtn').addEventListener('click', () => {
                       const note = document.getElementById('serviceNoteText').value;
 
                       const noteSublist = document.querySelectorAll('#serviceDivSpreadsheet .edit--section--list--item--sublist')[1];
@@ -1517,7 +1518,6 @@
                     });
 
                     // Setup all autocomplete fields
-                    const serviceRoot = document.getElementById('serviceDivSpreadsheet');
                     setupAutocomplete('categoryTopDropdown', topCategory, serviceRoot);
                     setupAutocomplete('categorySubDropdown', subCategory, serviceRoot);
                     setupAutocomplete('eligibilityTopDropdown', topEligibility, serviceRoot);
