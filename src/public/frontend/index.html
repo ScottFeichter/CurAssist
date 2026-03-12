@@ -20,7 +20,39 @@
       padding: 0 20px;
       display: flex;
       align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-side {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .sidebar-toggle-btn {
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
       justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .sidebar-toggle-btn:hover {
+      background: rgba(255,255,255,0.35);
     }
 
     #main {
@@ -41,11 +73,10 @@
       border-right: 1px solid #ccc;
       overflow-y: auto;
       position: relative;
-      transition: margin-left 0.3s, width 0.3s;
+      transition: width 0.3s, min-width 0.3s, padding 0.3s;
     }
 
     #sidebar.collapsed {
-      margin-left: -250px;
       width: 0;
       min-width: 0;
       padding: 0;
@@ -83,36 +114,61 @@
       background: #276CE5;
     }
 
-    #collapseBtn {
-      position: absolute;
-      left: 10px;
-      top: 10px;
-      width: 30px;
-      height: 30px;
+    #rightSidebar {
+      width: 250px;
+      min-width: 200px;
+      max-width: 600px;
+      background: #f0f0f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      border-left: 1px solid #ccc;
+      overflow-y: hidden;
+      position: relative;
+      transition: width 0.3s, min-width 0.3s, padding 0.3s;
+    }
+
+    #rightSidebar.collapsed {
+      width: 0;
+      min-width: 0;
       padding: 0;
-      background: #276CE5;
-      color: white;
-      border: none;
+      overflow: hidden;
+    }
+
+    #rightResizeHandle {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 60px;
+      background: transparent;
+      cursor: ew-resize;
       border-radius: 4px;
-      cursor: pointer;
-      font-size: 18px;
+      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 100;
-      transition: left 0.3s, opacity 0.3s;
+      gap: 2px;
     }
 
-    #collapseBtn:hover {
-      background: #1a5bb8;
+    #rightResizeHandle::before,
+    #rightResizeHandle::after {
+      content: '';
+      width: 2px;
+      height: 20px;
+      background: #999;
+      border-radius: 1px;
     }
 
-    #collapseBtn.inactive {
-      opacity: 0.5;
+    #rightResizeHandle:hover::before,
+    #rightResizeHandle:hover::after {
+      background: #276CE5;
     }
 
-    #sidebar.collapsed ~ #collapseBtn {
-      left: -240px;
+    #collapseBtn {
+      display: none;
     }
 
     #content {
@@ -428,7 +484,15 @@
 </head>
 <body>
   <div id="header">
+    <div class="header-side">
+      <button class="sidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
+      <span class="header-label">Bucket Actions</span>
+    </div>
     <h2>CurAssist WorkFlow</h2>
+    <div class="header-side">
+      <span class="header-label">File Actions</span>
+      <button class="sidebar-toggle-btn" onclick="toggleRightSidebar()">☰</button>
+    </div>
   </div>
 
   <div id="main">
@@ -439,44 +503,40 @@
       <button class="createBucket-btn" onclick="createBucket()">Create Bucket</button>
       <button class="deleteBucket-btn" onclick="deleteBucket()">Delete Bucket</button>
 
-
-
-
-      <div class="section-title">Bucket</div>
+      <!-- <div class="section-title">Bucket</div> -->
       <select id="bucketSelect" onchange="loadBucket()">
         <option value="">Select bucket...</option>
       </select>
 
-      <div class="section-title">Subdirectory</div>
+      <!-- <div class="section-title">Subdirectory</div> -->
       <select id="subdirSelect" onchange="loadSubdir()">
         <option value="">Select subdirectory...</option>
       </select>
 
-
-      <div class="section-title">File</div>
+      <!-- <div class="section-title">File</div> -->
       <select id="fileInfo" onchange="loadSelectedFile()">
         <option value="">Select file...</option>
       </select>
-      <div id="fileCount"></div>
-
       <div class="nav-buttons">
         <button onclick="loadPrevious()">← Prev</button>
         <button onclick="loadNext()">Next →</button>
       </div>
+      <div id="fileCount"></div>
+    </div>
 
-      <div class="section-title">File Actions</div>
+    <div id="content">
+      <iframe id="formFrame" src=""></iframe>
+    </div>
+
+    <div id="rightSidebar">
+      <div id="rightResizeHandle"></div>
+      <div class="section-title" style="margin-top: 0;">File Actions</div>
       <button class="moveFile-btn" onclick="moveFile()">Move File</button>
       <button class="copyFile-btn" onclick="copyFile()">Copy File</button>
       <button class="createFile-btn" onclick="createFile()">Create File</button>
       <button class="saveFile-btn" onclick="saveFile()">Save Changes</button>
       <button class="deleteFile-btn" onclick="deleteFile()">Delete File</button>
       <button class="submitFile-btn" onclick="submitFile()">Submit</button>
-
-
-    </div>
-
-    <div id="content">
-      <iframe id="formFrame" src=""></iframe>
     </div>
   </div>
 

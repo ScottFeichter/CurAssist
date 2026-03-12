@@ -647,43 +647,57 @@ function cancelCreateFile() {
 
 // #endregion ------------------------------------------------------------------
 
-// Toggle sidebar collapse/expand
+// Toggle sidebars
 function toggleSidebar() {
-  const sidebar = document.getElementById('sidebar');
-  const btn = document.getElementById('collapseBtn');
-  sidebar.classList.toggle('collapsed');
-  btn.classList.toggle('inactive');
+  document.getElementById('sidebar').classList.toggle('collapsed');
+}
+
+function toggleRightSidebar() {
+  document.getElementById('rightSidebar').classList.toggle('collapsed');
 }
 
 // Sidebar resize functionality
-let isResizing = false;
+let isResizingLeft = false;
+let isResizingRight = false;
 let startX = 0;
 let startWidth = 0;
 
 const resizeHandle = document.getElementById('resizeHandle');
+const rightResizeHandle = document.getElementById('rightResizeHandle');
 const sidebar = document.getElementById('sidebar');
+const rightSidebar = document.getElementById('rightSidebar');
 
 resizeHandle.addEventListener('mousedown', (e) => {
-  isResizing = true;
+  isResizingLeft = true;
   startX = e.clientX;
   startWidth = sidebar.offsetWidth;
   document.body.style.cursor = 'ew-resize';
   e.preventDefault();
 });
 
+rightResizeHandle.addEventListener('mousedown', (e) => {
+  isResizingRight = true;
+  startX = e.clientX;
+  startWidth = rightSidebar.offsetWidth;
+  document.body.style.cursor = 'ew-resize';
+  e.preventDefault();
+});
+
 document.addEventListener('mousemove', (e) => {
-  if (!isResizing) return;
-  const width = startWidth + (e.clientX - startX);
-  const minWidth = 200;
-  const maxWidth = 600;
-  if (width >= minWidth && width <= maxWidth) {
-    sidebar.style.width = width + 'px';
+  if (isResizingLeft) {
+    const width = startWidth + (e.clientX - startX);
+    if (width >= 200 && width <= 600) sidebar.style.width = width + 'px';
+  }
+  if (isResizingRight) {
+    const width = startWidth - (e.clientX - startX);
+    if (width >= 200 && width <= 600) rightSidebar.style.width = width + 'px';
   }
 });
 
 document.addEventListener('mouseup', () => {
-  if (isResizing) {
-    isResizing = false;
+  if (isResizingLeft || isResizingRight) {
+    isResizingLeft = false;
+    isResizingRight = false;
     document.body.style.cursor = '';
   }
 });
