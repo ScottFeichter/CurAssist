@@ -100,6 +100,59 @@ async function loadFile(index) {
   const content = await fetch(`${API_BASE}/buckets/${currentBucket}/${currentSubdir}/${filename}`).then(r => r.text());
 
   const iframe = document.getElementById('formFrame');
+
+  let loadCount = 0;
+  iframe.onload = () => {
+    loadCount++;
+    const iDoc = iframe.contentDocument;
+    console.log('[iframe.onload] fired, count:', loadCount);
+    if (!iDoc || !iDoc.getElementById('orgNavLink')) {
+      console.log('[iframe.onload] skipping - doc not ready');
+      return;
+    }
+
+    // Populate org name in navbar
+    const orgNameInput = iDoc.getElementById('organization_name');
+    const orgNavLink = iDoc.getElementById('orgNavLink');
+    console.log('[iframe.onload] orgNameInput:', orgNameInput, 'value attr:', orgNameInput?.getAttribute('value'));
+    console.log('[iframe.onload] orgNavLink:', orgNavLink);
+    if (orgNameInput && orgNavLink) {
+      orgNavLink.textContent = orgNameInput.getAttribute('value') || orgNameInput.value || '{{organization_name}}';
+      console.log('[iframe.onload] set orgNavLink to:', orgNavLink.textContent);
+      orgNameInput.addEventListener('input', function() {
+        orgNavLink.textContent = this.value || '{{organization_name}}';
+      });
+    }
+
+    // Populate servicesList from existing service divs
+    const orgServicesDiv = iDoc.getElementById('orgServicesDiv');
+    const servicesList = iDoc.getElementById('servicesList');
+    console.log('[iframe.onload] orgServicesDiv:', orgServicesDiv, 'children:', orgServicesDiv?.children.length);
+    console.log('[iframe.onload] servicesList:', servicesList);
+    if (orgServicesDiv && servicesList) {
+      Array.from(orgServicesDiv.children).forEach(serviceDiv => {
+        if (!serviceDiv.id || serviceDiv.style.display === 'none') return;
+        const nameInput = serviceDiv.querySelector('#service_name');
+        const serviceName = (nameInput && (nameInput.getAttribute('value') || nameInput.value)) || 'Unnamed Service';
+        console.log('[iframe.onload] adding service to nav:', serviceName);
+        const li = document.createElement('li');
+        li.className = 'app-components-edit-EditSidebar-module__listItem--HBckV';
+        li.dataset.serviceId = serviceDiv.id;
+        const link = document.createElement('a');
+        link.href = `#${serviceDiv.id}`;
+        link.textContent = serviceName;
+        link.onclick = (e) => { e.preventDefault(); serviceDiv.scrollIntoView({ behavior: 'smooth' }); };
+        li.appendChild(link);
+        servicesList.appendChild(li);
+        if (nameInput) {
+          nameInput.addEventListener('input', function() {
+            link.textContent = this.value || 'Unnamed Service';
+          });
+        }
+      });
+    }
+  };
+
   iframe.srcdoc = content;
 
   const fileSelect = document.getElementById('fileInfo');
