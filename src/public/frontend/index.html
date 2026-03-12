@@ -648,6 +648,26 @@
     </div>
   </div>
 
+  <!-- Submit success modal -->
+  <div id="submitSuccessModal" class="modal">
+    <div class="modal-content">
+      <p>File successfully submitted and moved to Complete.</p>
+      <div class="modal-buttons">
+        <button class="submit-btn" onclick="onSubmitSuccessOk()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Already complete modal -->
+  <div id="alreadyCompleteModal" class="modal">
+    <div class="modal-content">
+      <p>This file is in the Complete subdirectory and cannot be resubmitted.</p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="document.getElementById('alreadyCompleteModal').style.display='none'">OK</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Delete bucket modal - Step 1 -->
   <div id="deleteBucketModal1" class="modal">
     <div class="modal-content">
@@ -729,6 +749,7 @@
     </div>
   </div>
 
+  <script src="collector.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

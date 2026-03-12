@@ -70,6 +70,7 @@ export const serviceFieldMap: Record<string, string> = {
   service_sub_categories: 'Sub Categories', //   Special: uses FieldMap for actual data
   service_top_eligibilities: 'Top Eligibilities', // Special: uses FieldMap for actual data
   service_sub_eligibilities: 'Sub Eligibilities', //   Special: uses FieldMap for actual data
+  service_belongs_to_org: 'Organization ID', // ID of the org this service belongs to
 };
 
 // Service location fields mapping (uses same columns as organization locations)

@@ -351,22 +351,43 @@ function cancelDelete() {
 
 // Submit file - Show confirmation modal
 function submitFile() {
-  if (!currentFiles[currentIndex]) {
-    alert('No file selected');
+  if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
+  if (currentSubdir === 'Complete') {
+    document.getElementById('alreadyCompleteModal').style.display = 'block';
     return;
   }
   document.getElementById('submitModal').style.display = 'block';
 }
 
-// Confirm submit - placeholder for future implementation
+// Confirm submit
 function confirmSubmit() {
   document.getElementById('submitModal').style.display = 'none';
-  alert('Functionality not implemented yet');
+  submitFormData();
 }
 
 // Cancel submit - close modal
 function cancelSubmit() {
   document.getElementById('submitModal').style.display = 'none';
+}
+
+function onSubmitSuccessOk() {
+  document.getElementById('submitSuccessModal').style.display = 'none';
+  reloadSubdirNoLoad();
+}
+
+async function reloadSubdirNoLoad() {
+  currentFiles = await fetch(`${API_BASE}/buckets/${currentBucket}/${currentSubdir}/files`).then(r => r.json());
+  currentIndex = 0;
+  const fileSelect = document.getElementById('fileInfo');
+  fileSelect.innerHTML = '<option value="">Select file...</option>';
+  currentFiles.forEach((file, index) => {
+    const option = document.createElement('option');
+    option.value = index;
+    option.textContent = file;
+    fileSelect.appendChild(option);
+  });
+  document.getElementById('fileCount').textContent = `File 0 of ${currentFiles.length}`;
+  document.getElementById('formFrame').srcdoc = '';
 }
 
 // Create bucket - placeholder

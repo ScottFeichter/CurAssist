@@ -1908,6 +1908,8 @@
                         // Find the location list
                         const locationList = document.getElementById('organization_locations');
                         const div = document.createElement('div');
+                        div.dataset.name = name; div.dataset.addr1 = addr1; div.dataset.addr2 = addr2;
+                        div.dataset.city = city; div.dataset.state = state; div.dataset.zip = zip;
                         div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
                         locationList.appendChild(div);
 
@@ -1933,6 +1935,7 @@
                         // Find the phone sublist
                         const phoneSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[1];
                         const li = document.createElement('li');
+                        li.dataset.name = name; li.dataset.number = number;
                         li.innerHTML = `<strong>${name}:</strong> ${number}`;
                         phoneSublist.appendChild(li);
 
@@ -2108,8 +2111,8 @@
 
 <!---------------------------------------------------------------------  Service Org Number ---------------------------------------------------------------------------->
                               <li class="edit--section--list--item">
-                                  <label for="serviceBelongsToOrg">Service Belongs To Organization:</label>
-                                  <input type="text" class="serviceBelongsToOrg"  id="serviceBelongsToOrg" placeholder="What Is The Number Of The Organization This Service Belongs To?">
+                                  <label for="service_belongs_to_org">Service Belongs To Organization:</label>
+                                  <input type="text" class="service_belongs_to_org"  id="service_belongs_to_org" placeholder="What Is The Number Of The Organization This Service Belongs To?">
                               </li>
 
 <!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
@@ -3021,6 +3024,8 @@
 
                       const locationList = document.getElementById('service_locations');
                       const div = document.createElement('div');
+                      div.dataset.name = name; div.dataset.addr1 = addr1; div.dataset.addr2 = addr2;
+                      div.dataset.city = city; div.dataset.state = state; div.dataset.zip = zip;
                       div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
                       locationList.appendChild(div);
 
@@ -3044,6 +3049,7 @@
 
                       const phoneSublist = document.querySelectorAll('#serviceDivSpreadsheet .edit--section--list--item--sublist')[0];
                       const li = document.createElement('li');
+                      li.dataset.name = name; li.dataset.number = number;
                       li.innerHTML = `<strong>${name}:</strong> ${number}`;
                       phoneSublist.appendChild(li);
 
@@ -4113,6 +4119,8 @@
 
                       const locationList = root.querySelector('#service_locations');
                       const div = document.createElement('div');
+                      div.dataset.name = name; div.dataset.addr1 = addr1; div.dataset.addr2 = addr2;
+                      div.dataset.city = city; div.dataset.state = state; div.dataset.zip = zip;
                       div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
                       locationList.appendChild(div);
 
@@ -4138,6 +4146,7 @@
 
                       const phoneSublist = root.querySelectorAll('.edit--section--list--item--sublist')[0];
                       const li = document.createElement('li');
+                      li.dataset.name = name; li.dataset.number = number;
                       li.innerHTML = `<strong>${name}:</strong> ${number}`;
                       phoneSublist.appendChild(li);
 
