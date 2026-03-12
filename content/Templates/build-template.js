@@ -25,6 +25,8 @@ const outputPath = process.argv[3] || __dirname;
 const outputFile = path.join(outputPath, outputName);
 
 // Read all component files
+const timePicker = fs.readFileSync(path.join(componentsDir, '_timePicker.html'), 'utf8');
+const sharedServiceData = fs.readFileSync(path.join(componentsDir, '_sharedServiceData.html'), 'utf8');
 const html = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-html.html'), 'utf8');
 const head = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-head.html'), 'utf8');
 const bodySkeleton = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-skeleton.html'), 'utf8');
@@ -36,7 +38,7 @@ const servDivSpreadsheet = fs.readFileSync(path.join(componentsDir, 'orgServTemp
 const servDivOrganization = fs.readFileSync(path.join(componentsDir, 'orgServTemplate-body-ServiceDiv-Organization.html'), 'utf8');
 
 // Combine: insert head into html, then insert body components into skeleton
-let combined = html.replace('</html>', head + bodySkeleton);
+let combined = html.replace('</html>', head + bodySkeleton + '\n</html>');
 
 // Wrap navbar + org content in flex container that gets toggled
 const orgWrapper = `<div id="organizationWrapper" style="display: flex;">
@@ -50,7 +52,7 @@ ${orgServicesDiv}
 </div>`;
 
 // Insert the body components where the edit--main div content should go
-const bodyComponents = header + '\n' + orgWrapper + '\n' + servDivSpreadsheet + '\n' + '<div id="serviceDivOrgTemplate" style="display:none;">' + servDivOrganization + '</div>';
+const bodyComponents = timePicker + '\n' + sharedServiceData + '\n' + header + '\n' + orgWrapper + '\n' + servDivSpreadsheet + '\n' + '<div id="serviceDivOrgTemplate" style="display:none;">' + servDivOrganization + '</div>';
 combined = combined.replace(
   /<div class="edit--main">[\s\S]*?<\/div>\s*<!-+\s*EDIT MAIN START/,
   `<div class="edit--main">\n${bodyComponents}\n              </div>\n<!-------------- EDIT MAIN START`

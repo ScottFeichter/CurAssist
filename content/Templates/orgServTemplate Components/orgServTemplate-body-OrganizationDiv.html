@@ -38,8 +38,7 @@
                             (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
                           </p>
                         </label>
-                        <textarea id="organization_internal_notes" class="input edit-section-internal-note" placeholder="Add any info that future content editors should be aware of updating this resource. Adding dates to your notes will help with tracking changes." data-field="internal_note">
-                        </textarea>
+                        <textarea id="organization_internal_notes" class="input edit-section-internal-note" placeholder="Add any info that future content editors should be aware of updating this resource. Adding dates to your notes will help with tracking changes." data-field="internal_note"></textarea>
                       </li>
 
 
@@ -108,8 +107,7 @@
                         <label for="organization_description">
                           Description
                         </label>
-                        <textarea id="organization_description" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description">
-                        </textarea>
+                        <textarea id="organization_description" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description"></textarea>
                         <p>
                           If you'd like to add formatting to descriptions, we support&nbsp;
                           <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
@@ -134,37 +132,38 @@
                           Hours
                         </span>
                         <div>
-                          <span class="label open-24-label">
-                            24 hrs?
-                          </span>
                           <ul class="edit-hours-list">
                             <div class="day-group">
                               <div class="hours">
-                                <div style="display: flex; align-items: center; justify-content: center; margin-bottom: 10px;">
-                                  <label style="margin: 0; display: flex; align-items: center; gap: 8px; white-space: nowrap;">
+                                <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                                  <div style="flex: 1;"></div>
+                                  <label style="margin: 0; display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap;">
                                     Copy M hours to M - F?
                                     <input type="checkbox" id="copyMondayHours" style="margin: 0; cursor: pointer;">
                                   </label>
+                                  <div style="flex: 1; display: flex; justify-content: flex-end;">
+                                    <span style="width: auto; color: #888; font-size: 1rem;">24 hrs?</span>
+                                  </div>
                                 </div>
                                 <li>
                                   <p>
                                     M
                                   </p>
-                                  <div>
-                                    <input type="time" value="">
-                                    <input type="time" value="">
+                                  <div style="flex: 1;">
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                  </div>
+                                  <div class="add-time">
+                                    <button type="button" class="icon-button">
+                                      <i class="material-symbols-outlined">
+                                        add
+                                      </i>
+                                    </button>
+                                  </div>
+                                  <div class="is-24-hours">
+                                    <input type="checkbox">
                                   </div>
                                 </li>
-                              </div>
-                              <div class="add-time">
-                                <button type="button" class="icon-button">
-                                  <i class="material-symbols-outlined">
-                                    add
-                                  </i>
-                                </button>
-                              </div>
-                              <div class="is-24-hours">
-                                <input type="checkbox">
                               </div>
                             </div>
                             <div class="day-group">
@@ -173,21 +172,21 @@
                                   <p>
                                     T
                                   </p>
-                                  <div>
-                                    <input type="time" value="">
-                                    <input type="time" value="">
+                                  <div style="flex: 1;">
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                  </div>
+                                  <div class="add-time">
+                                    <button type="button" class="icon-button">
+                                      <i class="material-symbols-outlined">
+                                        add
+                                      </i>
+                                    </button>
+                                  </div>
+                                  <div class="is-24-hours">
+                                    <input type="checkbox">
                                   </div>
                                 </li>
-                              </div>
-                              <div class="add-time">
-                                <button type="button" class="icon-button">
-                                  <i class="material-symbols-outlined">
-                                    add
-                                  </i>
-                                </button>
-                              </div>
-                              <div class="is-24-hours">
-                                <input type="checkbox">
                               </div>
                             </div>
                             <div class="day-group">
@@ -196,21 +195,21 @@
                                   <p>
                                     W
                                   </p>
-                                  <div>
-                                    <input type="time" value="">
-                                    <input type="time" value="">
+                                  <div style="flex: 1;">
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                  </div>
+                                  <div class="add-time">
+                                    <button type="button" class="icon-button">
+                                      <i class="material-symbols-outlined">
+                                        add
+                                      </i>
+                                    </button>
+                                  </div>
+                                  <div class="is-24-hours">
+                                    <input type="checkbox">
                                   </div>
                                 </li>
-                              </div>
-                              <div class="add-time">
-                                <button type="button" class="icon-button">
-                                  <i class="material-symbols-outlined">
-                                    add
-                                  </i>
-                                </button>
-                              </div>
-                              <div class="is-24-hours">
-                                <input type="checkbox">
                               </div>
                             </div>
                             <div class="day-group">
@@ -219,21 +218,21 @@
                                   <p>
                                     Th
                                   </p>
-                                  <div>
-                                    <input type="time" value="">
-                                    <input type="time" value="">
+                                  <div style="flex: 1;">
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                  </div>
+                                  <div class="add-time">
+                                    <button type="button" class="icon-button">
+                                      <i class="material-symbols-outlined">
+                                        add
+                                      </i>
+                                    </button>
+                                  </div>
+                                  <div class="is-24-hours">
+                                    <input type="checkbox">
                                   </div>
                                 </li>
-                              </div>
-                              <div class="add-time">
-                                <button type="button" class="icon-button">
-                                  <i class="material-symbols-outlined">
-                                    add
-                                  </i>
-                                </button>
-                              </div>
-                              <div class="is-24-hours">
-                                <input type="checkbox">
                               </div>
                             </div>
                             <div class="day-group">
@@ -242,21 +241,21 @@
                                   <p>
                                     F
                                   </p>
-                                  <div>
-                                    <input type="time" value="">
-                                    <input type="time" value="">
+                                  <div style="flex: 1;">
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                  </div>
+                                  <div class="add-time">
+                                    <button type="button" class="icon-button">
+                                      <i class="material-symbols-outlined">
+                                        add
+                                      </i>
+                                    </button>
+                                  </div>
+                                  <div class="is-24-hours">
+                                    <input type="checkbox">
                                   </div>
                                 </li>
-                              </div>
-                              <div class="add-time">
-                                <button type="button" class="icon-button">
-                                  <i class="material-symbols-outlined">
-                                    add
-                                  </i>
-                                </button>
-                              </div>
-                              <div class="is-24-hours">
-                                <input type="checkbox">
                               </div>
                             </div>
                             <div class="day-group">
@@ -265,21 +264,21 @@
                                   <p>
                                     S
                                   </p>
-                                  <div>
-                                    <input type="time" value="">
-                                    <input type="time" value="">
+                                  <div style="flex: 1;">
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                  </div>
+                                  <div class="add-time">
+                                  <button type="button" class="icon-button">
+                                    <i class="material-symbols-outlined">
+                                      add
+                                    </i>
+                                  </button>
+                                  </div>
+                                  <div class="is-24-hours">
+                                    <input type="checkbox">
                                   </div>
                                 </li>
-                              </div>
-                              <div class="add-time">
-                                <button type="button" class="icon-button">
-                                  <i class="material-symbols-outlined">
-                                    add
-                                  </i>
-                                </button>
-                              </div>
-                              <div class="is-24-hours">
-                                <input type="checkbox">
                               </div>
                             </div>
                             <div class="day-group">
@@ -288,21 +287,21 @@
                                   <p>
                                     Su
                                   </p>
-                                  <div>
-                                    <input type="time" value="">
-                                    <input type="time" value="">
+                                  <div style="flex: 1;">
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                  </div>
+                                  <div class="add-time">
+                                    <button type="button" class="icon-button">
+                                      <i class="material-symbols-outlined">
+                                        add
+                                      </i>
+                                    </button>
+                                  </div>
+                                  <div class="is-24-hours">
+                                    <input type="checkbox">
                                   </div>
                                 </li>
-                              </div>
-                              <div class="add-time">
-                                <button type="button" class="icon-button">
-                                  <i class="material-symbols-outlined">
-                                    add
-                                  </i>
-                                </button>
-                              </div>
-                              <div class="is-24-hours">
-                                <input type="checkbox">
                               </div>
                             </div>
                           </ul>
@@ -455,7 +454,7 @@
                       dayGroups.forEach(group => {
                         const checkbox = group.querySelector('.is-24-hours input[type="checkbox"]');
                         const timeInputs = group.querySelectorAll('input[type="time"]');
-                        
+
                         checkbox.addEventListener('change', function() {
                           if (this.checked) {
                             timeInputs[0].value = '00:00';
@@ -591,10 +590,22 @@
                       position: relative;
                       top: 0;
                     }
-                    .is-24-hours {
+                    .day-group .hours {
+                      width: 100%;
+                    }
+                    .day-group .is-24-hours {
                       display: flex;
                       align-items: center;
                       justify-content: center;
+                      width: auto;
+                      padding-left: 0;
+                      padding-right: 0;
+                    }
+                    .day-group .is-24-hours input[type="checkbox"] {
+                      width: 20px;
+                      height: 20px;
+                      margin: 0;
+                      cursor: pointer;
                     }
                   </style>
 
