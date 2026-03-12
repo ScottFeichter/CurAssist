@@ -180,6 +180,34 @@
     }
 
 
+    .moveFile-btn {
+      background: #888;
+      color: white;
+      font-weight: 600;
+    }
+
+    .moveFile-btn:hover {
+      background: #777;
+    }
+
+    .moveFile-btn:active {
+      background: #666;
+    }
+
+    .copyFile-btn {
+      background: #222;
+      color: white;
+      font-weight: 600;
+    }
+
+    .copyFile-btn:hover {
+      background: #111;
+    }
+
+    .copyFile-btn:active {
+      background: #000;
+    }
+
     .createFile-btn {
       background: green;
       color: white;
@@ -436,19 +464,9 @@
         <button onclick="loadNext()">Next →</button>
       </div>
 
-      <div class="section-title">Move File</div>
-      <select id="moveToSubdir">
-        <option value="">Select destination...</option>
-      </select>
-      <button onclick="moveFile()">Move File</button>
-
-      <div class="section-title">Copy File</div>
-      <select id="copyToSubdir">
-        <option value="">Select destination...</option>
-      </select>
-      <button onclick="copyFile()">Copy File</button>
-
       <div class="section-title">File Actions</div>
+      <button class="moveFile-btn" onclick="moveFile()">Move File</button>
+      <button class="copyFile-btn" onclick="copyFile()">Copy File</button>
       <button class="createFile-btn" onclick="createFile()">Create File</button>
       <button class="saveFile-btn" onclick="saveFile()">Save Changes</button>
       <button class="deleteFile-btn" onclick="deleteFile()">Delete File</button>
@@ -462,13 +480,38 @@
     </div>
   </div>
 
-  <!-- Move confirmation modal -->
+  <!-- Move file modal -->
   <div id="moveModal" class="modal">
     <div class="modal-content">
-      <p>Do you want to save changes before moving?</p>
+      <p>Select destination</p>
+      <select id="moveToBucket" class="modal-input" onchange="onMoveBucketChange()">
+        <option value="">Select bucket...</option>
+      </select>
+      <select id="moveToSubdir" class="modal-input">
+        <option value="">Select subdirectory...</option>
+      </select>
+      <p style="margin-top: 16px;">Do you want to save changes before moving?</p>
       <div class="modal-buttons">
         <button class="save-btn" onclick="confirmMove(true)">Save And Move</button>
         <button onclick="confirmMove(false)">Move Without Saving</button>
+        <button class="cancel-btn" onclick="document.getElementById('moveModal').style.display='none'">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Copy file modal -->
+  <div id="copyModal" class="modal">
+    <div class="modal-content">
+      <p>Select destination</p>
+      <select id="copyToBucket" class="modal-input" onchange="onCopyBucketChange()">
+        <option value="">Select bucket...</option>
+      </select>
+      <select id="copyToSubdir" class="modal-input">
+        <option value="">Select destination...</option>
+      </select>
+      <div class="modal-buttons" style="margin-top: 16px;">
+        <button class="create-btn" onclick="confirmCopy()">Copy File</button>
+        <button class="cancel-btn" onclick="document.getElementById('copyModal').style.display='none'">Cancel</button>
       </div>
     </div>
   </div>

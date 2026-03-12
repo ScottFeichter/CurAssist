@@ -53,21 +53,12 @@ async function loadBucket() {
 
   const subdirs = await fetch(`${API_BASE}/buckets/${bucket}/subdirs`).then(r => r.json());
   const subdirSelect = document.getElementById('subdirSelect');
-  const moveToSelect = document.getElementById('moveToSubdir');
-
   subdirSelect.innerHTML = '<option value="">Select subdirectory...</option>';
-  moveToSelect.innerHTML = '<option value="">Select destination...</option>';
-
   subdirs.forEach(subdir => {
-    const opt1 = document.createElement('option');
-    opt1.value = subdir;
-    opt1.textContent = subdir;
-    subdirSelect.appendChild(opt1);
-
-    const opt2 = document.createElement('option');
-    opt2.value = subdir;
-    opt2.textContent = subdir;
-    moveToSelect.appendChild(opt2);
+    const opt = document.createElement('option');
+    opt.value = subdir;
+    opt.textContent = subdir;
+    subdirSelect.appendChild(opt);
   });
 }
 
@@ -90,19 +81,7 @@ async function loadSubdir() {
     fileSelect.appendChild(option);
   });
 
-  // Update move destination dropdown to exclude current subdirectory
-  const subdirs = await fetch(`${API_BASE}/buckets/${currentBucket}/subdirs`).then(r => r.json());
-  const moveToSelect = document.getElementById('moveToSubdir');
-  moveToSelect.innerHTML = '<option value="">Select destination...</option>';
-  subdirs.forEach(dir => {
-    if (dir !== currentSubdir) {
-      const option = document.createElement('option');
-      option.value = dir;
-      option.textContent = dir;
-      moveToSelect.appendChild(option);
-    }
-  });
-
+  // Update file list only
   if (currentFiles.length > 0) {
     fileSelect.selectedIndex = 1;
     loadFile(0);
@@ -171,67 +150,69 @@ async function saveFile() {
 }
 
 // Move file
-let pendingMoveDestination = null;
-
 async function moveFile() {
-  const toSubdir = document.getElementById('moveToSubdir').value;
-  if (!toSubdir || !currentFiles[currentIndex]) {
-    alert('Please select a destination');
-    return;
-  }
-
-  // Store destination and show modal
-  pendingMoveDestination = toSubdir;
+  if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
+  const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
+  const bucketSel = document.getElementById('moveToBucket');
+  bucketSel.innerHTML = '<option value="">Select bucket...</option>';
+  buckets.forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b; opt.textContent = b;
+    bucketSel.appendChild(opt);
+  });
+  bucketSel.value = currentBucket || '';
+  await onMoveBucketChange();
   document.getElementById('moveModal').style.display = 'block';
 }
 
+async function onMoveBucketChange() {
+  const bucket = document.getElementById('moveToBucket').value;
+  const subdirSel = document.getElementById('moveToSubdir');
+  subdirSel.innerHTML = '<option value="">Select subdirectory...</option>';
+  if (!bucket) return;
+  const subdirs = await fetch(`${API_BASE}/buckets/${bucket}/subdirs`).then(r => r.json());
+  subdirs.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    subdirSel.appendChild(opt);
+  });
+  // pre-select current subdir only if same bucket, exclude it to avoid moving to same place
+  if (bucket === currentBucket && currentSubdir) {
+    const otherOpt = Array.from(subdirSel.options).find(o => o.value && o.value !== currentSubdir);
+    if (otherOpt) subdirSel.value = otherOpt.value;
+  } else if (currentSubdir) {
+    subdirSel.value = currentSubdir;
+  }
+}
+
 async function confirmMove(shouldSave) {
-  // Hide modal
+  const toBucket = document.getElementById('moveToBucket').value;
+  const toSubdir = document.getElementById('moveToSubdir').value;
+  if (!toBucket || !toSubdir) { alert('Please select a destination bucket and subdirectory'); return; }
+  if (toBucket === currentBucket && toSubdir === currentSubdir) { alert('Destination is the same as the current location'); return; }
   document.getElementById('moveModal').style.display = 'none';
-  
-  const toSubdir = pendingMoveDestination;
-  pendingMoveDestination = null;
 
   try {
     if (shouldSave) {
       const iframe = document.getElementById('formFrame');
       const content = iframe.contentDocument.documentElement.outerHTML;
-      
       await fetch(`${API_BASE}/buckets/save`, {
         method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'XSRF-Token': getCsrfToken()
-        },
+        headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
         credentials: 'include',
-        body: JSON.stringify({
-          bucket: currentBucket,
-          subdir: currentSubdir,
-          filename: currentFiles[currentIndex],
-          content: '<!DOCTYPE html>\n' + content
-        })
+        body: JSON.stringify({ bucket: currentBucket, subdir: currentSubdir, filename: currentFiles[currentIndex], content: '<!DOCTYPE html>\n' + content })
       });
     }
 
-    // Move
     const moveResponse = await fetch(`${API_BASE}/buckets/move`, {
       method: 'POST',
-      headers: { 
-        'Content-Type': 'application/json',
-        'XSRF-Token': getCsrfToken()
-      },
+      headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
       credentials: 'include',
-      body: JSON.stringify({
-        fromBucket: currentBucket,
-        fromSubdir: currentSubdir,
-        toBucket: currentBucket,
-        toSubdir: toSubdir,
-        filename: currentFiles[currentIndex]
-      })
+      body: JSON.stringify({ fromBucket: currentBucket, fromSubdir: currentSubdir, toBucket, toSubdir, filename: currentFiles[currentIndex] })
     });
 
     if (moveResponse.ok) {
-      alert(`File moved to ${toSubdir}`);
+      alert(`File moved to ${toBucket} / ${toSubdir}`);
       loadSubdir();
     } else if (moveResponse.status === 409) {
       const data = await moveResponse.json();
@@ -246,6 +227,68 @@ async function confirmMove(shouldSave) {
 
 // Initialize on load
 init();
+
+// Copy file
+async function copyFile() {
+  if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
+  const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
+  const bucketSel = document.getElementById('copyToBucket');
+  bucketSel.innerHTML = '<option value="">Select bucket...</option>';
+  buckets.forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b; opt.textContent = b;
+    bucketSel.appendChild(opt);
+  });
+  bucketSel.value = currentBucket || '';
+  await onCopyBucketChange();
+  document.getElementById('copyModal').style.display = 'block';
+}
+
+async function onCopyBucketChange() {
+  const bucket = document.getElementById('copyToBucket').value;
+  const subdirSel = document.getElementById('copyToSubdir');
+  subdirSel.innerHTML = '<option value="">Select destination...</option>';
+  if (!bucket) return;
+  const subdirs = await fetch(`${API_BASE}/buckets/${bucket}/subdirs`).then(r => r.json());
+  subdirs.forEach(d => {
+    const opt = document.createElement('option');
+    opt.value = d; opt.textContent = d;
+    subdirSel.appendChild(opt);
+  });
+  if (currentSubdir) subdirSel.value = currentSubdir;
+}
+
+async function confirmCopy() {
+  const toBucket = document.getElementById('copyToBucket').value;
+  const toSubdir = document.getElementById('copyToSubdir').value;
+  if (!toBucket || !toSubdir) { alert('Please select a destination bucket and subdirectory'); return; }
+  document.getElementById('copyModal').style.display = 'none';
+
+  try {
+    const response = await fetch(`${API_BASE}/buckets/create-file`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+      credentials: 'include',
+      body: JSON.stringify({
+        bucket: toBucket,
+        subdir: toSubdir,
+        filename: currentFiles[currentIndex],
+        fromBucket: currentBucket,
+        fromSubdir: currentSubdir,
+        fromFilename: currentFiles[currentIndex]
+      })
+    });
+    const data = await response.json();
+    if (response.ok) {
+      alert(`File copied to ${toBucket} / ${toSubdir} as ${data.filename}`);
+      if (toBucket === currentBucket && toSubdir === currentSubdir) loadSubdir();
+    } else {
+      alert(data.error || 'Failed to copy file');
+    }
+  } catch (error) {
+    alert('Error copying file: ' + error.message);
+  }
+}
 
 // Delete file - Step 1: Show first confirmation
 function deleteFile() {
