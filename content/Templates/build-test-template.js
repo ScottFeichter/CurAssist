@@ -187,5 +187,11 @@ html = html.replace(
   'class="app-components-edit-EditSidebar-module__sidebar--npORK" id="sidebar"'
 );
 
+// Fix edit--main width so it doesn't overflow the sticky sidebar
+html = html.replace(
+  '</head>',
+  `<style>\n  .edit--main { overflow: hidden; min-width: 0; }\n</style>\n</head>`
+);
+
 fs.writeFileSync(outputFile, html, 'utf8');
 console.log(`✓ Test values template created: ${outputFile}`);
