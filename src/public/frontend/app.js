@@ -125,10 +125,29 @@ function loadNext() {
 }
 
 // Save file
+function syncIframeValues(iframeDoc) {
+  iframeDoc.querySelectorAll('input').forEach(el => {
+    if (el.type === 'checkbox' || el.type === 'radio') {
+      el.checked ? el.setAttribute('checked', '') : el.removeAttribute('checked');
+    } else {
+      el.setAttribute('value', el.value);
+    }
+  });
+  iframeDoc.querySelectorAll('textarea').forEach(el => {
+    el.textContent = el.value;
+  });
+  iframeDoc.querySelectorAll('select').forEach(el => {
+    Array.from(el.options).forEach(opt => {
+      opt.selected ? opt.setAttribute('selected', '') : opt.removeAttribute('selected');
+    });
+  });
+}
+
 async function saveFile() {
   if (!currentFiles[currentIndex]) return;
 
   const iframe = document.getElementById('formFrame');
+  syncIframeValues(iframe.contentDocument);
   const content = iframe.contentDocument.documentElement.outerHTML;
 
   await fetch(`${API_BASE}/buckets/save`, {

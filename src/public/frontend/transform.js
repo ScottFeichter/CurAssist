@@ -74,6 +74,7 @@ function transformService(svc) {
     wait_time:                svc.service_wait_time             || null,
     url:                      svc.service_website               || null,
     addresses:                transformLocations(svc.service_locations),
+    phones:                   transformPhones(svc.service_phones || []),
     schedule:                 transformHours(svc.service_hours),
     notes:                    transformNotes(svc.service_markdown_notes),
     categories:               transformCategories(svc.service_top_categories, svc.service_sub_categories),

@@ -88,6 +88,7 @@ function collectService(root) {
     service_wait_time:             val(root, 'service_wait_time'),
     service_website:               val(root, 'service_website'),
     service_locations:             collectLocations(root, 'service_locations'),
+    service_phones:                collectPhones(root, 'service_phones'),
     service_hours:                 collectHours(root),
     service_top_eligibilities:     collectPills(root, 'service_top_eligibilities'),
     service_sub_eligibilities:     collectPills(root, 'service_sub_eligibilities'),

@@ -1933,7 +1933,7 @@
                         const number = document.getElementById('phoneNumber').value;
 
                         // Find the phone sublist
-                        const phoneSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[1];
+                        const phoneSublist = document.getElementById('organization_phones');
                         const li = document.createElement('li');
                         li.dataset.name = name; li.dataset.number = number;
                         li.innerHTML = `<strong>${name}:</strong> ${number}`;
@@ -1954,7 +1954,7 @@
                         const note = document.getElementById('noteText').value;
 
                         // Find the note sublist
-                        const noteSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[2];
+                        const noteSublist = document.getElementById('organization_markdown_notes');
                         const li = document.createElement('li');
                         li.textContent = note;
                         noteSublist.appendChild(li);
@@ -2178,6 +2178,18 @@
                                   Add Location
                                 </button>
                              </li>
+
+<!--------------------------------------------------------------------- Phones  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item edit--notes">
+                                <label for="edit-item">
+                                  Phones
+                                </label>
+                                <ul id="service_phones" class="edit--section--list--item--sublist">
+                                </ul>
+                                <button type="button" class="edit--section--list--item--button solid-brand">
+                                  Add Phone
+                                </button>
+                              </li>
 
 <!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
                               <li class="edit--section--list--item email">
@@ -3047,7 +3059,7 @@
                       const name = document.getElementById('servicePhoneName').value;
                       const number = document.getElementById('servicePhoneNumber').value;
 
-                      const phoneSublist = document.querySelectorAll('#serviceDivSpreadsheet .edit--section--list--item--sublist')[0];
+                      const phoneSublist = document.getElementById('service_phones');
                       const li = document.createElement('li');
                       li.dataset.name = name; li.dataset.number = number;
                       li.innerHTML = `<strong>${name}:</strong> ${number}`;
@@ -3066,7 +3078,7 @@
                     serviceRoot.querySelector('#serviceAddNoteBtn').addEventListener('click', () => {
                       const note = document.getElementById('serviceNoteText').value;
 
-                      const noteSublist = document.querySelectorAll('#serviceDivSpreadsheet .edit--section--list--item--sublist')[1];
+                      const noteSublist = document.getElementById('service_markdown_notes');
                       const li = document.createElement('li');
                       li.textContent = note;
                       noteSublist.appendChild(li);
@@ -3271,6 +3283,18 @@
                                   Add Location
                                 </button>
                              </li>
+
+<!--------------------------------------------------------------------- Phones  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item edit--notes">
+                                <label for="edit-item">
+                                  Phones
+                                </label>
+                                <ul id="service_phones" class="edit--section--list--item--sublist">
+                                </ul>
+                                <button id="serviceAddPhoneTrigger" type="button" class="edit--section--list--item--button solid-brand">
+                                  Add Phone
+                                </button>
+                              </li>
 
 <!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
                               <li class="edit--section--list--item email">
@@ -4144,7 +4168,7 @@
                       const name = root.querySelector('#servicePhoneName').value;
                       const number = root.querySelector('#servicePhoneNumber').value;
 
-                      const phoneSublist = root.querySelectorAll('.edit--section--list--item--sublist')[0];
+                      const phoneSublist = root.querySelector('#service_phones');
                       const li = document.createElement('li');
                       li.dataset.name = name; li.dataset.number = number;
                       li.innerHTML = `<strong>${name}:</strong> ${number}`;
@@ -4165,7 +4189,7 @@
                     if (addNoteBtn) addNoteBtn.addEventListener('click', () => {
                       const note = root.querySelector('#serviceNoteText').value;
 
-                      const noteSublist = root.querySelectorAll('.edit--section--list--item--sublist')[1];
+                      const noteSublist = root.querySelector('#service_markdown_notes');
                       const li = document.createElement('li');
                       li.textContent = note;
                       noteSublist.appendChild(li);

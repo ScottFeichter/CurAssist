@@ -4,7 +4,7 @@
   "description": "Backend for CurAssist workflow app",
   "main": "dist/entry.js",
   "scripts": {
-    "build": "tsc && cp -r src/views dist/ && cp -r src/public dist/",
+    "build": "node content/Templates/build-template.js && tsc && cp -r src/views dist/ && cp -r src/public dist/",
     "start": "node dist/entry.js",
     "dev": "npm run build && node dev-runner.js",
     "watch": "tsc --watch",

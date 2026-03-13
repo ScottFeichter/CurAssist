@@ -42,6 +42,14 @@ const serviceSample = {
       }
     ],
 
+    // Phones — array of phone objects (collected via data-* attrs on each child li)
+    service_phones: [
+      {
+        phone_name: "Main",
+        phone_number: "415-555-1234"
+      }
+    ],
+
     // Hours — keyed by day abbreviation, start/end with time (HH:MM) and derived meridiem
     service_hours: {
       M:  { start: { time: "09:00", meridiem: "AM" }, end: { time: "17:00", meridiem: "PM" } },
