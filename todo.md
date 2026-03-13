@@ -4,10 +4,8 @@ when creating new address in a service allow for pick from any address in servic
 5. add time + not working
 1. inherit schedule in service both
 
-when copying a file give option for the name of the new file
-
 the add markdown note in organization not working
 
-change the move file button to orange
+when a file is moved don't have teh ui automatically load the next file in the bucket
 
-fix bug about the navBar being chopped
+fix the strange thing about the truncation that happens when the ui is zoom 100 for the navbar changing
