@@ -65,7 +65,7 @@ watchDirs.forEach(dir => {
     fs.watch(dir, { recursive: true }, (event, filename) => {
       if (filename && !/orgServTemplate-combined/.test(filename)) scheduleCopy();
     });
-    console.log(formatLine('watch', `Watching: ${dir}`));
+    console.log(formatLine('watch', `INFO : Watching -> ${dir.replace(/.*CurAssist\//, '')}`));
   }
 });
 
