@@ -144,8 +144,16 @@ async function submitFormData() {
   const payload = collectFormData();
   console.log('Submit payload:', JSON.stringify(payload, null, 2));
 
-  // TODO: plug in API call here
-  // const response = await fetch(`${API_BASE}/submit`, { ... });
+  try {
+    if (payload.organization) {
+      await submitNewOrg(payload);
+    } else {
+      await submitService(payload);
+    }
+  } catch (err) {
+    alert('Submission failed: ' + err.message);
+    return;
+  }
 
   // Move file to Complete
   const filename = currentFiles[currentIndex];
@@ -159,7 +167,7 @@ async function submitFormData() {
   if (moveResponse.ok) {
     document.getElementById('submitSuccessModal').style.display = 'block';
   } else {
-    alert('Submission logged but failed to move file to Complete');
+    alert('Submission succeeded but failed to move file to Complete');
   }
 }
 
