@@ -12,7 +12,6 @@ async function submitService(payload) {
   const res = await fetch(`${SF_API}/resources/${orgId}/services`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
     body: JSON.stringify(servicesBody)
   });
 

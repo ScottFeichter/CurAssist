@@ -12,7 +12,6 @@ async function submitNewOrg(payload) {
   const orgRes = await fetch(`${SF_API}/resources`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    credentials: 'include',
     body: JSON.stringify(orgBody)
   });
 
@@ -35,7 +34,6 @@ async function submitNewOrg(payload) {
     const svcRes = await fetch(`${SF_API}/resources/${orgId}/services`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
       body: JSON.stringify({ services })
     });
 

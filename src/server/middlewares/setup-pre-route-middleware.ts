@@ -110,7 +110,10 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
     ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
     });
 
-    SERVER.use(csrfProtection as express.RequestHandler);
+    SERVER.use((req: Request, res: Response, next: NextFunction) => {
+      if (req.path.startsWith('/api/sf')) return next();
+      (csrfProtection as express.RequestHandler)(req, res, next);
+    });
     SERVER.use(handleCSRFError);
   // #endregion ----------------------------------------------------------------
 

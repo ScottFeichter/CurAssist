@@ -1,6 +1,6 @@
 // #region ===================== CONSTANTS =====================================
 
-const SF_API = 'https://www.sfserviceguide.org/api';
+const SF_API = '/api/sf';
 
 // #endregion ------------------------------------------------------------------
 
@@ -54,10 +54,12 @@ function transformNotes(notes) {
 }
 
 function transformPhones(phones) {
-  return phones.map(p => ({
-    number:      p.phone_number || null,
-    description: p.phone_name   || null
-  }));
+  return phones
+    .filter(p => p.phone_number)
+    .map(p => ({
+      number:      p.phone_number || null,
+      description: p.phone_name   || null
+    }));
 }
 
 // #endregion ------------------------------------------------------------------

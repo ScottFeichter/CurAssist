@@ -143,29 +143,43 @@ function syncIframeValues(iframeDoc) {
   });
 }
 
-async function saveFile() {
-  if (!currentFiles[currentIndex]) return;
+async function saveFile(silent = false) {
+  if (!currentFiles[currentIndex]) return false;
 
   const iframe = document.getElementById('formFrame');
   syncIframeValues(iframe.contentDocument);
   const content = iframe.contentDocument.documentElement.outerHTML;
 
-  await fetch(`${API_BASE}/buckets/save`, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'XSRF-Token': getCsrfToken()
-    },
-    credentials: 'include',
-    body: JSON.stringify({
-      bucket: currentBucket,
-      subdir: currentSubdir,
-      filename: currentFiles[currentIndex],
-      content: '<!DOCTYPE html>\n' + content
-    })
-  });
+  try {
+    const res = await fetch(`${API_BASE}/buckets/save`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'XSRF-Token': getCsrfToken()
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        bucket: currentBucket,
+        subdir: currentSubdir,
+        filename: currentFiles[currentIndex],
+        content: '<!DOCTYPE html>\n' + content
+      })
+    });
 
-  alert('File saved successfully');
+    if (!res.ok) throw new Error('Server returned ' + res.status);
+
+    if (!silent) {
+      document.getElementById('saveFeedbackMessage').textContent = 'File saved successfully.';
+      document.getElementById('saveFeedbackModal').style.display = 'block';
+    }
+    return true;
+  } catch (err) {
+    if (!silent) {
+      document.getElementById('saveFeedbackMessage').textContent = 'Save failed: ' + err.message;
+      document.getElementById('saveFeedbackModal').style.display = 'block';
+    }
+    return false;
+  }
 }
 
 // Move file
@@ -399,8 +413,8 @@ function cancelSubmit() {
   document.getElementById('submitModal').style.display = 'none';
 }
 
-function onSubmitSuccessOk() {
-  document.getElementById('submitSuccessModal').style.display = 'none';
+function onSubmitResultOk() {
+  document.getElementById('submitResultModal').style.display = 'none';
   reloadSubdirNoLoad();
 }
 

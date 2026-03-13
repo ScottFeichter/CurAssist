@@ -1,6 +1,7 @@
 import express from 'express';
 import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
 import bucketsRouter from './buckets/buckets-routes';
+import sfProxyRouter from './sf-proxy/sf-proxy-routes';
 // import demoUsersRouter from './demousers/demoUsers-routes';
 // import loginRouter from './login/login-routes';
 // import logoutRouter from './login/logout-routes';
@@ -14,6 +15,7 @@ const apiRouter = express.Router();
 
 // Mount routes
 apiRouter.use('/buckets', bucketsRouter);
+apiRouter.use('/sf', sfProxyRouter);
 // apiRouter.use('/signup', signupRouter); // Commented out - requires DemoUser
 // apiRouter.use('/login', loginRouter); // Commented out - requires authentication middleware
 // apiRouter.use('/logout', logoutRouter); // Commented out - requires authentication middleware

@@ -643,7 +643,7 @@
   <!-- Submit confirmation modal -->
   <div id="submitModal" class="modal">
     <div class="modal-content">
-      <p>This will submit the information in the file to the live database. You will not be able to resubmit this file again. Would you like to proceed?</p>
+      <p>This will save any changes and submit the information in the file to the live database.<br><br>You will not be able to resubmit this file again.<br><br>Would you like to proceed?</p>
       <div class="modal-buttons">
         <button class="submit-btn" onclick="confirmSubmit()">Submit</button>
         <button class="cancel-btn" onclick="cancelSubmit()">Cancel</button>
@@ -651,12 +651,22 @@
     </div>
   </div>
 
-  <!-- Submit success modal -->
-  <div id="submitSuccessModal" class="modal">
+  <!-- Submit result modal -->
+  <div id="submitResultModal" class="modal">
     <div class="modal-content">
-      <p>File successfully submitted and moved to Complete.</p>
+      <p id="submitResultMessage"></p>
       <div class="modal-buttons">
-        <button class="submit-btn" onclick="onSubmitSuccessOk()">OK</button>
+        <button class="submit-btn" onclick="onSubmitResultOk()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Save feedback modal -->
+  <div id="saveFeedbackModal" class="modal">
+    <div class="modal-content">
+      <p id="saveFeedbackMessage"></p>
+      <div class="modal-buttons">
+        <button class="submit-btn" onclick="document.getElementById('saveFeedbackModal').style.display='none'">OK</button>
       </div>
     </div>
   </div>

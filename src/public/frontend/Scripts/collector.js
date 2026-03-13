@@ -4,13 +4,17 @@
 
 // #region ===================== HELPERS ========================================
 
+function getEl(root, id) {
+  return root.getElementById ? root.getElementById(id) : root.querySelector('#' + id);
+}
+
 function val(root, id) {
-  const el = root.getElementById(id);
+  const el = getEl(root, id);
   return el ? el.value.trim() : '';
 }
 
 function collectLocations(root, id) {
-  const container = root.getElementById(id);
+  const container = getEl(root, id);
   if (!container) return [];
   return Array.from(container.children)
     .map(div => ({
@@ -25,7 +29,7 @@ function collectLocations(root, id) {
 }
 
 function collectPhones(root, id) {
-  const container = root.getElementById(id);
+  const container = getEl(root, id);
   if (!container) return [];
   return Array.from(container.children).map(li => ({
     phone_name:   li.dataset.name   || '',
@@ -34,13 +38,13 @@ function collectPhones(root, id) {
 }
 
 function collectNotes(root, id) {
-  const container = root.getElementById(id);
+  const container = getEl(root, id);
   if (!container) return [];
   return Array.from(container.children).map(li => li.textContent.trim()).filter(Boolean);
 }
 
 function collectPills(root, id) {
-  const container = root.getElementById(id);
+  const container = getEl(root, id);
   if (!container) return [];
   return Array.from(container.querySelectorAll('.Select-value-label')).map(el => el.textContent.trim());
 }
@@ -126,7 +130,7 @@ function collectOrganization(root) {
 function collectFormData() {
   const iframeWin = document.getElementById('formFrame').contentWindow;
   const iframeDoc = iframeWin.document;
-  const isOrg = iframeWin.Organization === true;
+  const isOrg = !!iframeDoc.getElementById('OrganizationButton')?.classList.contains('active');
 
   if (!isOrg) {
     const service = collectService(iframeDoc);
@@ -142,6 +146,13 @@ function collectFormData() {
 // #region ===================== SUBMIT ========================================
 
 async function submitFormData() {
+  const saved = await saveFile(true);
+  if (!saved) {
+    document.getElementById('submitResultMessage').innerHTML = 'Save failed — submission cancelled.';;
+    document.getElementById('submitResultModal').style.display = 'block';
+    return;
+  }
+
   const payload = collectFormData();
   console.log('Submit payload:', JSON.stringify(payload, null, 2));
 
@@ -152,7 +163,8 @@ async function submitFormData() {
       await submitService(payload);
     }
   } catch (err) {
-    alert('Submission failed: ' + err.message);
+    document.getElementById('submitResultMessage').innerHTML = 'File saved successfully.<br><br>Submission failed: ' + err.message;
+    document.getElementById('submitResultModal').style.display = 'block';
     return;
   }
 
@@ -166,9 +178,11 @@ async function submitFormData() {
   });
 
   if (moveResponse.ok) {
-    document.getElementById('submitSuccessModal').style.display = 'block';
+    document.getElementById('submitResultMessage').innerHTML = 'File saved and submitted successfully.<br><br>Moved to Complete.';
+    document.getElementById('submitResultModal').style.display = 'block';
   } else {
-    alert('Submission succeeded but failed to move file to Complete');
+    document.getElementById('submitResultMessage').innerHTML = 'Submitted successfully but failed to move file to Complete.';
+    document.getElementById('submitResultModal').style.display = 'block';
   }
 }
 
