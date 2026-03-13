@@ -1,16 +1,5 @@
 <!DOCTYPE html>
-
-
-<!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HTML START  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
-<html lang="en" style="height: 100%;">
-
-
-
-
-
-
-<!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HEAD START  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
-  <head>
+<html lang="en" style="height: 100%;"><!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HEAD START  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] --><head>
 
     <title>Org Serv Template</title>
 
@@ -1171,7 +1160,7 @@
                 </header>
 <!---=========================================================================== HEADER END ===============================================================================--->
 <div id="organizationWrapper" style="display: flex;">
-<nav class="app-components-edit-EditSidebar-module__sidebar--npORK collapsed" id="sidebar">
+<nav class="app-components-edit-EditSidebar-module__sidebar--npORK" id="sidebar">
 <!---=========================================================================== VERTICAL LEFT NAV BAR START ============================================================================-->
 <!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
 <!-- Vertical Left Navigation Bar -->
@@ -1183,7 +1172,7 @@
     </h3>
     <ul class="app-components-edit-EditSidebar-module__list--EdtMl">
       <li class="app-components-edit-EditSidebar-module__listItem--HBckV app-components-edit-EditSidebar-module__active--IatxP">
-        <a href="#" id="orgNavLink" onclick="scrollToOrganization(event)">{{organization_name}}</a>
+        <a href="#" id="orgNavLink" onclick="scrollToOrganization(event)">Abc Pre-school</a>
       </li>
     </ul>
 
@@ -1195,7 +1184,7 @@
       <button type="button" class="app-components-edit-EditSidebar-module__serviceActionButton--rxLK8" id="add_from" onclick="addServiceFrom()">add from</button>
     </div>
     <ul class="app-components-edit-EditSidebar-module__list--EdtMl" id="servicesList">
-    </ul>
+    <li class="app-components-edit-EditSidebar-module__listItem--HBckV" data-service-id="service-1773408726289"><a href="#service-1773408726289">New Service 1</a></li><li class="app-components-edit-EditSidebar-module__listItem--HBckV" data-service-id="service-1773408729694"><a href="#service-1773408729694">New Service 2</a></li></ul>
 
   </div>
   <div class="sidebar-resizer" id="sidebarResizer"></div>
@@ -1261,7 +1250,11 @@
     const link = document.createElement('a');
     link.href = `#${serviceId}`;
     link.textContent = placeholderName;
-    link.setAttribute('onclick', `event.preventDefault(); var t=document.getElementById('${serviceId}'); if(t) t.scrollIntoView({behavior:'smooth'});`);
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetDiv = document.getElementById(serviceId);
+      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
+    };
     li.appendChild(link);
     servicesList.appendChild(li);
     console.log('Added link to navbar');
@@ -1427,7 +1420,11 @@
     const link = document.createElement('a');
     link.href = `#${serviceId}`;
     link.textContent = serviceName;
-    link.setAttribute('onclick', `event.preventDefault(); var t=document.getElementById('${serviceId}'); if(t) t.scrollIntoView({behavior:'smooth'});`);
+    link.onclick = (e) => {
+      e.preventDefault();
+      const targetDiv = document.getElementById(serviceId);
+      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
+    };
     li.appendChild(link);
     servicesList.appendChild(li);
     
@@ -1522,7 +1519,7 @@
                   <section id="info" class="edit--section">
 
                     <header class="edit--section--header" style="display: flex; flex-direction: column; align-items: flex-start;">
-                      <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">▶</button>
+                      <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">◀</button>
                       <h4>
                         New Organization
                       </h4>
@@ -1566,7 +1563,7 @@
                         <label for="organization_name">
                           Name of the Organization
                         </label>
-                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="">
+                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="Abc Pre-school">
                       </li>
 
 
@@ -1583,8 +1580,7 @@
                         <div class="app-components-edit-EditAddress-module__addressListTitle--Y1zCq">
                           Location
                         </div>
-                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1">
-                        </div>
+                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1"><div>426 33rd Avenue, 1st Floor<br>San Francisco, CA 94121</div></div>
                         <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
                           Add Location
                         </button>
@@ -1595,8 +1591,7 @@
                         <label for="edit-item">
                           Phones
                         </label>
-                        <ul id="organization_phones" class="edit--section--list--item--sublist">
-                        </ul>
+                        <ul id="organization_phones" class="edit--section--list--item--sublist"><li><strong></strong> 415-387-9111</li></ul>
                         <button type="button" class="edit--section--list--item--button solid-brand">
                           Add Phone
                         </button>
@@ -1668,8 +1663,8 @@
                                     M
                                   </p>
                                   <div style="flex: 1;">
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
                                   </div>
                                   <div class="add-time">
                                     <button type="button" class="icon-button">
@@ -1691,8 +1686,8 @@
                                     T
                                   </p>
                                   <div style="flex: 1;">
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
                                   </div>
                                   <div class="add-time">
                                     <button type="button" class="icon-button">
@@ -1714,8 +1709,8 @@
                                     W
                                   </p>
                                   <div style="flex: 1;">
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
                                   </div>
                                   <div class="add-time">
                                     <button type="button" class="icon-button">
@@ -1737,8 +1732,8 @@
                                     Th
                                   </p>
                                   <div style="flex: 1;">
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
                                   </div>
                                   <div class="add-time">
                                     <button type="button" class="icon-button">
@@ -1760,8 +1755,8 @@
                                     F
                                   </p>
                                   <div style="flex: 1;">
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
                                   </div>
                                   <div class="add-time">
                                     <button type="button" class="icon-button">
@@ -1783,8 +1778,8 @@
                                     S
                                   </p>
                                   <div style="flex: 1;">
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
                                   </div>
                                   <div class="add-time">
                                   <button type="button" class="icon-button">
@@ -1806,8 +1801,8 @@
                                     Su
                                   </p>
                                   <div style="flex: 1;">
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
-                                    <div class="time-input-wrap"><input type="time" value=""><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
+                                    <div class="time-input-wrap"><input type="time" value="" list="time-options"><span class="time-picker-icon material-symbols-outlined" onclick="openTimePicker(this.previousElementSibling)">schedule</span></div>
                                   </div>
                                   <div class="add-time">
                                     <button type="button" class="icon-button">
@@ -2016,12 +2011,12 @@
                   <div id="addLocationModal" class="modal" style="display:none;">
                     <div class="modal-content">
                       <h3>Add Location</h3>
-                      <input type="text" id="locationName" placeholder="Location Name">
-                      <input type="text" id="addressLine1" placeholder="Address Line 1">
-                      <input type="text" id="addressLine2" placeholder="Address Line 2">
-                      <input type="text" id="city" placeholder="City">
-                      <input type="text" id="state" placeholder="State">
-                      <input type="text" id="zip" placeholder="Zip">
+                      <input type="text" id="locationName" placeholder="Location Name" value="">
+                      <input type="text" id="addressLine1" placeholder="Address Line 1" value="">
+                      <input type="text" id="addressLine2" placeholder="Address Line 2" value="">
+                      <input type="text" id="city" placeholder="City" value="">
+                      <input type="text" id="state" placeholder="State" value="">
+                      <input type="text" id="zip" placeholder="Zip" value="">
                       <button id="addLocationBtn">Add Location</button>
                       <button id="cancelLocationBtn">Cancel</button>
                     </div>
@@ -2031,8 +2026,8 @@
                   <div id="addPhoneModal" class="modal" style="display:none;">
                     <div class="modal-content">
                       <h3>Add Phone</h3>
-                      <input type="text" id="phoneName" placeholder="Phone Name">
-                      <input type="text" id="phoneNumber" placeholder="Number">
+                      <input type="text" id="phoneName" placeholder="Phone Name" value="">
+                      <input type="text" id="phoneNumber" placeholder="Number" value="">
                       <button id="addPhoneBtn">Add Phone</button>
                       <button id="cancelPhoneBtn">Cancel</button>
                     </div>
@@ -2065,12 +2060,7 @@
                 </div>
 <!---=========================================================================== EDIT (ORG) SECTIONS END ============================================================================-->
 <!---=========================================================================== ORG SERVICES CONTAINER START ============================================================================-->
-<div class="edit--orgServices" id="orgServicesDiv"></div>
-<!---=========================================================================== ORG SERVICES CONTAINER END ==============================================================================-->
-</div>
-</div>
-<!---=========================================================================== EDIT SERVICES STARTS ============================================================================-->
-                <div class="edit--services" id="serviceDivSpreadsheet">
+<div class="edit--orgServices" id="orgServicesDiv"><div class="edit--services" id="service-1773408726289">
 
                   <!-- <header class="edit--main--header"> -->
                     <!-- <h1 class="edit--main--header--title">
@@ -2089,21 +2079,15 @@
                               <h4>
                                 New Service
                               </h4>
-
-
+                              <button class="remove-item" type="button" id="service--deactivation">
+                                Remove Service
+                              </button>
                             </header>
 
 
 
 
                             <ul class="edit--section--list">
-
-<!---------------------------------------------------------------------  Service Org Number ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                  <label for="serviceBelongsToOrg">Service Belongs To Organization:</label>
-                                  <input type="text" class="serviceBelongsToOrg"  id="serviceBelongsToOrg" placeholder="What Is The Number Of The Organization This Service Belongs To?">
-                              </li>
-
 <!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
                               <li class="edit--section--list--item">
                                 <label for="textarea">
@@ -2161,6 +2145,2210 @@
                                 </label>
                                 <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6">
                                 </div>
+
+
+                                <button id="serviceAddLocationTrigger" class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
+                                  Add Location
+                                </button>
+                             </li>
+
+<!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item email">
+                                <label for="input">
+                                  Service E-Mail
+                                </label>
+                                <input id="service_email" type="email" placeholder="Email address for this service" value="">
+                              </li>
+
+
+ <!--------------------------------------------------------------------- Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Description
+                                </label>
+                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences."></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Short Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
+                                </label>
+                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences."></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Application Process  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Application Process
+                                </label>
+                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Required Documents  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Required Documents
+                                </label>
+                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?"></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Interpretation Services  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Interpretation Services
+                                </label>
+                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Clinical Actions  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Clinician Actions (Include any COVID Actions)
+                                </label>
+                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Top Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilityTopDropdown">
+                                  Top Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
+                                      <div class="Select-placeholder" style="display: block;">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilitySubDropdown">
+                                  Sub Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
+                                      <div class="Select-placeholder" style="display: block;">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Cost  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Cost
+                                </label>
+                                <input id="service_cost" type="text" placeholder="How much does this service cost?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Wait Time  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Wait Time
+                                </label>
+                                <input id="service_wait_time" type="text" placeholder="Is there a waiting list or wait time?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Website  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Service's Website
+                                </label>
+                                <input id="service_website" type="text" placeholder="http://" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Hours  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item hours">
+                                <span class="label">
+                                  Hours
+                                </span>
+                                <div class="inherit-schedule">
+                                  <label for="inherit" class="inline-checkbox">
+                                    <input id="inherit" class="input-checkbox" type="checkbox" checked="" value="">
+                                    Inherit schedule from parent organization
+                                  </label>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Markdown Notes  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item edit--notes">
+                                <label for="add-note">
+                                  Notes
+                                </label>
+                                <p>
+                                  <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
+                                    Markdown
+                                  </a>
+                                  is also supported for notes.
+                                </p>
+                                <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
+                                </ul>
+                                <button id="serviceAddNoteTrigger" type="button" class="edit--section--list--item--button">
+                                  <i class="material-symbols-outlined">
+                                    add_box
+                                  </i>
+                                  Add Note
+                                </button>
+                              </li>
+
+<!--------------------------------------------------------------------- Top Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categoryTopDropdown">
+                                  Top Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
+                                      <div class="Select-placeholder" style="display: block;">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categorySubDropdown">
+                                  Sub Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
+                                      <div class="Select-placeholder" style="display: block;">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
+                              </li>
+
+<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: CSS ------------------------------------------------------------------------------->
+
+                  
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: MODALS ------------------------------------------------------------------------------->
+
+                  <!-- Service Add Location Modal -->
+                  <div id="serviceAddLocationModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Location</h3>
+                      <input type="text" id="serviceLocationName" placeholder="Location Name" value="">
+                      <input type="text" id="serviceAddressLine1" placeholder="Address Line 1" value="">
+                      <input type="text" id="serviceAddressLine2" placeholder="Address Line 2" value="">
+                      <input type="text" id="serviceCity" placeholder="City" value="">
+                      <input type="text" id="serviceState" placeholder="State" value="">
+                      <input type="text" id="serviceZip" placeholder="Zip" value="">
+                      <button id="serviceAddLocationBtn">Add Location</button>
+                      <button id="serviceCancelLocationBtn">Cancel</button>
+                    </div>
+                  </div>
+
+                  <!-- Service Add Phone Modal -->
+                  <div id="serviceAddPhoneModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Phone</h3>
+                      <input type="text" id="servicePhoneName" placeholder="Phone Name" value="">
+                      <input type="text" id="servicePhoneNumber" placeholder="Number" value="">
+                      <button id="serviceAddPhoneBtn">Add Phone</button>
+                      <button id="serviceCancelPhoneBtn">Cancel</button>
+                    </div>
+                  </div>
+
+                  <!-- Service Add Note Modal -->
+                  <div id="serviceAddNoteModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Note</h3>
+                      <textarea id="serviceNoteText" placeholder="Enter note (markdown supported)"></textarea>
+                      <button id="serviceAddNoteBtn">Add Note</button>
+                      <button id="serviceCancelNoteBtn">Cancel</button>
+                    </div>
+                  </div>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: JS ------------------------------------------------------------------------------->
+
+                <script>
+  var topCategory = {
+    "Arts, Culture &amp; Identity": false,
+    "Childcare": false,
+    "Family Support": false,
+    "Health &amp; Wellness": false,
+    "sfsg-domesticviolence": false,
+    "sfsg-finance": false,
+    "sfsg-food": false,
+    "sfsg-health": false,
+    "sfsg-housing": false,
+    "sfsg-hygiene": false,
+    "sfsg-internet": false,
+    "sfsg-jobs": false,
+    "sfsg-lgbtqa": false,
+    "sfsg-longtermhousing": false,
+    "sfsg-shelter": false,
+    "sfsg-substanceuse": false,
+    "Sports &amp; Recreation": false,
+    "Ucsf-foodinsecurity": false,
+    "ucsf-immigration": false,
+    "Ucsf-intimatepartnerviolence": false,
+    "Ucsf-mentalhealth": false,
+    "Ucsf-shelter": false,
+    "Ucsf-substanceabuse": false,
+    "Youth Workforce &amp; Life Skills": false
+  }
+
+  var subCategory = {
+    "12-Step": false,
+    "Academic Support": false,
+    "ADA Transit": false,
+    "Addiction Medicine": false,
+    "Addiction &amp; Recovery": false,
+    "Adoption": false,
+    "Adoption &amp; Foster Care": false,
+    "Adult Daycare": false,
+    "Advocacy &amp; Legal Aid": false,
+    "Affordable Connectivity Program": false,
+    "After &amp; Before School": false,
+    "Alternative Education &amp; GED": false,
+    "Anger Management": false,
+    "Animal Welfare": false,
+    "Apprenticeship": false,
+    "Arts and Creative Expression": false,
+    "Arts, Culture &amp; Identity": false,
+    "Assisted Living": false,
+    "At-Home Support": false,
+    "At Imminent Risk of Eviction": false,
+    "Basic Literacy": false,
+    "Basic Needs &amp; Shelter": false,
+    "Beacon Community School": false,
+    "Bereavement": false,
+    "Birth Control": false,
+    "Board Games": false,
+    "Books": false,
+    "Building Code Enforcement": false,
+    "Bullying": false,
+    "Bus Passes": false,
+    "Care": false,
+    "Career Exploration": false,
+    "Caregiver Relief": false,
+    "Case Manager": false,
+    "Checkup &amp; Test": false,
+    "Childcare": false,
+    "Children&#39;s Care": false,
+    "Child Welfare Services": false,
+    "Circus Arts": false,
+    "Citizenship &amp; Immigration": false,
+    "Clean Slate": false,
+    "Clothes": false,
+    "Clothes for School": false,
+    "Clothes for Work": false,
+    "Clothing": false,
+    "Clothing Vouchers": false,
+    "Coding": false,
+    "College Prep": false,
+    "Computer Access": false,
+    "Computer Class": false,
+    "Computer or Internet Access": false,
+    "Congregate Meals": false,
+    "Congregate meals for seniors and people with disabilities": false,
+    "Consult a Crisis Counselor to come ZSFG ED": false,
+    "Coronavirus (COVID-19) Testing": false,
+    "Coronavirus-Related Urgent Care": false,
+    "Counseling": false,
+    "Counseling Assistance": false,
+    "Criminal Justice Involvement": false,
+    "Crisis": false,
+    "Crisis Intervention": false,
+    "Culinary Arts": false,
+    "Culture &amp; Identity": false,
+    "Cycling": false,
+    "Daily Free meals for all": false,
+    "Daily Life Skills": false,
+    "Day Camp": false,
+    "Daytime Care": false,
+    "Dental Care": false,
+    "Depression": false,
+    "Detox": false,
+    "Diaper Bank": false,
+    "Digital Media Production": false,
+    "Disability Benefits": false,
+    "Disability Screening": false,
+    "Disability Support": false,
+    "Disaster Assistance": false,
+    "Discounted Healthcare": false,
+    "Discount Utilities": false,
+    "Discrimination &amp; Civil Rights": false,
+    "Disease Management": false,
+    "Disease Screening": false,
+    "Domestic Violence": false,
+    "Domestic Violence Counseling": false,
+    "Domestic Violence Hotline": false,
+    "Domestic Violence Hotlines": false,
+    "Domestic Violence Shelter": false,
+    "Domestic Violence Shelters": false,
+    "Drop in Center": false,
+    "Drop-In Clinics": false,
+    "Drug Related Services": false,
+    "Drug Testing": false,
+    "Early Childhood": false,
+    "Early Childhood Education": false,
+    "Education": false,
+    "ELA (English Language Arts)": false,
+    "Emergency": false,
+    "Emergency Care": false,
+    "Emergency Financial Assistance": false,
+    "Emergency Food": false,
+    "Emergency Rental Assistance": false,
+    "Emergency Shelters": false,
+    "Employment": false,
+    "End of Life Care": false,
+    "End-of-Life Care": false,
+    "English as a Second Language": false,
+    "English as a Second Language (ESL)": false,
+    "Eviction Legal Aid": false,
+    "Eviction Prevention": false,
+    "Family Counseling": false,
+    "Family Legal Services": false,
+    "Family Planning": false,
+    "Family Resource Centers": false,
+    "Family Shelters": false,
+    "Family Support": false,
+    "Fertility": false,
+    "Financial Aid &amp; Loans": false,
+    "Financial assistance for living expenses": false,
+    "Financial Education": false,
+    "Food": false,
+    "Food benefits": false,
+    "Food Benefits": false,
+    "Food Delivery": false,
+    "Food for Children": false,
+    "Food pantries": false,
+    "Food Pantry": false,
+    "Foreign Languages": false,
+    "Foster Care Services": false,
+    "Free City College": false,
+    "Free Health Clinics": false,
+    "Free Meals": false,
+    "Gardening": false,
+    "General Help": false,
+    "General Outpatient Services": false,
+    "Goods": false,
+    "Government Benefits": false,
+    "Government Homelessness Services": false,
+    "Group Home": false,
+    "Group Therapy": false,
+    "Guardianship": false,
+    "Habitability": false,
+    "Haircut": false,
+    "Health": false,
+    "Health Careers": false,
+    "Health Education": false,
+    "Healthier Habits/Safer Use": false,
+    "Health Insurance": false,
+    "Health &amp; Medical": false,
+    "Health &amp; Wellness": false,
+    "Hearing Tests": false,
+    "Help Pay for Internet or Device": false,
+    "HIV Treatment": false,
+    "Hoarding": false,
+    "Hoarding &amp; Cluttering": false,
+    "Home-delivered groceries and home-delivered meals": false,
+    "Home Delivered Meals": false,
+    "Home Goods": false,
+    "Homelessness Essentials": false,
+    "Home &amp; Renters Insurance": false,
+    "Home Visiting": false,
+    "Hospice": false,
+    "Hospitality": false,
+    "Hotlines and Case Management": false,
+    "Hot Meals": false,
+    "Housing Assistance": false,
+    "Housing Counseling": false,
+    "Housing-related Conflict Resolution": false,
+    "Housing &amp; Rental Assistance": false,
+    "Housing Rights": false,
+    "Housing/Tenants Rights": false,
+    "Housing Vouchers": false,
+    "HSH Funded": false,
+    "Hygiene": false,
+    "Hygiene kits": false,
+    "Hygiene Supplies": false,
+    "Identification Recovery": false,
+    "Immediate Safety": false,
+    "Immigration Assistance": false,
+    "Independent Living": false,
+    "Individual Counseling": false,
+    "In-Home Support": false,
+    "Insurance": false,
+    "Interview Training": false,
+    "Job Assistance": false,
+    "Job Board": false,
+    "Job Placement": false,
+    "Job Placement Support": false,
+    "Job Readiness": false,
+    "Job Training": false,
+    "Justice Involvement": false,
+    "Laundry": false,
+    "Leadership": false,
+    "Learning English": false,
+    "Legal": false,
+    "Legal Assistance": false,
+    "Legal Representation": false,
+    "Legal Services": false,
+    "LGBTQ+ Support": false,
+    "Loans": false,
+    "Long-Term Housing": false,
+    "Long-Term Shelter": false,
+    "Low-Income Housing": false,
+    "Maternity Care": false,
+    "Mediation": false,
+    "Medical Care": false,
+    "Medical Supplies": false,
+    "Medication Management": false,
+    "Medications": false,
+    "Medications for Mental Health": false,
+    "Medication Treatment": false,
+    "Meditation": false,
+    "Meetings/Support": false,
+    "Mental Health Care": false,
+    "Mental Health Evaluation": false,
+    "Mental Health Medication": false,
+    "Mental Health Services": false,
+    "Mental Health Urgent Care": false,
+    "Mentorship": false,
+    "Mindfulness": false,
+    "MOHCD Funded": false,
+    "Money": false,
+    "Money Management": false,
+    "More Education": false,
+    "Navigating Police Involvement": false,
+    "Navigating the System": false,
+    "Notary": false,
+    "Nursing Home": false,
+    "Nutrition Education": false,
+    "One-Night Shelter": false,
+    "One-on-One Support": false,
+    "Online": false,
+    "Online Only": false,
+    "Other Legal Assistance": false,
+    "Other Medical Services": false,
+    "Other Mental Health Services": false,
+    "Outdoors": false,
+    "Overnight/Prolonged Observation": false,
+    "Pain Management": false,
+    "Parenting Education": false,
+    "Payee Services": false,
+    "Peer Support": false,
+    "Personal Hygiene": false,
+    "Personal Safety": false,
+    "Personal Safety Items": false,
+    "Pets": false,
+    "Physical Fitness": false,
+    "Physical Therapy": false,
+    "Pilates": false,
+    "Playgroups": false,
+    "Portable Toilets and Hand-Washing Stations": false,
+    "Postnatal Care": false,
+    "Pregnancy Tests": false,
+    "Pregnancy Wraparound Services": false,
+    "Preschool": false,
+    "Prescription Assistance": false,
+    "Prevent &amp; Treat": false,
+    "Primary Care": false,
+    "Prison/Jail Related Services": false,
+    "Probation &amp; Parole": false,
+    "Probation and Parole": false,
+    "Programs Integrated into School Day": false,
+    "Psychiatric Emergency Services": false,
+    "Public Housing": false,
+    "Public Schools": false,
+    "Reading &amp; Literacy": false,
+    "Recreation": false,
+    "Re-entry Services": false,
+    "Relief for Caregivers": false,
+    "Rental Assistance": false,
+    "Representation": false,
+    "Residential Care": false,
+    "Residential Treatment": false,
+    "Restraining Order": false,
+    "Resume Development": false,
+    "Resume Writing": false,
+    "Retirement Benefits": false,
+    "Reward Program": false,
+    "Rock Climbing": false,
+    "Ropes Course": false,
+    "Running": false,
+    "Safe Housing": false,
+    "Safe place to sober up": false,
+    "Safety Education": false,
+    "Scholarship": false,
+    "School Attendance": false,
+    "School Supplies": false,
+    "School Transportation": false,
+    "Screening &amp; Exams": false,
+    "Self-esteem": false,
+    "SEL (Social Emotional Learning)": false,
+    "Senior Centers": false,
+    "Seniors": false,
+    "Services/Urgent Care": false,
+    "Sex Education": false,
+    "Sexual Assault Hotlines": false,
+    "Sexual Exploitation or Trafficking for All Women Hotlines": false,
+    "Sexual &amp; Reproductive Health": false,
+    "Sffamilies": false,
+    "SFUSD Wellness Centers": false,
+    "Short-Term Housing": false,
+    "Showers": false,
+    "Skill Building": false,
+    "Skills Assessment": false,
+    "Skills &amp; Training": false,
+    "Smartphones": false,
+    "Sober Living": false,
+    "Social Justice": false,
+    "Special Education": false,
+    "Specialized Therapy": false,
+    "Specialized Training": false,
+    "Spiritual Support": false,
+    "Sports Programs": false,
+    "Sports &amp; Recreation": false,
+    "STD/STI Treatment &amp; Prevention": false,
+    "STEM": false,
+    "Storage": false,
+    "Storytelling": false,
+    "Stress": false,
+    "Subsidized Housing": false,
+    "Substance Abuse Counseling": false,
+    "Suicide": false,
+    "Summer Programs": false,
+    "Supplies for School": false,
+    "Supported Employment": false,
+    "Support Groups": false,
+    "Support Network": false,
+    "Support Services": false,
+    "Tax Preparation": false,
+    "Team Sports": false,
+    "Technology": false,
+    "Teen Parents": false,
+    "Temporary Shelter": false,
+    "Temporary Shelter for Women": false,
+    "Tenant Counseling": false,
+    "Toilet": false,
+    "Transit": false,
+    "Transitional Aged Youth": false,
+    "Transitional Housing for Women": false,
+    "Translation &amp; Interpretation": false,
+    "Transportation for Healthcare": false,
+    "Transportation for School": false,
+    "Trauma": false,
+    "Trauma Informed": false,
+    "Traumatic Brain Injury": false,
+    "Truancy Prevention": false,
+    "Understand Disability": false,
+    "Understand Government Programs": false,
+    "Understand Mental Health": false,
+    "Unemployment Benefits": false,
+    "Utilities &amp; Insurance Assistance": false,
+    "Vaccinations": false,
+    "Virtual Support": false,
+    "Vision Care": false,
+    "Vocational Training": false,
+    "Vocational Training Programs": false,
+    "We are a family with children under 18 years old.": false,
+    "Wifi Access": false,
+    "Workplace Rights": false,
+    "Year-Round": false,
+    "Yoga": false,
+    "Youth": false,
+    "Youth Jobs": false,
+    "Youth jobs &amp; Internships": false,
+    "Youth Leadership": false,
+    "Youth-Led Philanthropy": false,
+    "Youth Services": false,
+    "Youth Workforce &amp; LifeSkills": false,
+    "Zumba": false
+  }
+
+  var topEligibility = {
+    "Age": false,
+    "Education Level": false,
+    "Employment Status": false,
+    "Ethnicity": false,
+    "Family Status": false,
+    "Financial Status": false,
+    "Gender": false,
+    "Health Concerns": false,
+    "Immigration Status": false,
+    "Housing Status": false,
+    "Other": false
+  }
+
+  var subEligibility = {
+    "Adolescents": false,
+    "Limited English": false,
+    "Active Duty": false,
+    "African American": false,
+    "Adoption": false,
+    "Benefit Recipients": false,
+    "LGBTQ+": false,
+    "Abuse or Neglect Survivors": false,
+    "Immigrants": false,
+    "Home Owners": false,
+    "Anyone in Need": false,
+    "Elderly": false,
+    "Continuing Education Students": false,
+    "Employed": false,
+    "African/Black": false,
+    "CIP (Children of Incarcerated Parents)": false,
+    "Low-Income": false,
+    "Men": false,
+    "Alcoholic": false,
+    "Refugees": false,
+    "Home Renters": false,
+    "Disaster Victim": false,
+    "Age 12-17": false,
+    "ESL/ELL (English Language Learner)": false,
+    "National Guard": false,
+    "API": false,
+    "Foster Youth": false,
+    "Underinsured": false,
+    "Non-Binary": false,
+    "Alzheimers": false,
+    "Undocumented": false,
+    "Homeless": false,
+    "Domestic Violence Survivors": false,
+    "Age 18-24": false,
+    "Preschool": false,
+    "Retired": false,
+    "API (Asian/Pacific Islander)": false,
+    "Individuals": false,
+    "Uninsured": false,
+    "Transgender and Gender Non-Conforming": false,
+    "Cancer": false,
+    "Homeless Youth": false,
+    "Gender-Based Violence": false,
+    "All Ages": false,
+    "Elementary School": false,
+    "Sex Worker": false,
+    "Asian": false,
+    "Single Parent": false,
+    "Women": false,
+    "Chronic Illness": false,
+    "Experiencing Homelessness": false,
+    "Human Trafficking Survivors": false,
+    "Middle School Students": false,
+    "Veterans": false,
+    "Chinese": false,
+    "Married no children": false,
+    "Deaf or Hard of Hearing": false,
+    "I live with someone under 18 years of age": false,
+    "Young Adults (18-27 years old)": false,
+    "High School Students": false,
+    "Unemployed": false,
+    "Chinese American": false,
+    "Developmental Disability": false,
+    "Imminent Risk of Eviction": false,
+    "San Francisco Residents": false,
+    "Young Adults (20-30 years old)": false,
+    "Post-Grad": false,
+    "Filipino/a": false,
+    "Disabled": false,
+    "In Jail": false,
+    "Sexual Assault Survivors": false,
+    "Young Children": false,
+    "Jewish": false,
+    "Dual Diagnosis": false,
+    "Near Homeless": false,
+    "Trauma Survivors": false,
+    "Families with children below 18 years old": false,
+    "Latinx": false,
+    "HIV/AIDS": false,
+    "Re-Entry": false,
+    "Youth (below 21 years old)": false,
+    "Middle Eastern and North African": false,
+    "I am someone with disabilities": false,
+    "Infants": false,
+    "Native American": false,
+    "Infectious Disease": false,
+    "Toddlers": false,
+    "Pacific Islander": false,
+    "Learning Disability": false,
+    "Children": false,
+    "Samoan": false,
+    "Limited Mobility": false,
+    "Pre-Teen": false,
+    "Mental Illness": false,
+    "Teens": false,
+    "Mentally Incapacitated": false,
+    "Youth": false,
+    "Opioid Addict": false,
+    "Transitional Aged Youth (TAY)": false,
+    "People who use drugs": false,
+    "Adults": false,
+    "Pregnant": false,
+    "Maturing Adult": false,
+    "PTSD": false,
+    "Senior": false,
+    "Seizure Disorder": false,
+    "Smoker": false,
+    "Special Needs/Disabilities": false,
+    "Substance Dependency": false,
+    "Terminal Illness": false,
+    "Visual Impairment": false
+  }
+</script>
+
+<script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    const serviceRoot = document.getElementById('serviceDivOrganization');
+                    initServiceModals(serviceRoot);
+                  });
+
+                  function initServiceModals(root) {
+                    console.log('[initServiceModals] called, root id:', root && root.id);
+                    // Service Section Modal References — scoped to root
+                    const serviceLocationModal = root.querySelector('#serviceAddLocationModal');
+                    const servicePhoneModal = root.querySelector('#serviceAddPhoneModal');
+                    const serviceNoteModal = root.querySelector('#serviceAddNoteModal');
+                    console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
+
+                    const locationTrigger = root.querySelector('#serviceAddLocationTrigger');
+                    console.log('[initServiceModals] locationTrigger:', locationTrigger);
+                    if (locationTrigger) {
+                      locationTrigger.addEventListener('click', () => {
+                        console.log('[initServiceModals] Add Location clicked');
+                        serviceLocationModal.style.display = 'flex';
+                      });
+                    }
+                    const noteTrigger = root.querySelector('#serviceAddNoteTrigger');
+                    if (noteTrigger) {
+                      noteTrigger.addEventListener('click', () => {
+                        serviceNoteModal.style.display = 'flex';
+                      });
+                    }
+
+                    // Service Location modal handlers
+                    const cancelLocationBtn = root.querySelector('#serviceCancelLocationBtn');
+                    if (cancelLocationBtn) cancelLocationBtn.addEventListener('click', () => {
+                      serviceLocationModal.style.display = 'none';
+                    });
+
+                    const addLocationBtn = root.querySelector('#serviceAddLocationBtn');
+                    if (addLocationBtn) addLocationBtn.addEventListener('click', () => {
+                      const name = root.querySelector('#serviceLocationName').value;
+                      const addr1 = root.querySelector('#serviceAddressLine1').value;
+                      const addr2 = root.querySelector('#serviceAddressLine2').value;
+                      const city = root.querySelector('#serviceCity').value;
+                      const state = root.querySelector('#serviceState').value;
+                      const zip = root.querySelector('#serviceZip').value;
+
+                      const locationList = root.querySelector('#service_locations');
+                      const div = document.createElement('div');
+                      div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
+                      locationList.appendChild(div);
+
+                      root.querySelector('#serviceLocationName').value = '';
+                      root.querySelector('#serviceAddressLine1').value = '';
+                      root.querySelector('#serviceAddressLine2').value = '';
+                      root.querySelector('#serviceCity').value = '';
+                      root.querySelector('#serviceState').value = '';
+                      root.querySelector('#serviceZip').value = '';
+                      serviceLocationModal.style.display = 'none';
+                    });
+
+                    // Service Phone modal handlers
+                    const cancelPhoneBtn = root.querySelector('#serviceCancelPhoneBtn');
+                    if (cancelPhoneBtn) cancelPhoneBtn.addEventListener('click', () => {
+                      servicePhoneModal.style.display = 'none';
+                    });
+
+                    const addPhoneBtn = root.querySelector('#serviceAddPhoneBtn');
+                    if (addPhoneBtn) addPhoneBtn.addEventListener('click', () => {
+                      const name = root.querySelector('#servicePhoneName').value;
+                      const number = root.querySelector('#servicePhoneNumber').value;
+
+                      const phoneSublist = root.querySelectorAll('.edit--section--list--item--sublist')[0];
+                      const li = document.createElement('li');
+                      li.innerHTML = `<strong>${name}:</strong> ${number}`;
+                      phoneSublist.appendChild(li);
+
+                      root.querySelector('#servicePhoneName').value = '';
+                      root.querySelector('#servicePhoneNumber').value = '';
+                      servicePhoneModal.style.display = 'none';
+                    });
+
+                    // Service Note modal handlers
+                    const cancelNoteBtn = root.querySelector('#serviceCancelNoteBtn');
+                    if (cancelNoteBtn) cancelNoteBtn.addEventListener('click', () => {
+                      serviceNoteModal.style.display = 'none';
+                    });
+
+                    const addNoteBtn = root.querySelector('#serviceAddNoteBtn');
+                    if (addNoteBtn) addNoteBtn.addEventListener('click', () => {
+                      const note = root.querySelector('#serviceNoteText').value;
+
+                      const noteSublist = root.querySelectorAll('.edit--section--list--item--sublist')[1];
+                      const li = document.createElement('li');
+                      li.textContent = note;
+                      noteSublist.appendChild(li);
+
+                      root.querySelector('#serviceNoteText').value = '';
+                      serviceNoteModal.style.display = 'none';
+                    });
+
+                    // Expose as global so navBar can call it on each cloned service div
+                    window.initServiceModals = initServiceModals;
+
+                    window.setupServiceAutocomplete = function(root) {
+                      setupAutocomplete('categoryTopDropdown', topCategory, root);
+                      setupAutocomplete('categorySubDropdown', subCategory, root);
+                      setupAutocomplete('eligibilityTopDropdown', topEligibility, root);
+                      setupAutocomplete('eligibilitySubDropdown', subEligibility, root);
+                    };
+
+                    function setupAutocomplete(inputId, dataObject, root) {
+                      const input = root.querySelector('#' + inputId);
+                      const wrapper = input.closest('.Select-multi-value-wrapper');
+                      const placeholder = wrapper.querySelector('.Select-placeholder');
+                      const control = input.closest('.Select-control');
+
+                      const suggestionsDiv = document.createElement('div');
+                      suggestionsDiv.className = 'category-suggestions';
+                      input.closest('.Select').appendChild(suggestionsDiv);
+
+                      control.addEventListener('click', () => {
+                        input.focus();
+                      });
+
+                      input.addEventListener('focus', function() {
+                        if (placeholder) placeholder.style.display = 'none';
+                      });
+
+                      input.addEventListener('blur', function() {
+                        if (placeholder && !wrapper.querySelector('.Select-value')) {
+                          placeholder.style.display = 'block';
+                        }
+                      });
+
+                      input.addEventListener('input', function() {
+                        const query = this.value.toLowerCase();
+                        suggestionsDiv.innerHTML = '';
+
+                        if (query.length === 0) {
+                          suggestionsDiv.style.display = 'none';
+                          return;
+                        }
+
+                        const matches = Object.keys(dataObject).filter(item =>
+                          !dataObject[item] && item.toLowerCase().includes(query)
+                        );
+
+                        if (matches.length > 0) {
+                          matches.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'category-suggestion-item';
+                            div.textContent = item;
+                            div.addEventListener('click', () => selectItem(item));
+                            suggestionsDiv.appendChild(div);
+                          });
+                          suggestionsDiv.style.display = 'block';
+                        } else {
+                          suggestionsDiv.style.display = 'none';
+                        }
+                      });
+
+                      function selectItem(item) {
+                        dataObject[item] = true;
+
+                        if (placeholder) placeholder.style.display = 'none';
+
+                        const pill = document.createElement('div');
+                        pill.className = 'Select-value';
+                        pill.innerHTML = `
+                          <span class="Select-value-icon" aria-hidden="true">×</span>
+                          <span class="Select-value-label">${item}</span>
+                        `;
+
+                        pill.querySelector('.Select-value-icon').addEventListener('click', () => {
+                          dataObject[item] = false;
+                          pill.remove();
+                          if (!wrapper.querySelector('.Select-value')) {
+                            placeholder.style.display = 'block';
+                          }
+                        });
+
+                        wrapper.insertBefore(pill, input.parentElement);
+                        input.value = '';
+                        suggestionsDiv.style.display = 'none';
+                      }
+
+                      document.addEventListener('click', (e) => {
+                        if (!input.closest('.Select').contains(e.target)) {
+                          suggestionsDiv.style.display = 'none';
+                        }
+                      });
+                    }
+                  }
+                </script>
+
+
+
+<!------------------------------------------------------------------------------ Categories Eligibilities Object ------------------------------------------------------------------------------->
+
+
+
+
+
+
+
+
+              </div><div class="edit--services" id="service-1773408729694">
+
+                  <!-- <header class="edit--main--header"> -->
+                    <!-- <h1 class="edit--main--header--title">
+                      Services
+                    </h1> -->
+                  <!-- </header> -->
+
+                  <div class="edit--sections">
+                    <ul class="edit--section--list">
+                      <li class="edit--section--list--item">
+                        <ul class="edit--section--list--item--sublist edit--service--list">
+                          <li id="-2" class="edit--service edit--section">
+
+
+                            <header class="edit--section--header">
+                              <h4>
+                                New Service
+                              </h4>
+                              <button class="remove-item" type="button" id="service--deactivation">
+                                Remove Service
+                              </button>
+                            </header>
+
+
+
+
+                            <ul class="edit--section--list">
+<!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  <div>
+                                    <p class="internal-note-label-text">
+                                      Internal Notes about Editing this Service
+                                    </p>
+                                    <p class="internal-note-label-subtext">
+                                      (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
+                                    </p>
+                                  </div>
+                                </label>
+                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes."></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_name">
+                                  Name of the Service
+                                </label>
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_alternate_name">
+                                  Alternate Name
+                                </label>
+                                <input id="service_alternate_name" type="text" placeholder="What it's known as in the community" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Location ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label>
+                                  Location
+                                  <!-- COMMENTED OUT: Add location from organization dropdown
+                                  <select class="app-components-edit-ProvidedService-module__addressSelect--Q9eih">
+                                    <option value="">
+                                      Add location from organization
+                                    </option>
+                                    <option value="0">
+                                      1925 Lawton Campus
+                                    </option>
+                                    <option value="1">
+                                      Silver Campus
+                                    </option>
+                                    <option value="2">
+                                      1943 Lawton Campus
+                                    </option>
+                                    <option value="3">
+                                      Cambridge Campus
+                                    </option>
+                                  </select>
+                                  -->
+                                </label>
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6">
+                                </div>
+
+
+                                <button id="serviceAddLocationTrigger" class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
+                                  Add Location
+                                </button>
+                             </li>
+
+<!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item email">
+                                <label for="input">
+                                  Service E-Mail
+                                </label>
+                                <input id="service_email" type="email" placeholder="Email address for this service" value="">
+                              </li>
+
+
+ <!--------------------------------------------------------------------- Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Description
+                                </label>
+                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences."></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Short Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
+                                </label>
+                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences."></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Application Process  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Application Process
+                                </label>
+                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Required Documents  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Required Documents
+                                </label>
+                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?"></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Interpretation Services  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Interpretation Services
+                                </label>
+                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Clinical Actions  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Clinician Actions (Include any COVID Actions)
+                                </label>
+                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Top Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilityTopDropdown">
+                                  Top Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
+                                      <div class="Select-placeholder" style="display: block;">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilitySubDropdown">
+                                  Sub Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
+                                      <div class="Select-placeholder" style="display: block;">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Cost  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Cost
+                                </label>
+                                <input id="service_cost" type="text" placeholder="How much does this service cost?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Wait Time  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Wait Time
+                                </label>
+                                <input id="service_wait_time" type="text" placeholder="Is there a waiting list or wait time?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Website  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Service's Website
+                                </label>
+                                <input id="service_website" type="text" placeholder="http://" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Hours  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item hours">
+                                <span class="label">
+                                  Hours
+                                </span>
+                                <div class="inherit-schedule">
+                                  <label for="inherit" class="inline-checkbox">
+                                    <input id="inherit" class="input-checkbox" type="checkbox" checked="" value="">
+                                    Inherit schedule from parent organization
+                                  </label>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Markdown Notes  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item edit--notes">
+                                <label for="add-note">
+                                  Notes
+                                </label>
+                                <p>
+                                  <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
+                                    Markdown
+                                  </a>
+                                  is also supported for notes.
+                                </p>
+                                <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
+                                </ul>
+                                <button id="serviceAddNoteTrigger" type="button" class="edit--section--list--item--button">
+                                  <i class="material-symbols-outlined">
+                                    add_box
+                                  </i>
+                                  Add Note
+                                </button>
+                              </li>
+
+<!--------------------------------------------------------------------- Top Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categoryTopDropdown">
+                                  Top Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
+                                      <div class="Select-placeholder" style="display: block;">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categorySubDropdown">
+                                  Sub Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
+                                      <div class="Select-placeholder" style="display: block;">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
+                              </li>
+
+<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+                            </ul>
+                          </li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </div>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: CSS ------------------------------------------------------------------------------->
+
+                  
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: MODALS ------------------------------------------------------------------------------->
+
+                  <!-- Service Add Location Modal -->
+                  <div id="serviceAddLocationModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Location</h3>
+                      <input type="text" id="serviceLocationName" placeholder="Location Name" value="">
+                      <input type="text" id="serviceAddressLine1" placeholder="Address Line 1" value="">
+                      <input type="text" id="serviceAddressLine2" placeholder="Address Line 2" value="">
+                      <input type="text" id="serviceCity" placeholder="City" value="">
+                      <input type="text" id="serviceState" placeholder="State" value="">
+                      <input type="text" id="serviceZip" placeholder="Zip" value="">
+                      <button id="serviceAddLocationBtn">Add Location</button>
+                      <button id="serviceCancelLocationBtn">Cancel</button>
+                    </div>
+                  </div>
+
+                  <!-- Service Add Phone Modal -->
+                  <div id="serviceAddPhoneModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Phone</h3>
+                      <input type="text" id="servicePhoneName" placeholder="Phone Name" value="">
+                      <input type="text" id="servicePhoneNumber" placeholder="Number" value="">
+                      <button id="serviceAddPhoneBtn">Add Phone</button>
+                      <button id="serviceCancelPhoneBtn">Cancel</button>
+                    </div>
+                  </div>
+
+                  <!-- Service Add Note Modal -->
+                  <div id="serviceAddNoteModal" class="service-modal" style="display:none;">
+                    <div class="service-modal-content">
+                      <h3>Add Note</h3>
+                      <textarea id="serviceNoteText" placeholder="Enter note (markdown supported)"></textarea>
+                      <button id="serviceAddNoteBtn">Add Note</button>
+                      <button id="serviceCancelNoteBtn">Cancel</button>
+                    </div>
+                  </div>
+
+<!------------------------------------------------------------------------------ SERVICE SECTION: JS ------------------------------------------------------------------------------->
+
+                <script>
+  var topCategory = {
+    "Arts, Culture &amp; Identity": false,
+    "Childcare": false,
+    "Family Support": false,
+    "Health &amp; Wellness": false,
+    "sfsg-domesticviolence": false,
+    "sfsg-finance": false,
+    "sfsg-food": false,
+    "sfsg-health": false,
+    "sfsg-housing": false,
+    "sfsg-hygiene": false,
+    "sfsg-internet": false,
+    "sfsg-jobs": false,
+    "sfsg-lgbtqa": false,
+    "sfsg-longtermhousing": false,
+    "sfsg-shelter": false,
+    "sfsg-substanceuse": false,
+    "Sports &amp; Recreation": false,
+    "Ucsf-foodinsecurity": false,
+    "ucsf-immigration": false,
+    "Ucsf-intimatepartnerviolence": false,
+    "Ucsf-mentalhealth": false,
+    "Ucsf-shelter": false,
+    "Ucsf-substanceabuse": false,
+    "Youth Workforce &amp; Life Skills": false
+  }
+
+  var subCategory = {
+    "12-Step": false,
+    "Academic Support": false,
+    "ADA Transit": false,
+    "Addiction Medicine": false,
+    "Addiction &amp; Recovery": false,
+    "Adoption": false,
+    "Adoption &amp; Foster Care": false,
+    "Adult Daycare": false,
+    "Advocacy &amp; Legal Aid": false,
+    "Affordable Connectivity Program": false,
+    "After &amp; Before School": false,
+    "Alternative Education &amp; GED": false,
+    "Anger Management": false,
+    "Animal Welfare": false,
+    "Apprenticeship": false,
+    "Arts and Creative Expression": false,
+    "Arts, Culture &amp; Identity": false,
+    "Assisted Living": false,
+    "At-Home Support": false,
+    "At Imminent Risk of Eviction": false,
+    "Basic Literacy": false,
+    "Basic Needs &amp; Shelter": false,
+    "Beacon Community School": false,
+    "Bereavement": false,
+    "Birth Control": false,
+    "Board Games": false,
+    "Books": false,
+    "Building Code Enforcement": false,
+    "Bullying": false,
+    "Bus Passes": false,
+    "Care": false,
+    "Career Exploration": false,
+    "Caregiver Relief": false,
+    "Case Manager": false,
+    "Checkup &amp; Test": false,
+    "Childcare": false,
+    "Children&#39;s Care": false,
+    "Child Welfare Services": false,
+    "Circus Arts": false,
+    "Citizenship &amp; Immigration": false,
+    "Clean Slate": false,
+    "Clothes": false,
+    "Clothes for School": false,
+    "Clothes for Work": false,
+    "Clothing": false,
+    "Clothing Vouchers": false,
+    "Coding": false,
+    "College Prep": false,
+    "Computer Access": false,
+    "Computer Class": false,
+    "Computer or Internet Access": false,
+    "Congregate Meals": false,
+    "Congregate meals for seniors and people with disabilities": false,
+    "Consult a Crisis Counselor to come ZSFG ED": false,
+    "Coronavirus (COVID-19) Testing": false,
+    "Coronavirus-Related Urgent Care": false,
+    "Counseling": false,
+    "Counseling Assistance": false,
+    "Criminal Justice Involvement": false,
+    "Crisis": false,
+    "Crisis Intervention": false,
+    "Culinary Arts": false,
+    "Culture &amp; Identity": false,
+    "Cycling": false,
+    "Daily Free meals for all": false,
+    "Daily Life Skills": false,
+    "Day Camp": false,
+    "Daytime Care": false,
+    "Dental Care": false,
+    "Depression": false,
+    "Detox": false,
+    "Diaper Bank": false,
+    "Digital Media Production": false,
+    "Disability Benefits": false,
+    "Disability Screening": false,
+    "Disability Support": false,
+    "Disaster Assistance": false,
+    "Discounted Healthcare": false,
+    "Discount Utilities": false,
+    "Discrimination &amp; Civil Rights": false,
+    "Disease Management": false,
+    "Disease Screening": false,
+    "Domestic Violence": false,
+    "Domestic Violence Counseling": false,
+    "Domestic Violence Hotline": false,
+    "Domestic Violence Hotlines": false,
+    "Domestic Violence Shelter": false,
+    "Domestic Violence Shelters": false,
+    "Drop in Center": false,
+    "Drop-In Clinics": false,
+    "Drug Related Services": false,
+    "Drug Testing": false,
+    "Early Childhood": false,
+    "Early Childhood Education": false,
+    "Education": false,
+    "ELA (English Language Arts)": false,
+    "Emergency": false,
+    "Emergency Care": false,
+    "Emergency Financial Assistance": false,
+    "Emergency Food": false,
+    "Emergency Rental Assistance": false,
+    "Emergency Shelters": false,
+    "Employment": false,
+    "End of Life Care": false,
+    "End-of-Life Care": false,
+    "English as a Second Language": false,
+    "English as a Second Language (ESL)": false,
+    "Eviction Legal Aid": false,
+    "Eviction Prevention": false,
+    "Family Counseling": false,
+    "Family Legal Services": false,
+    "Family Planning": false,
+    "Family Resource Centers": false,
+    "Family Shelters": false,
+    "Family Support": false,
+    "Fertility": false,
+    "Financial Aid &amp; Loans": false,
+    "Financial assistance for living expenses": false,
+    "Financial Education": false,
+    "Food": false,
+    "Food benefits": false,
+    "Food Benefits": false,
+    "Food Delivery": false,
+    "Food for Children": false,
+    "Food pantries": false,
+    "Food Pantry": false,
+    "Foreign Languages": false,
+    "Foster Care Services": false,
+    "Free City College": false,
+    "Free Health Clinics": false,
+    "Free Meals": false,
+    "Gardening": false,
+    "General Help": false,
+    "General Outpatient Services": false,
+    "Goods": false,
+    "Government Benefits": false,
+    "Government Homelessness Services": false,
+    "Group Home": false,
+    "Group Therapy": false,
+    "Guardianship": false,
+    "Habitability": false,
+    "Haircut": false,
+    "Health": false,
+    "Health Careers": false,
+    "Health Education": false,
+    "Healthier Habits/Safer Use": false,
+    "Health Insurance": false,
+    "Health &amp; Medical": false,
+    "Health &amp; Wellness": false,
+    "Hearing Tests": false,
+    "Help Pay for Internet or Device": false,
+    "HIV Treatment": false,
+    "Hoarding": false,
+    "Hoarding &amp; Cluttering": false,
+    "Home-delivered groceries and home-delivered meals": false,
+    "Home Delivered Meals": false,
+    "Home Goods": false,
+    "Homelessness Essentials": false,
+    "Home &amp; Renters Insurance": false,
+    "Home Visiting": false,
+    "Hospice": false,
+    "Hospitality": false,
+    "Hotlines and Case Management": false,
+    "Hot Meals": false,
+    "Housing Assistance": false,
+    "Housing Counseling": false,
+    "Housing-related Conflict Resolution": false,
+    "Housing &amp; Rental Assistance": false,
+    "Housing Rights": false,
+    "Housing/Tenants Rights": false,
+    "Housing Vouchers": false,
+    "HSH Funded": false,
+    "Hygiene": false,
+    "Hygiene kits": false,
+    "Hygiene Supplies": false,
+    "Identification Recovery": false,
+    "Immediate Safety": false,
+    "Immigration Assistance": false,
+    "Independent Living": false,
+    "Individual Counseling": false,
+    "In-Home Support": false,
+    "Insurance": false,
+    "Interview Training": false,
+    "Job Assistance": false,
+    "Job Board": false,
+    "Job Placement": false,
+    "Job Placement Support": false,
+    "Job Readiness": false,
+    "Job Training": false,
+    "Justice Involvement": false,
+    "Laundry": false,
+    "Leadership": false,
+    "Learning English": false,
+    "Legal": false,
+    "Legal Assistance": false,
+    "Legal Representation": false,
+    "Legal Services": false,
+    "LGBTQ+ Support": false,
+    "Loans": false,
+    "Long-Term Housing": false,
+    "Long-Term Shelter": false,
+    "Low-Income Housing": false,
+    "Maternity Care": false,
+    "Mediation": false,
+    "Medical Care": false,
+    "Medical Supplies": false,
+    "Medication Management": false,
+    "Medications": false,
+    "Medications for Mental Health": false,
+    "Medication Treatment": false,
+    "Meditation": false,
+    "Meetings/Support": false,
+    "Mental Health Care": false,
+    "Mental Health Evaluation": false,
+    "Mental Health Medication": false,
+    "Mental Health Services": false,
+    "Mental Health Urgent Care": false,
+    "Mentorship": false,
+    "Mindfulness": false,
+    "MOHCD Funded": false,
+    "Money": false,
+    "Money Management": false,
+    "More Education": false,
+    "Navigating Police Involvement": false,
+    "Navigating the System": false,
+    "Notary": false,
+    "Nursing Home": false,
+    "Nutrition Education": false,
+    "One-Night Shelter": false,
+    "One-on-One Support": false,
+    "Online": false,
+    "Online Only": false,
+    "Other Legal Assistance": false,
+    "Other Medical Services": false,
+    "Other Mental Health Services": false,
+    "Outdoors": false,
+    "Overnight/Prolonged Observation": false,
+    "Pain Management": false,
+    "Parenting Education": false,
+    "Payee Services": false,
+    "Peer Support": false,
+    "Personal Hygiene": false,
+    "Personal Safety": false,
+    "Personal Safety Items": false,
+    "Pets": false,
+    "Physical Fitness": false,
+    "Physical Therapy": false,
+    "Pilates": false,
+    "Playgroups": false,
+    "Portable Toilets and Hand-Washing Stations": false,
+    "Postnatal Care": false,
+    "Pregnancy Tests": false,
+    "Pregnancy Wraparound Services": false,
+    "Preschool": false,
+    "Prescription Assistance": false,
+    "Prevent &amp; Treat": false,
+    "Primary Care": false,
+    "Prison/Jail Related Services": false,
+    "Probation &amp; Parole": false,
+    "Probation and Parole": false,
+    "Programs Integrated into School Day": false,
+    "Psychiatric Emergency Services": false,
+    "Public Housing": false,
+    "Public Schools": false,
+    "Reading &amp; Literacy": false,
+    "Recreation": false,
+    "Re-entry Services": false,
+    "Relief for Caregivers": false,
+    "Rental Assistance": false,
+    "Representation": false,
+    "Residential Care": false,
+    "Residential Treatment": false,
+    "Restraining Order": false,
+    "Resume Development": false,
+    "Resume Writing": false,
+    "Retirement Benefits": false,
+    "Reward Program": false,
+    "Rock Climbing": false,
+    "Ropes Course": false,
+    "Running": false,
+    "Safe Housing": false,
+    "Safe place to sober up": false,
+    "Safety Education": false,
+    "Scholarship": false,
+    "School Attendance": false,
+    "School Supplies": false,
+    "School Transportation": false,
+    "Screening &amp; Exams": false,
+    "Self-esteem": false,
+    "SEL (Social Emotional Learning)": false,
+    "Senior Centers": false,
+    "Seniors": false,
+    "Services/Urgent Care": false,
+    "Sex Education": false,
+    "Sexual Assault Hotlines": false,
+    "Sexual Exploitation or Trafficking for All Women Hotlines": false,
+    "Sexual &amp; Reproductive Health": false,
+    "Sffamilies": false,
+    "SFUSD Wellness Centers": false,
+    "Short-Term Housing": false,
+    "Showers": false,
+    "Skill Building": false,
+    "Skills Assessment": false,
+    "Skills &amp; Training": false,
+    "Smartphones": false,
+    "Sober Living": false,
+    "Social Justice": false,
+    "Special Education": false,
+    "Specialized Therapy": false,
+    "Specialized Training": false,
+    "Spiritual Support": false,
+    "Sports Programs": false,
+    "Sports &amp; Recreation": false,
+    "STD/STI Treatment &amp; Prevention": false,
+    "STEM": false,
+    "Storage": false,
+    "Storytelling": false,
+    "Stress": false,
+    "Subsidized Housing": false,
+    "Substance Abuse Counseling": false,
+    "Suicide": false,
+    "Summer Programs": false,
+    "Supplies for School": false,
+    "Supported Employment": false,
+    "Support Groups": false,
+    "Support Network": false,
+    "Support Services": false,
+    "Tax Preparation": false,
+    "Team Sports": false,
+    "Technology": false,
+    "Teen Parents": false,
+    "Temporary Shelter": false,
+    "Temporary Shelter for Women": false,
+    "Tenant Counseling": false,
+    "Toilet": false,
+    "Transit": false,
+    "Transitional Aged Youth": false,
+    "Transitional Housing for Women": false,
+    "Translation &amp; Interpretation": false,
+    "Transportation for Healthcare": false,
+    "Transportation for School": false,
+    "Trauma": false,
+    "Trauma Informed": false,
+    "Traumatic Brain Injury": false,
+    "Truancy Prevention": false,
+    "Understand Disability": false,
+    "Understand Government Programs": false,
+    "Understand Mental Health": false,
+    "Unemployment Benefits": false,
+    "Utilities &amp; Insurance Assistance": false,
+    "Vaccinations": false,
+    "Virtual Support": false,
+    "Vision Care": false,
+    "Vocational Training": false,
+    "Vocational Training Programs": false,
+    "We are a family with children under 18 years old.": false,
+    "Wifi Access": false,
+    "Workplace Rights": false,
+    "Year-Round": false,
+    "Yoga": false,
+    "Youth": false,
+    "Youth Jobs": false,
+    "Youth jobs &amp; Internships": false,
+    "Youth Leadership": false,
+    "Youth-Led Philanthropy": false,
+    "Youth Services": false,
+    "Youth Workforce &amp; LifeSkills": false,
+    "Zumba": false
+  }
+
+  var topEligibility = {
+    "Age": false,
+    "Education Level": false,
+    "Employment Status": false,
+    "Ethnicity": false,
+    "Family Status": false,
+    "Financial Status": false,
+    "Gender": false,
+    "Health Concerns": false,
+    "Immigration Status": false,
+    "Housing Status": false,
+    "Other": false
+  }
+
+  var subEligibility = {
+    "Adolescents": false,
+    "Limited English": false,
+    "Active Duty": false,
+    "African American": false,
+    "Adoption": false,
+    "Benefit Recipients": false,
+    "LGBTQ+": false,
+    "Abuse or Neglect Survivors": false,
+    "Immigrants": false,
+    "Home Owners": false,
+    "Anyone in Need": false,
+    "Elderly": false,
+    "Continuing Education Students": false,
+    "Employed": false,
+    "African/Black": false,
+    "CIP (Children of Incarcerated Parents)": false,
+    "Low-Income": false,
+    "Men": false,
+    "Alcoholic": false,
+    "Refugees": false,
+    "Home Renters": false,
+    "Disaster Victim": false,
+    "Age 12-17": false,
+    "ESL/ELL (English Language Learner)": false,
+    "National Guard": false,
+    "API": false,
+    "Foster Youth": false,
+    "Underinsured": false,
+    "Non-Binary": false,
+    "Alzheimers": false,
+    "Undocumented": false,
+    "Homeless": false,
+    "Domestic Violence Survivors": false,
+    "Age 18-24": false,
+    "Preschool": false,
+    "Retired": false,
+    "API (Asian/Pacific Islander)": false,
+    "Individuals": false,
+    "Uninsured": false,
+    "Transgender and Gender Non-Conforming": false,
+    "Cancer": false,
+    "Homeless Youth": false,
+    "Gender-Based Violence": false,
+    "All Ages": false,
+    "Elementary School": false,
+    "Sex Worker": false,
+    "Asian": false,
+    "Single Parent": false,
+    "Women": false,
+    "Chronic Illness": false,
+    "Experiencing Homelessness": false,
+    "Human Trafficking Survivors": false,
+    "Middle School Students": false,
+    "Veterans": false,
+    "Chinese": false,
+    "Married no children": false,
+    "Deaf or Hard of Hearing": false,
+    "I live with someone under 18 years of age": false,
+    "Young Adults (18-27 years old)": false,
+    "High School Students": false,
+    "Unemployed": false,
+    "Chinese American": false,
+    "Developmental Disability": false,
+    "Imminent Risk of Eviction": false,
+    "San Francisco Residents": false,
+    "Young Adults (20-30 years old)": false,
+    "Post-Grad": false,
+    "Filipino/a": false,
+    "Disabled": false,
+    "In Jail": false,
+    "Sexual Assault Survivors": false,
+    "Young Children": false,
+    "Jewish": false,
+    "Dual Diagnosis": false,
+    "Near Homeless": false,
+    "Trauma Survivors": false,
+    "Families with children below 18 years old": false,
+    "Latinx": false,
+    "HIV/AIDS": false,
+    "Re-Entry": false,
+    "Youth (below 21 years old)": false,
+    "Middle Eastern and North African": false,
+    "I am someone with disabilities": false,
+    "Infants": false,
+    "Native American": false,
+    "Infectious Disease": false,
+    "Toddlers": false,
+    "Pacific Islander": false,
+    "Learning Disability": false,
+    "Children": false,
+    "Samoan": false,
+    "Limited Mobility": false,
+    "Pre-Teen": false,
+    "Mental Illness": false,
+    "Teens": false,
+    "Mentally Incapacitated": false,
+    "Youth": false,
+    "Opioid Addict": false,
+    "Transitional Aged Youth (TAY)": false,
+    "People who use drugs": false,
+    "Adults": false,
+    "Pregnant": false,
+    "Maturing Adult": false,
+    "PTSD": false,
+    "Senior": false,
+    "Seizure Disorder": false,
+    "Smoker": false,
+    "Special Needs/Disabilities": false,
+    "Substance Dependency": false,
+    "Terminal Illness": false,
+    "Visual Impairment": false
+  }
+</script>
+
+<script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    const serviceRoot = document.getElementById('serviceDivOrganization');
+                    initServiceModals(serviceRoot);
+                  });
+
+                  function initServiceModals(root) {
+                    console.log('[initServiceModals] called, root id:', root && root.id);
+                    // Service Section Modal References — scoped to root
+                    const serviceLocationModal = root.querySelector('#serviceAddLocationModal');
+                    const servicePhoneModal = root.querySelector('#serviceAddPhoneModal');
+                    const serviceNoteModal = root.querySelector('#serviceAddNoteModal');
+                    console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
+
+                    const locationTrigger = root.querySelector('#serviceAddLocationTrigger');
+                    console.log('[initServiceModals] locationTrigger:', locationTrigger);
+                    if (locationTrigger) {
+                      locationTrigger.addEventListener('click', () => {
+                        console.log('[initServiceModals] Add Location clicked');
+                        serviceLocationModal.style.display = 'flex';
+                      });
+                    }
+                    const noteTrigger = root.querySelector('#serviceAddNoteTrigger');
+                    if (noteTrigger) {
+                      noteTrigger.addEventListener('click', () => {
+                        serviceNoteModal.style.display = 'flex';
+                      });
+                    }
+
+                    // Service Location modal handlers
+                    const cancelLocationBtn = root.querySelector('#serviceCancelLocationBtn');
+                    if (cancelLocationBtn) cancelLocationBtn.addEventListener('click', () => {
+                      serviceLocationModal.style.display = 'none';
+                    });
+
+                    const addLocationBtn = root.querySelector('#serviceAddLocationBtn');
+                    if (addLocationBtn) addLocationBtn.addEventListener('click', () => {
+                      const name = root.querySelector('#serviceLocationName').value;
+                      const addr1 = root.querySelector('#serviceAddressLine1').value;
+                      const addr2 = root.querySelector('#serviceAddressLine2').value;
+                      const city = root.querySelector('#serviceCity').value;
+                      const state = root.querySelector('#serviceState').value;
+                      const zip = root.querySelector('#serviceZip').value;
+
+                      const locationList = root.querySelector('#service_locations');
+                      const div = document.createElement('div');
+                      div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
+                      locationList.appendChild(div);
+
+                      root.querySelector('#serviceLocationName').value = '';
+                      root.querySelector('#serviceAddressLine1').value = '';
+                      root.querySelector('#serviceAddressLine2').value = '';
+                      root.querySelector('#serviceCity').value = '';
+                      root.querySelector('#serviceState').value = '';
+                      root.querySelector('#serviceZip').value = '';
+                      serviceLocationModal.style.display = 'none';
+                    });
+
+                    // Service Phone modal handlers
+                    const cancelPhoneBtn = root.querySelector('#serviceCancelPhoneBtn');
+                    if (cancelPhoneBtn) cancelPhoneBtn.addEventListener('click', () => {
+                      servicePhoneModal.style.display = 'none';
+                    });
+
+                    const addPhoneBtn = root.querySelector('#serviceAddPhoneBtn');
+                    if (addPhoneBtn) addPhoneBtn.addEventListener('click', () => {
+                      const name = root.querySelector('#servicePhoneName').value;
+                      const number = root.querySelector('#servicePhoneNumber').value;
+
+                      const phoneSublist = root.querySelectorAll('.edit--section--list--item--sublist')[0];
+                      const li = document.createElement('li');
+                      li.innerHTML = `<strong>${name}:</strong> ${number}`;
+                      phoneSublist.appendChild(li);
+
+                      root.querySelector('#servicePhoneName').value = '';
+                      root.querySelector('#servicePhoneNumber').value = '';
+                      servicePhoneModal.style.display = 'none';
+                    });
+
+                    // Service Note modal handlers
+                    const cancelNoteBtn = root.querySelector('#serviceCancelNoteBtn');
+                    if (cancelNoteBtn) cancelNoteBtn.addEventListener('click', () => {
+                      serviceNoteModal.style.display = 'none';
+                    });
+
+                    const addNoteBtn = root.querySelector('#serviceAddNoteBtn');
+                    if (addNoteBtn) addNoteBtn.addEventListener('click', () => {
+                      const note = root.querySelector('#serviceNoteText').value;
+
+                      const noteSublist = root.querySelectorAll('.edit--section--list--item--sublist')[1];
+                      const li = document.createElement('li');
+                      li.textContent = note;
+                      noteSublist.appendChild(li);
+
+                      root.querySelector('#serviceNoteText').value = '';
+                      serviceNoteModal.style.display = 'none';
+                    });
+
+                    // Expose as global so navBar can call it on each cloned service div
+                    window.initServiceModals = initServiceModals;
+
+                    window.setupServiceAutocomplete = function(root) {
+                      setupAutocomplete('categoryTopDropdown', topCategory, root);
+                      setupAutocomplete('categorySubDropdown', subCategory, root);
+                      setupAutocomplete('eligibilityTopDropdown', topEligibility, root);
+                      setupAutocomplete('eligibilitySubDropdown', subEligibility, root);
+                    };
+
+                    function setupAutocomplete(inputId, dataObject, root) {
+                      const input = root.querySelector('#' + inputId);
+                      const wrapper = input.closest('.Select-multi-value-wrapper');
+                      const placeholder = wrapper.querySelector('.Select-placeholder');
+                      const control = input.closest('.Select-control');
+
+                      const suggestionsDiv = document.createElement('div');
+                      suggestionsDiv.className = 'category-suggestions';
+                      input.closest('.Select').appendChild(suggestionsDiv);
+
+                      control.addEventListener('click', () => {
+                        input.focus();
+                      });
+
+                      input.addEventListener('focus', function() {
+                        if (placeholder) placeholder.style.display = 'none';
+                      });
+
+                      input.addEventListener('blur', function() {
+                        if (placeholder && !wrapper.querySelector('.Select-value')) {
+                          placeholder.style.display = 'block';
+                        }
+                      });
+
+                      input.addEventListener('input', function() {
+                        const query = this.value.toLowerCase();
+                        suggestionsDiv.innerHTML = '';
+
+                        if (query.length === 0) {
+                          suggestionsDiv.style.display = 'none';
+                          return;
+                        }
+
+                        const matches = Object.keys(dataObject).filter(item =>
+                          !dataObject[item] && item.toLowerCase().includes(query)
+                        );
+
+                        if (matches.length > 0) {
+                          matches.forEach(item => {
+                            const div = document.createElement('div');
+                            div.className = 'category-suggestion-item';
+                            div.textContent = item;
+                            div.addEventListener('click', () => selectItem(item));
+                            suggestionsDiv.appendChild(div);
+                          });
+                          suggestionsDiv.style.display = 'block';
+                        } else {
+                          suggestionsDiv.style.display = 'none';
+                        }
+                      });
+
+                      function selectItem(item) {
+                        dataObject[item] = true;
+
+                        if (placeholder) placeholder.style.display = 'none';
+
+                        const pill = document.createElement('div');
+                        pill.className = 'Select-value';
+                        pill.innerHTML = `
+                          <span class="Select-value-icon" aria-hidden="true">×</span>
+                          <span class="Select-value-label">${item}</span>
+                        `;
+
+                        pill.querySelector('.Select-value-icon').addEventListener('click', () => {
+                          dataObject[item] = false;
+                          pill.remove();
+                          if (!wrapper.querySelector('.Select-value')) {
+                            placeholder.style.display = 'block';
+                          }
+                        });
+
+                        wrapper.insertBefore(pill, input.parentElement);
+                        input.value = '';
+                        suggestionsDiv.style.display = 'none';
+                      }
+
+                      document.addEventListener('click', (e) => {
+                        if (!input.closest('.Select').contains(e.target)) {
+                          suggestionsDiv.style.display = 'none';
+                        }
+                      });
+                    }
+                  }
+                </script>
+
+
+
+<!------------------------------------------------------------------------------ Categories Eligibilities Object ------------------------------------------------------------------------------->
+
+
+
+
+
+
+
+
+              </div></div>
+<!---=========================================================================== ORG SERVICES CONTAINER END ==============================================================================-->
+</div>
+</div>
+<!---=========================================================================== EDIT SERVICES STARTS ============================================================================-->
+                <div class="edit--services" id="serviceDivSpreadsheet" style="display: none;">
+
+                  <!-- <header class="edit--main--header"> -->
+                    <!-- <h1 class="edit--main--header--title">
+                      Services
+                    </h1> -->
+                  <!-- </header> -->
+
+                  <div class="edit--sections">
+                    <ul class="edit--section--list">
+                      <li class="edit--section--list--item">
+                        <ul class="edit--section--list--item--sublist edit--service--list">
+                          <li id="-2" class="edit--service edit--section">
+
+
+                            <header class="edit--section--header">
+                              <h4>
+                                New Service
+                              </h4>
+
+
+                            </header>
+
+
+
+
+                            <ul class="edit--section--list">
+
+<!---------------------------------------------------------------------  Service Org Number ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                  <label for="serviceBelongsToOrg">Service Belongs To Organization:</label>
+                                  <input type="text" class="serviceBelongsToOrg" id="serviceBelongsToOrg" placeholder="What Is The Number Of The Organization This Service Belongs To?" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  <div>
+                                    <p class="internal-note-label-text">
+                                      Internal Notes about Editing this Service
+                                    </p>
+                                    <p class="internal-note-label-subtext">
+                                      (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
+                                    </p>
+                                  </div>
+                                </label>
+                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes."></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_name">
+                                  Name of the Service
+                                </label>
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="Abc Pre-school">
+                              </li>
+
+<!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_alternate_name">
+                                  Alternate Name
+                                </label>
+                                <input id="service_alternate_name" type="text" placeholder="What it's known as in the community" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Location ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label>
+                                  Location
+                                  <!-- COMMENTED OUT: Add location from organization dropdown
+                                  <select class="app-components-edit-ProvidedService-module__addressSelect--Q9eih">
+                                    <option value="">
+                                      Add location from organization
+                                    </option>
+                                    <option value="0">
+                                      1925 Lawton Campus
+                                    </option>
+                                    <option value="1">
+                                      Silver Campus
+                                    </option>
+                                    <option value="2">
+                                      1943 Lawton Campus
+                                    </option>
+                                    <option value="3">
+                                      Cambridge Campus
+                                    </option>
+                                  </select>
+                                  -->
+                                </label>
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6"><div>426 33rd Avenue, 1st Floor<br>San Francisco, CA 94121</div></div>
 
 
                                 <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
@@ -2235,8 +4423,7 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
-                                      <div class="Select-placeholder">
+                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Age</span></div><div class="Select-placeholder" style="display: none;">
                                         Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -2250,7 +4437,7 @@
                                       </span>
                                     </span>
                                   </div>
-                                </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
                               </li>
 
 <!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
@@ -2260,8 +4447,7 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
-                                      <div class="Select-placeholder">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Infants</span></div><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Toddlers</span></div><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Children</span></div><div class="Select-placeholder" style="display: none;">
                                         Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -2275,7 +4461,7 @@
                                       </span>
                                     </span>
                                   </div>
-                                </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
                               </li>
 
 
@@ -2346,8 +4532,7 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
-                                      <div class="Select-placeholder">
+                                    <div class="Select-multi-value-wrapper" id="service_top_categories"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Childcare</span></div><div class="Select-placeholder" style="display: none;">
                                         Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -2361,7 +4546,7 @@
                                       </span>
                                     </span>
                                   </div>
-                                </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
                               </li>
 
 <!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
@@ -2371,8 +4556,7 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
-                                      <div class="Select-placeholder">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_categories"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Childcare</span></div><div class="Select-placeholder" style="display: none;">
                                         Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -2386,7 +4570,7 @@
                                       </span>
                                     </span>
                                   </div>
-                                </div>
+                                <div class="category-suggestions" style="display: none;"></div></div>
                               </li>
 
 <!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
@@ -2407,12 +4591,12 @@
                   <div id="serviceAddLocationModal" class="service-modal" style="display:none;">
                     <div class="service-modal-content">
                       <h3>Add Location</h3>
-                      <input type="text" id="serviceLocationName" placeholder="Location Name">
-                      <input type="text" id="serviceAddressLine1" placeholder="Address Line 1">
-                      <input type="text" id="serviceAddressLine2" placeholder="Address Line 2">
-                      <input type="text" id="serviceCity" placeholder="City">
-                      <input type="text" id="serviceState" placeholder="State">
-                      <input type="text" id="serviceZip" placeholder="Zip">
+                      <input type="text" id="serviceLocationName" placeholder="Location Name" value="">
+                      <input type="text" id="serviceAddressLine1" placeholder="Address Line 1" value="">
+                      <input type="text" id="serviceAddressLine2" placeholder="Address Line 2" value="">
+                      <input type="text" id="serviceCity" placeholder="City" value="">
+                      <input type="text" id="serviceState" placeholder="State" value="">
+                      <input type="text" id="serviceZip" placeholder="Zip" value="">
                       <button id="serviceAddLocationBtn">Add Location</button>
                       <button id="serviceCancelLocationBtn">Cancel</button>
                     </div>
@@ -2422,8 +4606,8 @@
                   <div id="serviceAddPhoneModal" class="service-modal" style="display:none;">
                     <div class="service-modal-content">
                       <h3>Add Phone</h3>
-                      <input type="text" id="servicePhoneName" placeholder="Phone Name">
-                      <input type="text" id="servicePhoneNumber" placeholder="Number">
+                      <input type="text" id="servicePhoneName" placeholder="Phone Name" value="">
+                      <input type="text" id="servicePhoneNumber" placeholder="Number" value="">
                       <button id="serviceAddPhoneBtn">Add Phone</button>
                       <button id="serviceCancelPhoneBtn">Cancel</button>
                     </div>
@@ -3214,7 +5398,7 @@
                                 <label for="service_name">
                                   Name of the Service
                                 </label>
-                                <input id="service_name" type="text" placeholder="What is this service called?" value="">
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="Abc Pre-school">
                               </li>
 
 <!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
@@ -3497,12 +5681,12 @@
                   <div id="serviceAddLocationModal" class="service-modal" style="display:none;">
                     <div class="service-modal-content">
                       <h3>Add Location</h3>
-                      <input type="text" id="serviceLocationName" placeholder="Location Name">
-                      <input type="text" id="serviceAddressLine1" placeholder="Address Line 1">
-                      <input type="text" id="serviceAddressLine2" placeholder="Address Line 2">
-                      <input type="text" id="serviceCity" placeholder="City">
-                      <input type="text" id="serviceState" placeholder="State">
-                      <input type="text" id="serviceZip" placeholder="Zip">
+                      <input type="text" id="serviceLocationName" placeholder="Location Name" value="">
+                      <input type="text" id="serviceAddressLine1" placeholder="Address Line 1" value="">
+                      <input type="text" id="serviceAddressLine2" placeholder="Address Line 2" value="">
+                      <input type="text" id="serviceCity" placeholder="City" value="">
+                      <input type="text" id="serviceState" placeholder="State" value="">
+                      <input type="text" id="serviceZip" placeholder="Zip" value="">
                       <button id="serviceAddLocationBtn">Add Location</button>
                       <button id="serviceCancelLocationBtn">Cancel</button>
                     </div>
@@ -3512,8 +5696,8 @@
                   <div id="serviceAddPhoneModal" class="service-modal" style="display:none;">
                     <div class="service-modal-content">
                       <h3>Add Phone</h3>
-                      <input type="text" id="servicePhoneName" placeholder="Phone Name">
-                      <input type="text" id="servicePhoneNumber" placeholder="Number">
+                      <input type="text" id="servicePhoneName" placeholder="Phone Name" value="">
+                      <input type="text" id="servicePhoneNumber" placeholder="Number" value="">
                       <button id="serviceAddPhoneBtn">Add Phone</button>
                       <button id="serviceCancelPhoneBtn">Cancel</button>
                     </div>
@@ -4277,9 +6461,10 @@
 <!------------------------------------------------------------------------------ DIV OUTER-CONTAINER END --------------------------------------------------------->
     </div>
 <!------------------------------------------------------------------------------ DIV ROOT END --------------------------------------------------------->
-  </body>
-<!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  BODY END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
+  
 
 
-</html>
-<!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HTML END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
+
+
+
+<datalist id="time-options"><option value="00:00"></option><option value="01:00"></option><option value="02:00"></option><option value="03:00"></option><option value="04:00"></option><option value="05:00"></option><option value="06:00"></option><option value="07:00"></option><option value="08:00"></option><option value="09:00"></option><option value="10:00"></option><option value="11:00"></option><option value="12:00"></option><option value="13:00"></option><option value="14:00"></option><option value="15:00"></option><option value="16:00"></option><option value="17:00"></option><option value="18:00"></option><option value="19:00"></option><option value="20:00"></option><option value="21:00"></option><option value="22:00"></option><option value="23:00"></option><option value="00:15"></option><option value="01:15"></option><option value="02:15"></option><option value="03:15"></option><option value="04:15"></option><option value="05:15"></option><option value="06:15"></option><option value="07:15"></option><option value="08:15"></option><option value="09:15"></option><option value="10:15"></option><option value="11:15"></option><option value="12:15"></option><option value="13:15"></option><option value="14:15"></option><option value="15:15"></option><option value="16:15"></option><option value="17:15"></option><option value="18:15"></option><option value="19:15"></option><option value="20:15"></option><option value="21:15"></option><option value="22:15"></option><option value="23:15"></option><option value="00:30"></option><option value="01:30"></option><option value="02:30"></option><option value="03:30"></option><option value="04:30"></option><option value="05:30"></option><option value="06:30"></option><option value="07:30"></option><option value="08:30"></option><option value="09:30"></option><option value="10:30"></option><option value="11:30"></option><option value="12:30"></option><option value="13:30"></option><option value="14:30"></option><option value="15:30"></option><option value="16:30"></option><option value="17:30"></option><option value="18:30"></option><option value="19:30"></option><option value="20:30"></option><option value="21:30"></option><option value="22:30"></option><option value="23:30"></option><option value="00:45"></option><option value="01:45"></option><option value="02:45"></option><option value="03:45"></option><option value="04:45"></option><option value="05:45"></option><option value="06:45"></option><option value="07:45"></option><option value="08:45"></option><option value="09:45"></option><option value="10:45"></option><option value="11:45"></option><option value="12:45"></option><option value="13:45"></option><option value="14:45"></option><option value="15:45"></option><option value="16:45"></option><option value="17:45"></option><option value="18:45"></option><option value="19:45"></option><option value="20:45"></option><option value="21:45"></option><option value="22:45"></option><option value="23:45"></option></datalist></body><!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  BODY END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] --></html>

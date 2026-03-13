@@ -659,11 +659,7 @@
     const link = document.createElement('a');
     link.href = `#${serviceId}`;
     link.textContent = placeholderName;
-    link.onclick = (e) => {
-      e.preventDefault();
-      const targetDiv = document.getElementById(serviceId);
-      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
-    };
+    link.setAttribute('onclick', `event.preventDefault(); var t=document.getElementById('${serviceId}'); if(t) t.scrollIntoView({behavior:'smooth'});`);
     li.appendChild(link);
     servicesList.appendChild(li);
     console.log('Added link to navbar');
@@ -829,11 +825,7 @@
     const link = document.createElement('a');
     link.href = `#${serviceId}`;
     link.textContent = serviceName;
-    link.onclick = (e) => {
-      e.preventDefault();
-      const targetDiv = document.getElementById(serviceId);
-      if (targetDiv) targetDiv.scrollIntoView({ behavior: 'smooth' });
-    };
+    link.setAttribute('onclick', `event.preventDefault(); var t=document.getElementById('${serviceId}'); if(t) t.scrollIntoView({behavior:'smooth'});`);
     li.appendChild(link);
     servicesList.appendChild(li);
     
