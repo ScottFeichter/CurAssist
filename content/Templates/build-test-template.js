@@ -185,7 +185,8 @@ html = html.replace(
 // Fix edit--main width so it doesn't overflow the sticky sidebar
 html = html.replace(
   '</head>',
-  `<style>\n  .edit--main { overflow: clip; min-width: 0; }\n</style>\n</head>`
+  `<style>\n  .edit--main { overflow: clip; min-width: 0; }
+  button.remove-item { background: transparent !important; color: #e34646 !important; border: 1px solid #e34646 !important; }\n</style>\n</head>`
 );
 
 fs.writeFileSync(outputFile, html, 'utf8');
