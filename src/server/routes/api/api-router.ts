@@ -1,6 +1,5 @@
 import express from 'express';
 import { extendedConsole as console } from '../../../streams/consoles/customConsoles';
-import { log } from '../../../utils/logger/logger-setup/logger-wrapper';
 import bucketsRouter from './buckets/buckets-routes';
 // import demoUsersRouter from './demousers/demoUsers-routes';
 // import loginRouter from './login/login-routes';

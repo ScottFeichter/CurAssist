@@ -1,8 +1,10 @@
-// ============================================================
-// TRANSFORM — maps collector output to server API shape
-// ============================================================
+// #region ===================== CONSTANTS =====================================
 
 const SF_API = 'https://www.sfserviceguide.org/api';
+
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== HELPERS =======================================
 
 function transformCategories(topCats, subCats) {
   return [...topCats, ...subCats]
@@ -57,6 +59,10 @@ function transformPhones(phones) {
     description: p.phone_name   || null
   }));
 }
+
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== TRANSFORMS ====================================
 
 function transformService(svc) {
   return {
@@ -113,3 +119,5 @@ function transformServiceOnly(payload) {
   const transformed = transformService(svc);
   return { orgId, servicesBody: { services: [transformed] } };
 }
+
+// #endregion ------------------------------------------------------------------

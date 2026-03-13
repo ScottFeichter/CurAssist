@@ -1,8 +1,9 @@
-// ============================================================
-// SUBMIT NEW ORG
+// #region ===================== SUBMIT NEW ORG ================================
 // 1. POST /api/resources        — create org, get back id
 // 2. POST /api/resources/{id}/services — if org has services
-// ============================================================
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== FUNCTIONS =====================================
 
 async function submitNewOrg(payload) {
   const { orgBody, services } = transformNewOrg(payload);
@@ -49,3 +50,5 @@ async function submitNewOrg(payload) {
 
   return orgId;
 }
+
+// #endregion ------------------------------------------------------------------

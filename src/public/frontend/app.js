@@ -1,4 +1,4 @@
-// #region ===================== CONSTANTS =====================================
+// #region ===================== CONSTANTS / STATE ============================
 const API_BASE = '/api';
 
 let currentBucket = '';
@@ -244,8 +244,15 @@ async function confirmMove(shouldSave) {
   }
 }
 
-// Initialize on load
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== INIT ==========================================
+
 init();
+
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== FILE OPERATIONS ===============================
 
 // Copy file
 async function copyFile() {
@@ -690,6 +697,8 @@ function cancelCreateFile() {
 
 // #endregion ------------------------------------------------------------------
 
+// #region ===================== UI / SIDEBAR ==================================
+
 // Toggle sidebars
 function toggleSidebar() {
   const el = document.getElementById('leftSidebar');
@@ -782,3 +791,5 @@ function stopResize() {
 }
 
 document.addEventListener('mouseup', stopResize);
+
+// #endregion ------------------------------------------------------------------

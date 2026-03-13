@@ -1,9 +1,8 @@
-// ============================================================
-// SUBMIT SERVICE (to existing org)
+// #region ===================== SUBMIT SERVICE ================================
 // POST /api/resources/{org_id}/services
-// ============================================================
+// #endregion ------------------------------------------------------------------
 
-const SF_API = 'https://www.sfserviceguide.org/api';
+// #region ===================== FUNCTIONS =====================================
 
 async function submitService(payload) {
   const { orgId, servicesBody } = transformServiceOnly(payload);
@@ -26,3 +25,5 @@ async function submitService(payload) {
   console.log('Service created:', data);
   return data;
 }
+
+// #endregion ------------------------------------------------------------------
