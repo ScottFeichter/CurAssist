@@ -7,6 +7,7 @@ import { exec } from 'child_process';
 import { promisify } from 'util';
 import * as XLSX from 'xlsx';
 import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap } from './buckets-map';
+const { injectInput, injectTextarea, injectPhoneList, injectLocationDiv } = require('../../../content/Templates/inject-values');
 import { 
   sanitizePhoneName, 
   sanitizeOrganizationPhones,
@@ -161,13 +162,8 @@ export async function generateHtmlFiles(
       const rawValue = row[spreadsheetColumn] || '';
       const value = sanitizers[htmlId] ? sanitizers[htmlId](rawValue) : rawValue;
       
-      // Match input elements by id
-      const inputRegex = new RegExp(`(<input[^>]*id="${htmlId}"[^>]*value=")[^"]*(")`, 'gi');
-      html = html.replace(inputRegex, `$1${value}$2`);
-      
-      // Match textarea elements by id
-      const textareaRegex = new RegExp(`(<textarea[^>]*id="${htmlId}"[^>]*>)[\\s\\S]*?(<\\/textarea>)`, 'gi');
-      html = html.replace(textareaRegex, `$1${value}$2`);
+      html = injectInput(html, htmlId, value);
+      html = injectTextarea(html, htmlId, value);
     }
     
     // Handle organization location data - combine address fields into location list
@@ -180,20 +176,8 @@ export async function generateHtmlFiles(
     if (orgAddress || orgCity || orgState || orgZip) {
       const locationLabel = orgLocationName ? `<strong style="font-weight: bold;">${orgLocationName}</strong>` : '';
       const locationHtml = `<div>${locationLabel}${locationLabel ? '<br>' : ''}${orgAddress}${orgAddress ? '<br>' : ''}${orgCity}, ${orgState} ${orgZip}</div>`;
-      html = html.replace(
-        /(<div[^>]*id="organization_locations"[^>]*>)([\s\S]*?)(<\/div>)/,
-        `$1${locationHtml}$3`
-      );
-    }
-    
-    // Handle service location data - use same data as organization
-    if (orgAddress || orgCity || orgState || orgZip) {
-      const locationLabel = orgLocationName ? `<strong style="font-weight: bold;">${orgLocationName}</strong>` : '';
-      const locationHtml = `<div>${locationLabel}${locationLabel ? '<br>' : ''}${orgAddress}${orgAddress ? '<br>' : ''}${orgCity}, ${orgState} ${orgZip}</div>`;
-      html = html.replace(
-        /(<div[^>]*id="service_locations"[^>]*>)([\s\S]*?)(<\/div>)/,
-        `$1${locationHtml}$3`
-      );
+      html = injectLocationDiv(html, 'organization_locations', locationHtml);
+      html = injectLocationDiv(html, 'service_locations', locationHtml);
     }
     
     // Handle organization phone data - combine phone fields into phone list
@@ -202,10 +186,7 @@ export async function generateHtmlFiles(
     
     if (orgPhoneName || orgPhone) {
       const phoneHtml = `<li><strong>${orgPhoneName}</strong> ${orgPhone}</li>`;
-      html = html.replace(
-        /(<ul[^>]*id="organization_phones"[^>]*>)([\s\S]*?)(<\/ul>)/,
-        `$1${phoneHtml}$3`
-      );
+      html = injectPhoneList(html, 'organization_phones', phoneHtml);
     }
     
     // Write the populated HTML back to the file

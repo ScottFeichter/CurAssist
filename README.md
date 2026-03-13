@@ -44,6 +44,18 @@ npm start
 
 Then open browser to: `http://localhost:8004` (or your configured PORT)
 
+## NPM Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run build` | Builds blank combined template, test values template, compiles TypeScript, copies views/public |
+| `npm run dev` | Runs full build then starts dev runner |
+| `npm start` | Starts production server from compiled output |
+| `npm run watch` | Watches TypeScript files and recompiles on change |
+| `npm run watch:template` | Watches `content/Templates` source files and rebuilds `orgServTemplate-combinedTestValues.html` on change. Run in a separate terminal while editing template source files (`build-test-template.js`, `testOrgValues.js`, `inject-values.js`, component HTMLs) |
+| `npm run serve` | Runs nodemon on compiled server output |
+| `npm run clean` | Removes `dist/` directory |
+
 ## Usage
 
 1. Select a bucket from the dropdown (e.g., "DCYF 10.01.25")

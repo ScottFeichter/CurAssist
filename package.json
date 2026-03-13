@@ -8,6 +8,7 @@
     "start": "node dist/entry.js",
     "dev": "npm run build && node dev-runner.js",
     "watch": "tsc --watch",
+    "watch:template": "nodemon --watch content/Templates --ext js,html --ignore content/Templates/orgServTemplate-combined*.html --exec \"node content/Templates/build-test-template.js\"",
     "serve": "nodemon --delay 1 dist/entry.js",
     "clean": "rm -rf dist"
   },
