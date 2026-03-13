@@ -60,12 +60,23 @@ const watchDirs = [
   path.join(__dirname, 'content/collector'),
 ];
 
+const watchFiles = [
+  path.join(__dirname, 'false_commit.md'),
+];
+
 watchDirs.forEach(dir => {
   if (fs.existsSync(dir)) {
     fs.watch(dir, { recursive: true }, (event, filename) => {
       if (filename && !/orgServTemplate-combined/.test(filename)) scheduleCopy();
     });
     console.log(formatLine('watch', `INFO : Watching -> ${dir.replace(/.*CurAssist\//, '')}`));
+  }
+});
+
+watchFiles.forEach(file => {
+  if (fs.existsSync(file)) {
+    fs.watch(file, () => scheduleCopy());
+    console.log(formatLine('watch', `INFO : Watching -> ${file.replace(/.*CurAssist\//, '')}`))
   }
 });
 
