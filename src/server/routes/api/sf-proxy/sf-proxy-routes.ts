@@ -29,7 +29,7 @@ sfProxyRouter.post('/*', async (req: Request, res: Response) => {
     });
 
     const data = await sfRes.json().catch(() => ({}));
-    console.log('SF proxy response:', sfRes.status, JSON.stringify(data));
+    console.super('SF Proxy Response', sfRes.status, data);
     log.retrn('sf-proxy POST', log.kcarb);
     res.status(sfRes.status).json(data);
   } catch (err: any) {
