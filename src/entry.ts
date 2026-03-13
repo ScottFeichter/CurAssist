@@ -5,7 +5,7 @@ import logger from './utils/logger/logger';
 import { log } from './utils/logger/logger-setup/logger-wrapper';
 import { createLogDirectories } from './utils/logger/logger-setup/logger-directories';
 import { testLoggers, testLogWrappers } from './utils/logger/logger-trials/logger-trials';
-import { start, SERVER } from './server/routes/server';
+import { start, SERVER } from './server/server';
 // #endregion ------------------------------------------------------------------
 
 console.enter();

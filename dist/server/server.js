@@ -1,22 +1,61 @@
-import express from 'express';
-import cors from 'cors';
-import path from 'path';
-import { fileURLToPath } from 'url';
-import { PORT } from '../config/env.js';
-import { logger } from '../utils/logger/logger.js';
-import apiRoutes from './routes/api.js';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-export const server = express();
-// Middleware
-server.use(cors());
-server.use(express.json({ limit: '50mb' }));
-server.use(express.static(path.join(__dirname, '../../public')));
-// Routes
-server.use('/api', apiRoutes);
-export const start = () => {
-    server.listen(PORT, () => {
-        logger.info(`Server running on http://localhost:${PORT}`);
-        console.log(`✅ Server running on http://localhost:${PORT}`);
-    });
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.start = exports.SERVER = void 0;
+// #region ===================== IMPORTS =======================================
+const customConsoles_1 = require("../streams/consoles/customConsoles");
+const logger_wrapper_1 = require("../utils/logger/logger-setup/logger-wrapper");
+const express_1 = __importDefault(require("express"));
+const setup_pre_route_middleware_1 = require("./middlewares/setup-pre-route-middleware");
+const setup_routes_1 = require("./routes/setup-routes");
+const setup_post_route_middleware_1 = require("./middlewares/setup-post-route-middleware");
+// import SEQUELIZE from '../../database/sequelize';
+const env_module_1 = require("../config/env-module");
+const cors_1 = __importDefault(require("cors"));
+const api_1 = __importDefault(require("./routes/api"));
+// #endregion ------------------------------------------------------------------
+customConsoles_1.extendedConsole.enter();
+// #region ====================== START ========================================
+logger_wrapper_1.log.infor(`NODE_ENV at runtime from server.ts: ${process.env.NODE_ENV}`);
+// Instantiate the server
+exports.SERVER = (0, express_1.default)();
+// Function to start the server (called in entry.ts)
+const start = async (SERVER) => {
+    logger_wrapper_1.log.enter("start()", logger_wrapper_1.log.brack);
+    try {
+        // Middleware
+        SERVER.use((0, cors_1.default)());
+        SERVER.use(express_1.default.json({ limit: '50mb' }));
+        // Add setup middleware and set up routes
+        (0, setup_pre_route_middleware_1.setupPreRouteMiddleware)(SERVER);
+        (0, setup_routes_1.setupRoutes)(SERVER);
+        (0, setup_post_route_middleware_1.setupPostRouteMiddleware)(SERVER);
+        // Authenticate Sequelize instance to ensure the DB connection is successful
+        // await SEQUELIZE.authenticate();
+        // log.infor('Database connection has been established successfully!');
+        // Routes
+        SERVER.use('/api', api_1.default);
+        SERVER.listen(env_module_1.SERVER_PORT, () => {
+            logger_wrapper_1.log.blank();
+            customConsoles_1.extendedConsole.infor('To prevent terminal line wrapping run: tput rmam');
+            customConsoles_1.extendedConsole.infor('To restore terminal line wrapping run: tput smam');
+            logger_wrapper_1.log.blank();
+            customConsoles_1.extendedConsole.infor(`✅ Server is running at \x1b[36mhttp://localhost:${env_module_1.SERVER_PORT}\x1b[0m`);
+            logger_wrapper_1.log.blank();
+        });
+    }
+    catch (error) {
+        logger_wrapper_1.log.blank();
+        customConsoles_1.extendedConsole.error('❌ Failed to start server:', error);
+        logger_wrapper_1.log.blank();
+        process.exit(1);
+    }
+    return logger_wrapper_1.log.retrn("start()", logger_wrapper_1.log.kcarb);
+};
+exports.start = start;
+// #endregion ------------------------------------------------------------------
+customConsoles_1.extendedConsole.leave();
+// #region ====================== NOTES ========================================
+// #endregion ------------------------------------------------------------------

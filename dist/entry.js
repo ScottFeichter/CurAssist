@@ -9,7 +9,7 @@ const env_module_1 = require("./config/env-module");
 const logger_1 = __importDefault(require("./utils/logger/logger"));
 const logger_directories_1 = require("./utils/logger/logger-setup/logger-directories");
 const logger_trials_1 = require("./utils/logger/logger-trials/logger-trials");
-const server_1 = require("./server/routes/server");
+const server_1 = require("./server/server");
 // #endregion ------------------------------------------------------------------
 customConsoles_1.extendedConsole.enter();
 // #region ====================== START ========================================

@@ -1,18 +1,18 @@
 // #region ===================== IMPORTS =======================================
-import { extendedConsole as console } from '../../streams/consoles/customConsoles';
-import { log } from '../../utils/logger/logger-setup/logger-wrapper';
+import { extendedConsole as console } from '../streams/consoles/customConsoles';
+import { log } from '../utils/logger/logger-setup/logger-wrapper';
 import express, { Application } from 'express';
-import { setupPreRouteMiddleware } from '../middlewares/setup-pre-route-middleware';
-import { setupRoutes } from './setup-routes';
-import { setupPostRouteMiddleware } from '../middlewares/setup-post-route-middleware';
+import { setupPreRouteMiddleware } from './middlewares/setup-pre-route-middleware';
+import { setupRoutes } from './routes/setup-routes';
+import { setupPostRouteMiddleware } from './middlewares/setup-post-route-middleware';
 // import SEQUELIZE from '../../database/sequelize';
-import { SERVER_PORT } from '../../config/env-module';
+import { SERVER_PORT } from '../config/env-module';
 
 import cors from 'cors';
 import path from 'path';
-import { PORT } from '../../config/env';
-import logger from '../../utils/logger/logger';
-import apiRoutes from './api';
+import { PORT } from '../config/env';
+import logger from '../utils/logger/logger';
+import apiRoutes from './routes/api';
 // #endregion ------------------------------------------------------------------
 
 console.enter();
@@ -52,6 +52,9 @@ export const start = async (SERVER: Application) => {
     SERVER.use('/api', apiRoutes);
 
     SERVER.listen(SERVER_PORT, () => {
+      log.blank();
+      console.infor('To prevent terminal line wrapping run: tput rmam');
+      console.infor('To restore terminal line wrapping run: tput smam');
       log.blank();
       console.infor(`✅ Server is running at \x1b[36mhttp://localhost:${SERVER_PORT}\x1b[0m`);
       log.blank();
