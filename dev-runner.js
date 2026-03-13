@@ -6,6 +6,10 @@
  * 2. Nodemon watching dist folder - restarts server when compiled files change
  * 3. File watcher on src/public and content/ (excluding content/Buckets) -
  *    runs build-template + copy to dist on changes
+ *
+ * NOTE: On file changes, only build-test-template.js is called directly.
+ * It internally calls build-template.js first, so both templates are rebuilt
+ * in a single pass. Calling build-template.js separately would build it twice.
  */
 
 const { spawn, execSync } = require('child_process');
@@ -35,13 +39,15 @@ let rebuildTimer = null;
 function scheduleCopy() {
   if (rebuildTimer) clearTimeout(rebuildTimer);
   rebuildTimer = setTimeout(() => {
-    console.log(formatLine('watch', 'Change detected — rebuilding template and copying assets...'));
+    console.log(formatLine('watch', 'ALERT : Change detected — rebuilding template and copying assets...'));
     try {
-      execSync('node content/Templates/build-template.js', { stdio: 'inherit' });
-      execSync('cp -r src/public dist/ && cp -r src/views dist/', { stdio: 'inherit' });
-      console.log(formatLine('watch', 'Assets copied to dist/'));
+      const out1 = execSync('node content/Templates/build-test-template.js').toString().trim();
+      if (out1) out1.split('\n').forEach(l => console.log(formatLine('watch', `ALERT : ${l}`)));
+      execSync('cp -r src/public dist/ && cp -r src/views dist/');
+      console.log(formatLine('watch', 'ALERT : Assets copied to dist/'));
     } catch (e) {
-      console.error(formatLine('watch', 'Build error: ' + e.message));
+      const msg = (e.stdout ? e.stdout.toString().trim() + '\n' : '') + e.message;
+      msg.split('\n').forEach(l => console.error(formatLine('watch', `ALERT : ${l}`)));
     }
   }, 300);
 }
@@ -57,7 +63,7 @@ const watchDirs = [
 watchDirs.forEach(dir => {
   if (fs.existsSync(dir)) {
     fs.watch(dir, { recursive: true }, (event, filename) => {
-      if (filename) scheduleCopy();
+      if (filename && !/orgServTemplate-combined/.test(filename)) scheduleCopy();
     });
     console.log(formatLine('watch', `Watching: ${dir}`));
   }

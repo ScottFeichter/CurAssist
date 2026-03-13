@@ -154,18 +154,13 @@ if (orgServices && orgServices.length) {
           return li;
         }).join('\n');
 
-        // Insert a new VISIBLE services container before the hidden serviceDivOrgTemplate
-        const hiddenTemplateMarker = '<div id="serviceDivOrgTemplate"';
-        const insertPos = html.indexOf(hiddenTemplateMarker);
-        if (insertPos !== -1) {
-          const visibleOrgDiv =
-            `<div class="edit--services" id="serviceDivOrganization--populated">\n` +
-            `  <div class="edit--sections"><ul class="edit--section--list"><li class="edit--section--list--item">` +
-            `<ul class="edit--section--list--item--sublist edit--service--list">\n` +
-            populatedLis +
-            `\n</ul></li></ul></div>\n</div>\n`;
-          html = html.slice(0, insertPos) + visibleOrgDiv + html.slice(insertPos);
-        }
+        // Inject populated services into the orgServicesDiv container (inside edit--main)
+        html = html.replace(
+          '<div class="edit--orgServices" id="orgServicesDiv"></div>',
+          `<div class="edit--orgServices" id="orgServicesDiv">\n` +
+          populatedLis +
+          `\n</div>`
+        );
       }
     }
   }
@@ -190,8 +185,8 @@ html = html.replace(
 // Fix edit--main width so it doesn't overflow the sticky sidebar
 html = html.replace(
   '</head>',
-  `<style>\n  .edit--main { overflow: hidden; min-width: 0; }\n</style>\n</head>`
+  `<style>\n  .edit--main { overflow: clip; min-width: 0; }\n</style>\n</head>`
 );
 
 fs.writeFileSync(outputFile, html, 'utf8');
-console.log(`✓ Test values template created: ${outputFile}`);
+console.log(`Test combined template created -> ${outputName}`);

@@ -116,4 +116,4 @@ combined = combined.replace(
 
 // Write the combined file
 fs.writeFileSync(outputFile, combined, 'utf8');
-console.log(`✓ Combined template created: ${outputFile}`);
+console.log(`Blank Combined template created -> ${outputName}`);

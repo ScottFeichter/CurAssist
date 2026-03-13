@@ -981,7 +981,7 @@
                     }
                   </style>
 <style>
-  .edit--main { overflow: hidden; min-width: 0; }
+  .edit--main { overflow: clip; min-width: 0; }
 </style>
 </head>
 <!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HEAD END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
@@ -2078,7 +2078,615 @@
                 </div>
 <!---=========================================================================== EDIT (ORG) SECTIONS END ============================================================================-->
 <!---=========================================================================== ORG SERVICES CONTAINER START ============================================================================-->
-<div class="edit--orgServices" id="orgServicesDiv"></div>
+<div class="edit--orgServices" id="orgServicesDiv">
+<li id="service-test-001" class="edit--service edit--section">
+
+
+                            <header class="edit--section--header">
+                              <h4>
+                                New Service
+                              </h4>
+                              <button class="remove-item" type="button" id="service--deactivation">
+                                Remove Service
+                              </button>
+                            </header>
+
+
+
+
+                            <ul class="edit--section--list">
+<!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  <div>
+                                    <p class="internal-note-label-text">
+                                      Internal Notes about Editing this Service
+                                    </p>
+                                    <p class="internal-note-label-subtext">
+                                      (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
+                                    </p>
+                                  </div>
+                                </label>
+                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes.">test service internal notes</textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_name">
+                                  Name of the Service
+                                </label>
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="Test Service">
+                              </li>
+
+<!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_alternate_name">
+                                  Alternate Name
+                                </label>
+                                <input id="service_alternate_name" type="text" placeholder="What it's known as in the community" value="test alt name">
+                              </li>
+
+<!--------------------------------------------------------------------- Location ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label>
+                                  Location
+                                  <!-- COMMENTED OUT: Add location from organization dropdown
+                                  <select class="app-components-edit-ProvidedService-module__addressSelect--Q9eih">
+                                    <option value="">
+                                      Add location from organization
+                                    </option>
+                                    <option value="0">
+                                      1925 Lawton Campus
+                                    </option>
+                                    <option value="1">
+                                      Silver Campus
+                                    </option>
+                                    <option value="2">
+                                      1943 Lawton Campus
+                                    </option>
+                                    <option value="3">
+                                      Cambridge Campus
+                                    </option>
+                                  </select>
+                                  -->
+                                </label>
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6"><div data-name="Service Location" data-address1="456 Service Ave" data-address2="" data-city="San Francisco" data-state="CA" data-zip="94105">Service Location, 456 Service Ave, San Francisco, CA, 94105</div></div>
+
+
+                                <button id="serviceAddLocationTrigger" class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
+                                  Add Location
+                                </button>
+                             </li>
+
+<!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item email">
+                                <label for="input">
+                                  Service E-Mail
+                                </label>
+                                <input id="service_email" type="email" placeholder="Email address for this service" value="service@testemail.com">
+                              </li>
+
+
+ <!--------------------------------------------------------------------- Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Description
+                                </label>
+                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences.">test service description</textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Short Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
+                                </label>
+                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences.">test service short description</textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Application Process  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Application Process
+                                </label>
+                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Required Documents  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Required Documents
+                                </label>
+                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?"></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Interpretation Services  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Interpretation Services
+                                </label>
+                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Clinical Actions  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Clinician Actions (Include any COVID Actions)
+                                </label>
+                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Top Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilityTopDropdown">
+                                  Top Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
+                                      <div class="Select-placeholder">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilitySubDropdown">
+                                  Sub Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
+                                      <div class="Select-placeholder">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Cost  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Cost
+                                </label>
+                                <input id="service_cost" type="text" placeholder="How much does this service cost?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Wait Time  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Wait Time
+                                </label>
+                                <input id="service_wait_time" type="text" placeholder="Is there a waiting list or wait time?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Website  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Service's Website
+                                </label>
+                                <input id="service_website" type="text" placeholder="http://" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Hours  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item hours">
+                                <span class="label">
+                                  Hours
+                                </span>
+                                <div class="inherit-schedule">
+                                  <label for="inherit" class="inline-checkbox">
+                                    <input id="inherit" class="input-checkbox" type="checkbox" checked="">
+                                    Inherit schedule from parent organization
+                                  </label>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Markdown Notes  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item edit--notes">
+                                <label for="add-note">
+                                  Notes
+                                </label>
+                                <p>
+                                  <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
+                                    Markdown
+                                  </a>
+                                  is also supported for notes.
+                                </p>
+                                <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
+                                </ul>
+                                <button id="serviceAddNoteTrigger" type="button" class="edit--section--list--item--button">
+                                  <i class="material-symbols-outlined">
+                                    add_box
+                                  </i>
+                                  Add Note
+                                </button>
+                              </li>
+
+<!--------------------------------------------------------------------- Top Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categoryTopDropdown">
+                                  Top Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
+                                      <div class="Select-placeholder">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categorySubDropdown">
+                                  Sub Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
+                                      <div class="Select-placeholder">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+                            </ul>
+                          </li>
+<li id="service-test-002" class="edit--service edit--section">
+
+
+                            <header class="edit--section--header">
+                              <h4>
+                                New Service
+                              </h4>
+                              <button class="remove-item" type="button" id="service--deactivation">
+                                Remove Service
+                              </button>
+                            </header>
+
+
+
+
+                            <ul class="edit--section--list">
+<!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  <div>
+                                    <p class="internal-note-label-text">
+                                      Internal Notes about Editing this Service
+                                    </p>
+                                    <p class="internal-note-label-subtext">
+                                      (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
+                                    </p>
+                                  </div>
+                                </label>
+                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes."></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_name">
+                                  Name of the Service
+                                </label>
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="test service 2">
+                              </li>
+
+<!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="service_alternate_name">
+                                  Alternate Name
+                                </label>
+                                <input id="service_alternate_name" type="text" placeholder="What it's known as in the community" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Location ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label>
+                                  Location
+                                  <!-- COMMENTED OUT: Add location from organization dropdown
+                                  <select class="app-components-edit-ProvidedService-module__addressSelect--Q9eih">
+                                    <option value="">
+                                      Add location from organization
+                                    </option>
+                                    <option value="0">
+                                      1925 Lawton Campus
+                                    </option>
+                                    <option value="1">
+                                      Silver Campus
+                                    </option>
+                                    <option value="2">
+                                      1943 Lawton Campus
+                                    </option>
+                                    <option value="3">
+                                      Cambridge Campus
+                                    </option>
+                                  </select>
+                                  -->
+                                </label>
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6">
+                                </div>
+
+
+                                <button id="serviceAddLocationTrigger" class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
+                                  Add Location
+                                </button>
+                             </li>
+
+<!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item email">
+                                <label for="input">
+                                  Service E-Mail
+                                </label>
+                                <input id="service_email" type="email" placeholder="Email address for this service" value="">
+                              </li>
+
+
+ <!--------------------------------------------------------------------- Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Description
+                                </label>
+                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences.">second service description</textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Short Description  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
+                                </label>
+                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences."></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Application Process  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Application Process
+                                </label>
+                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Required Documents  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Required Documents
+                                </label>
+                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?"></textarea>
+                              </li>
+
+<!--------------------------------------------------------------------- Interpretation Services  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Interpretation Services
+                                </label>
+                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Clinical Actions  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="textarea">
+                                  Clinician Actions (Include any COVID Actions)
+                                </label>
+                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)"></textarea>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Top Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilityTopDropdown">
+                                  Top Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
+                                      <div class="Select-placeholder">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="eligibilitySubDropdown">
+                                  Sub Eligibility
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
+                                      <div class="Select-placeholder">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+
+<!--------------------------------------------------------------------- Cost  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Cost
+                                </label>
+                                <input id="service_cost" type="text" placeholder="How much does this service cost?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Wait Time  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Wait Time
+                                </label>
+                                <input id="service_wait_time" type="text" placeholder="Is there a waiting list or wait time?" value="">
+                              </li>
+
+
+<!--------------------------------------------------------------------- Website  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="input">
+                                  Service's Website
+                                </label>
+                                <input id="service_website" type="text" placeholder="http://" value="">
+                              </li>
+
+<!--------------------------------------------------------------------- Hours  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item hours">
+                                <span class="label">
+                                  Hours
+                                </span>
+                                <div class="inherit-schedule">
+                                  <label for="inherit" class="inline-checkbox">
+                                    <input id="inherit" class="input-checkbox" type="checkbox" checked="">
+                                    Inherit schedule from parent organization
+                                  </label>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Markdown Notes  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item edit--notes">
+                                <label for="add-note">
+                                  Notes
+                                </label>
+                                <p>
+                                  <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
+                                    Markdown
+                                  </a>
+                                  is also supported for notes.
+                                </p>
+                                <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
+                                </ul>
+                                <button id="serviceAddNoteTrigger" type="button" class="edit--section--list--item--button">
+                                  <i class="material-symbols-outlined">
+                                    add_box
+                                  </i>
+                                  Add Note
+                                </button>
+                              </li>
+
+<!--------------------------------------------------------------------- Top Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categoryTopDropdown">
+                                  Top Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
+                                      <div class="Select-placeholder">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
+                              <li class="edit--section--list--item">
+                                <label for="categorySubDropdown">
+                                  Sub Categories
+                                </label>
+                                <div class="Select is-clearable is-searchable Select--multi">
+                                  <div class="Select-control">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
+                                      <div class="Select-placeholder">
+                                        Begin typing for list, type A for all items
+                                      </div>
+                                      <div class="Select-input" style="display: inline-block;">
+                                        <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
+                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <span class="Select-arrow-zone">
+                                      <span class="Select-arrow">
+                                      </span>
+                                    </span>
+                                  </div>
+                                </div>
+                              </li>
+
+<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
+                            </ul>
+                          </li>
+</div>
 <!---=========================================================================== ORG SERVICES CONTAINER END ==============================================================================-->
 </div>
 </div>
@@ -3177,617 +3785,6 @@
 
               </div>
 <!---=========================================================================== EDIT SERVICES ENDS ===========================================================================--->
-<div class="edit--services" id="serviceDivOrganization--populated">
-  <div class="edit--sections"><ul class="edit--section--list"><li class="edit--section--list--item"><ul class="edit--section--list--item--sublist edit--service--list">
-<li id="service-test-001" class="edit--service edit--section">
-
-
-                            <header class="edit--section--header">
-                              <h4>
-                                New Service
-                              </h4>
-                              <button class="remove-item" type="button" id="service--deactivation">
-                                Remove Service
-                              </button>
-                            </header>
-
-
-
-
-                            <ul class="edit--section--list">
-<!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  <div>
-                                    <p class="internal-note-label-text">
-                                      Internal Notes about Editing this Service
-                                    </p>
-                                    <p class="internal-note-label-subtext">
-                                      (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
-                                    </p>
-                                  </div>
-                                </label>
-                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes.">test service internal notes</textarea>
-                              </li>
-
-<!--------------------------------------------------------------------- Name ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="service_name">
-                                  Name of the Service
-                                </label>
-                                <input id="service_name" type="text" placeholder="What is this service called?" value="Test Service">
-                              </li>
-
-<!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="service_alternate_name">
-                                  Alternate Name
-                                </label>
-                                <input id="service_alternate_name" type="text" placeholder="What it's known as in the community" value="test alt name">
-                              </li>
-
-<!--------------------------------------------------------------------- Location ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label>
-                                  Location
-                                  <!-- COMMENTED OUT: Add location from organization dropdown
-                                  <select class="app-components-edit-ProvidedService-module__addressSelect--Q9eih">
-                                    <option value="">
-                                      Add location from organization
-                                    </option>
-                                    <option value="0">
-                                      1925 Lawton Campus
-                                    </option>
-                                    <option value="1">
-                                      Silver Campus
-                                    </option>
-                                    <option value="2">
-                                      1943 Lawton Campus
-                                    </option>
-                                    <option value="3">
-                                      Cambridge Campus
-                                    </option>
-                                  </select>
-                                  -->
-                                </label>
-                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6"><div data-name="Service Location" data-address1="456 Service Ave" data-address2="" data-city="San Francisco" data-state="CA" data-zip="94105">Service Location, 456 Service Ave, San Francisco, CA, 94105</div></div>
-
-
-                                <button id="serviceAddLocationTrigger" class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
-                                  Add Location
-                                </button>
-                             </li>
-
-<!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item email">
-                                <label for="input">
-                                  Service E-Mail
-                                </label>
-                                <input id="service_email" type="email" placeholder="Email address for this service" value="service@testemail.com">
-                              </li>
-
-
- <!--------------------------------------------------------------------- Description  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Service Description
-                                </label>
-                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences.">test service description</textarea>
-                              </li>
-
-<!--------------------------------------------------------------------- Short Description  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
-                                </label>
-                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences.">test service short description</textarea>
-                              </li>
-
-<!--------------------------------------------------------------------- Application Process  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Application Process
-                                </label>
-                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?"></textarea>
-                              </li>
-
-
-<!--------------------------------------------------------------------- Required Documents  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Required Documents
-                                </label>
-                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?"></textarea>
-                              </li>
-
-<!--------------------------------------------------------------------- Interpretation Services  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Interpretation Services
-                                </label>
-                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?"></textarea>
-                              </li>
-
-
-<!--------------------------------------------------------------------- Clinical Actions  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Clinician Actions (Include any COVID Actions)
-                                </label>
-                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)"></textarea>
-                              </li>
-
-
-<!--------------------------------------------------------------------- Top Eligibility  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="eligibilityTopDropdown">
-                                  Top Eligibility
-                                </label>
-                                <div class="Select is-clearable is-searchable Select--multi">
-                                  <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
-                                      <div class="Select-placeholder">
-                                        Begin typing for list, type A for all items
-                                      </div>
-                                      <div class="Select-input" style="display: inline-block;">
-                                        <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
-                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <span class="Select-arrow-zone">
-                                      <span class="Select-arrow">
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-
-<!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="eligibilitySubDropdown">
-                                  Sub Eligibility
-                                </label>
-                                <div class="Select is-clearable is-searchable Select--multi">
-                                  <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
-                                      <div class="Select-placeholder">
-                                        Begin typing for list, type A for all items
-                                      </div>
-                                      <div class="Select-input" style="display: inline-block;">
-                                        <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
-                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <span class="Select-arrow-zone">
-                                      <span class="Select-arrow">
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-
-
-<!--------------------------------------------------------------------- Cost  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="input">
-                                  Cost
-                                </label>
-                                <input id="service_cost" type="text" placeholder="How much does this service cost?" value="">
-                              </li>
-
-
-<!--------------------------------------------------------------------- Wait Time  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="input">
-                                  Wait Time
-                                </label>
-                                <input id="service_wait_time" type="text" placeholder="Is there a waiting list or wait time?" value="">
-                              </li>
-
-
-<!--------------------------------------------------------------------- Website  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="input">
-                                  Service's Website
-                                </label>
-                                <input id="service_website" type="text" placeholder="http://" value="">
-                              </li>
-
-<!--------------------------------------------------------------------- Hours  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item hours">
-                                <span class="label">
-                                  Hours
-                                </span>
-                                <div class="inherit-schedule">
-                                  <label for="inherit" class="inline-checkbox">
-                                    <input id="inherit" class="input-checkbox" type="checkbox" checked="">
-                                    Inherit schedule from parent organization
-                                  </label>
-                                </div>
-                              </li>
-
-<!--------------------------------------------------------------------- Markdown Notes  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item edit--notes">
-                                <label for="add-note">
-                                  Notes
-                                </label>
-                                <p>
-                                  <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
-                                    Markdown
-                                  </a>
-                                  is also supported for notes.
-                                </p>
-                                <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
-                                </ul>
-                                <button id="serviceAddNoteTrigger" type="button" class="edit--section--list--item--button">
-                                  <i class="material-symbols-outlined">
-                                    add_box
-                                  </i>
-                                  Add Note
-                                </button>
-                              </li>
-
-<!--------------------------------------------------------------------- Top Categories  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="categoryTopDropdown">
-                                  Top Categories
-                                </label>
-                                <div class="Select is-clearable is-searchable Select--multi">
-                                  <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
-                                      <div class="Select-placeholder">
-                                        Begin typing for list, type A for all items
-                                      </div>
-                                      <div class="Select-input" style="display: inline-block;">
-                                        <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
-                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <span class="Select-arrow-zone">
-                                      <span class="Select-arrow">
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-
-<!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="categorySubDropdown">
-                                  Sub Categories
-                                </label>
-                                <div class="Select is-clearable is-searchable Select--multi">
-                                  <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
-                                      <div class="Select-placeholder">
-                                        Begin typing for list, type A for all items
-                                      </div>
-                                      <div class="Select-input" style="display: inline-block;">
-                                        <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
-                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <span class="Select-arrow-zone">
-                                      <span class="Select-arrow">
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-
-<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-                            </ul>
-                          </li>
-<li id="service-test-002" class="edit--service edit--section">
-
-
-                            <header class="edit--section--header">
-                              <h4>
-                                New Service
-                              </h4>
-                              <button class="remove-item" type="button" id="service--deactivation">
-                                Remove Service
-                              </button>
-                            </header>
-
-
-
-
-                            <ul class="edit--section--list">
-<!--------------------------------------------------------------------- Internal Notes ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  <div>
-                                    <p class="internal-note-label-text">
-                                      Internal Notes about Editing this Service
-                                    </p>
-                                    <p class="internal-note-label-subtext">
-                                      (These notes will NOT be displayed to users. They are for internal use only, to help with content editing.)
-                                    </p>
-                                  </div>
-                                </label>
-                                <textarea id="service_internal_notes" class="edit-section-internal-note" placeholder="Add any info that future content editors should be aware of when updating this service. Adding dates to your notes will help with tracking changes."></textarea>
-                              </li>
-
-<!--------------------------------------------------------------------- Name ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="service_name">
-                                  Name of the Service
-                                </label>
-                                <input id="service_name" type="text" placeholder="What is this service called?" value="test service 2">
-                              </li>
-
-<!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="service_alternate_name">
-                                  Alternate Name
-                                </label>
-                                <input id="service_alternate_name" type="text" placeholder="What it's known as in the community" value="">
-                              </li>
-
-<!--------------------------------------------------------------------- Location ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label>
-                                  Location
-                                  <!-- COMMENTED OUT: Add location from organization dropdown
-                                  <select class="app-components-edit-ProvidedService-module__addressSelect--Q9eih">
-                                    <option value="">
-                                      Add location from organization
-                                    </option>
-                                    <option value="0">
-                                      1925 Lawton Campus
-                                    </option>
-                                    <option value="1">
-                                      Silver Campus
-                                    </option>
-                                    <option value="2">
-                                      1943 Lawton Campus
-                                    </option>
-                                    <option value="3">
-                                      Cambridge Campus
-                                    </option>
-                                  </select>
-                                  -->
-                                </label>
-                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6">
-                                </div>
-
-
-                                <button id="serviceAddLocationTrigger" class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
-                                  Add Location
-                                </button>
-                             </li>
-
-<!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item email">
-                                <label for="input">
-                                  Service E-Mail
-                                </label>
-                                <input id="service_email" type="email" placeholder="Email address for this service" value="">
-                              </li>
-
-
- <!--------------------------------------------------------------------- Description  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Service Description
-                                </label>
-                                <textarea id="service_description" class="" placeholder="Describe what you'll receive from this service in a few sentences.">second service description</textarea>
-                              </li>
-
-<!--------------------------------------------------------------------- Short Description  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Service Short Description (NOTE: THIS FIELD IS CURRENTLY ONLY USED FOR SERVICES ON THE UCSF INTIMATE PARTNER VIOLENCE TILE. PLEASE DO NOT EDIT THIS UNLESS YOU ARE SPECIFICALLY UPDATING IT FOR THIS REASON.)
-                                </label>
-                                <textarea id="service_short_description" placeholder="Describe what you'll receive from this service in a few sentences."></textarea>
-                              </li>
-
-<!--------------------------------------------------------------------- Application Process  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Application Process
-                                </label>
-                                <textarea id="service_application_process" class="" placeholder="How do you apply for this service?"></textarea>
-                              </li>
-
-
-<!--------------------------------------------------------------------- Required Documents  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Required Documents
-                                </label>
-                                <textarea id="service_required_documents" class="" placeholder="What documents do you need to bring to apply?"></textarea>
-                              </li>
-
-<!--------------------------------------------------------------------- Interpretation Services  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Interpretation Services
-                                </label>
-                                <textarea id="service_interpretation_services" class="" placeholder="What interpretation services do they offer?"></textarea>
-                              </li>
-
-
-<!--------------------------------------------------------------------- Clinical Actions  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="textarea">
-                                  Clinician Actions (Include any COVID Actions)
-                                </label>
-                                <textarea id="service_clinician_actions" placeholder="Add a list of actions to be taken by clinician and/or client prior to providing service referral (markdown is supported)"></textarea>
-                              </li>
-
-
-<!--------------------------------------------------------------------- Top Eligibility  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="eligibilityTopDropdown">
-                                  Top Eligibility
-                                </label>
-                                <div class="Select is-clearable is-searchable Select--multi">
-                                  <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
-                                      <div class="Select-placeholder">
-                                        Begin typing for list, type A for all items
-                                      </div>
-                                      <div class="Select-input" style="display: inline-block;">
-                                        <input id="eligibilityTopDropdown" aria-activedescendant="react-select-top-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
-                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <span class="Select-arrow-zone">
-                                      <span class="Select-arrow">
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-
-<!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="eligibilitySubDropdown">
-                                  Sub Eligibility
-                                </label>
-                                <div class="Select is-clearable is-searchable Select--multi">
-                                  <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
-                                      <div class="Select-placeholder">
-                                        Begin typing for list, type A for all items
-                                      </div>
-                                      <div class="Select-input" style="display: inline-block;">
-                                        <input id="eligibilitySubDropdown" aria-activedescendant="react-select-sub-elig--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
-                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <span class="Select-arrow-zone">
-                                      <span class="Select-arrow">
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-
-
-<!--------------------------------------------------------------------- Cost  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="input">
-                                  Cost
-                                </label>
-                                <input id="service_cost" type="text" placeholder="How much does this service cost?" value="">
-                              </li>
-
-
-<!--------------------------------------------------------------------- Wait Time  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="input">
-                                  Wait Time
-                                </label>
-                                <input id="service_wait_time" type="text" placeholder="Is there a waiting list or wait time?" value="">
-                              </li>
-
-
-<!--------------------------------------------------------------------- Website  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="input">
-                                  Service's Website
-                                </label>
-                                <input id="service_website" type="text" placeholder="http://" value="">
-                              </li>
-
-<!--------------------------------------------------------------------- Hours  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item hours">
-                                <span class="label">
-                                  Hours
-                                </span>
-                                <div class="inherit-schedule">
-                                  <label for="inherit" class="inline-checkbox">
-                                    <input id="inherit" class="input-checkbox" type="checkbox" checked="">
-                                    Inherit schedule from parent organization
-                                  </label>
-                                </div>
-                              </li>
-
-<!--------------------------------------------------------------------- Markdown Notes  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item edit--notes">
-                                <label for="add-note">
-                                  Notes
-                                </label>
-                                <p>
-                                  <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
-                                    Markdown
-                                  </a>
-                                  is also supported for notes.
-                                </p>
-                                <ul id="service_markdown_notes" class="edit--section--list--item--sublist">
-                                </ul>
-                                <button id="serviceAddNoteTrigger" type="button" class="edit--section--list--item--button">
-                                  <i class="material-symbols-outlined">
-                                    add_box
-                                  </i>
-                                  Add Note
-                                </button>
-                              </li>
-
-<!--------------------------------------------------------------------- Top Categories  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="categoryTopDropdown">
-                                  Top Categories
-                                </label>
-                                <div class="Select is-clearable is-searchable Select--multi">
-                                  <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
-                                      <div class="Select-placeholder">
-                                        Begin typing for list, type A for all items
-                                      </div>
-                                      <div class="Select-input" style="display: inline-block;">
-                                        <input id="categoryTopDropdown" aria-activedescendant="react-select-top-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
-                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <span class="Select-arrow-zone">
-                                      <span class="Select-arrow">
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-
-<!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
-                              <li class="edit--section--list--item">
-                                <label for="categorySubDropdown">
-                                  Sub Categories
-                                </label>
-                                <div class="Select is-clearable is-searchable Select--multi">
-                                  <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
-                                      <div class="Select-placeholder">
-                                        Begin typing for list, type A for all items
-                                      </div>
-                                      <div class="Select-input" style="display: inline-block;">
-                                        <input id="categorySubDropdown" aria-activedescendant="react-select-sub-cat--value" aria-expanded="false" aria-haspopup="false" aria-owns="" role="combobox" value="" style="box-sizing: content-box; width: 5px;">
-                                        <div style="position: absolute; top: 0px; left: 0px; visibility: hidden; height: 0px; overflow: scroll; white-space: pre; font-size: 16px; font-family: &quot;Open Sans&quot;, &quot;San Francisco&quot;, Roboto, Arial, sans-serif; font-weight: 400; font-style: normal; letter-spacing: normal; text-transform: none;">
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <span class="Select-arrow-zone">
-                                      <span class="Select-arrow">
-                                      </span>
-                                    </span>
-                                  </div>
-                                </div>
-                              </li>
-
-<!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
-                            </ul>
-                          </li>
-</ul></li></ul></div>
-</div>
 <div id="serviceDivOrgTemplate" style="display:none;"><!---=========================================================================== EDIT SERVICES STARTS ============================================================================-->
                 <div class="edit--services" id="serviceDivOrganization">
 
