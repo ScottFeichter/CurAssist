@@ -260,6 +260,7 @@ async function copyFile() {
   });
   bucketSel.value = currentBucket || '';
   await onCopyBucketChange();
+  document.getElementById('copyFileName').value = currentFiles[currentIndex].replace(/\.html$/i, '');
   document.getElementById('copyModal').style.display = 'block';
 }
 
@@ -280,7 +281,9 @@ async function onCopyBucketChange() {
 async function confirmCopy() {
   const toBucket = document.getElementById('copyToBucket').value;
   const toSubdir = document.getElementById('copyToSubdir').value;
+  const copyName = document.getElementById('copyFileName').value.trim();
   if (!toBucket || !toSubdir) { alert('Please select a destination bucket and subdirectory'); return; }
+  if (!copyName) { alert('Please enter a file name'); return; }
   document.getElementById('copyModal').style.display = 'none';
 
   try {
@@ -291,7 +294,7 @@ async function confirmCopy() {
       body: JSON.stringify({
         bucket: toBucket,
         subdir: toSubdir,
-        filename: currentFiles[currentIndex],
+        filename: copyName + '.html',
         fromBucket: currentBucket,
         fromSubdir: currentSubdir,
         fromFilename: currentFiles[currentIndex]

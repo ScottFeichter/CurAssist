@@ -279,17 +279,17 @@
 
 
     .moveFile-btn {
-      background: #888;
+      background: #f0a060;
       color: white;
       font-weight: 600;
     }
 
     .moveFile-btn:hover {
-      background: #777;
+      background: #dc9050;
     }
 
     .moveFile-btn:active {
-      background: #666;
+      background: #c88040;
     }
 
     .copyFile-btn {
@@ -422,11 +422,12 @@
       display: flex;
       gap: 10px;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     .modal-buttons button {
       flex: 1;
-      max-width: 180px;
+      min-width: 120px;
     }
 
     .delete-btn {
@@ -607,6 +608,8 @@
       <select id="copyToSubdir" class="modal-input">
         <option value="">Select destination...</option>
       </select>
+      <p style="margin-top: 16px;">Enter A Name For The New Copy</p>
+      <input type="text" id="copyFileName" class="modal-input" style="margin-bottom: 8px;" />
       <div class="modal-buttons" style="margin-top: 16px;">
         <button class="create-btn" onclick="confirmCopy()">Copy File</button>
         <button class="cancel-btn" onclick="document.getElementById('copyModal').style.display='none'">Cancel</button>
