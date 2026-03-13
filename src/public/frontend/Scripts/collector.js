@@ -134,7 +134,7 @@ function collectFormData() {
 
   if (!isOrg) {
     const service = collectService(iframeDoc);
-    service.service_belongs_to_org = val(iframeDoc, 'service_belongs_to_org');
+    service.service_belongs_to_org = val(iframeDoc, 'serviceBelongsToOrg');
     return { service };
   }
 
@@ -148,7 +148,7 @@ function collectFormData() {
 async function submitFormData() {
   const saved = await saveFile(true);
   if (!saved) {
-    document.getElementById('submitResultMessage').innerHTML = 'Save failed — submission cancelled.';;
+    document.getElementById('submitResultMessage').innerHTML = 'Save failed — submission cancelled.';
     document.getElementById('submitResultModal').style.display = 'block';
     return;
   }
@@ -168,7 +168,7 @@ async function submitFormData() {
     return;
   }
 
-  // Move file to Complete
+  // Move file to Complete only on success
   const filename = currentFiles[currentIndex];
   const moveResponse = await fetch(`${API_BASE}/buckets/move`, {
     method: 'POST',
@@ -179,11 +179,10 @@ async function submitFormData() {
 
   if (moveResponse.ok) {
     document.getElementById('submitResultMessage').innerHTML = 'File saved and submitted successfully.<br><br>Moved to Complete.';
-    document.getElementById('submitResultModal').style.display = 'block';
   } else {
     document.getElementById('submitResultMessage').innerHTML = 'Submitted successfully but failed to move file to Complete.';
-    document.getElementById('submitResultModal').style.display = 'block';
   }
+  document.getElementById('submitResultModal').style.display = 'block';
 }
 
 // #endregion ------------------------------------------------------------------
