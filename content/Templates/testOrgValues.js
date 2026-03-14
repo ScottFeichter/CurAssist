@@ -1,6 +1,12 @@
 // Test values extracted from CuraTest 3.13.26.2.html
 // Used by build-test-template.js to produce orgServTemplate-combinedTestValues.html
 
+/**
+ * @typedef {{ number: string, ext: string, vanity?: string, type: string, description: string }} Phone
+ * @typedef {{ name: string, address1: string, address2: string, city: string, state: string, zip: string }} Location
+ */
+
+/** @type {{ organization: Object, spreadsheetService: Object, services: Object[] }} */
 const testOrgValues = {
   organization: {
     organization_name: 'name of org',

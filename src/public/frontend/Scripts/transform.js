@@ -1,11 +1,18 @@
 // #region ===================== CONSTANTS =====================================
 
+/** @type {string} Base URL for SF Service Guide API proxy */
 const SF_API = '/api/sf';
 
 // #endregion ------------------------------------------------------------------
 
 // #region ===================== HELPERS =======================================
 
+/**
+ * Merges top-level and sub categories, resolves IDs from lookup table, filters unknowns.
+ * @param {string[]} topCats
+ * @param {string[]} subCats
+ * @returns {{ name: string, id: number|null, top_level: boolean, featured: boolean }[]}
+ */
 function transformCategories(topCats, subCats) {
   return [...topCats, ...subCats]
     .map(name => {
@@ -15,6 +22,12 @@ function transformCategories(topCats, subCats) {
     .filter(c => c.id !== null);
 }
 
+/**
+ * Merges top-level and sub eligibilities, resolves IDs from lookup table, filters unknowns.
+ * @param {string[]} topEligibs
+ * @param {string[]} subEligibs
+ * @returns {{ name: string, id: number|null, feature_rank: null }[]}
+ */
 function transformEligibilities(topEligibs, subEligibs) {
   return [...topEligibs, ...subEligibs]
     .map(name => {
@@ -24,6 +37,11 @@ function transformEligibilities(topEligibs, subEligibs) {
     .filter(e => e.id !== null);
 }
 
+/**
+ * Converts collected hours object into SF API schedule_days format.
+ * @param {Object} service_hours
+ * @returns {{ schedule_days: { day: string, opens_at: string|null, closes_at: string|null }[] }}
+ */
 function transformHours(service_hours) {
   const dayMap = { M: 'Monday', T: 'Tuesday', W: 'Wednesday', Th: 'Thursday', F: 'Friday', Sa: 'Saturday', Su: 'Sunday' };
   const schedule_days = [];
@@ -38,6 +56,11 @@ function transformHours(service_hours) {
   return { schedule_days };
 }
 
+/**
+ * Converts collected location objects into SF API address format.
+ * @param {{ location_name: string, address_1: string, address_2: string, city: string, state: string, zip: string }[]} locations
+ * @returns {Object[]}
+ */
 function transformLocations(locations) {
   return locations.map(loc => ({
     name:       loc.location_name || null,
@@ -49,10 +72,20 @@ function transformLocations(locations) {
   }));
 }
 
+/**
+ * Wraps note strings into SF API note objects.
+ * @param {string[]} notes
+ * @returns {{ note: string }[]}
+ */
 function transformNotes(notes) {
   return notes.map(n => ({ note: n }));
 }
 
+/**
+ * Filters empty phones and converts to SF API phone format.
+ * @param {{ phone_number: string, phone_name: string }[]} phones
+ * @returns {{ number: string|null, description: string|null }[]}
+ */
 function transformPhones(phones) {
   return phones
     .filter(p => p.phone_number)
@@ -66,6 +99,11 @@ function transformPhones(phones) {
 
 // #region ===================== TRANSFORMS ====================================
 
+/**
+ * Transforms a collected service object into SF API service format.
+ * @param {Object} svc - Collected service data from collector.js
+ * @returns {Object} SF API-shaped service object
+ */
 function transformService(svc) {
   return {
     id:                       -1,
@@ -91,6 +129,11 @@ function transformService(svc) {
   };
 }
 
+/**
+ * Transforms a new org payload into SF API format, including nested services.
+ * @param {{ organization: Object }} payload
+ * @returns {{ orgBody: Object, services: Object[] }}
+ */
 function transformNewOrg(payload) {
   const org = payload.organization;
   const services = Object.values(org.services || {}).map(transformService);
@@ -115,6 +158,11 @@ function transformNewOrg(payload) {
   };
 }
 
+/**
+ * Transforms a standalone service payload for posting to an existing org.
+ * @param {{ service: Object }} payload
+ * @returns {{ orgId: string, servicesBody: { services: Object[] } }}
+ */
 function transformServiceOnly(payload) {
   const svc = payload.service;
   const orgId = svc.service_belongs_to_org;

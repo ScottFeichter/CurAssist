@@ -24,15 +24,23 @@ const outputName = process.argv[2] || 'orgServTemplate-combined.html';
 const outputPath = process.argv[3] || __dirname;
 const outputFile = path.join(outputPath, outputName);
 
-// In the combined output, converts const->var in sharedServiceData script blocks only
-// so duplicate declarations across ServiceDivs don't error (var re-declaration is allowed)
+/**
+ * Converts `const` to `var` for shared service data declarations inside <script> blocks,
+ * allowing re-declaration across multiple ServiceDivs in the combined output.
+ * @param {string} html
+ * @returns {string}
+ */
 function varifySharedData(html) {
   return html.replace(/(<script>[\s\S]*?)(const topCategory|const subCategory|const topEligibility|const subEligibility)([\s\S]*?<\/script>)/g,
     (match) => match.replace(/\bconst (topCategory|subCategory|topEligibility|subEligibility)\b/g, 'var $1')
   );
 }
 
-// Extracts content between <body> and </body> from a full HTML document
+/**
+ * Extracts the inner content of the <body> tag from a full HTML document.
+ * @param {string} filePath
+ * @returns {string}
+ */
 function bodyContent(filePath) {
   const raw = fs.readFileSync(filePath, 'utf8');
   const start = raw.indexOf('<body');
@@ -42,8 +50,12 @@ function bodyContent(filePath) {
   return raw.slice(bodyTag, end).trim();
 }
 
-// Extracts component-specific <style> blocks from a full HTML document's <head>
-// (i.e. any style blocks that appear after the base head content ends)
+/**
+ * Extracts component-specific <style> blocks from a full HTML document's <head>,
+ * excluding base/minified styles and @import blocks.
+ * @param {string} filePath
+ * @returns {string}
+ */
 function componentStyles(filePath) {
   const raw = fs.readFileSync(filePath, 'utf8');
   const headEnd = raw.indexOf('</head>');
@@ -58,13 +70,21 @@ function componentStyles(filePath) {
     .join('\n');
 }
 
-// Extracts <style> blocks from a fragment (non-full-HTML file)
+/**
+ * Extracts all <style> blocks from an HTML fragment (non-full-HTML file).
+ * @param {string} content
+ * @returns {string}
+ */
 function fragmentStyles(content) {
   return [...content.matchAll(/<style>([\s\S]*?)<\/style>/g)]
     .map(m => `<style>${m[1]}</style>`).join('\n');
 }
 
-// Strips <style> blocks from a fragment
+/**
+ * Strips all <style> blocks from an HTML fragment.
+ * @param {string} content
+ * @returns {string}
+ */
 function stripStyles(content) {
   return content.replace(/<style>[\s\S]*?<\/style>/g, '').trim();
 }

@@ -4,15 +4,33 @@
 
 // #region ===================== HELPERS ========================================
 
+/**
+ * Returns an element by id from either a Document or an Element root.
+ * @param {Document|Element} root
+ * @param {string} id
+ * @returns {Element|null}
+ */
 function getEl(root, id) {
   return root.getElementById ? root.getElementById(id) : root.querySelector('#' + id);
 }
 
+/**
+ * Returns the trimmed value of an element by id.
+ * @param {Document|Element} root
+ * @param {string} id
+ * @returns {string}
+ */
 function val(root, id) {
   const el = getEl(root, id);
   return el ? el.value.trim() : '';
 }
 
+/**
+ * Collects location entries from a container element's children via data attributes.
+ * @param {Document|Element} root
+ * @param {string} id
+ * @returns {{ location_name: string, address_1: string, address_2: string, city: string, state: string, zip: string }[]}
+ */
 function collectLocations(root, id) {
   const container = getEl(root, id);
   if (!container) return [];
@@ -28,6 +46,12 @@ function collectLocations(root, id) {
     .filter(loc => loc.location_name || loc.address_1 || loc.city);
 }
 
+/**
+ * Collects phone entries from a container element's children via data attributes.
+ * @param {Document|Element} root
+ * @param {string} id
+ * @returns {{ phone_name: string, phone_number: string }[]}
+ */
 function collectPhones(root, id) {
   const container = getEl(root, id);
   if (!container) return [];
@@ -37,18 +61,35 @@ function collectPhones(root, id) {
   }));
 }
 
+/**
+ * Collects note text from a container element's children.
+ * @param {Document|Element} root
+ * @param {string} id
+ * @returns {string[]}
+ */
 function collectNotes(root, id) {
   const container = getEl(root, id);
   if (!container) return [];
   return Array.from(container.children).map(li => li.textContent.trim()).filter(Boolean);
 }
 
+/**
+ * Collects pill/tag label text from Select-value-label elements.
+ * @param {Document|Element} root
+ * @param {string} id
+ * @returns {string[]}
+ */
 function collectPills(root, id) {
   const container = getEl(root, id);
   if (!container) return [];
   return Array.from(container.querySelectorAll('.Select-value-label')).map(el => el.textContent.trim());
 }
 
+/**
+ * Collects hours from all .day-group elements in the root.
+ * @param {Document|Element} root
+ * @returns {Object.<string, { start: { time: string, meridiem: string }, end: { time: string, meridiem: string } }>}
+ */
 function collectHours(root) {
   const dayKeys = ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'];
   const groups = root.querySelectorAll('.day-group');
@@ -66,6 +107,11 @@ function collectHours(root) {
   return hours;
 }
 
+/**
+ * Derives AM/PM from a 24h time string.
+ * @param {string} timeStr
+ * @returns {string}
+ */
 function deriveMeridiem(timeStr) {
   if (!timeStr) return '';
   const hh = parseInt(timeStr.split(':')[0], 10);
@@ -76,6 +122,11 @@ function deriveMeridiem(timeStr) {
 
 // #region ===================== COLLECT =======================================
 
+/**
+ * Collects all service fields from a root element or document.
+ * @param {Document|Element} root
+ * @returns {Object}
+ */
 function collectService(root) {
   return {
     service_internal_notes:        val(root, 'service_internal_notes'),
@@ -102,6 +153,11 @@ function collectService(root) {
   };
 }
 
+/**
+ * Collects all organization fields and nested services from the iframe document.
+ * @param {Document} root
+ * @returns {Object}
+ */
 function collectOrganization(root) {
   const org = {
     organization_internal_notes: val(root, 'organization_internal_notes'),
@@ -127,6 +183,10 @@ function collectOrganization(root) {
   return org;
 }
 
+/**
+ * Determines org vs service mode from the active toggle button and collects the appropriate payload.
+ * @returns {{ organization: Object }|{ service: Object }}
+ */
 function collectFormData() {
   const iframeWin = document.getElementById('formFrame').contentWindow;
   const iframeDoc = iframeWin.document;
@@ -145,6 +205,10 @@ function collectFormData() {
 
 // #region ===================== SUBMIT ========================================
 
+/**
+ * Saves the file, collects form data, submits to SF API, and moves file to Complete on success.
+ * @returns {Promise<void>}
+ */
 async function submitFormData() {
   const saved = await saveFile(true);
   if (!saved) {

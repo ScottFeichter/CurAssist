@@ -1,4 +1,5 @@
 // #region ===================== CONSTANTS / STATE ============================
+/** @type {string} Base URL for all local API calls */
 const API_BASE = '/api';
 
 let currentBucket = '';
@@ -7,13 +8,19 @@ let currentFiles = [];
 let currentIndex = 0;
 let csrfToken = '';
 
-// Get CSRF token from cookie
+/**
+ * Reads the XSRF-TOKEN cookie and returns its decoded value.
+ * @returns {string}
+ */
 function getCsrfToken() {
   const match = document.cookie.match(/XSRF-TOKEN=([^;]+)/);
   return match ? decodeURIComponent(match[1]) : '';
 }
 
-// Fetch CSRF token from server
+/**
+ * Fetches a fresh CSRF token from the server and stores it in `csrfToken`.
+ * @returns {Promise<void>}
+ */
 async function fetchCsrfToken() {
   try {
     const response = await fetch(`${API_BASE}/csrf/restore`, {
@@ -26,7 +33,10 @@ async function fetchCsrfToken() {
   }
 }
 
-// Initialize
+/**
+ * Initializes the app — fetches CSRF token and populates the bucket dropdown.
+ * @returns {Promise<void>}
+ */
 async function init() {
   await fetchCsrfToken();
   document.getElementById('fileCount').textContent = 'File 0 of 0';
@@ -40,7 +50,10 @@ async function init() {
   });
 }
 
-// Load bucket subdirectories
+/**
+ * Loads subdirectories for the selected bucket and populates the subdir dropdown.
+ * @returns {Promise<void>}
+ */
 async function loadBucket() {
   const bucket = document.getElementById('bucketSelect').value;
   if (!bucket) return;
@@ -62,7 +75,10 @@ async function loadBucket() {
   });
 }
 
-// Load subdirectory files
+/**
+ * Loads files for the selected subdirectory and renders the file list.
+ * @returns {Promise<void>}
+ */
 async function loadSubdir() {
   const subdir = document.getElementById('subdirSelect').value;
   if (!subdir) return;
@@ -90,7 +106,11 @@ async function loadSubdir() {
   }
 }
 
-// Load specific file
+/**
+ * Loads a specific file by index into the iframe.
+ * @param {number} index
+ * @returns {Promise<void>}
+ */
 async function loadFile(index) {
   if (index < 0 || index >= currentFiles.length) return;
 
@@ -107,7 +127,9 @@ async function loadFile(index) {
   document.getElementById('fileCount').textContent = `File ${index + 1} of ${currentFiles.length}`;
 }
 
-// Load file from dropdown selection
+/**
+ * Reads the selected index from the file dropdown and calls `loadFile`.
+ */
 function loadSelectedFile() {
   const fileSelect = document.getElementById('fileInfo');
   const selectedIndex = parseInt(fileSelect.value);
@@ -124,7 +146,10 @@ function loadNext() {
   if (currentIndex < currentFiles.length - 1) loadFile(currentIndex + 1);
 }
 
-// Save file
+/**
+ * Syncs live DOM values back into HTML attributes so `outerHTML` captures current state.
+ * @param {Document} iframeDoc
+ */
 function syncIframeValues(iframeDoc) {
   iframeDoc.querySelectorAll('input').forEach(el => {
     if (el.type === 'checkbox' || el.type === 'radio') {
@@ -143,6 +168,11 @@ function syncIframeValues(iframeDoc) {
   });
 }
 
+/**
+ * Saves the current iframe file to the server.
+ * @param {boolean} [silent=false] - If true, suppresses the feedback modal (used during submit flow)
+ * @returns {Promise<boolean>} True if save succeeded, false otherwise
+ */
 async function saveFile(silent = false) {
   if (!currentFiles[currentIndex]) return false;
 
@@ -182,7 +212,10 @@ async function saveFile(silent = false) {
   }
 }
 
-// Move file
+/**
+ * Opens the move modal, pre-populated with available buckets and subdirs.
+ * @returns {Promise<void>}
+ */
 async function moveFile() {
   if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
   const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
@@ -218,6 +251,11 @@ async function onMoveBucketChange() {
   }
 }
 
+/**
+ * Executes the file move, optionally saving first.
+ * @param {boolean} shouldSave - Whether to save the file before moving
+ * @returns {Promise<void>}
+ */
 async function confirmMove(shouldSave) {
   const toBucket = document.getElementById('moveToBucket').value;
   const toSubdir = document.getElementById('moveToSubdir').value;
@@ -268,7 +306,10 @@ init();
 
 // #region ===================== FILE OPERATIONS ===============================
 
-// Copy file
+/**
+ * Opens the copy modal, pre-populated with available buckets and current filename.
+ * @returns {Promise<void>}
+ */
 async function copyFile() {
   if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
   const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
@@ -299,6 +340,10 @@ async function onCopyBucketChange() {
   if (currentSubdir) subdirSel.value = currentSubdir;
 }
 
+/**
+ * Executes the file copy to the selected destination.
+ * @returns {Promise<void>}
+ */
 async function confirmCopy() {
   const toBucket = document.getElementById('copyToBucket').value;
   const toSubdir = document.getElementById('copyToSubdir').value;
@@ -333,7 +378,9 @@ async function confirmCopy() {
   }
 }
 
-// Delete file - Step 1: Show first confirmation
+/**
+ * Delete file - Step 1: Show first confirmation
+ */
 function deleteFile() {
   if (!currentFiles[currentIndex]) {
     alert('No file selected');
@@ -342,14 +389,19 @@ function deleteFile() {
   document.getElementById('deleteModal1').style.display = 'block';
 }
 
-// Delete file - Step 2: Show second confirmation with text input
+/**
+ * Delete file - Step 2: Show second confirmation with text input
+ */
 function confirmDelete() {
   document.getElementById('deleteModal1').style.display = 'none';
   document.getElementById('deleteModal2').style.display = 'block';
   document.getElementById('deleteConfirmInput').value = '';
 }
 
-// Delete file - Step 3: Validate and execute delete
+/**
+ * Delete file - Step 3: Validate and execute delete
+ * @returns {Promise<void>}
+ */
 async function finalDelete() {
   const input = document.getElementById('deleteConfirmInput').value;
   
@@ -385,14 +437,18 @@ async function finalDelete() {
   }
 }
 
-// Cancel delete - close all modals
+/**
+ * Cancels delete and closes all delete modals.
+ */
 function cancelDelete() {
   document.getElementById('deleteModal1').style.display = 'none';
   document.getElementById('deleteModal2').style.display = 'none';
   document.getElementById('deleteConfirmInput').value = '';
 }
 
-// Submit file - Show confirmation modal
+/**
+ * Submit file - Show confirmation modal, or alert if already Complete.
+ */
 function submitFile() {
   if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
   if (currentSubdir === 'Complete') {
@@ -402,22 +458,33 @@ function submitFile() {
   document.getElementById('submitModal').style.display = 'block';
 }
 
-// Confirm submit
+/**
+ * Confirms submit — closes modal and triggers `submitFormData`.
+ */
 function confirmSubmit() {
   document.getElementById('submitModal').style.display = 'none';
   submitFormData();
 }
 
-// Cancel submit - close modal
+/**
+ * Cancels submit and closes the submit modal.
+ */
 function cancelSubmit() {
   document.getElementById('submitModal').style.display = 'none';
 }
 
+/**
+ * Closes the submit result modal and reloads the subdir file list.
+ */
 function onSubmitResultOk() {
   document.getElementById('submitResultModal').style.display = 'none';
   reloadSubdirNoLoad();
 }
 
+/**
+ * Reloads the current subdir file list without re-loading the iframe.
+ * @returns {Promise<void>}
+ */
 async function reloadSubdirNoLoad() {
   currentFiles = await fetch(`${API_BASE}/buckets/${currentBucket}/${currentSubdir}/files`).then(r => r.json());
   currentIndex = 0;
@@ -433,9 +500,9 @@ async function reloadSubdirNoLoad() {
   document.getElementById('formFrame').srcdoc = '';
 }
 
-// Create bucket - placeholder
-let selectedFile = null;
-
+/**
+ * Opens the create bucket modal and resets its state.
+ */
 function createBucket() {
   selectedFile = null;
   document.getElementById('uploadText').textContent = 'Click to select file or drag and drop';
@@ -446,6 +513,10 @@ function createBucket() {
   document.getElementById('createBucketModal').style.display = 'block';
 }
 
+/**
+ * Handles file input selection for bucket upload.
+ * @param {Event} event
+ */
 function handleFileSelect(event) {
   const file = event.target.files[0];
   if (file) {
@@ -481,6 +552,10 @@ if (uploadArea) {
   });
 }
 
+/**
+ * Uploads the selected spreadsheet and creates a new bucket.
+ * @returns {Promise<void>}
+ */
 async function processCreateBucket() {
   if (!selectedFile) return;
 
@@ -522,12 +597,18 @@ async function processCreateBucket() {
   }
 }
 
+/**
+ * Cancels bucket creation and closes the modal.
+ */
 function cancelCreateBucket() {
   document.getElementById('createBucketModal').style.display = 'none';
   selectedFile = null;
 }
 
-// Delete bucket - Step 1: Show bucket selection modal
+/**
+ * Delete bucket - Step 1: Show bucket selection modal
+ * @returns {Promise<void>}
+ */
 async function deleteBucket() {
   const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
   const select = document.getElementById('deleteBucketSelect');
@@ -543,7 +624,9 @@ async function deleteBucket() {
   document.getElementById('deleteBucketModal1').style.display = 'block';
 }
 
-// Delete bucket - Step 2: Show confirmation with text input
+/**
+ * Delete bucket - Step 2: Show confirmation with text input
+ */
 function confirmDeleteBucket() {
   const bucketName = document.getElementById('deleteBucketSelect').value;
   
@@ -559,7 +642,10 @@ function confirmDeleteBucket() {
   document.getElementById('deleteBucketModal2').style.display = 'block';
 }
 
-// Delete bucket - Step 3: Validate and execute delete
+/**
+ * Delete bucket - Step 3: Validate and execute delete
+ * @returns {Promise<void>}
+ */
 async function finalDeleteBucket() {
   const input = document.getElementById('deleteBucketConfirmInput').value;
   
@@ -591,14 +677,19 @@ async function finalDeleteBucket() {
   }
 }
 
-// Cancel delete bucket - close all modals
+/**
+ * Cancel delete bucket - close all modals
+ */
 function cancelDeleteBucket() {
   document.getElementById('deleteBucketModal1').style.display = 'none';
   document.getElementById('deleteBucketModal2').style.display = 'none';
   document.getElementById('deleteBucketConfirmInput').value = '';
 }
 
-// Create file
+/**
+ * Opens the create file modal, pre-populated with available buckets.
+ * @returns {Promise<void>}
+ */
 async function createFile() {
   // Populate destination bucket dropdown
   const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
@@ -667,6 +758,10 @@ async function onCreateFileFromSubdirChange() {
   });
 }
 
+/**
+ * Executes file creation at the selected destination, optionally copying from a source file.
+ * @returns {Promise<void>}
+ */
 async function confirmCreateFile() {
   const filename = document.getElementById('createFileName').value.trim();
   const bucket = document.getElementById('createFileBucket').value;
@@ -705,6 +800,9 @@ async function confirmCreateFile() {
   }
 }
 
+/**
+ * Cancels file creation and closes the modal.
+ */
 function cancelCreateFile() {
   document.getElementById('createFileModal').style.display = 'none';
 }
@@ -713,7 +811,9 @@ function cancelCreateFile() {
 
 // #region ===================== UI / SIDEBAR ==================================
 
-// Toggle sidebars
+/**
+ * Toggles the left sidebar collapsed/expanded state.
+ */
 function toggleSidebar() {
   const el = document.getElementById('leftSidebar');
   el.classList.toggle('collapsed');
@@ -727,6 +827,9 @@ function toggleSidebar() {
   }
 }
 
+/**
+ * Toggles the right sidebar collapsed/expanded state.
+ */
 function toggleRightSidebar() {
   const el = document.getElementById('rightSidebar');
   el.classList.toggle('collapsed');
@@ -794,6 +897,9 @@ document.addEventListener('mousemove', (e) => {
   }
 });
 
+/**
+ * Stops any active sidebar resize and restores pointer/cursor state.
+ */
 function stopResize() {
   if (isResizingLeft) sidebar.style.transition = '';
   if (isResizingRight) rightSidebar.style.transition = '';

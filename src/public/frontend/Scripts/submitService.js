@@ -4,6 +4,11 @@
 
 // #region ===================== FUNCTIONS =====================================
 
+/**
+ * Posts a standalone service to an existing org in the SF API.
+ * @param {{ service: Object }} payload
+ * @returns {Promise<Object>} The created service data
+ */
 async function submitService(payload) {
   const { orgId, servicesBody } = transformServiceOnly(payload);
 

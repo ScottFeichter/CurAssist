@@ -5,6 +5,11 @@
 
 // #region ===================== FUNCTIONS =====================================
 
+/**
+ * Submits a new organization to the SF API, then posts any associated services.
+ * @param {{ organization: Object }} payload
+ * @returns {Promise<number>} The new org's ID
+ */
 async function submitNewOrg(payload) {
   const { orgBody, services } = transformNewOrg(payload);
 
