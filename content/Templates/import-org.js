@@ -65,7 +65,9 @@ function reverseTransformService(svc, orgId) {
     service_interpretation_services: svc.interpretation_services || '',
     service_cost: svc.fee || '',
     service_wait_time: svc.wait_time || '',
-    service_website: svc.url || ''
+    service_website: svc.url || '',
+    categories: (svc.categories || []),
+    eligibilities: (svc.eligibilities || [])
   };
 }
 
@@ -127,15 +129,16 @@ function buildPopulateScript(org, services) {
       if (inputs[1]) inputs[1].value = h.close;
     });
 
-    // Services — call addService() for each, then populate the cloned div's fields
+    // Services — call addNewService() for each, then populate the cloned div's fields
     if (typeof window.addNewService === 'function') {
       services.forEach(function(svc) {
         window.addNewService();
-        // addService appends to orgServicesDiv — grab the last child
         var orgServicesDiv = document.getElementById('orgServicesDiv');
         if (!orgServicesDiv) return;
         var newDiv = orgServicesDiv.lastElementChild;
         if (!newDiv) return;
+
+        // Populate text fields and trigger input event so navbar link updates
         var fields = [
           'service_name', 'service_alternate_name', 'service_email', 'service_website',
           'service_description', 'service_short_description', 'service_application_process',
@@ -144,8 +147,45 @@ function buildPopulateScript(org, services) {
         ];
         fields.forEach(function(f) {
           var el = newDiv.querySelector('#' + f);
-          if (el && svc[f] !== undefined) el.value = svc[f];
+          if (el && svc[f] !== undefined) {
+            el.value = svc[f];
+            el.dispatchEvent(new Event('input'));
+          }
         });
+
+        // Inject category/eligibility pills into the Select-multi-value-wrapper
+        function addPills(dropdownId, names) {
+          if (!names || !names.length) return;
+          var input = newDiv.querySelector('#' + dropdownId);
+          if (!input) return;
+          var wrapper = input.closest('.Select-multi-value-wrapper');
+          if (!wrapper) return;
+          var placeholder = wrapper.querySelector('.Select-placeholder');
+          if (placeholder) placeholder.style.display = 'none';
+          names.forEach(function(name) {
+            var pill = document.createElement('div');
+            pill.className = 'Select-value';
+            pill.innerHTML = '<span class="Select-value-icon" aria-hidden="true">\u00d7</span><span class="Select-value-label">' + name + '</span>';
+            pill.querySelector('.Select-value-icon').addEventListener('click', function() {
+              pill.remove();
+              if (!wrapper.querySelector('.Select-value') && placeholder) placeholder.style.display = 'block';
+            });
+            wrapper.insertBefore(pill, input.parentElement);
+          });
+        }
+
+        if (svc.categories && svc.categories.length) {
+          var topCats = svc.categories.filter(function(c) { return c.top_level; }).map(function(c) { return c.name; });
+          var subCats = svc.categories.filter(function(c) { return !c.top_level; }).map(function(c) { return c.name; });
+          addPills('categoryTopDropdown', topCats);
+          addPills('categorySubDropdown', subCats);
+        }
+        if (svc.eligibilities && svc.eligibilities.length) {
+          var topElig = svc.eligibilities.filter(function(e) { return e.feature_rank !== null; }).map(function(e) { return e.name; });
+          var subElig = svc.eligibilities.filter(function(e) { return e.feature_rank === null; }).map(function(e) { return e.name; });
+          addPills('eligibilityTopDropdown', topElig);
+          addPills('eligibilitySubDropdown', subElig);
+        }
       });
     }
   }
