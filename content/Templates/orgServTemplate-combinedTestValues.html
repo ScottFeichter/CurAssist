@@ -585,6 +585,22 @@
                         background-color: #154a8a;; /* darker blue than #276CE5 */
                       }
 
+                      .toggle-button:disabled {
+                        cursor: default;
+                        opacity: 0.6;
+                      }
+
+                      .toggle-button:disabled:hover {
+                        color: #999;
+                        background-color: #fff;
+                        border-color: #ccc;
+                      }
+
+                      .toggle-button.active:disabled:hover {
+                        background-color: #276CE5;
+                        border-color: #276CE5;
+                      }
+
 
 
                       #OrganizationButton.active {
@@ -1104,7 +1120,7 @@
 <!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
                 <header class="edit--main--header">
 
-                  <h1 class="edit--main--header--title">
+                  <h1 class="edit--main--header--title" id="headerTitle">
                     Is this an Organization or a Service?
                   </h1>
 
@@ -1136,6 +1152,7 @@
                     const servBtn = document.getElementById('ServiceButton');
 
                     let Organization = true;
+                    let importedFileFromSFSG = false;
 
 
                     function toggleView() {
@@ -1167,6 +1184,11 @@
 
                     document.addEventListener('DOMContentLoaded', function() {
                       toggleView();
+                      if (importedFileFromSFSG) {
+                        orgBtn.disabled = true;
+                        servBtn.disabled = true;
+                        document.getElementById('headerTitle').textContent = 'Imported File From Existing Organization';
+                      }
                     });
                   </script>
 

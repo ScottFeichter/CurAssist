@@ -279,17 +279,17 @@
 
 
     .moveFile-btn {
-      background: #f0a060;
+      background: #888;
       color: white;
       font-weight: 600;
     }
 
     .moveFile-btn:hover {
-      background: #dc9050;
+      background: #707070;
     }
 
     .moveFile-btn:active {
-      background: #c88040;
+      background: #585858;
     }
 
     .copyFile-btn {
@@ -314,6 +314,20 @@
 
     .createFile-btn:hover {
       background: darkgreen;
+    }
+
+    .importFile-btn {
+      background: #f0a060;
+      color: white;
+      font-weight: 600;
+    }
+
+    .importFile-btn:hover {
+      background: #dc9050;
+    }
+
+    .importFile-btn:active {
+      background: #c88040;
     }
 
 
@@ -572,6 +586,7 @@
       <div class="section-title">File Actions</div>
       <button class="createFile-btn" onclick="createFile()">Create File</button>
       <button class="deleteFile-btn" onclick="deleteFile()">Delete File</button>
+      <button class="importFile-btn" onclick="importFile()">Import File</button>
       <button class="moveFile-btn" onclick="moveFile()">Move File</button>
       <button class="copyFile-btn" onclick="copyFile()">Copy File</button>
       <button class="saveFile-btn" onclick="saveFile()">Save Changes</button>
@@ -722,6 +737,43 @@
       <div class="modal-buttons">
         <button class="create-btn" id="createBucketBtn" onclick="processCreateBucket()" disabled>Create Bucket</button>
         <button class="cancel-btn" onclick="cancelCreateBucket()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import file modal -->
+  <div id="importFileModal" class="modal">
+    <div class="modal-content" style="width: 420px; text-align: left;">
+      <p style="margin-bottom: 16px; font-size: 16px; font-weight: 600;">Import File from SF Service Guide</p>
+
+      <label style="font-size: 13px; color: #666;">SF Org ID</label>
+      <input type="text" id="importOrgId" class="modal-input" placeholder="e.g. 1241">
+
+      <label style="font-size: 13px; color: #666;">Destination Bucket</label>
+      <select id="importFileBucket" class="modal-input" onchange="onImportFileBucketChange()">
+        <option value="">Select bucket...</option>
+      </select>
+
+      <label style="font-size: 13px; color: #666;">Destination Subdirectory</label>
+      <select id="importFileSubdir" class="modal-input">
+        <option value="">Select subdirectory...</option>
+      </select>
+
+      <p id="importFileError" style="color: #c4243a; font-size: 13px; min-height: 18px;"></p>
+
+      <div class="modal-buttons" style="margin-top: 8px;">
+        <button class="create-btn" onclick="confirmImportFile()">Import</button>
+        <button class="cancel-btn" onclick="cancelImportFile()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import result modal -->
+  <div id="importResultModal" class="modal">
+    <div class="modal-content">
+      <p id="importResultMessage"></p>
+      <div class="modal-buttons">
+        <button class="submit-btn" onclick="document.getElementById('importResultModal').style.display='none'">OK</button>
       </div>
     </div>
   </div>

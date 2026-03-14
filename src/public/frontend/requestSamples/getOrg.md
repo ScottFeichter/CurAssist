@@ -48,3 +48,119 @@ Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like 
 ﻿
 ﻿
 
+
+
+Response
+
+{
+    "resource": {
+        "updated_at": "2026-03-13T01:18:16.242Z",
+        "alternate_name": null,
+        "certified": false,
+        "email": null,
+        "id": 1241,
+        "legal_status": null,
+        "long_description": null,
+        "name": "test 3.13.26.3",
+        "short_description": null,
+        "status": "approved",
+        "verified_at": null,
+        "website": null,
+        "certified_at": null,
+        "featured": null,
+        "source_attribution": "ask_darcel",
+        "internal_note": null,
+        "services": [
+            {
+                "updated_at": "2026-03-13T01:18:16.083Z",
+                "alternate_name": null,
+                "application_process": null,
+                "certified": false,
+                "eligibility": null,
+                "email": null,
+                "fee": null,
+                "id": 5519,
+                "interpretation_services": null,
+                "long_description": null,
+                "name": "some test service",
+                "required_documents": null,
+                "short_description": null,
+                "url": null,
+                "verified_at": null,
+                "wait_time": null,
+                "certified_at": null,
+                "featured": null,
+                "source_attribution": "ask_darcel",
+                "status": "approved",
+                "internal_note": null,
+                "schedule": {
+                    "id": 6570,
+                    "schedule_days": [],
+                    "hours_known": true
+                },
+                "notes": [],
+                "categories": [],
+                "addresses": [],
+                "eligibilities": [],
+                "instructions": [],
+                "documents": []
+            },
+            {
+                "updated_at": "2026-03-13T01:18:16.089Z",
+                "alternate_name": null,
+                "application_process": null,
+                "certified": false,
+                "eligibility": null,
+                "email": null,
+                "fee": null,
+                "id": 5520,
+                "interpretation_services": null,
+                "long_description": null,
+                "name": "some test service with eligibilities and categories",
+                "required_documents": null,
+                "short_description": null,
+                "url": null,
+                "verified_at": null,
+                "wait_time": null,
+                "certified_at": null,
+                "featured": null,
+                "source_attribution": "ask_darcel",
+                "status": "approved",
+                "internal_note": null,
+                "schedule": {
+                    "id": 6571,
+                    "schedule_days": [],
+                    "hours_known": true
+                },
+                "notes": [],
+                "categories": [
+                    {
+                        "name": "Academic Support",
+                        "id": 345,
+                        "top_level": false,
+                        "featured": false
+                    }
+                ],
+                "addresses": [],
+                "eligibilities": [
+                    {
+                        "name": "Abuse or Neglect Survivors",
+                        "id": 1068,
+                        "feature_rank": null
+                    }
+                ],
+                "instructions": [],
+                "documents": []
+            }
+        ],
+        "schedule": {
+            "id": 6569,
+            "schedule_days": [],
+            "hours_known": true
+        },
+        "phones": [],
+        "addresses": [],
+        "notes": [],
+        "categories": []
+    }
+}

@@ -10,6 +10,26 @@ const SF_BASE = 'https://www.sfserviceguide.org/api';
 
 const sfProxyRouter = Router();
 
+sfProxyRouter.get('/v2/resources/:id', async (req: Request, res: Response) => {
+  log.enter('sf-proxy GET resource', log.brack);
+  const url = `${SF_BASE}/v2/resources/${req.params.id}`;
+  try {
+    const sfRes = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'Origin': 'https://www.sfserviceguide.org',
+        'Referer': 'https://www.sfserviceguide.org/organizations/new'
+      }
+    });
+    const data = await sfRes.json().catch(() => ({}));
+    log.retrn('sf-proxy GET resource', log.kcarb);
+    res.status(sfRes.status).json(data);
+  } catch (err: any) {
+    log.retrn('sf-proxy GET resource error', log.kcarb);
+    res.status(502).json({ error: 'SF proxy request failed', detail: err.message });
+  }
+});
+
 sfProxyRouter.post('/*', async (req: Request, res: Response) => {
   log.enter('sf-proxy POST', log.brack);
 

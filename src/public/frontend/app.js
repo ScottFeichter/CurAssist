@@ -807,6 +807,83 @@ function cancelCreateFile() {
   document.getElementById('createFileModal').style.display = 'none';
 }
 
+/**
+ * Opens the Import File modal, populating the bucket dropdown.
+ */
+async function importFile() {
+  document.getElementById('importOrgId').value = '';
+  document.getElementById('importFileError').textContent = '';
+  const bucketSel = document.getElementById('importFileBucket');
+  bucketSel.innerHTML = '<option value="">Select bucket...</option>';
+  document.getElementById('importFileSubdir').innerHTML = '<option value="">Select subdirectory...</option>';
+
+  const buckets = await fetch('/api/buckets').then(r => r.json()).catch(() => []);
+  buckets.forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b; opt.textContent = b;
+    bucketSel.appendChild(opt);
+  });
+
+  document.getElementById('importFileModal').style.display = 'flex';
+}
+
+/**
+ * Populates the subdirectory dropdown when a bucket is selected in the import modal.
+ */
+async function onImportFileBucketChange() {
+  const bucket = document.getElementById('importFileBucket').value;
+  const subdirSel = document.getElementById('importFileSubdir');
+  subdirSel.innerHTML = '<option value="">Select subdirectory...</option>';
+  if (!bucket) return;
+  const subdirs = await fetch(`/api/buckets/${encodeURIComponent(bucket)}/subdirs`).then(r => r.json()).catch(() => []);
+  subdirs.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    subdirSel.appendChild(opt);
+  });
+}
+
+/**
+ * Submits the import-file request to the server.
+ */
+async function confirmImportFile() {
+  const orgId = document.getElementById('importOrgId').value.trim();
+  const bucket = document.getElementById('importFileBucket').value;
+  const subdir = document.getElementById('importFileSubdir').value;
+  const errEl = document.getElementById('importFileError');
+  errEl.textContent = '';
+
+  if (!orgId || !bucket || !subdir) {
+    errEl.textContent = 'Org ID, bucket, and subdirectory are required.';
+    return;
+  }
+
+  const res = await fetch('/api/buckets/import-file', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+    body: JSON.stringify({ orgId, bucket, subdir })
+  });
+  const data = await res.json();
+
+  document.getElementById('importFileModal').style.display = 'none';
+  const msgEl = document.getElementById('importResultMessage');
+
+  if (!data.success) {
+    msgEl.innerHTML = `Import failed.<br>${data.error || 'Unknown error.'}`;
+  } else {
+    msgEl.innerHTML = `Import successful!<br>${data.filename}`;
+    if (currentBucket === bucket && currentSubdir === subdir) {
+      await loadFiles(bucket, subdir);
+    }
+  }
+
+  document.getElementById('importResultModal').style.display = 'flex';
+}
+
+function cancelImportFile() {
+  document.getElementById('importFileModal').style.display = 'none';
+}
+
 // #endregion ------------------------------------------------------------------
 
 // #region ===================== UI / SIDEBAR ==================================

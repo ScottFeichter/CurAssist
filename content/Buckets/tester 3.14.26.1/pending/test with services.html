@@ -585,22 +585,6 @@
                         background-color: #154a8a;; /* darker blue than #276CE5 */
                       }
 
-                      .toggle-button:disabled {
-                        cursor: default;
-                        opacity: 0.6;
-                      }
-
-                      .toggle-button:disabled:hover {
-                        color: #999;
-                        background-color: #fff;
-                        border-color: #ccc;
-                      }
-
-                      .toggle-button.active:disabled:hover {
-                        background-color: #276CE5;
-                        border-color: #276CE5;
-                      }
-
 
 
                       #OrganizationButton.active {
@@ -1148,7 +1132,7 @@
                     const servBtn = document.getElementById('ServiceButton');
 
                     let Organization = true;
-                    let importedFileFromSFSG = false;
+                    let importedFileFromSFSG = true;
 
 
                     function toggleView() {
@@ -1588,7 +1572,7 @@
                         <label for="organization_name">
                           Name of the Organization
                         </label>
-                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="">
+                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="test with services">
                       </li>
 
 

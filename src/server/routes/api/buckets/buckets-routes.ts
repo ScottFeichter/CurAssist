@@ -156,6 +156,54 @@ bucketsRouter.delete('/:bucket', async (req: Request, res: Response, next: NextF
   }
 });
 
+// POST /api/buckets/import-file - Create a new file pre-populated from an SF org by ID
+bucketsRouter.post('/import-file', async (req: Request, res: Response, next: NextFunction) => {
+  log.enter("POST /api/buckets/import-file", log.brack);
+  try {
+    const { bucket, subdir, orgId } = req.body;
+    if (!bucket || !subdir || !orgId) {
+      return res.status(400).json({ success: false, error: 'bucket, subdir, and orgId are required' });
+    }
+
+    // Fetch org from SF API via proxy logic (server-side direct fetch)
+    const sfRes = await fetch(`https://www.sfserviceguide.org/api/v2/resources/${orgId}`, {
+      headers: {
+        'Accept': 'application/json',
+        'Origin': 'https://www.sfserviceguide.org',
+        'Referer': 'https://www.sfserviceguide.org/organizations/new'
+      }
+    });
+    if (!sfRes.ok) {
+      return res.status(sfRes.status).json({ success: false, error: `SF API returned ${sfRes.status}` });
+    }
+    const { resource } = await sfRes.json() as { resource: any };
+    if (!resource) {
+      return res.status(404).json({ success: false, error: 'No resource found for that ID' });
+    }
+
+    const destDir = path.join(BUCKETS_PATH, bucket, subdir);
+    const baseName = (resource.name || `org-${orgId}`).replace(/[^a-zA-Z0-9_\-. ]/g, '').trim() || `org-${orgId}`;
+
+    const existing = await fs.readdir(destDir).catch(() => [] as string[]);
+    let finalName = `${baseName}.html`;
+    if (existing.includes(finalName)) {
+      let num = 1;
+      while (existing.includes(`${baseName}_${num}.html`)) num++;
+      finalName = `${baseName}_${num}.html`;
+    }
+
+    const importScriptPath = path.join(process.cwd(), 'content', 'Templates', 'import-org.js');
+    const { buildImportedOrgFile } = require(importScriptPath);
+    buildImportedOrgFile(resource, finalName, destDir);
+
+    log.retrn("POST /api/buckets/import-file", log.kcarb);
+    res.json({ success: true, filename: finalName });
+  } catch (error) {
+    log.retrn("POST /api/buckets/import-file", log.kcarb);
+    next(error);
+  }
+});
+
 // POST /api/buckets/create-file - Create a new file from template or existing file
 bucketsRouter.post('/create-file', async (req: Request, res: Response, next: NextFunction) => {
   log.enter("POST /api/buckets/create-file", log.brack);
