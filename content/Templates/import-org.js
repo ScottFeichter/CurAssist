@@ -91,7 +91,12 @@ function buildPopulateScript(org, services) {
     // Phones
     var phoneSublist = document.getElementById('organization_phones');
     if (phoneSublist) {
-      phones.forEach(function(p) {
+      phones.forEach(function(p, i) {
+        if (i > 0) {
+          var hr = document.createElement('li');
+          hr.style.cssText = 'list-style:none;border-top:1px solid #ddd;margin:6px 0;padding:0;';
+          phoneSublist.appendChild(hr);
+        }
         var li = document.createElement('li');
         li.innerHTML = '<strong>' + (p.description || '') + ':</strong> ' + p.number + (p.ext ? ' x' + p.ext : '');
         phoneSublist.appendChild(li);
@@ -101,7 +106,12 @@ function buildPopulateScript(org, services) {
     // Locations
     var locationList = document.getElementById('organization_locations');
     if (locationList) {
-      locations.forEach(function(l) {
+      locations.forEach(function(l, i) {
+        if (i > 0) {
+          var sep = document.createElement('div');
+          sep.style.cssText = 'border-top:1px solid #ddd;margin:8px 0;';
+          locationList.appendChild(sep);
+        }
         var div = document.createElement('div');
         div.innerHTML = '<strong>' + l.name + '</strong><br>' + l.address1 + (l.address2 ? '<br>' + l.address2 : '') + '<br>' + l.city + ', ' + l.state + ' ' + l.zip;
         locationList.appendChild(div);
@@ -118,9 +128,9 @@ function buildPopulateScript(org, services) {
     });
 
     // Services — call addService() for each, then populate the cloned div's fields
-    if (typeof window.addService === 'function') {
+    if (typeof window.addNewService === 'function') {
       services.forEach(function(svc) {
-        window.addService();
+        window.addNewService();
         // addService appends to orgServicesDiv — grab the last child
         var orgServicesDiv = document.getElementById('orgServicesDiv');
         if (!orgServicesDiv) return;
