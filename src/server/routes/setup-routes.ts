@@ -73,15 +73,13 @@ export const setupRoutes = (SERVER: Application) => {
   // CSRF token restoration - only in development
   // Commented out - CSRF not configured
   // UNCOMMENTED - Re-enabled for file operations
-  if (process.env.NODE_ENV !== 'production') {
-    SERVER.get('/api/csrf/restore', (req: Request, res: Response) => {
-      const csrfToken = req.csrfToken();
-      res.cookie('XSRF-TOKEN', csrfToken);
-      res.status(200).json({
-        'XSRF-Token': csrfToken
-      });
+  SERVER.get('/api/csrf/restore', (req: Request, res: Response) => {
+    const csrfToken = req.csrfToken();
+    res.cookie('XSRF-TOKEN', csrfToken);
+    res.status(200).json({
+      'XSRF-Token': csrfToken
     });
-  }
+  });
 
 
 
