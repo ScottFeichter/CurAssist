@@ -9,19 +9,22 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      EC2_USER: ${{ secrets.EC2_USER }}
+
     steps:
       - name: Deploy to EC2
         run: |
           echo "${{ secrets.EC2_KEY }}" | base64 -d > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
-          ssh -i /tmp/deploy_key \
-            -o StrictHostKeyChecking=no \
-            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
-            'export NVM_DIR="$HOME/.nvm" && \
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
-            cd ~/CurAssist && \
-            git pull origin main && \
-            npm install && \
-            npm run build && \
-            pm2 restart curassist'
+          ssh -i /tmp/deploy_key -o StrictHostKeyChecking=no ${EC2_USER}@${EC2_HOST} << 'ENDSSH'
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            cd ~/CurAssist
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart curassist
+          ENDSSH
           rm /tmp/deploy_key
