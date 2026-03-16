@@ -10,22 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Prepare SSH key
+      - name: Deploy to EC2
         run: |
           echo "${{ secrets.EC2_KEY }}" | base64 -d > /tmp/deploy_key
           chmod 600 /tmp/deploy_key
-
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key_path: /tmp/deploy_key
-          script: |
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            cd ~/CurAssist
-            git pull origin main
-            npm install
-            npm run build
-            pm2 restart curassist
+          ssh -i /tmp/deploy_key \
+            -o StrictHostKeyChecking=no \
+            ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} \
+            'export NVM_DIR="$HOME/.nvm" && \
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && \
+            cd ~/CurAssist && \
+            git pull origin main && \
+            npm install && \
+            npm run build && \
+            pm2 restart curassist'
+          rm /tmp/deploy_key
