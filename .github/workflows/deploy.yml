@@ -19,5 +19,9 @@ jobs:
           mkdir -p ~/.ssh
           echo "$DEPLOY_KEY" | base64 -d > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          echo "--- Key type check ---"
+          ssh-keygen -l -f ~/.ssh/deploy_key
+          echo "--- First line of key ---"
+          head -1 ~/.ssh/deploy_key
           ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
-          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" "export NVM_DIR=\$HOME/.nvm && [ -s \$NVM_DIR/nvm.sh ] && . \$NVM_DIR/nvm.sh && cd ~/CurAssist && git pull origin main && npm install && npm run build && pm2 restart curassist"
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" "echo connected"
