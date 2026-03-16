@@ -220,9 +220,10 @@ async function submitFormData() {
   const payload = collectFormData();
   console.log('Submit payload:', JSON.stringify(payload, null, 2));
 
+  let orgId = null;
   try {
     if (payload.organization) {
-      await submitNewOrg(payload);
+      orgId = await submitNewOrg(payload);
     } else {
       await submitService(payload);
     }
@@ -241,10 +242,11 @@ async function submitFormData() {
     body: JSON.stringify({ fromBucket: currentBucket, fromSubdir: currentSubdir, toBucket: currentBucket, toSubdir: 'Complete', filename })
   });
 
+  const orgIdLine = orgId ? `<br><br>New Org ID: <strong>${orgId}</strong>` : '';
   if (moveResponse.ok) {
-    document.getElementById('submitResultMessage').innerHTML = 'File saved and submitted successfully.<br><br>Moved to Complete.';
+    document.getElementById('submitResultMessage').innerHTML = `File saved and submitted successfully.<br><br>Moved to Complete.${orgIdLine}`;
   } else {
-    document.getElementById('submitResultMessage').innerHTML = 'Submitted successfully but failed to move file to Complete.';
+    document.getElementById('submitResultMessage').innerHTML = `Submitted successfully but failed to move file to Complete.${orgIdLine}`;
   }
   document.getElementById('submitResultModal').style.display = 'block';
 }
