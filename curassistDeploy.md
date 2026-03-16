@@ -355,19 +355,55 @@ aws s3 sync s3://curassist-backups/Buckets /home/ec2-user/CurAssist/content/Buck
 
 On every push to `main`, GitHub Actions SSHes into the EC2 instance and runs the redeploy commands automatically.
 
+### SSH Key for GitHub Actions
+
+A separate ED25519 key pair was generated specifically for GitHub Actions (not the EC2 login key):
+
+```bash
+ssh-keygen -t ed25519 -f ~/.ssh/curassist-ed25519 -N "" -C "curassist-github-actions"
+```
+
+The public key was added to the EC2 instance's `authorized_keys`:
+
+```bash
+# On EC2 instance
+echo "<public key contents>" >> ~/.ssh/authorized_keys
+```
+
+The private key was base64 encoded as a single line (no newlines) to avoid copy/paste formatting issues:
+
+```bash
+base64 -i ~/.ssh/curassist-ed25519 | tr -d '\n'
+```
+
 ### GitHub Secrets
 
-Added to repo under **Settings → Secrets and variables → Actions**:
+Added to repo under **Settings → Secrets and variables → Actions → Repository secrets**:
 
 | Secret | Value |
 |---|---|
-| `EC2_HOST` | `54.197.109.5` |
-| `EC2_USER` | `ec2-user` |
-| `EC2_KEY` | contents of `~/.ssh/curassist-key.pem` |
+| `EC2_HOST` | `54.197.109.5` — type manually, no trailing whitespace |
+| `EC2_USER` | `ec2-user` — type manually, no trailing newline |
+| `EC2_KEY` | base64-encoded ED25519 private key (single line) |
+
+**Important**: `EC2_USER` must have no trailing newline — a hidden `\n` causes `Invalid user ec2-user\n` on the server and authentication fails silently.
+
+### GitHub Actions Permissions
+
+Set under **Settings → Actions → General → Workflow permissions**: **Read and write permissions**.
+
+### Git Remote URL (on EC2)
+
+GitHub requires a Personal Access Token (PAT) for HTTPS git operations. Set the remote URL with the PAT embedded:
+
+```bash
+cd ~/CurAssist
+git remote set-url origin https://ScottFeichter:<PAT>@github.com/ScottFeichter/CurAssist.git
+```
 
 ### Workflow File
 
-Created at `.github/workflows/deploy.yml`:
+Created at `.github/workflows/deploy.yml`. Uses plain `ssh` directly on the GitHub runner — no third-party actions, no Docker containers:
 
 ```yaml
 name: Deploy to EC2
@@ -382,20 +418,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy to EC2
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_KEY }}
-          script: |
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-            cd ~/CurAssist
-            git pull origin main
-            npm install
-            npm run build
-            pm2 restart curassist
+      - name: Deploy
+        env:
+          DEPLOY_HOST: ${{ secrets.EC2_HOST }}
+          DEPLOY_USER: ${{ secrets.EC2_USER }}
+          DEPLOY_KEY: ${{ secrets.EC2_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$DEPLOY_KEY" | base64 -d > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key "${DEPLOY_USER}@${DEPLOY_HOST}" "export NVM_DIR=\$HOME/.nvm && [ -s \$NVM_DIR/nvm.sh ] && . \$NVM_DIR/nvm.sh && cd ~/CurAssist && git pull origin main && npm install && npm run build && pm2 restart curassist"
 ```
 
 To trigger a deploy: push to `main`. Monitor runs under the **Actions** tab in GitHub.
