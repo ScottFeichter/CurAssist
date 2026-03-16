@@ -351,9 +351,54 @@ aws s3 sync s3://curassist-backups/Buckets /home/ec2-user/CurAssist/content/Buck
 
 ---
 
-## Step 12 — CI/CD via GitHub Actions (TODO)
+## Step 12 — CI/CD via GitHub Actions ✅
 
-Set up a GitHub Action to auto-deploy on push to `main`. See `deployment.md` for plan.
+On every push to `main`, GitHub Actions SSHes into the EC2 instance and runs the redeploy commands automatically.
+
+### GitHub Secrets
+
+Added to repo under **Settings → Secrets and variables → Actions**:
+
+| Secret | Value |
+|---|---|
+| `EC2_HOST` | `54.197.109.5` |
+| `EC2_USER` | `ec2-user` |
+| `EC2_KEY` | contents of `~/.ssh/curassist-key.pem` |
+
+### Workflow File
+
+Created at `.github/workflows/deploy.yml`:
+
+```yaml
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_KEY }}
+          script: |
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            cd ~/CurAssist
+            git pull origin main
+            npm install
+            npm run build
+            pm2 restart curassist
+```
+
+To trigger a deploy: push to `main`. Monitor runs under the **Actions** tab in GitHub.
 
 ---
 
