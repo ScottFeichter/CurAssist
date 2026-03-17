@@ -40,14 +40,11 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
       next();
     });
 
-    // Long-running routes get 60s, all others get 5s
+    // Long-running routes skip timeout; all others get 5s
     SERVER.use((req, res, next) => {
-      const longRoutes = ['/api/buckets/create', '/api/buckets/import'];
-      if (longRoutes.some(r => req.path.startsWith(r))) {
-        timeout('60s')(req, res, next);
-      } else {
-        timeout('5s')(req, res, next);
-      }
+      const noTimeoutRoutes = ['/api/buckets/create', '/api/buckets/import'];
+      if (noTimeoutRoutes.some(r => req.path.startsWith(r))) return next();
+      timeout('5s')(req, res, next);
     });
 
     // Checks if request has timed out before proceeding
@@ -60,8 +57,8 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
 
   // #region =============== PARSING MIDDLEWARE ================================
     SERVER.use(cookieParser());
-    SERVER.use(express.json({ limit: '10kb' }));
-    SERVER.use(express.urlencoded({ extended: true, limit: '10kb' }));
+    SERVER.use(express.json({ limit: '10mb' }));
+    SERVER.use(express.urlencoded({ extended: true, limit: '10mb' }));
     SERVER.use(compression());
   // #endregion ----------------------------------------------------------------
 
