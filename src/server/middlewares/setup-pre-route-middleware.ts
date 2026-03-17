@@ -40,8 +40,15 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
       next();
     });
 
-    // Sets a 5-second timeout for all requests
-    SERVER.use(timeout('5s'));
+    // Long-running routes get 60s, all others get 5s
+    SERVER.use((req, res, next) => {
+      const longRoutes = ['/api/buckets/create', '/api/buckets/import'];
+      if (longRoutes.some(r => req.path.startsWith(r))) {
+        timeout('60s')(req, res, next);
+      } else {
+        timeout('5s')(req, res, next);
+      }
+    });
 
     // Checks if request has timed out before proceeding
     SERVER.use((req, res, next) => {
