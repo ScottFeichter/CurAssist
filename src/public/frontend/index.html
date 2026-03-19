@@ -525,6 +525,17 @@
       background: #ccc;
       cursor: not-allowed;
     }
+
+    .directImport-btn {
+      background: linear-gradient(135deg, #f953c6, #b91d73);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .directImport-btn:hover {
+      background: linear-gradient(135deg, #e040b0, #a01060);
+    }
   </style>
 </head>
 <body>
@@ -561,6 +572,7 @@
         <button onclick="loadNext()">Next →</button>
       </div>
       <div id="fileCount"></div>
+      <button class="directImport-btn" onclick="directImport()">Direct Import</button>
     </div>
 
     <div id="content">
