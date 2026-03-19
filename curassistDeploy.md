@@ -1,6 +1,32 @@
 # CurAssist Deployment Log
 _Deployed: March 16, 2026_
 
+## Quick Reference
+
+```bash
+# SSH into EC2
+ssh -i ~/.ssh/curassist-key.pem ec2-user@54.197.109.5
+
+# View app console logs (run on EC2)
+pm2 logs curassist
+```
+
+## Instance Specs
+
+| Spec | Value |
+|---|---|
+| Instance type | t3.micro |
+| vCPU | 2 |
+| RAM | 1 GB |
+| Storage | 20 GB gp3 EBS (delete on termination: false) |
+| Architecture | x86_64 |
+| OS | Amazon Linux 2023 |
+| Kernel | 6.18 |
+| AMI | ami-0c421724a94bba6d6 (al2023-ami-2023.10.20260302.1) |
+| Virtualization | HVM |
+
+---
+
 ## Infrastructure Summary
 
 | Resource | Value |
