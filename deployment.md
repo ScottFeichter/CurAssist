@@ -41,17 +41,105 @@ When a user opens a file, server marks it "checked out" in an in-memory map or `
 
 ---
 
-## Recommendation
+## Hosting Decision: AWS EC2 t3.micro
 
-**Fly.io** — best fit:
-- Free tier covers always-on small VM + 3GB persistent volume (likely $0 cost)
-- Auto HTTPS + custom domain included
-- Single region deploy is fine for 10 volunteers
-- Deploy via Docker container (straightforward for Node)
+No containerization — plain Linux box running Node directly via PM2.
 
-**AWS EC2 t3.micro** — good alternative if staying in AWS ecosystem, especially if the account qualifies for the 12-month free tier.
+- ~$10/mo (free for 12 months if account qualifies for free tier)
+- Simple, reliable, no orchestration overhead
+- EBS root volume provides persistent disk storage
 
 ---
 
-## Key Deploy Task (either provider)
-`content/Buckets/` must live on the **persistent volume**, not the container image, so file changes survive redeploys. One-line config change when ready.
+## Storage: EBS + S3 Backup
+
+### EBS root volume (Option 1)
+Every EC2 instance comes with an EBS root volume attached by default. `content/Buckets/` lives on this volume and persists across reboots and stops.
+
+**Critical setting at launch**: uncheck **"Delete on termination"** for the root EBS volume. This ensures the volume survives if the instance is terminated, and can be reattached to a new instance.
+
+- Survives: reboots, stops, instance replacement
+- Does not survive: volume deletion (hence the S3 backup below)
+
+### S3 sync cron (Option 3)
+Nightly (or more frequent) cron job syncs `content/Buckets/` to an S3 bucket as a safety net.
+
+```bash
+# Add to crontab (crontab -e) — runs every 15 minutes
+*/15 * * * * aws s3 sync /path/to/app/content/Buckets s3://curassist-backups/Buckets
+```
+
+To restore after spinning up a new instance:
+```bash
+aws s3 sync s3://curassist-backups/Buckets /path/to/app/content/Buckets
+```
+
+---
+
+## Setup Steps
+
+### 1. Launch EC2 instance
+- AMI: Amazon Linux 2023 (or Ubuntu 22.04)
+- Instance type: t3.micro
+- Security group: open port 22 (SSH), 80 (HTTP), 443 (HTTPS)
+- **Uncheck "Delete on termination" on root EBS volume**
+- Assign or allocate an Elastic IP
+
+### 2. Install Node via nvm
+```bash
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.7/install.sh | bash
+source ~/.bashrc
+nvm install 20
+nvm use 20
+```
+
+### 3. Deploy app
+```bash
+# Clone repo or scp files up
+git clone <repo-url> /home/ec2-user/curassist
+cd /home/ec2-user/curassist
+npm install
+npm run build
+```
+
+### 4. Configure environment
+```bash
+cp .env.example .env   # or create .env manually
+# Set PORT=8004 (or 80 if running directly on port 80)
+```
+
+### 5. Run with PM2
+```bash
+npm install -g pm2
+pm2 start dist/entry.js --name curassist
+pm2 startup    # follow the printed command to enable auto-start on reboot
+pm2 save
+```
+
+### 6. HTTPS with Let's Encrypt
+```bash
+# Amazon Linux
+sudo dnf install certbot python3-certbot-nginx -y
+sudo certbot --nginx -d yourdomain.com
+```
+
+### 7. S3 backup cron
+```bash
+# Ensure instance has an IAM role with s3:PutObject on the backup bucket
+crontab -e
+# Add: */15 * * * * aws s3 sync /home/ec2-user/curassist/content/Buckets s3://curassist-backups/Buckets
+```
+
+---
+
+## Redeploy Process
+```bash
+cd /home/ec2-user/curassist
+git pull
+npm install
+npm run build
+pm2 restart curassist
+```
+
+`content/Buckets/` is never touched by a redeploy as long as you don't wipe the directory.
+

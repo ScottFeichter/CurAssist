@@ -585,6 +585,22 @@
                         background-color: #154a8a;; /* darker blue than #276CE5 */
                       }
 
+                      .toggle-button:disabled {
+                        cursor: default;
+                        opacity: 0.6;
+                      }
+
+                      .toggle-button:disabled:hover {
+                        color: #999;
+                        background-color: #fff;
+                        border-color: #ccc;
+                      }
+
+                      .toggle-button.active:disabled:hover {
+                        background-color: #276CE5;
+                        border-color: #276CE5;
+                      }
+
 
 
                       #OrganizationButton.active {
@@ -1100,7 +1116,7 @@
 <!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
                 <header class="edit--main--header">
 
-                  <h1 class="edit--main--header--title">
+                  <h1 class="edit--main--header--title" id="headerTitle">
                     Is this an Organization or a Service?
                   </h1>
 
@@ -1132,6 +1148,7 @@
                     const servBtn = document.getElementById('ServiceButton');
 
                     let Organization = true;
+                    let importedFileFromSFSG = true;
 
 
                     function toggleView() {
@@ -1163,6 +1180,11 @@
 
                     document.addEventListener('DOMContentLoaded', function() {
                       toggleView();
+                      if (importedFileFromSFSG) {
+                        orgBtn.disabled = true;
+                        servBtn.disabled = true;
+                        document.getElementById('headerTitle').textContent = 'Imported File From Existing Organization';
+                      }
                     });
                   </script>
 
@@ -1566,7 +1588,7 @@
                         <label for="organization_name">
                           Name of the Organization
                         </label>
-                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="Alpha Kids Academy, Llc">
+                        <input id="organization_name" type="text" class="input" placeholder="Organization Name" data-field="name" value="Kai Ming Head Start ">
                       </li>
 
 
@@ -1583,7 +1605,8 @@
                         <div class="app-components-edit-EditAddress-module__addressListTitle--Y1zCq">
                           Location
                         </div>
-                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1"><div>175 Junipero Serra Blvd<br>San Francisco, CA 94127</div></div>
+                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1">
+                        </div>
                         <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
                           Add Location
                         </button>
@@ -1594,7 +1617,8 @@
                         <label for="edit-item">
                           Phones
                         </label>
-                        <ul id="organization_phones" class="edit--section--list--item--sublist"><li><strong></strong> 415-664-8080</li></ul>
+                        <ul id="organization_phones" class="edit--section--list--item--sublist">
+                        </ul>
                         <button type="button" class="edit--section--list--item--button solid-brand">
                           Add Phone
                         </button>
@@ -1606,7 +1630,7 @@
                         <label for="organization_website">
                           Website
                         </label>
-                        <input id="organization_website" type="url" class="input" placeholder="http://" data-field="website" value="">
+                        <input id="organization_website" type="url" class="input" placeholder="http://" data-field="website" value="https://kaiming.org/">
                       </li>
 
 <!--------------------------------------------------------------------- Email  ---------------------------------------------------------------------------->
@@ -1614,7 +1638,7 @@
                         <label for="organization_email">
                           E-Mail
                         </label>
-                        <input id="organization_email" type="email" class="input" data-field="email" value="">
+                        <input id="organization_email" type="email" class="input" data-field="email" value="info@kaiming.org">
                       </li>
 
 
@@ -1623,7 +1647,12 @@
                         <label for="organization_description">
                           Description
                         </label>
-                        <textarea id="organization_description" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description"></textarea>
+                        <textarea id="organization_description" class="input" placeholder="Describe the organization in 1-2 sentences. Avoid listing the services it provides and instead explaint the organization's mission." data-field="long_description">Kai Ming Head Start, a non-profit organization is dedicated to helping parents prepare for their child during pregnancy, provide exceptional infant and day care, and offer a comprehensive, culturally relevant preschool curriculum to get ready for kindergarten.  
+
+By offering the following programming:
+- Preschool (3-5 years) Culturally relevant, family-centric and child-interest specific, curriculum that supports dual language learners prepares children for kindergarten and provides a springboard for life-long learning. Teacher-child-ratio between 1:5 to 1:8. 
+- Infant and Toddler Care (3-36 months) Early learning: social-emotional, language, cognition, and physical development foundations of early learning are central to creating the nurturing environment at our centers. Teacher-child ratio 1:3 for infants and 1:4 for toddlers. 
+- Prenatal and Home-Based Care Weekly home visits, monthly center-based socialization plus comprehensive health, and wellness services give parents and children a solid start.</textarea>
                         <p>
                           If you'd like to add formatting to descriptions, we support&nbsp;
                           <a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer">
@@ -2122,7 +2151,7 @@
                                 <label for="service_name">
                                   Name of the Service
                                 </label>
-                                <input id="service_name" type="text" placeholder="What is this service called?" value="Alpha Kids Academy, Llc">
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="">
                               </li>
 
 <!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
@@ -2157,7 +2186,8 @@
                                   </select>
                                   -->
                                 </label>
-                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6"><div>175 Junipero Serra Blvd<br>San Francisco, CA 94127</div></div>
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6">
+                                </div>
 
 
                                 <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
@@ -2232,7 +2262,8 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Age</span></div><div class="Select-placeholder" style="display: none;">
+                                    <div class="Select-multi-value-wrapper" id="service_top_eligibilities">
+                                      <div class="Select-placeholder">
                                         Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -2256,7 +2287,8 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Infants</span></div><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Toddlers</span></div><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Children</span></div><div class="Select-placeholder" style="display: none;">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_eligibilities">
+                                      <div class="Select-placeholder">
                                         Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -2341,7 +2373,8 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_top_categories"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Childcare</span></div><div class="Select-placeholder" style="display: none;">
+                                    <div class="Select-multi-value-wrapper" id="service_top_categories">
+                                      <div class="Select-placeholder">
                                         Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -2365,7 +2398,8 @@
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
-                                    <div class="Select-multi-value-wrapper" id="service_sub_categories"><div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">Childcare</span></div><div class="Select-placeholder" style="display: none;">
+                                    <div class="Select-multi-value-wrapper" id="service_sub_categories">
+                                      <div class="Select-placeholder">
                                         Begin typing for list, type A for all items
                                       </div>
                                       <div class="Select-input" style="display: inline-block;">
@@ -3207,7 +3241,7 @@
                                 <label for="service_name">
                                   Name of the Service
                                 </label>
-                                <input id="service_name" type="text" placeholder="What is this service called?" value="Alpha Kids Academy, Llc">
+                                <input id="service_name" type="text" placeholder="What is this service called?" value="">
                               </li>
 
 <!--------------------------------------------------------------------- Alternate Name ---------------------------------------------------------------------------->
@@ -4270,7 +4304,123 @@
 <!------------------------------------------------------------------------------ DIV OUTER-CONTAINER END --------------------------------------------------------->
     </div>
 <!------------------------------------------------------------------------------ DIV ROOT END --------------------------------------------------------->
-  </body>
+  
+<script id="importPopulateScript">
+(function() {
+  var phones = [{"number":"(415) 766-6092","ext":"","description":"Dr. T.K.L"},{"number":"(415) 982-4570","ext":"","description":"Broadway "},{"number":"(415) 387-3133","ext":"","description":"Geary"},{"number":"(415) 386-3096","ext":"","description":"Richmond"},{"number":"(415) 387-3688","ext":"","description":"PMsquare Children’s Center"},{"number":"(415) 931-1088","ext":"","description":"North Beach"},{"number":"(415) 982-6522","ext":"","description":"Rainbow"},{"number":"(415) 982-4777","ext":"","description":"Main Office"},{"number":"(415) 690-1014","ext":"","description":"St. Luke's "},{"number":"(415) 759-8980","ext":"","description":"Sunset"}];
+  var locations = [{"name":"North Beach","address1":"1170 Columbus Avenue","address2":"","city":"San Francisco","state":"CA","zip":"94133-1708"},{"name":"Office","address1":"934 Howard Street","address2":"","city":"San Francisc","state":"CA","zip":"94103"},{"name":"Geary","address1":"6221 Geary Blvd.","address2":"","city":"San Francisco","state":"CA","zip":"94121-1887"},{"name":"Broadway","address1":"820 Battery Street","address2":"","city":"San Francisco","state":"CA","zip":"94111-1504"},{"name":"North Beach","address1":"1170 Columbus Avenue","address2":"","city":"San Francisco","state":"CA","zip":"94133-1708"},{"name":"Geary","address1":"6221 Geary Blvd.","address2":"","city":"San Francisco","state":"CA","zip":"94121-1887"},{"name":"Richmond","address1":"426 33rd Avenue","address2":"","city":"San Francisco","state":"CA","zip":"94121-1606"},{"name":"Main Office","address1":"934 Howard Street","address2":"","city":"San Francisco","state":"CA","zip":"94103"},{"name":"Dr. T.K.L","address1":"950 Powell Street","address2":"","city":"San Francisco","state":"CA","zip":"94108-2014"},{"name":"PMsquare Children’s Center","address1":"671 China Basin Street","address2":"","city":"San Francisco","state":"CA","zip":"94158"},{"name":"Rainbow","address1":"799 Pacific Avenue","address2":"","city":"San Francisco","state":"CA","zip":"94133-4411"},{"name":"Sunset","address1":"2800 Taraval Street","address2":"","city":"San Francisco","state":"CA","zip":"94116-2157"},{"name":"St. Luke's ","address1":"1755 Clay Street","address2":"","city":"San Francisco","state":"CA","zip":"94109-3612"}];
+  var hours = [{"open":"08:00","close":"17:00"},{"open":"08:00","close":"17:00"},{"open":"08:00","close":"17:00"},{"open":"08:00","close":"17:00"},{"open":"08:00","close":"17:00"},{"open":"","close":""},{"open":"","close":""}];
+  var services = [{"id":"service-sf-5014","service_name":"Prenatal and Home-based Infant/Toddler Services","service_alternate_name":"","service_description":"Kai Ming Home Visitors work with families who are expecting a baby, and families with infants and toddlers (0 to 3 years). The Home Visitors help families to foster healthy lifestyles during pregnancy, immediately after birth, and throughout the first three years of life. They provide home visits, workshops and socialization groups (play groups), and comprehensive health and wellness services that give parents and children a solid start to early learning readiness. The services are free to eligible families.\n\n**Prenatal and Home-based Infant/Toddler Services:**\n- Home Visits, based on the family’s individual needs\n- Workshops and Groups\n- Child Development Information\n- Parenting support\n- Health, wellness, and nutrition support\n- Partners for a Healthy Baby, an evidence based curriculum","service_short_description":"","service_email":"","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Contact office for information or to schedule an in-person or virtual appointment:\n\nKai Ming Main Office | 415-982-4777 | enroll@kaiming.org | 933 Howard St. | San Francisco, CA 94103 | kaiming.org","service_required_documents":"","service_interpretation_services":"","service_cost":"Programming free for eligible families. ","service_wait_time":"","service_website":"https://kaiming.org/HomeBased.aspx","categories":[{"name":"Health Education","id":43,"top_level":false,"featured":false},{"name":"Parenting Education","id":48,"top_level":false,"featured":false},{"name":"Postnatal Care","id":70,"top_level":false,"featured":false},{"name":"Parent Education","id":295,"top_level":false,"featured":false},{"name":"Family Resource Centers","id":297,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false},{"name":"Family Support","id":359,"top_level":true,"featured":false},{"name":"Health & Wellness","id":360,"top_level":true,"featured":false}],"eligibilities":[{"name":"Single Parent","id":1051,"feature_rank":null},{"name":"Pregnant","id":1035,"feature_rank":null},{"name":"Families with children below 18 years old","id":1050,"feature_rank":null}]},{"id":"service-sf-5015","service_name":"Infant And Toddler Care","service_alternate_name":"","service_description":"Early Head Start program is designed to meet the unique needs of infants and toddlers ages 3 months to 3 years. They offer high quality infant and toddler classrooms, with highly qualified teaching staff, provide loving, nurturing, and responsive environments for the youngest children, in partnership with their families. The services are free or low cost for eligible families.\n\nProgram details: \n- Age-appropriate activities individualized for each child\n- Emerging language and literacy\n- Sensory and motor development\n- Toilet training (when children are developmentally ready)\n- Safe spaces for learning\n- Self confidence and independence experienced through routines\n- Inquiry, observation, and play\n- Self expression through arts, music, and movement\n- Culturally appropriate activities and experiences\n- High quality teacher-child interactions, leading to warm, nurturing relationships\n- Nutritious meals and snacks","service_short_description":"","service_email":"","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Contact office for information or to schedule an in-person or virtual appointment:\n\nKai Ming Main Office | 415-982-4777 | enroll@kaiming.org | 933 Howard St. | San Francisco, CA 94103 | kaiming.org","service_required_documents":"","service_interpretation_services":"","service_cost":"","service_wait_time":"","service_website":"https://kaiming.org/IT.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Children's Care","id":357,"top_level":true,"featured":false}],"eligibilities":[{"name":"Toddler Age","id":32,"feature_rank":null},{"name":"Infants (0-2 years old)","id":1006,"feature_rank":null}]},{"id":"service-sf-5016","service_name":"Preschool","service_alternate_name":"","service_description":"The program helps prepare children for kindergarten, as well as provide a springboard for life-long learning. An optimal teacher-child ratio ensures that children have their unique needs met in a safe, educational, and multicultural preschool experience. The services are free or low cost for eligible families.","service_short_description":"","service_email":"","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"","service_required_documents":"","service_interpretation_services":"","service_cost":"These services are free or low cost for eligible families.","service_wait_time":"","service_website":"https://kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Preschool","id":106,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Children's Care","id":357,"top_level":true,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null}]},{"id":"service-sf-5232","service_name":"DR. T. KONG LEE CENTER","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service. ","service_wait_time":"","service_website":"https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5233","service_name":"Geary Center","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service.","service_wait_time":"","service_website":" https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5234","service_name":"North Beach Center","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service.","service_wait_time":"","service_website":"https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5235","service_name":"Richmond Center","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service.","service_wait_time":"","service_website":"https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5238","service_name":"Broadway Center","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service.","service_wait_time":"","service_website":"https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5239","service_name":"St. Luke's Center","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service.","service_wait_time":"","service_website":"https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5240","service_name":"Sunset Center","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service. ","service_wait_time":"","service_website":"https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5241","service_name":"PM Square Children's Center","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based sevice.","service_wait_time":"","service_website":"https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5242","service_name":"Rainbow Preschool Center","service_alternate_name":"KAI MING HEAD START","service_description":"Kai Ming curriculum aligns with the Head Start Early Learning Outcomes Framework (ELOF) and California early care and education standards. The curriculum is drawn from current child development science, the interests and ideas of the children, family input, and the values of the community. The curriculum fosters development in areas including physical, social, emotional, language and literacy development, as well as problem-solving and cognitive skills. It draws from three award-winning, child-centered curriculums:\n\nThe Project Approach\nDual Language Learning\nThe Creative Curriculum®\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service. ","service_wait_time":"","service_website":"https://www.kaiming.org/Preschool.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Preschool Student","id":35,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5243","service_name":"North Beach Infants Center","service_alternate_name":"KAI MING HEAD START","service_description":"Infants and toddlers ages 3 months to 3 years utilizing the Creative Curriculum for Infants, Toddlers, and Twos, and we follow the approach of the Program for Infant and Toddler Care (PITC). \n\nBoth of these promote relationship based care, and focus on following the individual needs and interests of each child. Relationships with the family are equally as important as relationships with each child, and our staff welcome the engagement of families in the classroom.","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service. ","service_wait_time":"","service_website":"https://www.kaiming.org/IT.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Toddler Age","id":32,"feature_rank":null},{"name":"Infants (0-2 years old)","id":1006,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5244","service_name":"Broadway Infant Center","service_alternate_name":"KAI MING HEAD START","service_description":"Infants and toddlers ages 3 months to 3 years utilizing the Creative Curriculum for Infants, Toddlers, and Twos, and we follow the approach of the Program for Infant and Toddler Care (PITC). \n\nBoth of these promote relationship based care, and focus on following the individual needs and interests of each child. Relationships with the family are equally as important as relationships with each child, and our staff welcome the engagement of families in the classroom.\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service.","service_wait_time":"","service_website":"https://www.kaiming.org/IT.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Toddler Age","id":32,"feature_rank":null},{"name":"Infants (0-2 years old)","id":1006,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5245","service_name":"PM Square Infant Center","service_alternate_name":"KAI MING HEAD START","service_description":"Infants and toddlers ages 3 months to 3 years utilizing the Creative Curriculum for Infants, Toddlers, and Twos, and we follow the approach of the Program for Infant and Toddler Care (PITC). \n\nBoth of these promote relationship based care, and focus on following the individual needs and interests of each child. Relationships with the family are equally as important as relationships with each child, and our staff welcome the engagement of families in the classroom.\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service. ","service_wait_time":"","service_website":"https://www.kaiming.org/IT.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Toddler Age","id":32,"feature_rank":null},{"name":"Infants (0-2 years old)","id":1006,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]},{"id":"service-sf-5247","service_name":"Rainbow Infant Center","service_alternate_name":"KAI MING HEAD START","service_description":"Infants and toddlers ages 3 months to 3 years utilizing the Creative Curriculum for Infants, Toddlers, and Twos, and we follow the approach of the Program for Infant and Toddler Care (PITC). \n\nBoth of these promote relationship based care, and focus on following the individual needs and interests of each child. Relationships with the family are equally as important as relationships with each child, and our staff welcome the engagement of families in the classroom.\n","service_short_description":"","service_email":"info@kaiming.org","service_belongs_to_org":"1080","service_internal_notes":"","service_application_process":"Visit their enrollment pages in [English](https://www.kaiming.org/Enrollment.aspx), [Chinese](https://www.kaiming.org/Enrollment.aspx?lang=Chinese), or [Spanish](https://www.kaiming.org/Enrollment.aspx?lang=Spanish) or call the main office to schedule an in-person or virtual appointment. ","service_required_documents":"","service_interpretation_services":"","service_cost":"This is a fee based service. ","service_wait_time":"","service_website":"https://www.kaiming.org/IT.aspx","categories":[{"name":"Childcare","id":102,"top_level":false,"featured":false},{"name":"Early Childhood","id":196,"top_level":false,"featured":false},{"name":"Early Childhood Education","id":197,"top_level":false,"featured":false},{"name":"Education","id":358,"top_level":true,"featured":false}],"eligibilities":[{"name":"Toddler Age","id":32,"feature_rank":null},{"name":"Infants (0-2 years old)","id":1006,"feature_rank":null},{"name":"San Francisco Residents","id":1072,"feature_rank":null}]}];
+
+  function populate() {
+    // Phones
+    var phoneSublist = document.getElementById('organization_phones');
+    if (phoneSublist) {
+      phones.forEach(function(p, i) {
+        if (i > 0) {
+          var hr = document.createElement('li');
+          hr.style.cssText = 'list-style:none;border-top:1px solid #ddd;margin:6px 0;padding:0;';
+          phoneSublist.appendChild(hr);
+        }
+        var li = document.createElement('li');
+        li.innerHTML = '<strong>' + (p.description || '') + ':</strong> ' + p.number + (p.ext ? ' x' + p.ext : '');
+        phoneSublist.appendChild(li);
+      });
+    }
+
+    // Locations
+    var locationList = document.getElementById('organization_locations');
+    if (locationList) {
+      locations.forEach(function(l, i) {
+        if (i > 0) {
+          var sep = document.createElement('div');
+          sep.style.cssText = 'border-top:1px solid #ddd;margin:8px 0;';
+          locationList.appendChild(sep);
+        }
+        var div = document.createElement('div');
+        div.innerHTML = '<strong>' + l.name + '</strong><br>' + l.address1 + (l.address2 ? '<br>' + l.address2 : '') + '<br>' + l.city + ', ' + l.state + ' ' + l.zip;
+        locationList.appendChild(div);
+      });
+    }
+
+    // Hours — 7 positional .day-group divs (M, T, W, Th, F, S, Su)
+    var dayGroups = document.querySelectorAll('.day-group');
+    hours.forEach(function(h, i) {
+      if (!dayGroups[i]) return;
+      var inputs = dayGroups[i].querySelectorAll('input[type="time"]');
+      if (inputs[0]) inputs[0].value = h.open;
+      if (inputs[1]) inputs[1].value = h.close;
+    });
+
+    // Services — call addNewService() for each, then populate the cloned div's fields
+    if (typeof window.addNewService === 'function') {
+      services.forEach(function(svc) {
+        window.addNewService();
+        var orgServicesDiv = document.getElementById('orgServicesDiv');
+        if (!orgServicesDiv) return;
+        var newDiv = orgServicesDiv.lastElementChild;
+        if (!newDiv) return;
+
+        // Populate text fields and trigger input event so navbar link updates
+        var fields = [
+          'service_name', 'service_alternate_name', 'service_email', 'service_website',
+          'service_description', 'service_short_description', 'service_application_process',
+          'service_required_documents', 'service_interpretation_services',
+          'service_cost', 'service_wait_time', 'service_internal_notes'
+        ];
+        fields.forEach(function(f) {
+          var el = newDiv.querySelector('#' + f);
+          if (el && svc[f] !== undefined) {
+            el.value = svc[f];
+            el.dispatchEvent(new Event('input'));
+          }
+        });
+
+        // Inject category/eligibility pills into the Select-multi-value-wrapper
+        function addPills(dropdownId, names) {
+          if (!names || !names.length) return;
+          var input = newDiv.querySelector('#' + dropdownId);
+          if (!input) return;
+          var wrapper = input.closest('.Select-multi-value-wrapper');
+          if (!wrapper) return;
+          var placeholder = wrapper.querySelector('.Select-placeholder');
+          if (placeholder) placeholder.style.display = 'none';
+          names.forEach(function(name) {
+            var pill = document.createElement('div');
+            pill.className = 'Select-value';
+            pill.innerHTML = '<span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">' + name + '</span>';
+            pill.querySelector('.Select-value-icon').addEventListener('click', function() {
+              pill.remove();
+              if (!wrapper.querySelector('.Select-value') && placeholder) placeholder.style.display = 'block';
+            });
+            wrapper.insertBefore(pill, input.parentElement);
+          });
+        }
+
+        if (svc.categories && svc.categories.length) {
+          var topCats = svc.categories.filter(function(c) { return c.top_level; }).map(function(c) { return c.name; });
+          var subCats = svc.categories.filter(function(c) { return !c.top_level; }).map(function(c) { return c.name; });
+          addPills('categoryTopDropdown', topCats);
+          addPills('categorySubDropdown', subCats);
+        }
+        if (svc.eligibilities && svc.eligibilities.length) {
+          var topElig = svc.eligibilities.filter(function(e) { return e.feature_rank !== null; }).map(function(e) { return e.name; });
+          var subElig = svc.eligibilities.filter(function(e) { return e.feature_rank === null; }).map(function(e) { return e.name; });
+          addPills('eligibilityTopDropdown', topElig);
+          addPills('eligibilitySubDropdown', subElig);
+        }
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', populate);
+  } else {
+    populate();
+  }
+})();
+</script>
+</body>
 <!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  BODY END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
 
 
