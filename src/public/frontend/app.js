@@ -4,7 +4,7 @@ const API_BASE = '/api';
 
 let currentBucket = '';
 let currentSubdir = '';
-let currentFiles = [];
+let currentFiles = [];  // now array of { _id, name } objects
 let currentIndex = 0;
 let csrfToken = '';
 
@@ -89,15 +89,14 @@ async function loadSubdir() {
 
   const fileSelect = document.getElementById('fileInfo');
   fileSelect.innerHTML = '<option value="">Select file...</option>';
-  
+
   currentFiles.forEach((file, index) => {
     const option = document.createElement('option');
     option.value = index;
-    option.textContent = file;
+    option.textContent = file.name;
     fileSelect.appendChild(option);
   });
 
-  // Update file list only
   if (currentFiles.length > 0) {
     fileSelect.selectedIndex = 1;
     loadFile(0);
@@ -115,9 +114,9 @@ async function loadFile(index) {
   if (index < 0 || index >= currentFiles.length) return;
 
   currentIndex = index;
-  const filename = currentFiles[index];
+  const file = currentFiles[index];
 
-  const content = await fetch(`${API_BASE}/buckets/${currentBucket}/${currentSubdir}/${filename}`).then(r => r.text());
+  const content = await fetch(`${API_BASE}/buckets/${currentBucket}/${currentSubdir}/${file._id}`).then(r => r.text());
 
   const iframe = document.getElementById('formFrame');
   iframe.srcdoc = content;
@@ -177,8 +176,18 @@ async function saveFile(silent = false) {
   if (!currentFiles[currentIndex]) return false;
 
   const iframe = document.getElementById('formFrame');
-  syncIframeValues(iframe.contentDocument);
-  const content = iframe.contentDocument.documentElement.outerHTML;
+  const iframeDoc = iframe.contentDocument;
+
+  // Use collector to extract structured field values from the iframe
+  let fields = {};
+  try {
+    const payload = collectFormData();
+    fields = payload.organization || payload.service || {};
+  } catch (e) {
+    fields = {};
+  }
+
+  const orgId = iframeDoc?.body?.dataset?.orgId || currentFiles[currentIndex]._id;
 
   try {
     const res = await fetch(`${API_BASE}/buckets/save`, {
@@ -188,12 +197,7 @@ async function saveFile(silent = false) {
         'XSRF-Token': getCsrfToken()
       },
       credentials: 'include',
-      body: JSON.stringify({
-        bucket: currentBucket,
-        subdir: currentSubdir,
-        filename: currentFiles[currentIndex],
-        content: '<!DOCTYPE html>\n' + content
-      })
+      body: JSON.stringify({ id: orgId, fields })
     });
 
     if (!res.ok) throw new Error('Server returned ' + res.status);
@@ -264,22 +268,19 @@ async function confirmMove(shouldSave) {
   document.getElementById('moveModal').style.display = 'none';
 
   try {
-    if (shouldSave) {
-      const iframe = document.getElementById('formFrame');
-      const content = iframe.contentDocument.documentElement.outerHTML;
-      await fetch(`${API_BASE}/buckets/save`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
-        credentials: 'include',
-        body: JSON.stringify({ bucket: currentBucket, subdir: currentSubdir, filename: currentFiles[currentIndex], content: '<!DOCTYPE html>\n' + content })
-      });
-    }
+    if (shouldSave) await saveFile(true);
 
     const moveResponse = await fetch(`${API_BASE}/buckets/move`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
       credentials: 'include',
-      body: JSON.stringify({ fromBucket: currentBucket, fromSubdir: currentSubdir, toBucket, toSubdir, filename: currentFiles[currentIndex] })
+      body: JSON.stringify({
+        id: currentFiles[currentIndex]._id,
+        fromBucket: currentBucket,
+        fromSubdir: currentSubdir,
+        toBucket,
+        toSubdir
+      })
     });
 
     if (moveResponse.ok) {
@@ -322,7 +323,7 @@ async function copyFile() {
   });
   bucketSel.value = currentBucket || '';
   await onCopyBucketChange();
-  document.getElementById('copyFileName').value = currentFiles[currentIndex].replace(/\.html$/i, '');
+  document.getElementById('copyFileName').value = currentFiles[currentIndex].name;
   document.getElementById('copyModal').style.display = 'block';
 }
 
@@ -360,15 +361,13 @@ async function confirmCopy() {
       body: JSON.stringify({
         bucket: toBucket,
         subdir: toSubdir,
-        filename: copyName + '.html',
-        fromBucket: currentBucket,
-        fromSubdir: currentSubdir,
-        fromFilename: currentFiles[currentIndex]
+        filename: copyName,
+        fromId: currentFiles[currentIndex]._id
       })
     });
     const data = await response.json();
     if (response.ok) {
-      alert(`File copied to ${toBucket} / ${toSubdir} as ${data.filename}`);
+      alert(`File copied to ${toBucket} / ${toSubdir} as ${data.name}`);
       if (toBucket === currentBucket && toSubdir === currentSubdir) loadSubdir();
     } else {
       alert(data.error || 'Failed to copy file');
@@ -404,7 +403,7 @@ function confirmDelete() {
  */
 async function finalDelete() {
   const input = document.getElementById('deleteConfirmInput').value;
-  
+
   if (input !== 'delete') {
     alert('You must type "delete" exactly to confirm');
     return;
@@ -413,16 +412,12 @@ async function finalDelete() {
   try {
     const response = await fetch(`${API_BASE}/buckets/delete`, {
       method: 'DELETE',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'XSRF-Token': getCsrfToken()
       },
       credentials: 'include',
-      body: JSON.stringify({
-        bucket: currentBucket,
-        subdir: currentSubdir,
-        filename: currentFiles[currentIndex]
-      })
+      body: JSON.stringify({ id: currentFiles[currentIndex]._id })
     });
 
     if (response.ok) {
@@ -493,7 +488,7 @@ async function reloadSubdirNoLoad() {
   currentFiles.forEach((file, index) => {
     const option = document.createElement('option');
     option.value = index;
-    option.textContent = file;
+    option.textContent = file.name;
     fileSelect.appendChild(option);
   });
   document.getElementById('fileCount').textContent = `File 0 of ${currentFiles.length}`;
@@ -753,7 +748,8 @@ async function onCreateFileFromSubdirChange() {
   const files = await fetch(`${API_BASE}/buckets/${bucket}/${subdir}/files`).then(r => r.json());
   files.forEach(f => {
     const opt = document.createElement('option');
-    opt.value = f; opt.textContent = f;
+    opt.value = f._id;
+    opt.textContent = f.name;
     fileSel.appendChild(opt);
   });
 }
@@ -766,18 +762,14 @@ async function confirmCreateFile() {
   const filename = document.getElementById('createFileName').value.trim();
   const bucket = document.getElementById('createFileBucket').value;
   const subdir = document.getElementById('createFileSubdir').value;
-  const fromBucket = document.getElementById('createFileFromBucket').value;
-  const fromSubdir = document.getElementById('createFileFromSubdir').value;
-  const fromFilename = document.getElementById('createFileFromFile').value;
+  const fromId = document.getElementById('createFileFromFile').value;
 
   if (!filename) { alert('Please enter a file name'); return; }
-  if (!bucket) { alert('Please select a destination bucket'); return; }
-  if (!subdir) { alert('Please select a destination subdirectory'); return; }
+  if (!bucket)   { alert('Please select a destination bucket'); return; }
+  if (!subdir)   { alert('Please select a destination subdirectory'); return; }
 
   const body = { bucket, subdir, filename };
-  if (fromBucket && fromSubdir && fromFilename) {
-    Object.assign(body, { fromBucket, fromSubdir, fromFilename });
-  }
+  if (fromId) Object.assign(body, { fromId });
 
   try {
     const response = await fetch(`${API_BASE}/buckets/create-file`, {
@@ -788,9 +780,8 @@ async function confirmCreateFile() {
     });
     const data = await response.json();
     if (response.ok) {
-      alert(`File created: ${data.filename}`);
+      alert(`File created: ${data.name}`);
       document.getElementById('createFileModal').style.display = 'none';
-      // Reload file list if we're in the same bucket/subdir
       if (bucket === currentBucket && subdir === currentSubdir) loadSubdir();
     } else {
       alert(data.error || 'Failed to create file');

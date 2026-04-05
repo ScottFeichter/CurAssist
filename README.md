@@ -146,6 +146,7 @@ Only available when `NODE_ENV=development`:
 - `GET /docs/deployment` — Deployment guide (MongoDB)
 - `GET /docs/deployment-nodb` — Deployment guide (S3, no DB, historical)
 - `GET /docs/deploy-log` — Full deployment log and infrastructure notes
+- `GET /docs/buckets-map` — Spreadsheet field maps
 
 ### Buckets (internal)
 

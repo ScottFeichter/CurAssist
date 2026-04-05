@@ -220,10 +220,12 @@ async function submitFormData() {
   const payload = collectFormData();
   console.log('Submit payload:', JSON.stringify(payload, null, 2));
 
-  let orgId = null;
+  const orgId = currentFiles[currentIndex]._id;
+  let sfId = null;
+
   try {
     if (payload.organization) {
-      orgId = await submitNewOrg(payload);
+      sfId = await submitNewOrg(payload);
     } else {
       await submitService(payload);
     }
@@ -233,20 +235,19 @@ async function submitFormData() {
     return;
   }
 
-  // Move file to Complete only on success
-  const filename = currentFiles[currentIndex];
-  const moveResponse = await fetch(`${API_BASE}/buckets/move`, {
+  // Write sfId back to Atlas and move to complete
+  const moveResponse = await fetch(`${API_BASE}/buckets/submit`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
     credentials: 'include',
-    body: JSON.stringify({ fromBucket: currentBucket, fromSubdir: currentSubdir, toBucket: currentBucket, toSubdir: 'Complete', filename })
+    body: JSON.stringify({ id: orgId, sfId })
   });
 
-  const orgIdLine = orgId ? `<br><br>New Org ID: <strong>${orgId}</strong>` : '';
+  const sfIdLine = sfId ? `<br><br>New Org ID: <strong>${sfId}</strong>` : '';
   if (moveResponse.ok) {
-    document.getElementById('submitResultMessage').innerHTML = `File saved and submitted successfully.<br><br>Moved to Complete.${orgIdLine}`;
+    document.getElementById('submitResultMessage').innerHTML = `File saved and submitted successfully.<br><br>Moved to Complete.${sfIdLine}`;
   } else {
-    document.getElementById('submitResultMessage').innerHTML = `Submitted successfully but failed to move file to Complete.${orgIdLine}`;
+    document.getElementById('submitResultMessage').innerHTML = `Submitted successfully but failed to update record.${sfIdLine}`;
   }
   document.getElementById('submitResultModal').style.display = 'block';
 }
