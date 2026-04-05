@@ -12,6 +12,11 @@ console.enter();
 // #region ====================== START ========================================
 
 
+/**
+ * Connects to MongoDB Atlas using the DB_CONNECT environment variable.
+ * Called in server.ts before SERVER.listen() — the server will not start
+ * if this connection fails. Exits the process with code 1 on failure.
+ */
 export const connectToAtlas = async (): Promise<void> => {
   log.enter('connectToAtlas()', log.brack);
 
@@ -38,6 +43,10 @@ export const connectToAtlas = async (): Promise<void> => {
 };
 
 
+/**
+ * Disconnects from MongoDB Atlas.
+ * Available for graceful shutdown scenarios.
+ */
 export const disconnectFromAtlas = async (): Promise<void> => {
   log.enter('disconnectFromAtlas()', log.brack);
 

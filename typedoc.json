@@ -1,9 +1,11 @@
 {
-  "entryPoints": ["src/entry.ts"],
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
   "out": "docs/typedocs",
   "name": "CurAssist",
   "excludePrivate": true,
   "excludeProtected": true,
+  "exclude": ["**/*.d.ts", "**/node_modules/**", "**/dist/**"],
   "theme": "default",
   "readme": "README.md"
 }

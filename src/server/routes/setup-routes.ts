@@ -15,6 +15,13 @@ console.enter();
 
 // #region ====================== START ========================================
 
+/**
+ * Sets up all Express routes.
+ * Dev-only documentation routes are mounted first (/docs/*).
+ * API routes are mounted under /api via apiRouter.
+ * A catch-all handles unmatched routes.
+ * @param SERVER - The Express application instance
+ */
 export const setupRoutes = (SERVER: Application) => {
   log.enter("setupRoutes()", log.brack);
 

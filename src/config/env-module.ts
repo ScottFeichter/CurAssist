@@ -37,7 +37,11 @@ if (environmentVariables.error) {
 }
 
 
-// Array for helper function to ensure required environment variables are defined
+/**
+ * Array of required environment variable names.
+ * Importing this from entry.ts triggers env-module.ts to execute,
+ * which loads the correct .env file and validates all required vars.
+ */
 export const requiredEnvVars = [
   // 'PG_DB_HOST',
   // 'PG_DB_USERNAME',

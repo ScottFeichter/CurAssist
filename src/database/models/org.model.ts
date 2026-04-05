@@ -9,22 +9,29 @@ console.enter();
 
 // #region ====================== TYPES ========================================
 
-interface IScheduleDay {
+/** A single day entry in a weekly schedule. */
+export interface IScheduleDay {
+  /** Day of the week e.g. "Monday" */
   day:       string;
+  /** Opening time in minutes from midnight */
   opens_at:  number;
+  /** Closing time in minutes from midnight */
   closes_at: number;
 }
 
-interface ISchedule {
+/** Weekly schedule containing an array of day entries. */
+export interface ISchedule {
   schedule_days: IScheduleDay[];
 }
 
-interface IPhone {
-  number:       string;
+/** A phone number entry with optional service type label. */
+export interface IPhone {
+  number:        string;
   service_type?: string;
 }
 
-interface IAddress {
+/** A physical address. All fields optional to match SFSG API flexibility. */
+export interface IAddress {
   address_1?:      string;
   address_2?:      string;
   city?:           string;
@@ -32,27 +39,40 @@ interface IAddress {
   postal_code?:    string;
 }
 
-interface INote {
+/** A freeform text note. */
+export interface INote {
   note: string;
 }
 
-interface IService {
+/** A service offered by an org. Embedded directly in the org document. */
+export interface IService {
+  /** SF Service Guide assigned ID — populated after submission. */
   sfId?:                           number;
   name:                            string;
   notes:                           INote[];
   schedule:                        ISchedule;
+  /** If true, service inherits the parent org schedule. */
   shouldInheritScheduleFromParent: boolean;
   eligibilities:                   string[];
   categories:                      string[];
 }
 
-interface IHistoryEntry {
-  action: 'created' | 'edited' | 'moved' | 'submitted';
-  by:     string;
-  at:     Date;
-  detail?: string;
+/** A single entry in the org audit history trail. */
+export interface IHistoryEntry {
+  /** The type of action that occurred. */
+  action:   'created' | 'edited' | 'moved' | 'submitted';
+  /** Who performed the action. Placeholder 'unknown' until auth is added. */
+  by:       string;
+  /** When the action occurred. */
+  at:       Date;
+  /** Optional context e.g. "incomplete → pending" for a move action. */
+  detail?:  string;
 }
 
+/**
+ * The main org document interface.
+ * Mirrors the SF Service Guide API shape with additional CurAssist metadata.
+ */
 export interface IOrg extends Document {
   sfId?:       number;
   name:        string;
@@ -137,6 +157,7 @@ const OrgSchema = new Schema<IOrg>({
 
 // #region ====================== MODEL ========================================
 
+/** The Mongoose model for org documents. Use this to query and write to the orgs collection. */
 export const Org: Model<IOrg> = mongoose.model<IOrg>('Org', OrgSchema);
 
 // #endregion ------------------------------------------------------------------

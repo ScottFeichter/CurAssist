@@ -22,11 +22,19 @@ console.enter();
 log.infor(`NODE_ENV at runtime from server.ts: ${process.env.NODE_ENV}`);
 
 
-// Instantiate the server
+/**
+ * The Express application instance.
+ * Exported so it can be passed into start() from entry.ts.
+ */
 export const SERVER: Application = express();
 
 
-// Function to start the server (called in entry.ts)
+/**
+ * Starts the Express server.
+ * Connects to MongoDB Atlas before binding to the port —
+ * the server will not start if the DB connection fails.
+ * @param SERVER - The Express application instance
+ */
 export const start = async (SERVER: Application) => {
   log.enter("start()", log.brack);
 

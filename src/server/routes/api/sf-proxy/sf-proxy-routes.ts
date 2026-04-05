@@ -6,6 +6,10 @@ console.enter();
 
 // #region ====================== START ========================================
 
+/**
+ * Base URL for the SF Service Guide API.
+ * All proxy requests are forwarded to this base.
+ */
 const SF_BASE = 'https://www.sfserviceguide.org/api';
 
 const sfProxyRouter = Router();
