@@ -1,17 +1,28 @@
+# CurAssist Todo
 
-when creating new address in a service allow for pick from any address in services or org
+## In Progress
 
-5. add time + not working
-1. inherit schedule in service both
+- Test the full submit flow end to end with a real SFSG session
+- Multiple services — currently only services[0] is hydrated and saved
 
-the add markdown note in organization not working
+---
 
-when a file is moved don't have teh ui automatically load the next file in the bucket
+## Bugs
 
-fix the strange thing about the truncation that happens when the ui is zoom 100 for the navbar changing
+- Add time picker not working
+- Inherit schedule in service not working
+- Add markdown note in organization not working
 
-when i rename the organization in a file from spreadsheet (or any file) should the file name also be changed to reflect this?
+---
 
-check if we need all the console.logs in dev tools
+## Deferred
 
-check if we can get better and perhaps more logging for public and content whether in front end dev tools or backend server logs or backend frontend logs...
+- When a file is moved don't auto-load the next file in the bucket
+- Fix truncation at 100% zoom in the navbar
+- When org name is changed update the record name in the file list
+- User authentication — replace 'unknown' in history[].by with real user identity
+- Bucket-level metadata (notes, source spreadsheet name, batch size)
+- File-level soft locking (concurrency Option B)
+- E2E tests (Playwright or Cypress)
+- Unit tests for hydrateTemplate()
+- Integration tests for import-file route (requires mocking SFSG API)

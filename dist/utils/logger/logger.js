@@ -19,24 +19,28 @@ customConsoles_1.extendedConsole.enter();
 events_1.EventEmitter.defaultMaxListeners = 20;
 // Add the custom colors before creating the logger
 winston_1.default.addColors(logger_levels_1.customLevels.colors);
+// In test environment use a silent logger — no file writes, no console noise
+const isTest = process.env.NODE_ENV === 'test';
 // Create the logger
 const logger = winston_1.default.createLogger({
     level: process.env.WINSTON_LOG_LEVEL || 'debug',
     levels: logger_levels_1.customLevels.levels,
     format: winston_1.default.format.combine((0, logger_timestamp_1.customTimestamp)(), winston_1.default.format.errors({ stack: true }), logger_formatters_1.baseLogFormat),
-    transports: [
-        logger_fileTransports_1.errorTransport,
-        logger_fileTransports_1.warniTransport,
-        logger_fileTransports_1.inforTransport,
-        logger_fileTransports_1.httpsTransport,
-        logger_fileTransports_1.debugTransport,
-        logger_fileTransports_1.enterTransport,
-        logger_fileTransports_1.retrnTransport,
-        logger_fileTransports_1.allWinstonLogsTransport,
-        logger_fileTransports_1.allLogsNoAnsiTransport,
-        logger_fileTransports_1.allLogsWithAnsiTransport,
-        logger_consoleTransports_1.consoleTransport
-    ]
+    transports: isTest
+        ? [new winston_1.default.transports.Console({ silent: true })]
+        : [
+            logger_fileTransports_1.errorTransport,
+            logger_fileTransports_1.warniTransport,
+            logger_fileTransports_1.inforTransport,
+            logger_fileTransports_1.httpsTransport,
+            logger_fileTransports_1.debugTransport,
+            logger_fileTransports_1.enterTransport,
+            logger_fileTransports_1.retrnTransport,
+            logger_fileTransports_1.allWinstonLogsTransport,
+            logger_fileTransports_1.allLogsNoAnsiTransport,
+            logger_fileTransports_1.allLogsWithAnsiTransport,
+            logger_consoleTransports_1.consoleTransport
+        ]
 });
 // Set max listeners on the logger instance
 logger.setMaxListeners(20);

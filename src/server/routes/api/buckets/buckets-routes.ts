@@ -102,21 +102,74 @@ bucketsRouter.post('/save', async (req: Request, res: Response, next: NextFuncti
     const org = await Org.findById(id);
     if (!org) return res.status(404).json({ success: false, error: 'Org not found' });
 
-    // Update org fields from collected form data
-    if (fields.organization_name)        org.name = fields.organization_name;
-    if (fields.organization_description) org.notes = [{ note: fields.organization_description }];
-    if (fields.organization_website || fields.organization_email) {
-      // Store as notes for now until schema is extended with these fields
+    // ── Org scalar fields ──────────────────────────────────────────────────────
+    if (fields.organization_name           != null) org.name             = fields.organization_name;
+    if (fields.organization_alternate_name != null) org.alternate_name   = fields.organization_alternate_name;
+    if (fields.organization_website        != null) org.website          = fields.organization_website;
+    if (fields.organization_email          != null) org.email            = fields.organization_email;
+    if (fields.organization_legal_status   != null) org.legal_status     = fields.organization_legal_status;
+    if (fields.organization_description    != null) org.long_description = fields.organization_description;
+    if (fields.organization_internal_notes != null) org.internal_note    = fields.organization_internal_notes;
+
+    // ── Org phones ─────────────────────────────────────────────────────────────
+    if (Array.isArray(fields.organization_phones)) {
+      org.phones = fields.organization_phones
+        .filter((p: any) => p.phone_number)
+        .map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
     }
-    if (fields.service_name && org.services.length) {
-      org.services[0].name = fields.service_name;
+
+    // ── Org addresses ──────────────────────────────────────────────────────────
+    if (Array.isArray(fields.organization_locations)) {
+      org.addresses = fields.organization_locations.map((l: any) => ({
+        address_1:      l.address_1  || '',
+        address_2:      l.address_2  || '',
+        city:           l.city       || '',
+        state_province: l.state      || '',
+        postal_code:    l.zip        || ''
+      }));
     }
-    if (fields.service_description && org.services.length) {
-      org.services[0].notes = [{ note: fields.service_description }];
+
+    // ── Service fields ──────────────────────────────────────────────────────────
+    if (org.services.length === 0) org.services.push({ name: org.name } as any);
+    const svc = org.services[0] as any;
+
+    if (fields.service_name                    != null) svc.name                    = fields.service_name;
+    if (fields.service_alternate_name          != null) svc.alternate_name          = fields.service_alternate_name;
+    if (fields.service_email                   != null) svc.email                   = fields.service_email;
+    if (fields.service_website                 != null) svc.url                     = fields.service_website;
+    if (fields.service_cost                    != null) svc.fee                     = fields.service_cost;
+    if (fields.service_wait_time               != null) svc.wait_time               = fields.service_wait_time;
+    if (fields.service_description             != null) svc.long_description        = fields.service_description;
+    if (fields.service_short_description       != null) svc.short_description       = fields.service_short_description;
+    if (fields.service_application_process     != null) svc.application_process     = fields.service_application_process;
+    if (fields.service_required_documents      != null) svc.required_documents      = fields.service_required_documents;
+    if (fields.service_interpretation_services != null) svc.interpretation_services = fields.service_interpretation_services;
+    if (fields.service_clinician_actions       != null) svc.clinician_actions       = fields.service_clinician_actions;
+    if (fields.service_internal_notes          != null) svc.internal_note           = fields.service_internal_notes;
+
+    if (Array.isArray(fields.service_top_categories))    svc.categories    = [...(fields.service_top_categories || []), ...(fields.service_sub_categories || [])];
+    if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = [...(fields.service_top_eligibilities || []), ...(fields.service_sub_eligibilities || [])];
+
+    if (Array.isArray(fields.service_phones)) {
+      svc.phones = fields.service_phones
+        .filter((p: any) => p.phone_number)
+        .map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
+    }
+
+    if (Array.isArray(fields.service_locations)) {
+      svc.addresses = fields.service_locations.map((l: any) => ({
+        address_1:      l.address_1 || '',
+        address_2:      l.address_2 || '',
+        city:           l.city      || '',
+        state_province: l.state     || '',
+        postal_code:    l.zip       || ''
+      }));
     }
 
     org.history.push({ action: 'edited', by: 'unknown', at: new Date() });
     org.markModified('services');
+    org.markModified('phones');
+    org.markModified('addresses');
     org.markModified('history');
     await org.save();
 
@@ -157,7 +210,8 @@ bucketsRouter.post('/create-file', async (req: Request, res: Response, next: Nex
   log.enter('POST /api/buckets/create-file', log.brack);
   try {
     const { bucket, subdir, filename, fromId } = req.body;
-    if (!bucket || !subdir || !filename) return res.status(400).json({ success: false, error: 'bucket, subdir, and filename are required' });
+    if (!bucket || !subdir) return res.status(400).json({ success: false, error: 'bucket and subdir are required' });
+    if (!fromId && !filename) return res.status(400).json({ success: false, error: 'filename is required when not copying' });
 
     let newOrg;
     if (fromId) {

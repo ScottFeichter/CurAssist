@@ -1,6 +1,6 @@
 # CurAssist - Curation Assistant
 
-A browser-based application for reviewing and curating HTML form files for the SF Service Guide.
+A browser-based application for reviewing and curating org records for the SF Service Guide. Records are stored in MongoDB Atlas and hydrated into the HTML template at request time.
 
 **Production URL**: https://sfsgcurassist.com
 
@@ -11,23 +11,35 @@ CurAssist/
   src/
     entry.ts              # Server entry point
     server/               # Express server, routes, helpers
+    database/             # MongoDB models and Atlas connection
+      atlas.ts            # Mongoose connect/disconnect
+      models/
+        org.model.ts      # Org document schema (with embedded services + history)
+        bucket.model.ts   # Bucket document schema
     public/
       frontend/           # Frontend static files (index.html, app.js, Scripts/)
-        Scripts/          # submit/transform logic (submitNewOrg.js, submitService.js, etc.)
+        Scripts/          # submit/transform/collector logic
         requestSamples/   # Captured SF API request/response samples
+    tests/
+      unit/               # Unit tests (sanitizers, transform logic)
+      integration/        # Integration tests (API routes via supertest + mongodb-memory-server)
+      _helpers/           # testConfig, testData, testUtils
   content/
-    Buckets/              # HTML files organized by bucket/subdirectory
-    Templates/            # Template files and build scripts
+    Templates/            # Combined HTML template and build scripts
+  scripts/
+    typedoc-runner.js     # TypeDoc wrapper with formatted output
   logs/                   # Winston rotating log files (gitignored)
   dist/                   # Compiled output (gitignored)
   .env/                   # Environment files (gitignored)
     .env.development
     .env.production
-    .env.testing
     .env.example
   .github/
     workflows/
       deploy.yml          # CI/CD — auto-deploys to EC2 on push to main
+  ecosystem.config.js     # PM2 config — sets NODE_ENV=production
+  typedoc.json            # TypeDoc config (entry point: src/entry.ts, output: docs/typedocs/)
+  jest.config.json        # Jest config
   package.json
   docs/
     deployment-DB-noS3.md # Current MongoDB-based deployment notes
@@ -36,7 +48,6 @@ CurAssist/
     curassistDeployFirst.md # Full deployment log and infrastructure notes
     todo.md               # Todo list
     .sequelizerc          # Sequelize config (historical reference)
-    typedoc.json          # TypeDoc config (entry point: src/entry.ts, output: docs/typedocs/)
 ```
 
 ## Environment Variables
@@ -100,36 +111,44 @@ Then open browser to: `http://localhost:5555`
 
 | Script | Description |
 |--------|-------------|
-| `npm run build` | Builds blank combined template, test values template, compiles TypeScript, copies views/public |
+| `npm run build` | Builds combined template, compiles TypeScript, copies views/public, generates TypeDoc |
 | `npm run dev` | Runs full build then starts dev runner |
 | `npm start` | Starts production server from compiled output |
 | `npm run watch` | Watches TypeScript files and recompiles on change |
-| `npm run watch:template` | Watches `content/Templates` source files and rebuilds `orgServTemplate-combinedTestValues.html` on change. Run in a separate terminal while editing template source files |
+| `npm run watch:template` | Watches `content/Templates` source files and rebuilds combined template on change |
 | `npm run serve` | Runs nodemon on compiled server output |
-| `npm run docs` | Generates TypeDoc documentation to `docs/generated/` |
+| `npm run docs` | Generates TypeDoc documentation to `docs/typedocs/` |
+| `npm test` | Runs all tests |
+| `npm run test:unit` | Runs unit tests only |
+| `npm run test:integration` | Runs integration tests only |
+| `npm run test:coverage` | Runs all tests with coverage report |
 | `npm run clean` | Removes `dist/` directory |
 
 ## Usage
 
 1. Select a bucket from the dropdown (e.g., "DCYF 10.01.25")
-2. Select a subdirectory ("Incomplete", "Pending", "Complete")
-3. Review HTML forms in the content area
+2. Select a subdirectory ("incomplete", "pending", "complete")
+3. Review the org form in the content area — data is loaded from MongoDB Atlas
 4. Adjust input values as needed
-5. Use navigation buttons to move between files
-6. Save changes with "Save Changes" button
-7. Move files to different subdirectories using "Move To" dropdown
-8. Submit completed files to SF Service Guide with "Submit" button
+5. Save changes with "Save Changes" button — saves to Atlas record
+6. Move files to different subdirectories using "Move File" button
+7. Submit completed files to SF Service Guide with "Submit" button — writes sfId back to Atlas and moves to complete
 
-## File Organization
+## Data Architecture
+
+All org records are stored in MongoDB Atlas. The HTML template (`orgServTemplate-combined.html`) is never stored pre-populated — it is hydrated with data from the DB at request time.
 
 ```
-content/
-  Buckets/
-    [Bucket Name]/
-      incomplete/    # Files to review
-      pending/       # Files in progress
-      complete/      # Reviewed and submitted files
+Atlas collections:
+  orgs      — org documents with embedded services, history audit trail
+  buckets   — bucket metadata (name, createdBy, timestamps)
 ```
+
+Buckets and subdirectories are UI concepts backed by fields on the org document:
+- `bucket` — the batch name (e.g. "DCYF 10.01.25")
+- `status` — `incomplete` | `pending` | `complete` (replaces subdirectory folders)
+
+Every save, move, and submit appends an entry to `org.history` for a full audit trail.
 
 ## API Endpoints
 
@@ -150,23 +169,43 @@ Only available when `NODE_ENV=development`:
 
 ### Buckets (internal)
 
-- `GET /api/buckets` — List all buckets
-- `GET /api/buckets/:bucket/subdirs` — List subdirectories in a bucket
-- `GET /api/buckets/:bucket/:subdir/files` — List HTML files in a subdirectory
-- `GET /api/buckets/:bucket/:subdir/:filename` — Get file content
-- `POST /api/buckets/save` — Save file changes
-- `POST /api/buckets/move` — Move file to different subdirectory
-- `POST /api/buckets/create-file` — Create new file from template or copy of existing file
+- `GET /api/buckets` — List all bucket names
+- `GET /api/buckets/:bucket/subdirs` — Returns fixed `['incomplete','pending','complete']`
+- `GET /api/buckets/:bucket/:subdir/files` — List orgs as `{_id, name}` objects
+- `GET /api/buckets/:bucket/:subdir/:id` — Get hydrated template HTML for an org
+- `POST /api/buckets/save` — Save org field values `{id, fields}` to Atlas
+- `POST /api/buckets/move` — Move org to different bucket/subdirectory
+- `POST /api/buckets/submit` — Write sfId back to Atlas, set status to complete
+- `POST /api/buckets/create-file` — Create blank org or copy existing one
 - `POST /api/buckets/import-file` — Direct import from SF org ID
 - `POST /api/buckets/create` — Create new bucket from spreadsheet upload
-- `DELETE /api/buckets/delete` — Delete a file
-- `DELETE /api/buckets/:bucket` — Delete an entire bucket
+- `DELETE /api/buckets/delete` — Delete a single org
+- `DELETE /api/buckets/:bucket` — Delete entire bucket and all its orgs
 
 ### SF Service Guide Proxy
 
 All SF API calls are proxied through `/api/sf/*` to avoid CORS issues. The server forwards requests to `https://www.sfserviceguide.org/api/*`.
 
 - `POST /api/sf/*` — Proxy any POST to the SF Service Guide API
+
+## Testing
+
+Tests use Jest with `mongodb-memory-server` (in-memory MongoDB) and `supertest` (HTTP testing). Tests never touch Atlas or the running dev server.
+
+```bash
+npm test                  # run all tests
+npm run test:unit         # unit tests only (sanitizers, transform logic)
+npm run test:integration  # integration tests only (API routes)
+npm run test:coverage     # all tests with coverage report
+```
+
+**Test environment behavior:**
+- `NODE_ENV=test` is set automatically by all test scripts
+- Winston uses a silent transport — no log files written during tests
+- Each integration test gets a fresh in-memory DB (cleared between tests)
+- CSRF tokens are fetched via a real `GET /api/csrf/restore` call using a cookie-persisting agent
+
+**First run on a new machine:** `mongodb-memory-server` downloads a MongoDB binary (~100MB) on first use. Subsequent runs use the cached binary.
 
 ## Deployment
 

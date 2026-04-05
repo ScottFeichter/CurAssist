@@ -151,6 +151,8 @@ export async function generateOrgDocuments(
         shouldInheritScheduleFromParent: true,
         eligibilities,
         categories,
+        addresses:                       [],
+        phones:                          [],
       }],
       history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `imported from spreadsheet` }],
     };
@@ -173,44 +175,105 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
 
   let html = await fs.readFile(TEMPLATE_PATH, 'utf-8');
 
-  // Inject org _id so the frontend can reference it on save
+  // Stamp org _id on body so frontend can reference it on save
   html = html.replace('<body', `<body data-org-id="${org._id}"`);
 
-  // Basic org fields
-  html = injectInput(html, 'organization_name', org.name || '');
-  html = injectInput(html, 'organization_alternate_name', '');
-  html = injectInput(html, 'organization_website', '');
-  html = injectInput(html, 'organization_email', '');
+  // ── Org scalar fields ──────────────────────────────────────────────────────
+  html = injectInput(html,    'organization_name',           org.name             || '');
+  html = injectInput(html,    'organization_alternate_name', org.alternate_name   || '');
+  html = injectInput(html,    'organization_website',        org.website          || '');
+  html = injectInput(html,    'organization_email',          org.email            || '');
+  html = injectInput(html,    'organization_legal_status',   org.legal_status     || '');
+  html = injectTextarea(html, 'organization_description',    org.long_description || '');
+  html = injectTextarea(html, 'organization_internal_notes', org.internal_note    || '');
 
-  // Notes
-  const orgNote = org.notes?.[0]?.note || '';
-  html = injectTextarea(html, 'organization_description', orgNote);
-
-  // Address
-  if (org.addresses?.length) {
-    const a = org.addresses[0];
-    const locLabel = a.address_1 ? `<strong>${a.address_1}</strong>` : '';
-    const locHtml = `<div>${locLabel}${locLabel ? '<br>' : ''}${a.address_1 || ''}<br>${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</div>`;
-    html = injectLocationDiv(html, 'organization_locations', locHtml);
+  // ── Org markdown notes ─────────────────────────────────────────────────────
+  if (org.notes?.length) {
+    const notesHtml = org.notes.map(n => `<li>${n.note}</li>`).join('');
+    html = html.replace(
+      /(<ul[^>]*id="organization_markdown_notes"[^>]*>)([\s\S]*?)(<\/ul>)/,
+      `$1${notesHtml}$3`
+    );
   }
 
-  // Phones
+  // ── Org addresses ──────────────────────────────────────────────────────────
+  if (org.addresses?.length) {
+    const locHtml = org.addresses.map(a => {
+      const label = a.address_1 ? `<strong>${a.address_1}</strong><br>` : '';
+      return `<li data-address1="${a.address_1 || ''}" data-address2="${a.address_2 || ''}" data-city="${a.city || ''}" data-state="${a.state_province || ''}" data-zip="${a.postal_code || ''}">${label}${a.address_1 || ''}<br>${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</li>`;
+    }).join('');
+    html = html.replace(
+      /(<ul[^>]*id="organization_locations"[^>]*>)([\s\S]*?)(<\/ul>)/,
+      `$1${locHtml}$3`
+    );
+  }
+
+  // ── Org phones ─────────────────────────────────────────────────────────────
   if (org.phones?.length) {
-    const p = org.phones[0];
-    const phoneHtml = `<li><strong>${p.service_type || ''}</strong> ${p.number}</li>`;
+    const phoneHtml = org.phones.map(p =>
+      `<li data-number="${p.number}" data-type="${p.service_type || ''}"><strong>${p.service_type || ''}</strong> ${p.number}</li>`
+    ).join('');
     html = injectPhoneList(html, 'organization_phones', phoneHtml);
   }
 
-  // Services
+  // ── Services ───────────────────────────────────────────────────────────────
   if (org.services?.length) {
     const svc = org.services[0];
-    html = injectInput(html, 'service_name', svc.name || '');
-    html = injectInput(html, 'service_cost', '');
-    html = injectInput(html, 'service_wait_time', '');
-    html = injectInput(html, 'service_website', '');
-    html = injectInput(html, 'service_email', '');
-    const svcNote = svc.notes?.[0]?.note || '';
-    html = injectTextarea(html, 'service_description', svcNote);
+
+    html = injectInput(html,    'service_name',                    svc.name                     || '');
+    html = injectInput(html,    'service_alternate_name',          svc.alternate_name            || '');
+    html = injectInput(html,    'service_email',                   svc.email                    || '');
+    html = injectInput(html,    'service_website',                 svc.url                      || '');
+    html = injectInput(html,    'service_cost',                    svc.fee                      || '');
+    html = injectInput(html,    'service_wait_time',               svc.wait_time                || '');
+    html = injectTextarea(html, 'service_description',             svc.long_description         || '');
+    html = injectTextarea(html, 'service_short_description',       svc.short_description        || '');
+    html = injectTextarea(html, 'service_application_process',     svc.application_process      || '');
+    html = injectTextarea(html, 'service_required_documents',      svc.required_documents       || '');
+    html = injectTextarea(html, 'service_interpretation_services', svc.interpretation_services  || '');
+    html = injectTextarea(html, 'service_clinician_actions',       svc.clinician_actions        || '');
+    html = injectTextarea(html, 'service_internal_notes',          svc.internal_note            || '');
+
+    // Service addresses
+    if (svc.addresses?.length) {
+      const locHtml = svc.addresses.map(a =>
+        `<li data-address1="${a.address_1 || ''}" data-city="${a.city || ''}" data-state="${a.state_province || ''}" data-zip="${a.postal_code || ''}">${a.address_1 || ''}, ${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</li>`
+      ).join('');
+      html = html.replace(
+        /(<ul[^>]*id="service_locations"[^>]*>)([\s\S]*?)(<\/ul>)/,
+        `$1${locHtml}$3`
+      );
+    }
+
+    // Service phones
+    if (svc.phones?.length) {
+      const phoneHtml = svc.phones.map(p =>
+        `<li data-number="${p.number}" data-type="${p.service_type || ''}"><strong>${p.service_type || ''}</strong> ${p.number}</li>`
+      ).join('');
+      html = injectPhoneList(html, 'service_phones', phoneHtml);
+    }
+
+    // Categories — inject as pills
+    if (svc.categories?.length) {
+      const pillsHtml = svc.categories.map(c =>
+        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+      ).join('');
+      html = html.replace(
+        /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+      );
+    }
+
+    // Eligibilities — inject as pills
+    if (svc.eligibilities?.length) {
+      const pillsHtml = svc.eligibilities.map(e =>
+        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+      ).join('');
+      html = html.replace(
+        /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+      );
+    }
   }
 
   log.retrn('hydrateTemplate()', log.kcarb);

@@ -49,12 +49,26 @@ export interface IService {
   /** SF Service Guide assigned ID — populated after submission. */
   sfId?:                           number;
   name:                            string;
+  alternate_name?:                 string;
+  email?:                          string;
+  url?:                            string;
+  fee?:                            string;
+  wait_time?:                      string;
+  application_process?:            string;
+  required_documents?:             string;
+  interpretation_services?:        string;
+  internal_note?:                  string;
+  clinician_actions?:              string;
+  short_description?:              string;
+  long_description?:               string;
   notes:                           INote[];
   schedule:                        ISchedule;
   /** If true, service inherits the parent org schedule. */
   shouldInheritScheduleFromParent: boolean;
   eligibilities:                   string[];
   categories:                      string[];
+  addresses:                       IAddress[];
+  phones:                          IPhone[];
 }
 
 /** A single entry in the org audit history trail. */
@@ -74,19 +88,25 @@ export interface IHistoryEntry {
  * Mirrors the SF Service Guide API shape with additional CurAssist metadata.
  */
 export interface IOrg extends Document {
-  sfId?:       number;
-  name:        string;
-  addresses:   IAddress[];
-  notes:       INote[];
-  schedule:    ISchedule;
-  phones:      IPhone[];
-  services:    IService[];
-  bucket:      string;
-  status:      'incomplete' | 'pending' | 'complete';
-  submittedAt?: Date;
-  history:     IHistoryEntry[];
-  createdAt:   Date;
-  updatedAt:   Date;
+  sfId?:           number;
+  name:            string;
+  alternate_name?: string;
+  email?:          string;
+  website?:        string;
+  long_description?: string;
+  legal_status?:   string;
+  internal_note?:  string;
+  addresses:       IAddress[];
+  notes:           INote[];
+  schedule:        ISchedule;
+  phones:          IPhone[];
+  services:        IService[];
+  bucket:          string;
+  status:          'incomplete' | 'pending' | 'complete';
+  submittedAt?:    Date;
+  history:         IHistoryEntry[];
+  createdAt:       Date;
+  updatedAt:       Date;
 }
 
 // #endregion ------------------------------------------------------------------
@@ -124,11 +144,25 @@ const NoteSchema = new Schema<INote>({
 const ServiceSchema = new Schema<IService>({
   sfId:                            { type: Number },
   name:                            { type: String, required: true },
+  alternate_name:                  { type: String },
+  email:                           { type: String },
+  url:                             { type: String },
+  fee:                             { type: String },
+  wait_time:                       { type: String },
+  application_process:             { type: String },
+  required_documents:              { type: String },
+  interpretation_services:         { type: String },
+  internal_note:                   { type: String },
+  clinician_actions:               { type: String },
+  short_description:               { type: String },
+  long_description:                { type: String },
   notes:                           { type: [NoteSchema], default: [] },
   schedule:                        { type: ScheduleSchema, default: () => ({ schedule_days: [] }) },
   shouldInheritScheduleFromParent: { type: Boolean, default: true },
   eligibilities:                   { type: [String], default: [] },
   categories:                      { type: [String], default: [] },
+  addresses:                       { type: [AddressSchema], default: [] },
+  phones:                          { type: [PhoneSchema], default: [] },
 }, { _id: false });
 
 const HistoryEntrySchema = new Schema<IHistoryEntry>({
@@ -139,17 +173,23 @@ const HistoryEntrySchema = new Schema<IHistoryEntry>({
 }, { _id: false });
 
 const OrgSchema = new Schema<IOrg>({
-  sfId:        { type: Number },
-  name:        { type: String, required: true },
-  addresses:   { type: [AddressSchema],  default: [] },
-  notes:       { type: [NoteSchema],     default: [] },
-  schedule:    { type: ScheduleSchema,   default: () => ({ schedule_days: [] }) },
-  phones:      { type: [PhoneSchema],    default: [] },
-  services:    { type: [ServiceSchema],  default: [] },
-  bucket:      { type: String, required: true },
-  status:      { type: String, enum: ['incomplete', 'pending', 'complete'], default: 'incomplete' },
-  submittedAt: { type: Date },
-  history:     { type: [HistoryEntrySchema], default: [] },
+  sfId:             { type: Number },
+  name:             { type: String, required: true },
+  alternate_name:   { type: String },
+  email:            { type: String },
+  website:          { type: String },
+  long_description: { type: String },
+  legal_status:     { type: String },
+  internal_note:    { type: String },
+  addresses:        { type: [AddressSchema],  default: [] },
+  notes:            { type: [NoteSchema],     default: [] },
+  schedule:         { type: ScheduleSchema,   default: () => ({ schedule_days: [] }) },
+  phones:           { type: [PhoneSchema],    default: [] },
+  services:         { type: [ServiceSchema],  default: [] },
+  bucket:           { type: String, required: true },
+  status:           { type: String, enum: ['incomplete', 'pending', 'complete'], default: 'incomplete' },
+  submittedAt:      { type: Date },
+  history:          { type: [HistoryEntrySchema], default: [] },
 }, { timestamps: true });
 
 // #endregion ------------------------------------------------------------------
