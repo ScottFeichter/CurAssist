@@ -164,9 +164,19 @@ bucketsRouter.post('/create-file', async (req: Request, res: Response, next: Nex
       const source = await Org.findById(fromId).lean();
       if (!source) return res.status(404).json({ success: false, error: 'Source org not found' });
       const { _id, createdAt, updatedAt, ...rest } = source as any;
+
+      // Use user-provided name, or auto-generate "Copy of X" with uniqueness check
+      let copyName = filename?.trim();
+      if (!copyName) {
+        const baseName = source.name || 'New Service';
+        const copyBase = `Copy of ${baseName}`;
+        const existingCount = await Org.countDocuments({ bucket, name: new RegExp(`^Copy of ${baseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`) });
+        copyName = existingCount === 0 ? copyBase : `${copyBase} ${existingCount + 1}`;
+      }
+
       newOrg = await Org.create({
         ...rest,
-        name: filename,
+        name: copyName,
         bucket,
         status: subdir,
         history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `copied from ${source.name}` }]

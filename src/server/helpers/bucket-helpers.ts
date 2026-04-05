@@ -137,7 +137,7 @@ export async function generateOrgDocuments(
     const eligibilities = sanitizeServiceEligibilitiesList(row[serviceFieldMap.service_top_eligibilities] || '');
 
     const orgDoc: Partial<IOrg> = {
-      name:      name || `Unnamed Org ${i + 1}`,
+      name:      name || `New Service ${i + 1}`,
       bucket:    bucketName,
       status:    'incomplete',
       addresses: address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [],
