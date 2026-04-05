@@ -218,60 +218,90 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
 
   // ── Services ───────────────────────────────────────────────────────────────
   if (org.services?.length) {
-    const svc = org.services[0];
 
-    html = injectInput(html,    'service_name',                    svc.name                     || '');
-    html = injectInput(html,    'service_alternate_name',          svc.alternate_name            || '');
-    html = injectInput(html,    'service_email',                   svc.email                    || '');
-    html = injectInput(html,    'service_website',                 svc.url                      || '');
-    html = injectInput(html,    'service_cost',                    svc.fee                      || '');
-    html = injectInput(html,    'service_wait_time',               svc.wait_time                || '');
-    html = injectTextarea(html, 'service_description',             svc.long_description         || '');
-    html = injectTextarea(html, 'service_short_description',       svc.short_description        || '');
-    html = injectTextarea(html, 'service_application_process',     svc.application_process      || '');
-    html = injectTextarea(html, 'service_required_documents',      svc.required_documents       || '');
-    html = injectTextarea(html, 'service_interpretation_services', svc.interpretation_services  || '');
-    html = injectTextarea(html, 'service_clinician_actions',       svc.clinician_actions        || '');
-    html = injectTextarea(html, 'service_internal_notes',          svc.internal_note            || '');
+    // Extract the service template block from the hidden serviceDivOrgTemplate
+    const templateMatch = html.match(/<div[^>]*id="serviceDivOrganization"[\s\S]*?(?=<\/div>\s*<\/div>\s*<!---={10,}\s*EDIT SERVICES ENDS)/);
+    const serviceTemplateHtml = templateMatch ? templateMatch[0] : null;
 
-    // Service addresses
-    if (svc.addresses?.length) {
-      const locHtml = svc.addresses.map(a =>
-        `<li data-address1="${a.address_1 || ''}" data-city="${a.city || ''}" data-state="${a.state_province || ''}" data-zip="${a.postal_code || ''}">${a.address_1 || ''}, ${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</li>`
-      ).join('');
+    if (serviceTemplateHtml) {
+      const populatedServices = org.services.map((svc, i) => {
+        let s = serviceTemplateHtml;
+
+        // Give each service a unique id
+        s = s.replace('id="serviceDivOrganization"', `id="service-org-${i}"`);
+
+        s = injectInput(s,    'service_name',                    svc.name                     || '');
+        s = injectInput(s,    'service_alternate_name',          svc.alternate_name            || '');
+        s = injectInput(s,    'service_email',                   svc.email                    || '');
+        s = injectInput(s,    'service_website',                 svc.url                      || '');
+        s = injectInput(s,    'service_cost',                    svc.fee                      || '');
+        s = injectInput(s,    'service_wait_time',               svc.wait_time                || '');
+        s = injectTextarea(s, 'service_description',             svc.long_description         || '');
+        s = injectTextarea(s, 'service_short_description',       svc.short_description        || '');
+        s = injectTextarea(s, 'service_application_process',     svc.application_process      || '');
+        s = injectTextarea(s, 'service_required_documents',      svc.required_documents       || '');
+        s = injectTextarea(s, 'service_interpretation_services', svc.interpretation_services  || '');
+        s = injectTextarea(s, 'service_clinician_actions',       svc.clinician_actions        || '');
+        s = injectTextarea(s, 'service_internal_notes',          svc.internal_note            || '');
+
+        // Service phones
+        if (svc.phones?.length) {
+          const phoneHtml = svc.phones.map((p: any) =>
+            `<li data-number="${p.number}" data-type="${p.service_type || ''}"><strong>${p.service_type || ''}</strong> ${p.number}</li>`
+          ).join('');
+          s = injectPhoneList(s, 'service_phones', phoneHtml);
+        }
+
+        // Service addresses
+        if (svc.addresses?.length) {
+          const locHtml = svc.addresses.map((a: any) =>
+            `<li data-address1="${a.address_1 || ''}" data-city="${a.city || ''}" data-state="${a.state_province || ''}" data-zip="${a.postal_code || ''}">${a.address_1 || ''}, ${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</li>`
+          ).join('');
+          s = s.replace(
+            /(<ul[^>]*id="service_locations"[^>]*>)([\s\S]*?)(<\/ul>)/,
+            `$1${locHtml}$3`
+          );
+        }
+
+        // Categories as pills
+        if (svc.categories?.length) {
+          const pillsHtml = svc.categories.map((c: any) =>
+            `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+          ).join('');
+          s = s.replace(
+            /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+            `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+          );
+        }
+
+        // Eligibilities as pills
+        if (svc.eligibilities?.length) {
+          const pillsHtml = svc.eligibilities.map((e: any) =>
+            `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+          ).join('');
+          s = s.replace(
+            /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+            `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+          );
+        }
+
+        return s;
+      }).join('\n');
+
+      // Inject all populated services into orgServicesDiv
       html = html.replace(
-        /(<ul[^>]*id="service_locations"[^>]*>)([\s\S]*?)(<\/ul>)/,
-        `$1${locHtml}$3`
+        '<div class="edit--orgServices" id="orgServicesDiv"></div>',
+        `<div class="edit--orgServices" id="orgServicesDiv">${populatedServices}</div>`
       );
-    }
 
-    // Service phones
-    if (svc.phones?.length) {
-      const phoneHtml = svc.phones.map(p =>
-        `<li data-number="${p.number}" data-type="${p.service_type || ''}"><strong>${p.service_type || ''}</strong> ${p.number}</li>`
-      ).join('');
-      html = injectPhoneList(html, 'service_phones', phoneHtml);
-    }
+      // Populate sidebar service links
+      const navLis = org.services.map((svc, i) =>
+        `<li class="app-components-edit-EditSidebar-module__listItem--HBckV" data-service-id="service-org-${i}"><a href="#service-org-${i}" onclick="event.preventDefault(); var t=document.getElementById('service-org-${i}'); if(t) t.scrollIntoView({behavior:'smooth'});">${svc.name || 'Service ' + (i + 1)}</a></li>`
+      ).join('\n');
 
-    // Categories — inject as pills
-    if (svc.categories?.length) {
-      const pillsHtml = svc.categories.map(c =>
-        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
-      ).join('');
       html = html.replace(
-        /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-      );
-    }
-
-    // Eligibilities — inject as pills
-    if (svc.eligibilities?.length) {
-      const pillsHtml = svc.eligibilities.map(e =>
-        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
-      ).join('');
-      html = html.replace(
-        /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        /(<ul[^>]*id="servicesList"[^>]*>)\s*(<\/ul>)/,
+        `$1\n${navLis}\n$2`
       );
     }
   }

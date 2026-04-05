@@ -47,6 +47,7 @@ CurAssist/
     db2bOrNot2b.md        # Database migration decision log
     curassistDeployFirst.md # Full deployment log and infrastructure notes
     todo.md               # Todo list
+    tests.md              # Test coverage documentation
     .sequelizerc          # Sequelize config (historical reference)
 ```
 
@@ -166,6 +167,7 @@ Only available when `NODE_ENV=development`:
 - `GET /docs/deployment-nodb` — Deployment guide (S3, no DB, historical)
 - `GET /docs/deploy-log` — Full deployment log and infrastructure notes
 - `GET /docs/buckets-map` — Spreadsheet field maps
+- `GET /docs/tests` — Test coverage documentation
 
 ### Buckets (internal)
 
@@ -178,7 +180,8 @@ Only available when `NODE_ENV=development`:
 - `POST /api/buckets/submit` — Write sfId back to Atlas, set status to complete
 - `POST /api/buckets/create-file` — Create blank org or copy existing one
 - `POST /api/buckets/import-file` — Direct import from SF org ID
-- `POST /api/buckets/create` — Create new bucket from spreadsheet upload
+- `POST /api/buckets/create-bucket-empty` — Create a named empty bucket
+- `POST /api/buckets/create-bucket-spreadsheet` — Create new bucket from spreadsheet upload
 - `DELETE /api/buckets/delete` — Delete a single org
 - `DELETE /api/buckets/:bucket` — Delete entire bucket and all its orgs
 

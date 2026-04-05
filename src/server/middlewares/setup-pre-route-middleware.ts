@@ -42,7 +42,7 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
 
     // Long-running routes skip timeout; all others get 5s
     SERVER.use((req, res, next) => {
-      const noTimeoutRoutes = ['/api/buckets/create', '/api/buckets/import'];
+      const noTimeoutRoutes = ['/api/buckets/create-bucket-spreadsheet', '/api/buckets/import'];
       if (noTimeoutRoutes.some(r => req.path.startsWith(r))) return next();
       timeout('5s')(req, res, next);
     });

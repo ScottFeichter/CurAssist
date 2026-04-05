@@ -500,12 +500,21 @@ async function reloadSubdirNoLoad() {
  */
 function createBucket() {
   selectedFile = null;
+  document.getElementById('createBucketName').value = '';
+  document.getElementById('createBucketEmpty').checked = false;
+  document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   document.getElementById('uploadText').textContent = 'Click to select file or drag and drop';
   document.getElementById('createBucketBtn').disabled = true;
   document.getElementById('progressContainer').style.display = 'none';
   document.getElementById('progressBar').style.width = '0%';
   document.getElementById('progressBar').textContent = '0%';
   document.getElementById('createBucketModal').style.display = 'block';
+}
+
+function toggleCreateBucketEmpty() {
+  const isEmpty = document.getElementById('createBucketEmpty').checked;
+  document.getElementById('createBucketSpreadsheetSection').style.display = isEmpty ? 'none' : 'block';
+  document.getElementById('createBucketBtn').disabled = !isEmpty && !selectedFile;
 }
 
 /**
@@ -517,7 +526,8 @@ function handleFileSelect(event) {
   if (file) {
     selectedFile = file;
     document.getElementById('uploadText').textContent = `Selected: ${file.name}`;
-    document.getElementById('createBucketBtn').disabled = false;
+    const isEmpty = document.getElementById('createBucketEmpty').checked;
+    if (!isEmpty) document.getElementById('createBucketBtn').disabled = false;
   }
 }
 
@@ -552,10 +562,34 @@ if (uploadArea) {
  * @returns {Promise<void>}
  */
 async function processCreateBucket() {
-  if (!selectedFile) return;
+  const bucketName = document.getElementById('createBucketName').value.trim();
+  const isEmpty    = document.getElementById('createBucketEmpty').checked;
 
-  const bucketName = prompt('Enter bucket name:');
-  if (!bucketName) return;
+  if (!bucketName) { alert('Please enter a bucket name'); return; }
+
+  if (isEmpty) {
+    try {
+      const response = await fetch(`${API_BASE}/buckets/create-bucket-empty`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+        credentials: 'include',
+        body: JSON.stringify({ bucketName })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        alert(`Bucket "${bucketName}" created successfully`);
+        document.getElementById('createBucketModal').style.display = 'none';
+        init();
+      } else {
+        alert(data.error || 'Failed to create bucket');
+      }
+    } catch (error) {
+      alert('Error creating bucket: ' + error.message);
+    }
+    return;
+  }
+
+  if (!selectedFile) return;
 
   const formData = new FormData();
   formData.append('spreadsheet', selectedFile);
@@ -565,15 +599,12 @@ async function processCreateBucket() {
   document.getElementById('progressContainer').style.display = 'block';
 
   try {
-    const response = await fetch(`${API_BASE}/buckets/create`, {
+    const response = await fetch(`${API_BASE}/buckets/create-bucket-spreadsheet`, {
       method: 'POST',
-      headers: {
-        'XSRF-Token': getCsrfToken()
-      },
+      headers: { 'XSRF-Token': getCsrfToken() },
       credentials: 'include',
       body: formData
     });
-
     if (response.ok) {
       const data = await response.json();
       document.getElementById('progressBar').style.width = '100%';
@@ -597,6 +628,9 @@ async function processCreateBucket() {
  */
 function cancelCreateBucket() {
   document.getElementById('createBucketModal').style.display = 'none';
+  document.getElementById('createBucketName').value = '';
+  document.getElementById('createBucketEmpty').checked = false;
+  document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   selectedFile = null;
 }
 
@@ -799,10 +833,108 @@ function cancelCreateFile() {
 }
 
 /**
+ * Opens the Import Bucket modal.
+ */
+function importMultipleFiles() {
+  document.getElementById('importBucketName').value = '';
+  document.getElementById('importBucketRangeStart').value = '';
+  document.getElementById('importBucketRangeEnd').value = '';
+  document.getElementById('importBucketSeries').value = '';
+  document.getElementById('importBucketUseRange').checked = false;
+  document.getElementById('importBucketUseSeries').checked = false;
+  document.getElementById('importBucketError').textContent = '';
+  document.getElementById('importBucketProgress').style.display = 'none';
+  document.getElementById('importBucketModal').style.display = 'block';
+}
+
+/**
+ * Collects org IDs from range and/or series, creates a bucket, and imports each org.
+ */
+async function confirmImportBucket() {
+  const bucketName  = document.getElementById('importBucketName').value.trim();
+  const useRange    = document.getElementById('importBucketUseRange').checked;
+  const useSeries   = document.getElementById('importBucketUseSeries').checked;
+  const rangeStart  = parseInt(document.getElementById('importBucketRangeStart').value);
+  const rangeEnd    = parseInt(document.getElementById('importBucketRangeEnd').value);
+  const seriesRaw   = document.getElementById('importBucketSeries').value;
+  const errEl       = document.getElementById('importBucketError');
+  const progressEl  = document.getElementById('importBucketProgress');
+
+  errEl.textContent = '';
+
+  if (!bucketName)              { errEl.textContent = 'Bucket name is required.'; return; }
+  if (!useRange && !useSeries)  { errEl.textContent = 'Select at least one of Range or Series.'; return; }
+  if (useRange && (isNaN(rangeStart) || isNaN(rangeEnd))) { errEl.textContent = 'Range requires a valid start and end ID.'; return; }
+  if (useRange && rangeStart > rangeEnd) { errEl.textContent = 'Range start must be less than or equal to end.'; return; }
+
+  // Build deduplicated list of org IDs
+  const ids = new Set();
+  if (useRange) {
+    for (let i = rangeStart; i <= rangeEnd; i++) ids.add(i);
+  }
+  if (useSeries) {
+    seriesRaw.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n)).forEach(n => ids.add(n));
+  }
+
+  if (ids.size === 0) { errEl.textContent = 'No valid org IDs found.'; return; }
+
+  // Create the bucket first
+  try {
+    const bucketRes = await fetch(`${API_BASE}/buckets/create-bucket-empty`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+      credentials: 'include',
+      body: JSON.stringify({ bucketName })
+    });
+    if (!bucketRes.ok) {
+      const data = await bucketRes.json();
+      errEl.textContent = data.error || 'Failed to create bucket.';
+      return;
+    }
+  } catch (err) {
+    errEl.textContent = 'Failed to create bucket: ' + err.message;
+    return;
+  }
+
+  // Import each org ID
+  progressEl.style.display = 'block';
+  const idList = Array.from(ids);
+  let succeeded = 0;
+  let failed = [];
+
+  for (let i = 0; i < idList.length; i++) {
+    const orgId = idList[i];
+    progressEl.textContent = `Importing ${i + 1} of ${idList.length} (ID: ${orgId})...`;
+    try {
+      const res = await fetch(`${API_BASE}/buckets/import-file`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+        credentials: 'include',
+        body: JSON.stringify({ orgId, bucket: bucketName, subdir: 'incomplete' })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        succeeded++;
+      } else {
+        failed.push(orgId);
+      }
+    } catch (err) {
+      failed.push(orgId);
+    }
+  }
+
+  document.getElementById('importBucketModal').style.display = 'none';
+
+  const msg = `Imported ${succeeded} of ${idList.length} orgs into "${bucketName}".`
+    + (failed.length ? `\n\nFailed IDs: ${failed.join(', ')}` : '');
+  document.getElementById('importBucketResultMessage').textContent = msg;
+  document.getElementById('importBucketResultModal').style.display = 'block';
+}
+
+/**
  * Opens the Import File modal, populating the bucket dropdown.
  */
 async function importFile() {
-  document.getElementById('importOrgId').value = '';
   document.getElementById('importFileError').textContent = '';
   const bucketSel = document.getElementById('importFileBucket');
   bucketSel.innerHTML = '<option value="">Select bucket...</option>';

@@ -587,7 +587,7 @@
     <div id="leftSidebar">
       <div id="resizeHandle"></div>
       <div class="section-title">Bucket Actions</div>
-      <button class="directImport-btn" onclick="directImport()">Import Bucket</button>
+      <button class="directImport-btn" onclick="importMultipleFiles()">Import Bucket</button>
       <button class="createBucket-btn" onclick="createBucket()">Create Bucket</button>
       <button class="deleteBucket-btn" onclick="deleteBucket()">Delete Bucket</button>
       <select id="bucketSelect" onchange="loadBucket()">
@@ -754,16 +754,28 @@
 
   <!-- Create bucket modal -->
   <div id="createBucketModal" class="modal">
-    <div class="modal-content">
-      <p>Upload Spreadsheet to Create Bucket</p>
-      <div id="fileUploadArea" class="file-upload-area" onclick="document.getElementById('fileInput').click()">
-        <p id="uploadText">Click to select file or drag and drop</p>
-        <p style="font-size: 12px; color: #666; margin-top: 10px;">Supported: .xlsx, .xls, .csv, .ods</p>
+    <div class="modal-content" style="text-align:left;">
+      <p style="font-size:16px; font-weight:600; margin-bottom:16px;">Create Bucket</p>
+
+      <label style="font-size:13px; color:#666;">Bucket Name</label>
+      <input type="text" id="createBucketName" class="modal-input" placeholder="Enter bucket name">
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:16px;">
+        <input type="checkbox" id="createBucketEmpty" onchange="toggleCreateBucketEmpty()">
+        Create empty bucket (no spreadsheet)
+      </label>
+
+      <div id="createBucketSpreadsheetSection">
+        <div id="fileUploadArea" class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+          <p id="uploadText">Click to select file or drag and drop</p>
+          <p style="font-size: 12px; color: #666; margin-top: 10px;">Supported: .xlsx, .xls, .csv, .ods</p>
+        </div>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.ods" style="display: none;" onchange="handleFileSelect(event)">
+        <div class="progress-container" id="progressContainer">
+          <div class="progress-bar" id="progressBar">0%</div>
+        </div>
       </div>
-      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.ods" style="display: none;" onchange="handleFileSelect(event)">
-      <div class="progress-container" id="progressContainer">
-        <div class="progress-bar" id="progressBar">0%</div>
-      </div>
+
       <div class="modal-buttons">
         <button class="create-btn" id="createBucketBtn" onclick="processCreateBucket()" disabled>Create Bucket</button>
         <button class="cancel-btn" onclick="cancelCreateBucket()">Cancel</button>
@@ -804,6 +816,51 @@
       <p id="importResultMessage" style="margin: 0 0 8px;"></p>
       <div class="modal-buttons">
         <button class="importFile-btn" style="background:#3a7bd5" onmouseover="this.style.background='#2e6bc4'" onmouseout="this.style.background='#3a7bd5'" onclick="document.getElementById('importResultModal').style.display='none'">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Bucket modal -->
+  <div id="importBucketModal" class="modal">
+    <div class="modal-content" style="width:500px; text-align:left;">
+      <p style="font-size:16px; font-weight:600; margin-bottom:16px;">Import Bucket from SF Service Guide</p>
+
+      <label style="font-size:13px; color:#666;">Bucket Name</label>
+      <input type="text" id="importBucketName" class="modal-input" placeholder="Enter bucket name">
+
+      <div style="margin-bottom:12px;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; margin-bottom:8px;">
+          <input type="checkbox" id="importBucketUseRange"> Range (inclusive)
+        </label>
+        <div style="display:flex; gap:10px; padding-left:24px;">
+          <input type="number" id="importBucketRangeStart" class="modal-input" placeholder="Start ID" style="margin-bottom:0; flex:1;">
+          <input type="number" id="importBucketRangeEnd" class="modal-input" placeholder="End ID" style="margin-bottom:0; flex:1;">
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; margin-bottom:8px;">
+          <input type="checkbox" id="importBucketUseSeries"> Series (comma separated)
+        </label>
+        <textarea id="importBucketSeries" class="modal-input" placeholder="e.g. 1234, 5678, 9012" style="margin-bottom:0; height:70px; resize:vertical;"></textarea>
+      </div>
+
+      <div id="importBucketError" style="color:red; font-size:13px; margin-bottom:8px;"></div>
+      <div id="importBucketProgress" style="display:none; font-size:13px; color:#666; margin-bottom:8px;"></div>
+
+      <div class="modal-buttons">
+        <button class="create-btn" onclick="confirmImportBucket()">Import</button>
+        <button class="cancel-btn" onclick="document.getElementById('importBucketModal').style.display='none'">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Bucket result modal -->
+  <div id="importBucketResultModal" class="modal">
+    <div class="modal-content">
+      <p id="importBucketResultMessage"></p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="document.getElementById('importBucketResultModal').style.display='none'; init();">OK</button>
       </div>
     </div>
   </div>

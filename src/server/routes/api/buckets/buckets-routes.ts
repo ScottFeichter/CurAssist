@@ -274,20 +274,40 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
     const newOrg = await Org.create({
       sfId:      resource.id,
       name:      resource.name,
+      alternate_name: resource.alternate_name || '',
+      email:     resource.email    || '',
+      website:   resource.website  || '',
+      long_description: resource.long_description || '',
+      legal_status:     resource.legal_status     || '',
+      internal_note:    resource.internal_note    || '',
       bucket,
       status:    subdir,
       addresses: resource.addresses || [],
-      phones:    resource.phones || [],
-      notes:     resource.notes || [],
-      schedule:  resource.schedule || { schedule_days: [] },
+      phones:    resource.phones    || [],
+      notes:     resource.notes     || [],
+      schedule:  resource.schedule  || { schedule_days: [] },
       services:  (resource.services || []).map((s: any) => ({
         sfId:                            s.id,
-        name:                            s.name,
-        notes:                           s.notes || [],
-        schedule:                        s.schedule || { schedule_days: [] },
+        name:                            s.name                            || '',
+        alternate_name:                  s.alternate_name                  || '',
+        email:                           s.email                           || '',
+        url:                             s.url                             || '',
+        fee:                             s.fee                             || '',
+        wait_time:                       s.wait_time                       || '',
+        application_process:             s.application_process             || '',
+        required_documents:              s.required_documents              || '',
+        interpretation_services:         s.interpretation_services         || '',
+        internal_note:                   s.internal_note                   || '',
+        clinician_actions:               s.clinician_actions               || '',
+        short_description:               s.short_description               || '',
+        long_description:                s.long_description                || '',
+        notes:                           s.notes                           || [],
+        schedule:                        s.schedule                        || { schedule_days: [] },
         shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
-        eligibilities:                   s.eligibilities || [],
-        categories:                      s.categories || [],
+        eligibilities:                   s.eligibilities                   || [],
+        categories:                      s.categories                      || [],
+        addresses:                       s.addresses                       || [],
+        phones:                          s.phones                          || [],
       })),
       history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `imported from SFSG org ID ${orgId}` }]
     });
@@ -300,9 +320,26 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
   }
 });
 
-// POST /api/buckets/create — Create bucket from spreadsheet upload
-bucketsRouter.post('/create', upload.single('spreadsheet'), async (req: Request, res: Response, next: NextFunction) => {
-  log.enter('POST /api/buckets/create', log.brack);
+// POST /api/buckets/create-bucket-empty — Create a named bucket with no orgs
+bucketsRouter.post('/create-bucket-empty', async (req: Request, res: Response, next: NextFunction) => {
+  log.enter('POST /api/buckets/create-bucket-empty', log.brack);
+  try {
+    const { bucketName } = req.body;
+    if (!bucketName) return res.status(400).json({ success: false, error: 'bucketName is required' });
+    const existing = await Bucket.findOne({ name: bucketName });
+    if (existing) return res.status(409).json({ success: false, error: `Bucket "${bucketName}" already exists` });
+    await Bucket.create({ name: bucketName });
+    log.retrn('POST /api/buckets/create-bucket-empty', log.kcarb);
+    res.json({ success: true });
+  } catch (error) {
+    log.retrn('POST /api/buckets/create-bucket-empty', log.kcarb);
+    next(error);
+  }
+});
+
+// POST /api/buckets/create-bucket-spreadsheet — Create bucket from spreadsheet upload
+bucketsRouter.post('/create-bucket-spreadsheet', upload.single('spreadsheet'), async (req: Request, res: Response, next: NextFunction) => {
+  log.enter('POST /api/buckets/create-bucket-spreadsheet', log.brack);
   try {
     const { bucketName } = req.body;
     const file = req.file;
@@ -314,10 +351,10 @@ bucketsRouter.post('/create', upload.single('spreadsheet'), async (req: Request,
     const { rows } = await parseSpreadsheet(file.buffer);
     await generateOrgDocuments(bucketName, rows, (_progress) => {});
 
-    log.retrn('POST /api/buckets/create', log.kcarb);
+    log.retrn('POST /api/buckets/create-bucket-spreadsheet', log.kcarb);
     res.json({ success: true, message: 'Bucket created successfully!' });
   } catch (error) {
-    log.retrn('POST /api/buckets/create', log.kcarb);
+    log.retrn('POST /api/buckets/create-bucket-spreadsheet', log.kcarb);
     next(error);
   }
 });
