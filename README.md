@@ -182,6 +182,7 @@ Only available when `NODE_ENV=development`:
 - `POST /api/buckets/import-file` — Direct import from SF org ID
 - `POST /api/buckets/create-bucket-empty` — Create a named empty bucket
 - `POST /api/buckets/create-bucket-spreadsheet` — Create new bucket from spreadsheet upload
+- `POST /api/buckets/create-bucket-spreadsheet-submit` — Create bucket from spreadsheet and submit all orgs directly to SFSG
 - `DELETE /api/buckets/delete` — Delete a single org
 - `DELETE /api/buckets/:bucket` — Delete entire bucket and all its orgs
 

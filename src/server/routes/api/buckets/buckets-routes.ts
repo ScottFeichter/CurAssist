@@ -5,7 +5,7 @@ import { extendedConsole as console } from '../../../../streams/consoles/customC
 import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { Bucket } from '../../../../database/models/bucket.model';
 import { Org } from '../../../../database/models/org.model';
-import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate } from '../../../helpers/bucket-helpers';
+import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload } from '../../../helpers/bucket-helpers';
 // #endregion ------------------------------------------------------------------
 
 console.enter();
@@ -333,6 +333,101 @@ bucketsRouter.post('/create-bucket-empty', async (req: Request, res: Response, n
     res.json({ success: true });
   } catch (error) {
     log.retrn('POST /api/buckets/create-bucket-empty', log.kcarb);
+    next(error);
+  }
+});
+
+// POST /api/buckets/create-bucket-spreadsheet-submit — Create bucket from spreadsheet and submit all orgs directly to SFSG
+bucketsRouter.post('/create-bucket-spreadsheet-submit', upload.single('spreadsheet'), async (req: Request, res: Response, next: NextFunction) => {
+  log.enter('POST /api/buckets/create-bucket-spreadsheet-submit', log.brack);
+  try {
+    const { bucketName } = req.body;
+    const file = req.file;
+    const cookieHeader = req.headers['cookie'] || '';
+
+    if (!file)       return res.status(400).json({ success: false, error: 'No spreadsheet file uploaded' });
+    if (!bucketName) return res.status(400).json({ success: false, error: 'Bucket name is required' });
+
+    const SF_BASE = 'https://www.sfserviceguide.org/api';
+    const sfHeaders: Record<string, string> = {
+      'Content-Type':  'application/json',
+      'Accept':        'application/json',
+      'Origin':        'https://www.sfserviceguide.org',
+      'Referer':       'https://www.sfserviceguide.org/organizations/new',
+      ...(cookieHeader ? { 'Cookie': cookieHeader as string } : {})
+    };
+
+    // Create bucket
+    await createBucketStructure(bucketName);
+
+    // Parse spreadsheet and create org documents
+    const { rows } = await parseSpreadsheet(file.buffer);
+    await generateOrgDocuments(bucketName, rows, () => {});
+
+    // Fetch all created orgs for this bucket
+    const orgs = await Org.find({ bucket: bucketName, status: 'incomplete' });
+
+    const results: { name: string, success: boolean, sfId?: number, error?: string }[] = [];
+
+    for (const org of orgs) {
+      try {
+        const { orgBody, services } = transformOrgToSFPayload(org);
+
+        // Step 1 — create org
+        const orgRes = await fetch(`${SF_BASE}/resources`, {
+          method: 'POST',
+          headers: sfHeaders,
+          body: JSON.stringify(orgBody)
+        });
+
+        if (!orgRes.ok) {
+          const err = await orgRes.json().catch(() => ({}));
+          throw new Error(`SFSG returned ${orgRes.status}: ${JSON.stringify(err)}`);
+        }
+
+        const orgData = await orgRes.json() as any;
+        const sfId = orgData.resources?.[0]?.resource?.id;
+        if (!sfId) throw new Error('No org ID returned from SFSG');
+
+        // Step 2 — create services if any
+        if (services.length > 0) {
+          const svcRes = await fetch(`${SF_BASE}/resources/${sfId}/services`, {
+            method: 'POST',
+            headers: sfHeaders,
+            body: JSON.stringify({ services })
+          });
+          if (!svcRes.ok) {
+            const err = await svcRes.json().catch(() => ({}));
+            throw new Error(`Services failed: ${svcRes.status}: ${JSON.stringify(err)}`);
+          }
+        }
+
+        // Update org record
+        org.sfId        = sfId;
+        org.status      = 'complete';
+        org.submittedAt = new Date();
+        org.history.push({ action: 'submitted', by: 'unknown', at: new Date(), detail: `direct submit from spreadsheet` });
+        org.markModified('history');
+        await org.save();
+
+        results.push({ name: org.name, success: true, sfId });
+
+      } catch (err: any) {
+        org.history.push({ action: 'edited', by: 'unknown', at: new Date(), detail: `submit failed: ${err.message}` });
+        org.markModified('history');
+        await org.save();
+        results.push({ name: org.name, success: false, error: err.message });
+      }
+    }
+
+    const succeeded = results.filter(r => r.success).length;
+    const failed    = results.filter(r => !r.success);
+
+    log.retrn('POST /api/buckets/create-bucket-spreadsheet-submit', log.kcarb);
+    res.json({ success: true, total: orgs.length, succeeded, failed });
+
+  } catch (error) {
+    log.retrn('POST /api/buckets/create-bucket-spreadsheet-submit', log.kcarb);
     next(error);
   }
 });

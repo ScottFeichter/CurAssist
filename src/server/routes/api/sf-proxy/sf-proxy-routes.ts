@@ -40,6 +40,9 @@ sfProxyRouter.post('/*', async (req: Request, res: Response) => {
   const sfPath = (req.params as any)[0] || '';
   const url = `${SF_BASE}/${sfPath}`;
 
+  // Forward browser cookies so SFSG session auth is preserved
+  const cookieHeader = req.headers['cookie'] || '';
+
   try {
     const sfRes = await fetch(url, {
       method: 'POST',
@@ -47,7 +50,8 @@ sfProxyRouter.post('/*', async (req: Request, res: Response) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Origin': 'https://www.sfserviceguide.org',
-        'Referer': 'https://www.sfserviceguide.org/organizations/new'
+        'Referer': 'https://www.sfserviceguide.org/organizations/new',
+        ...(cookieHeader ? { 'Cookie': cookieHeader } : {})
       },
       body: JSON.stringify(req.body)
     });

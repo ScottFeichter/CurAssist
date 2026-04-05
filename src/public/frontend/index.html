@@ -765,6 +765,11 @@
         Create empty bucket (no spreadsheet)
       </label>
 
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:16px;">
+        <input type="checkbox" id="createBucketDirectSubmit">
+        Submit directly to SF Service Guide (skip curation)
+      </label>
+
       <div id="createBucketSpreadsheetSection">
         <div id="fileUploadArea" class="file-upload-area" onclick="document.getElementById('fileInput').click()">
           <p id="uploadText">Click to select file or drag and drop</p>
@@ -816,6 +821,16 @@
       <p id="importResultMessage" style="margin: 0 0 8px;"></p>
       <div class="modal-buttons">
         <button class="importFile-btn" style="background:#3a7bd5" onmouseover="this.style.background='#2e6bc4'" onmouseout="this.style.background='#3a7bd5'" onclick="document.getElementById('importResultModal').style.display='none'">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Direct submit result modal -->
+  <div id="directSubmitResultModal" class="modal">
+    <div class="modal-content">
+      <p id="directSubmitResultMessage" style="white-space:pre-line;"></p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="document.getElementById('directSubmitResultModal').style.display='none'; init();">OK</button>
       </div>
     </div>
   </div>

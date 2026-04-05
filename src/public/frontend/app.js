@@ -502,6 +502,7 @@ function createBucket() {
   selectedFile = null;
   document.getElementById('createBucketName').value = '';
   document.getElementById('createBucketEmpty').checked = false;
+  document.getElementById('createBucketDirectSubmit').checked = false;
   document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   document.getElementById('uploadText').textContent = 'Click to select file or drag and drop';
   document.getElementById('createBucketBtn').disabled = true;
@@ -562,8 +563,9 @@ if (uploadArea) {
  * @returns {Promise<void>}
  */
 async function processCreateBucket() {
-  const bucketName = document.getElementById('createBucketName').value.trim();
-  const isEmpty    = document.getElementById('createBucketEmpty').checked;
+  const bucketName     = document.getElementById('createBucketName').value.trim();
+  const isEmpty        = document.getElementById('createBucketEmpty').checked;
+  const directSubmit   = document.getElementById('createBucketDirectSubmit').checked;
 
   if (!bucketName) { alert('Please enter a bucket name'); return; }
 
@@ -598,23 +600,36 @@ async function processCreateBucket() {
   document.getElementById('createBucketBtn').disabled = true;
   document.getElementById('progressContainer').style.display = 'block';
 
+  const endpoint = directSubmit
+    ? `${API_BASE}/buckets/create-bucket-spreadsheet-submit`
+    : `${API_BASE}/buckets/create-bucket-spreadsheet`;
+
   try {
-    const response = await fetch(`${API_BASE}/buckets/create-bucket-spreadsheet`, {
+    const response = await fetch(endpoint, {
       method: 'POST',
       headers: { 'XSRF-Token': getCsrfToken() },
       credentials: 'include',
       body: formData
     });
-    if (response.ok) {
-      const data = await response.json();
-      document.getElementById('progressBar').style.width = '100%';
-      document.getElementById('progressBar').textContent = '100%';
+    const data = await response.json();
+
+    document.getElementById('progressBar').style.width = '100%';
+    document.getElementById('progressBar').textContent = '100%';
+    document.getElementById('createBucketModal').style.display = 'none';
+
+    if (directSubmit && response.ok) {
+      const failed = data.failed || [];
+      let msg = `Submitted ${data.succeeded} of ${data.total} orgs to SF Service Guide.`;
+      if (failed.length) {
+        msg += `\n\nFailed (${failed.length}):` + failed.map((f) => `\n  • ${f.name}: ${f.error}`).join('');
+      }
+      document.getElementById('directSubmitResultMessage').textContent = msg;
+      document.getElementById('directSubmitResultModal').style.display = 'block';
+    } else if (response.ok) {
       alert(data.message || 'Bucket created successfully');
-      document.getElementById('createBucketModal').style.display = 'none';
       init();
     } else {
-      const error = await response.json();
-      alert(error.error || 'Failed to create bucket');
+      alert(data.error || 'Failed to create bucket');
     }
   } catch (error) {
     alert('Error creating bucket: ' + error.message);
@@ -630,6 +645,7 @@ function cancelCreateBucket() {
   document.getElementById('createBucketModal').style.display = 'none';
   document.getElementById('createBucketName').value = '';
   document.getElementById('createBucketEmpty').checked = false;
+  document.getElementById('createBucketDirectSubmit').checked = false;
   document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   selectedFile = null;
 }
