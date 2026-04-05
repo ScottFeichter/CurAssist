@@ -893,7 +893,9 @@ function cancelImportFile() {
  */
 function toggleSidebar() {
   const el = document.getElementById('leftSidebar');
+  const btn = document.querySelector('.leftSidebar-toggle-btn');
   el.classList.toggle('collapsed');
+  btn.classList.toggle('sidebar-closed', el.classList.contains('collapsed'));
   if (el.classList.contains('collapsed')) {
     if (parseInt(el.style.width) > 0) el.dataset.prevWidth = el.style.width;
     el.style.width = '';
@@ -909,7 +911,9 @@ function toggleSidebar() {
  */
 function toggleRightSidebar() {
   const el = document.getElementById('rightSidebar');
+  const btn = document.querySelector('.rightSidebar-toggle-btn');
   el.classList.toggle('collapsed');
+  btn.classList.toggle('sidebar-closed', el.classList.contains('collapsed'));
   if (el.classList.contains('collapsed')) {
     if (parseInt(el.style.width) > 0) el.dataset.prevWidth = el.style.width;
     el.style.width = '';

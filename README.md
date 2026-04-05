@@ -29,7 +29,33 @@ CurAssist/
     workflows/
       deploy.yml          # CI/CD — auto-deploys to EC2 on push to main
   package.json
-  curassistDeploy.md      # Full deployment log and infrastructure notes
+  docs/
+    deployment-DB-noS3.md # Current MongoDB-based deployment notes
+    deployment-S3-noDB.md # Original file-based deployment (historical reference)
+    db2bOrNot2b.md        # Database migration decision log
+    curassistDeployFirst.md # Full deployment log and infrastructure notes
+    todo.md               # Todo list
+    .sequelizerc          # Sequelize config (historical reference)
+    typedoc.json          # TypeDoc config (entry point: src/entry.ts, output: docs/typedocs/)
+```
+
+## Environment Variables
+
+Environment variables are loaded at startup by `src/config/env-module.ts`:
+
+1. `NODE_ENV` must be set before the app starts — in dev `dev-runner.js` explicitly sets it to `'development'`, in prod `ecosystem.config.js` sets it to `'production'` via PM2
+2. `entry.ts` imports `requiredEnvVars` from `env-module.ts`, which triggers it to execute
+3. `env-module.ts` builds the file path `./.env/.env.${NODE_ENV}` and calls `dotenv.config()` to load it into `process.env`
+4. Required vars are validated — app exits if any are missing
+5. Vars are exported as named constants for use throughout the app
+
+Required vars:
+```
+NODE_ENV
+SERVER_PORT
+BASE_URL
+WINSTON_LOG_LEVEL
+DB_CONNECT
 ```
 
 ## Setup
@@ -49,10 +75,10 @@ cp .env/.env.example .env/.env.development
 Key env vars:
 ```
 NODE_ENV=development
-SERVER_PORT=8004
-JWT_ACCESS_TOKEN_SECRET=<generate with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))">
-JWT_REFRESH_TOKEN_SECRET=<generate with: node -e "console.log(require('crypto').randomBytes(64).toString('hex'))">
-JWT_EXPIRES_IN=604800
+SERVER_PORT=5555
+DB_CONNECT=mongodb+srv://<user>:<password>@<cluster>.mongodb.net/curassist-dev?retryWrites=true&w=majority
+WINSTON_LOG_LEVEL=debug
+BASE_URL=http://localhost:5555
 ```
 
 ## Running
@@ -65,10 +91,10 @@ npm run dev
 **Production**:
 ```bash
 npm run build
-NODE_ENV=production npm start
+pm2 start ecosystem.config.js --env production
 ```
 
-Then open browser to: `http://localhost:8004`
+Then open browser to: `http://localhost:5555`
 
 ## NPM Scripts
 
@@ -80,6 +106,7 @@ Then open browser to: `http://localhost:8004`
 | `npm run watch` | Watches TypeScript files and recompiles on change |
 | `npm run watch:template` | Watches `content/Templates` source files and rebuilds `orgServTemplate-combinedTestValues.html` on change. Run in a separate terminal while editing template source files |
 | `npm run serve` | Runs nodemon on compiled server output |
+| `npm run docs` | Generates TypeDoc documentation to `docs/generated/` |
 | `npm run clean` | Removes `dist/` directory |
 
 ## Usage
@@ -106,6 +133,20 @@ content/
 
 ## API Endpoints
 
+### Dev-Only Routes
+
+Only available when `NODE_ENV=development`:
+
+- `GET /test` — Dev test page with links to all endpoints and docs
+- `GET /test/express` — Express routing test
+- `GET /test/404` — 404 error handling test
+- `GET /api/csrf/restore` — Restore CSRF token
+- `GET /docs/typedocs` — TypeDoc API documentation (served as static HTML)
+- `GET /docs/readme` — README.md
+- `GET /docs/deployment` — Deployment guide (MongoDB)
+- `GET /docs/deployment-nodb` — Deployment guide (S3, no DB, historical)
+- `GET /docs/deploy-log` — Full deployment log and infrastructure notes
+
 ### Buckets (internal)
 
 - `GET /api/buckets` — List all buckets
@@ -115,6 +156,7 @@ content/
 - `POST /api/buckets/save` — Save file changes
 - `POST /api/buckets/move` — Move file to different subdirectory
 - `POST /api/buckets/create-file` — Create new file from template or copy of existing file
+- `POST /api/buckets/import-file` — Direct import from SF org ID
 - `POST /api/buckets/create` — Create new bucket from spreadsheet upload
 - `DELETE /api/buckets/delete` — Delete a file
 - `DELETE /api/buckets/:bucket` — Delete an entire bucket
@@ -131,7 +173,7 @@ Deployed on AWS EC2 t3.micro (us-east-1) with Nginx, PM2, and Let's Encrypt SSL.
 
 CI/CD is configured via GitHub Actions — every push to `main` automatically deploys to the EC2 instance.
 
-See `curassistDeploy.md` for full infrastructure details, resource IDs, and setup steps.
+See `docs/deployment-DB-noS3.md` for the current MongoDB-based deployment. See `docs/deployment-S3-noDB.md` for the original file-based deployment (historical reference).
 
 ## SF Service Guide API
 

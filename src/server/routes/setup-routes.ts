@@ -19,6 +19,24 @@ export const setupRoutes = (SERVER: Application) => {
   log.enter("setupRoutes()", log.brack);
 
 
+  // Dev-only documentation routes
+  if (process.env.NODE_ENV !== 'production') {
+    SERVER.use('/docs/typedocs', express.static(join(__dirname, '../../../docs/typedocs')));
+    SERVER.get('/docs/readme', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../README.md'));
+    });
+    SERVER.get('/docs/deployment', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../docs/deployment-DB-noS3.md'));
+    });
+    SERVER.get('/docs/deployment-nodb', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../docs/deployment-S3-noDB.md'));
+    });
+    SERVER.get('/docs/deploy-log', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../docs/curassistDeployFirst.md'));
+    });
+  }
+
+
   // Backend test page
   SERVER.get('/test', (_req: Request, res: Response) => {
     res.sendFile(

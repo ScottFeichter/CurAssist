@@ -25,8 +25,8 @@ function formatLine(prefix, line) {
   return `${num}  [${prefix}] ${line}`;
 }
 
-function runProcess(command, args, prefix) {
-  const proc = spawn(command, args, { shell: true });
+function runProcess(command, args, prefix, env = {}) {
+  const proc = spawn(command, args, { shell: true, env: { ...process.env, ...env } });
   const rlOut = readline.createInterface({ input: proc.stdout });
   const rlErr = readline.createInterface({ input: proc.stderr });
   rlOut.on('line', (line) => console.log(formatLine(prefix, line)));
@@ -81,7 +81,7 @@ watchFiles.forEach(file => {
 });
 
 const tsc = runProcess('npx', ['tsc', '--watch', '--preserveWatchOutput'], 'tsc');
-const app = runProcess('npx', ['nodemon', '--delay', '1', '-w', 'dist', 'dist/entry.js'], 'app');
+const app = runProcess('npx', ['nodemon', '--delay', '1', '-w', 'dist', 'dist/entry.js'], 'app', { NODE_ENV: 'development' });
 
 process.on('SIGINT', () => {
   tsc.kill();

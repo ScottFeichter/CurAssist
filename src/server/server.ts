@@ -7,12 +7,11 @@ import { setupRoutes } from './routes/setup-routes';
 import { setupPostRouteMiddleware } from './middlewares/setup-post-route-middleware';
 // import SEQUELIZE from '../../database/sequelize';
 import { SERVER_PORT } from '../config/env-module';
+import { connectToAtlas } from '../database/atlas';
 
 import cors from 'cors';
 import path from 'path';
-import { PORT } from '../config/env';
 import logger from '../utils/logger/logger';
-import apiRoutes from './routes/api';
 // #endregion ------------------------------------------------------------------
 
 console.enter();
@@ -43,13 +42,9 @@ export const start = async (SERVER: Application) => {
     setupPostRouteMiddleware(SERVER);
 
 
-    // Authenticate Sequelize instance to ensure the DB connection is successful
-    // await SEQUELIZE.authenticate();
-    // log.infor('Database connection has been established successfully!');
+    // Connect to MongoDB Atlas — server will not start if connection fails
+    await connectToAtlas();
 
-
-    // Routes
-    SERVER.use('/api', apiRoutes);
 
     SERVER.listen(SERVER_PORT, () => {
       log.blank();

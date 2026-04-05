@@ -1,9 +1,9 @@
 {
-    "entryPoints": ["src/index.ts"],
-    "out": "docs",
-    "name": "Your Project Name",
-    "excludePrivate": true,
-    "excludeProtected": true,
-    "theme": "default",
-    "readme": "README.md"
-  }
+  "entryPoints": ["src/entry.ts"],
+  "out": "docs/typedocs",
+  "name": "CurAssist",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "theme": "default",
+  "readme": "README.md"
+}

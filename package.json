@@ -4,12 +4,13 @@
   "description": "Backend for CurAssist workflow app",
   "main": "dist/entry.js",
   "scripts": {
-    "build": "node content/Templates/build-template.js && node content/Templates/build-test-template.js && tsc && cp -r src/views dist/ && cp -r src/public dist/",
+    "build": "node content/Templates/build-template.js && node content/Templates/build-test-template.js && tsc && cp -r src/views dist/ && cp -r src/public dist/ && npx typedoc",
     "start": "node dist/entry.js",
     "dev": "npm run build && node dev-runner.js",
     "watch": "tsc --watch",
     "watch:template": "nodemon --watch content/Templates --ext js,html --ignore content/Templates/orgServTemplate-combined*.html --exec \"node content/Templates/build-test-template.js\"",
     "serve": "nodemon --delay 1 dist/entry.js",
+    "docs": "npx typedoc",
     "clean": "rm -rf dist"
   },
   "dependencies": {
@@ -25,6 +26,7 @@
     "express-session": "^1.19.0",
     "helmet": "^8.1.0",
     "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.4.1",
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "sequelize": "^6.37.7",
@@ -50,6 +52,7 @@
     "nodemon": "^3.0.1",
     "tsc-alias": "^1.8.10",
     "ttypescript": "^1.5.15",
+    "typedoc": "^0.28.18",
     "typescript": "^5.3.3",
     "typescript-transform-paths": "^3.5.6"
   }
