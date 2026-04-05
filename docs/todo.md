@@ -25,4 +25,4 @@ They require E2E tests (Playwright or Cypress) to catch automatically.
 - File-level soft locking (concurrency Option B)
 - E2E tests (Playwright or Cypress) — would catch the bugs listed above
 - Unit tests for hydrateTemplate()
-- Integration tests for import-file, create-bucket-empty, create-bucket-spreadsheet routes
+- Integration tests for import-file, create-bucket-empty, create-bucket-spreadsheet, create-bucket-spreadsheet-submit routes
