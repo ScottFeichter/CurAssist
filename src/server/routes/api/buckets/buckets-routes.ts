@@ -276,7 +276,7 @@ bucketsRouter.post('/import-file-resolve', async (req: Request, res: Response, n
       internal_note:    resource.internal_note    || '',
       bucket,
       status:    subdir,
-      addresses: (resource.addresses || []).map((a: any) => ({ address_1: a.address_1 || '', address_2: a.address_2 || '', city: a.city || '', state_province: a.state_province || '', postal_code: a.postal_code || '' })),
+      addresses: (resource.addresses || []).map((a: any) => ({ name: a.name || '', address_1: a.address_1 || '', address_2: a.address_2 || '', city: a.city || '', state_province: a.state_province || '', postal_code: a.postal_code || '' })),
       phones:    (resource.phones    || []).map((p: any) => ({ number: p.number || '', service_type: p.service_type || p.description || '' })),
       notes:     (resource.notes     || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
       schedule:  resource.schedule || { schedule_days: [] },
@@ -351,6 +351,7 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
       bucket,
       status:    subdir,
       addresses: (resource.addresses || []).map((a: any) => ({
+        name:           a.name           || '',
         address_1:      a.address_1      || '',
         address_2:      a.address_2      || '',
         city:           a.city           || '',

@@ -32,6 +32,7 @@ export interface IPhone {
 
 /** A physical address. All fields optional to match SFSG API flexibility. */
 export interface IAddress {
+  name?:           string;
   address_1?:      string;
   address_2?:      string;
   city?:           string;
@@ -130,6 +131,7 @@ const PhoneSchema = new Schema<IPhone>({
 }, { _id: false });
 
 const AddressSchema = new Schema<IAddress>({
+  name:           { type: String },
   address_1:      { type: String },
   address_2:      { type: String },
   city:           { type: String },

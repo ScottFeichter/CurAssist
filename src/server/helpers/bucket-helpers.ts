@@ -263,22 +263,25 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
 
   // ── Org addresses ──────────────────────────────────────────────────────────
   if (org.addresses?.length) {
-    const locHtml = org.addresses.map(a => {
-      const label = a.address_1 ? `<strong>${a.address_1}</strong><br>` : '';
-      return `<li data-address1="${a.address_1 || ''}" data-address2="${a.address_2 || ''}" data-city="${a.city || ''}" data-state="${a.state_province || ''}" data-zip="${a.postal_code || ''}">${label}${a.address_1 || ''}<br>${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</li>`;
+    const locHtml = org.addresses.map((a, i) => {
+      const addrParts = [a.address_1, a.address_2, a.city, a.state_province, a.postal_code].filter(Boolean).join('  ');
+      return `<div class="location-row" data-name="${a.name || ''}" data-addr1="${a.address_1 || ''}" data-addr2="${a.address_2 || ''}" data-city="${a.city || ''}" data-state="${a.state_province || ''}" data-zip="${a.postal_code || ''}"><span class="location-row-num">${i + 1}.</span><span class="location-row-name">${a.name || ''}</span><span class="location-row-addr">${addrParts}</span><span class="location-row-actions"><button type="button" class="edit-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span></div>`;
     }).join('');
     html = html.replace(
-      /(<ul[^>]*id="organization_locations"[^>]*>)([\s\S]*?)(<\/ul>)/,
-      `$1${locHtml}$3`
+      /<div[^>]*id="organization_locations"[^>]*>\s*<\/div>/,
+      `<div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1 location-row-list">${locHtml}</div>`
     );
   }
 
   // ── Org phones ─────────────────────────────────────────────────────────────
   if (org.phones?.length) {
-    const phoneHtml = org.phones.map(p =>
-      `<li data-number="${p.number}" data-type="${p.service_type || ''}"><strong>${p.service_type || ''}</strong> ${p.number}</li>`
+    const phoneHtml = org.phones.map((p, i) =>
+      `<li class="phone-row" data-number="${p.number}" data-type="${p.service_type || ''}"><span class="phone-row-num">${i + 1}.</span><span class="phone-row-name">${p.service_type || ''}</span><span class="phone-row-number">${p.number}</span><span class="phone-row-actions"><button type="button" class="edit-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span></li>`
     ).join('');
-    html = injectPhoneList(html, 'organization_phones', phoneHtml);
+    html = html.replace(
+      /<ul[^>]*id="organization_phones"[^>]*>\s*<\/ul>/,
+      `<ul id="organization_phones" class="edit--section--list--item--sublist phone-row-list">${phoneHtml}</ul>`
+    );
   }
 
   // ── Services ───────────────────────────────────────────────────────────────
