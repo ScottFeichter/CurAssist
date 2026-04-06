@@ -2162,13 +2162,6 @@
                         delete phoneModal.dataset.editingRow;
                         phoneModal.style.display = 'none';
                       });
-                        phoneList.appendChild(li);
-
-                        // Clear and close
-                        document.getElementById('phoneName').value = '';
-                        document.getElementById('phoneNumber').value = '';
-                        phoneModal.style.display = 'none';
-                      });
 
                       // Note modal handlers
                       document.getElementById('cancelNoteBtn').addEventListener('click', () => {
@@ -4397,7 +4390,7 @@
                       addFromOrgTrigger.addEventListener('click', (e) => {
                         e.stopPropagation();
                         //DISABLED: console.log('[copyFromOrg] trigger clicked');
-                        if (!copyFromOrgModal) { //DISABLED: console.log('[copyFromOrg] modal not found'); return; }
+                        if (!copyFromOrgModal) { return; } //DISABLED: console.log('[copyFromOrg] modal not found');
                         // Store reference to this service's location list
                         copyFromOrgModal._targetLocationList = root.querySelector('#service_locations');
                         // Populate select from org locations
