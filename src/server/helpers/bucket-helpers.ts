@@ -166,6 +166,15 @@ export async function generateOrgDocuments(
 }
 
 /**
+ * Normalizes a SFSG categories or eligibilities array to plain strings.
+ * SFSG returns objects like { name, id, top_level, featured } — we store only the name.
+ * @param items - Array of strings or SFSG objects
+ */
+export function normalizeSFSGStringArray(items: any[]): string[] {
+  return (items || []).map((item: any) => typeof item === 'string' ? item : item?.name).filter(Boolean);
+}
+
+/**
  * Transforms an IOrg document into the SF Service Guide API payload shape.
  * Mirrors the browser-side transformNewOrg() in transform.js.
  * @param org - The org document to transform
@@ -229,6 +238,11 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
   // Stamp org _id on body so frontend can reference it on save
   html = html.replace('<body', `<body data-org-id="${org._id}"`);
 
+  // If org was imported from SFSG, set importedFileFromSFSG flag in template
+  if (org.sfId) {
+    html = html.replace('let importedFileFromSFSG = false;', 'let importedFileFromSFSG = true;');
+  }
+
   // ── Org scalar fields ──────────────────────────────────────────────────────
   html = injectInput(html,    'organization_name',           org.name             || '');
   html = injectInput(html,    'organization_alternate_name', org.alternate_name   || '');
@@ -271,7 +285,7 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
   if (org.services?.length) {
 
     // Extract the service template block from the hidden serviceDivOrgTemplate
-    const templateMatch = html.match(/<div[^>]*id="serviceDivOrganization"[\s\S]*?(?=<\/div>\s*<\/div>\s*<!---={10,}\s*EDIT SERVICES ENDS)/);
+    const templateMatch = html.match(/<div[^>]*id="serviceDivOrganization"[\s\S]*?(?=<!---={10,}\s*EDIT SERVICES ENDS)/);
     const serviceTemplateHtml = templateMatch ? templateMatch[0] : null;
 
     if (serviceTemplateHtml) {

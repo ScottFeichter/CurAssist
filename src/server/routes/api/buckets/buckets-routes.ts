@@ -5,7 +5,7 @@ import { extendedConsole as console } from '../../../../streams/consoles/customC
 import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { Bucket } from '../../../../database/models/bucket.model';
 import { Org } from '../../../../database/models/org.model';
-import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload } from '../../../helpers/bucket-helpers';
+import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, normalizeSFSGStringArray } from '../../../helpers/bucket-helpers';
 // #endregion ------------------------------------------------------------------
 
 console.enter();
@@ -252,6 +252,59 @@ bucketsRouter.post('/create-file', async (req: Request, res: Response, next: Nex
   }
 });
 
+// POST /api/buckets/import-file-resolve — Resolve a duplicate import (overwrite or rename)
+bucketsRouter.post('/import-file-resolve', async (req: Request, res: Response, next: NextFunction) => {
+  log.enter('POST /api/buckets/import-file-resolve', log.brack);
+  try {
+    const { bucket, subdir, existingId, action, newName, resource } = req.body;
+    if (!bucket || !subdir || !action || !resource) return res.status(400).json({ success: false, error: 'Missing required fields' });
+
+    if (action === 'overwrite') {
+      await Org.findByIdAndDelete(existingId);
+    }
+
+    const orgName = action === 'rename' ? newName : resource.name;
+
+    const newOrg = await Org.create({
+      sfId:             resource.id,
+      name:             orgName,
+      alternate_name:   resource.alternate_name   || '',
+      email:            resource.email            || '',
+      website:          resource.website          || '',
+      long_description: resource.long_description || '',
+      legal_status:     resource.legal_status     || '',
+      internal_note:    resource.internal_note    || '',
+      bucket,
+      status:    subdir,
+      addresses: (resource.addresses || []).map((a: any) => ({ address_1: a.address_1 || '', address_2: a.address_2 || '', city: a.city || '', state_province: a.state_province || '', postal_code: a.postal_code || '' })),
+      phones:    (resource.phones    || []).map((p: any) => ({ number: p.number || '', service_type: p.service_type || p.description || '' })),
+      notes:     (resource.notes     || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
+      schedule:  resource.schedule || { schedule_days: [] },
+      services:  (resource.services || []).map((s: any) => ({
+        sfId: s.id, name: s.name || '', alternate_name: s.alternate_name || '', email: s.email || '', url: s.url || '',
+        fee: s.fee || '', wait_time: s.wait_time || '', application_process: s.application_process || '',
+        required_documents: s.required_documents || '', interpretation_services: s.interpretation_services || '',
+        internal_note: s.internal_note || '', clinician_actions: s.clinician_actions || '',
+        short_description: s.short_description || '', long_description: s.long_description || '',
+        notes:    (s.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
+        schedule: s.schedule || { schedule_days: [] },
+        shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
+        eligibilities: normalizeSFSGStringArray(s.eligibilities),
+        categories:    normalizeSFSGStringArray(s.categories),
+        addresses: (s.addresses || []).map((a: any) => ({ address_1: a.address_1 || '', city: a.city || '', state_province: a.state_province || '', postal_code: a.postal_code || '' })),
+        phones:    (s.phones    || []).map((p: any) => ({ number: p.number || '', service_type: p.service_type || p.description || '' }))
+      })),
+      history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `imported from SFSG org ID ${resource.id} (${action})` }]
+    });
+
+    log.retrn('POST /api/buckets/import-file-resolve', log.kcarb);
+    res.json({ success: true, _id: newOrg._id, name: newOrg.name });
+  } catch (error) {
+    log.retrn('POST /api/buckets/import-file-resolve', log.kcarb);
+    next(error);
+  }
+});
+
 // POST /api/buckets/import-file — Import org from SF Service Guide by ID
 bucketsRouter.post('/import-file', async (req: Request, res: Response, next: NextFunction) => {
   log.enter('POST /api/buckets/import-file', log.brack);
@@ -271,22 +324,46 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
     const { resource } = await sfRes.json() as { resource: any };
     if (!resource) return res.status(404).json({ success: false, error: 'No resource found for that ID' });
 
+    log.infor(`Attempting to create org in Atlas: ${resource.name}`);
+
+    // Check for duplicate name in same bucket
+    const existing = await Org.findOne({ bucket, name: resource.name });
+    if (existing) {
+      log.retrn('POST /api/buckets/import-file', log.kcarb);
+      return res.status(409).json({
+        success: false,
+        duplicate: true,
+        existingId: existing._id,
+        existingName: existing.name,
+        resource
+      });
+    }
+
     const newOrg = await Org.create({
       sfId:      resource.id,
       name:      resource.name,
-      alternate_name: resource.alternate_name || '',
-      email:     resource.email    || '',
-      website:   resource.website  || '',
+      alternate_name:   resource.alternate_name   || '',
+      email:            resource.email            || '',
+      website:          resource.website          || '',
       long_description: resource.long_description || '',
       legal_status:     resource.legal_status     || '',
       internal_note:    resource.internal_note    || '',
       bucket,
       status:    subdir,
-      addresses: resource.addresses || [],
-      phones:    resource.phones    || [],
-      notes:     resource.notes     || [],
-      schedule:  resource.schedule  || { schedule_days: [] },
-      services:  (resource.services || []).map((s: any) => ({
+      addresses: (resource.addresses || []).map((a: any) => ({
+        address_1:      a.address_1      || '',
+        address_2:      a.address_2      || '',
+        city:           a.city           || '',
+        state_province: a.state_province || '',
+        postal_code:    a.postal_code    || ''
+      })),
+      phones: (resource.phones || []).map((p: any) => ({
+        number:       p.number       || '',
+        service_type: p.service_type || p.description || ''
+      })),
+      notes:    (resource.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
+      schedule: resource.schedule || { schedule_days: [] },
+      services: (resource.services || []).map((s: any) => ({
         sfId:                            s.id,
         name:                            s.name                            || '',
         alternate_name:                  s.alternate_name                  || '',
@@ -301,16 +378,27 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
         clinician_actions:               s.clinician_actions               || '',
         short_description:               s.short_description               || '',
         long_description:                s.long_description                || '',
-        notes:                           s.notes                           || [],
-        schedule:                        s.schedule                        || { schedule_days: [] },
+        notes:    (s.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
+        schedule: s.schedule || { schedule_days: [] },
         shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
-        eligibilities:                   s.eligibilities                   || [],
-        categories:                      s.categories                      || [],
-        addresses:                       s.addresses                       || [],
-        phones:                          s.phones                          || [],
+        eligibilities: normalizeSFSGStringArray(s.eligibilities),
+        categories:    normalizeSFSGStringArray(s.categories),
+        addresses: (s.addresses || []).map((a: any) => ({
+          address_1:      a.address_1      || '',
+          address_2:      a.address_2      || '',
+          city:           a.city           || '',
+          state_province: a.state_province || '',
+          postal_code:    a.postal_code    || ''
+        })),
+        phones: (s.phones || []).map((p: any) => ({
+          number:       p.number       || '',
+          service_type: p.service_type || p.description || ''
+        }))
       })),
       history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `imported from SFSG org ID ${orgId}` }]
     });
+
+    log.infor(`Atlas create succeeded — org _id: ${newOrg._id}, services count: ${newOrg.services?.length}`);
 
     log.retrn('POST /api/buckets/import-file', log.kcarb);
     res.json({ success: true, _id: newOrg._id, name: newOrg.name });

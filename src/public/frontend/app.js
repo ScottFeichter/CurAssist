@@ -963,7 +963,7 @@ async function importFile() {
     bucketSel.appendChild(opt);
   });
 
-  document.getElementById('importFileModal').style.display = 'flex';
+  document.getElementById('importFileModal').style.display = 'block';
 }
 
 /**
@@ -1002,25 +1002,98 @@ async function confirmImportFile() {
     headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
     body: JSON.stringify({ orgId, bucket, subdir })
   });
-  const data = await res.json();
 
   document.getElementById('importFileModal').style.display = 'none';
   const msgEl = document.getElementById('importResultMessage');
 
-  if (!data.success) {
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    msgEl.innerHTML = `Import failed.<br>Server error (${res.status}).`;
+    document.getElementById('importResultModal').style.display = 'block';
+    return;
+  }
+
+  if (res.status === 409 && data.duplicate) {
+    // Duplicate found — show resolution modal
+    document.getElementById('importDuplicateMessage').textContent =
+      `An org named "${data.existingName}" already exists in this bucket. What would you like to do?`;
+    document.getElementById('importDuplicateOverwrite').checked = false;
+    document.getElementById('importDuplicateRename').checked = false;
+    document.getElementById('importDuplicateNewName').style.display = 'none';
+    document.getElementById('importDuplicateNewName').value = '';
+    document.getElementById('importDuplicateError').textContent = '';
+    // Store context for the resolve call
+    window._importDuplicateContext = { bucket, subdir, existingId: data.existingId, resource: data.resource };
+    document.getElementById('importDuplicateModal').style.display = 'block';
+    return;
+  }
+
+  if (!res.ok || !data.success) {
     msgEl.innerHTML = `Import failed.<br>${data.error || 'Unknown error.'}`;
   } else {
-    msgEl.innerHTML = `Import successful!<br>${data.filename}`;
+    msgEl.innerHTML = `Import successful!<br>${data.name}`;
     if (currentBucket === bucket && currentSubdir === subdir) {
-      await loadFiles(bucket, subdir);
+      await loadSubdir();
     }
   }
 
-  document.getElementById('importResultModal').style.display = 'flex';
+  document.getElementById('importResultModal').style.display = 'block';
 }
 
 function cancelImportFile() {
   document.getElementById('importFileModal').style.display = 'none';
+}
+
+/**
+ * Toggles the rename input field visibility based on selected duplicate action.
+ */
+document.addEventListener('change', function(e) {
+  if (e.target.name === 'importDuplicateAction') {
+    const nameInput = document.getElementById('importDuplicateNewName');
+    nameInput.style.display = e.target.value === 'rename' ? 'block' : 'none';
+  }
+});
+
+/**
+ * Submits the duplicate resolution — overwrite or rename.
+ */
+async function confirmImportDuplicate() {
+  const action   = document.querySelector('input[name="importDuplicateAction"]:checked')?.value;
+  const newName  = document.getElementById('importDuplicateNewName').value.trim();
+  const errEl    = document.getElementById('importDuplicateError');
+  const ctx      = window._importDuplicateContext;
+  errEl.textContent = '';
+
+  if (!action)                          { errEl.textContent = 'Please select an option.'; return; }
+  if (action === 'rename' && !newName)  { errEl.textContent = 'Please enter a new name.'; return; }
+
+  document.getElementById('importDuplicateModal').style.display = 'none';
+
+  const res = await fetch(`${API_BASE}/buckets/import-file-resolve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+    credentials: 'include',
+    body: JSON.stringify({ bucket: ctx.bucket, subdir: ctx.subdir, existingId: ctx.existingId, action, newName, resource: ctx.resource })
+  });
+
+  const msgEl = document.getElementById('importResultMessage');
+  let data;
+  try { data = await res.json(); } catch (e) {
+    msgEl.innerHTML = `Import failed.<br>Server error (${res.status}).`;
+    document.getElementById('importResultModal').style.display = 'block';
+    return;
+  }
+
+  if (!res.ok || !data.success) {
+    msgEl.innerHTML = `Import failed.<br>${data.error || 'Unknown error.'}`;
+  } else {
+    console.log('Import resolve result:', data);
+    msgEl.innerHTML = `Import successful!<br>${data.name}`;
+    if (currentBucket === ctx.bucket && currentSubdir === ctx.subdir) await loadSubdir();
+  }
+  document.getElementById('importResultModal').style.display = 'block';
 }
 
 // #endregion ------------------------------------------------------------------

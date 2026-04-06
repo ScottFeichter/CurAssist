@@ -143,7 +143,7 @@ const NoteSchema = new Schema<INote>({
 
 const ServiceSchema = new Schema<IService>({
   sfId:                            { type: Number },
-  name:                            { type: String, required: true },
+  name:                            { type: String, required: false, default: 'Unnamed Service' },
   alternate_name:                  { type: String },
   email:                           { type: String },
   url:                             { type: String },

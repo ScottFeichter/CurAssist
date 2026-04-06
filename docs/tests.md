@@ -67,7 +67,13 @@ The full submit flow is not tested because it requires a live SFSG session:
 - The `POST /api/buckets/submit` route is tested (sfId write-back, status update) but not the SFSG API call itself
 
 ### Import Route
-`POST /api/buckets/import-file` is not tested because it requires mocking the SFSG API. `POST /api/buckets/create-bucket-empty` and `POST /api/buckets/create-bucket-spreadsheet` are not tested.
+`POST /api/buckets/import-file` is not tested because it requires mocking the SFSG API. The following routes are also not tested:
+- `POST /api/buckets/create-bucket-empty`
+- `POST /api/buckets/create-bucket-spreadsheet`
+- `POST /api/buckets/create-bucket-spreadsheet-submit` (requires mocking SFSG API and live session cookies)
+- `importMultipleFiles` frontend flow
+
+**Known normalization:** The SFSG API returns `addresses`, `phones`, `notes`, `categories`, and `eligibilities` as objects with extra fields. These are normalized to match the Mongoose schema on import via `normalizeSFSGStringArray()` and explicit field mapping.
 
 ### Save Route — Full Field Coverage
 The save route integration test only verifies `organization_name` is updated. It does not verify that phones, addresses, service fields, categories, or eligibilities are correctly persisted.
