@@ -156,6 +156,14 @@ async function loadFile(index) {
   const iframe = document.getElementById('formFrame');
   iframe.srcdoc = content;
 
+  iframe.onload = () => {
+    const doc = iframe.contentDocument;
+    const orgId = doc?.body?.dataset?.orgId;
+    const sfIdEl = doc?.getElementById('organization_sfsg_id');
+    const sfsg_id = sfIdEl ? sfIdEl.textContent : 'TBD';
+    console.log('[LOAD] File loaded:', file.name, '| Atlas _id:', orgId, '| SFSG sfsg_id:', sfsg_id);
+  };
+
   const fileSelect = document.getElementById('fileInfo');
   fileSelect.selectedIndex = index + 1;
   document.getElementById('fileCount').textContent = `File ${index + 1} of ${currentFiles.length}`;
@@ -699,13 +707,13 @@ async function processCreateBucket() {
             throw new Error(`SFSG ${orgRes.status}: ${JSON.stringify(err)}`);
           }
           const orgData = await orgRes.json();
-          const sfId = orgData.resources?.[0]?.resource?.id;
-          if (!sfId) throw new Error('No org ID returned from SFSG');
+          const sfsg_id = orgData.resources?.[0]?.resource?.id;
+          if (!sfsg_id) throw new Error('No org ID returned from SFSG');
 
           // Step 2 — create services if any
           if (services.length > 0) {
             services.forEach((svc, idx) => svc.id = -(idx + 2));
-            const svcRes = await fetch(`${API_BASE}/sf/resources/${sfId}/services`, {
+            const svcRes = await fetch(`${API_BASE}/sf/resources/${sfsg_id}/services`, {
               method: 'POST',
               headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
               credentials: 'include',
@@ -717,12 +725,12 @@ async function processCreateBucket() {
             }
           }
 
-          // Step 3 — write sfId back to Atlas
+          // Step 3 — write sfsg_id back to Atlas
           await fetch(`${API_BASE}/buckets/submit`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
             credentials: 'include',
-            body: JSON.stringify({ id: org._id, sfId })
+            body: JSON.stringify({ id: org._id, sfsg_id })
           });
 
           succeeded++;

@@ -35,7 +35,7 @@ async function submitNewOrg(payload) {
   const orgId = orgData.resources?.[0]?.resource?.id;
   if (!orgId) throw new Error('No org ID returned from server');
 
-  console.log('[SUBMIT] Org created, sfId:', orgId);
+  console.log('[SUBMIT] Org created, sfsg_id:', orgId);
 
   // Step 2 — post services if any
   if (services.length > 0) {

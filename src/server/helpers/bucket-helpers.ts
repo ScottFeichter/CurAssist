@@ -238,9 +238,10 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
   // Stamp org _id on body so frontend can reference it on save
   html = html.replace('<body', `<body data-org-id="${org._id}"`);
 
-  // If org was imported from SFSG, set importedFileFromSFSG flag in template
-  if (org.sfId) {
+  // If org was imported from SFSG, set importedFileFromSFSG flag and show sfsg_id
+  if (org.sfsg_id) {
     html = html.replace('let importedFileFromSFSG = false;', 'let importedFileFromSFSG = true;');
+    html = html.replace('>TBD</span>', `>${org.sfsg_id}</span>`);
   }
 
   // ── Org scalar fields ──────────────────────────────────────────────────────

@@ -49,7 +49,7 @@ export interface INote {
 /** A service offered by an org. Embedded directly in the org document. */
 export interface IService {
   /** SF Service Guide assigned ID — populated after submission. */
-  sfId?:                           number;
+  sfsg_id?:                        number;
   name:                            string;
   alternate_name?:                 string;
   email?:                          string;
@@ -91,7 +91,7 @@ export interface IHistoryEntry {
  * Mirrors the SF Service Guide API shape with additional CurAssist metadata.
  */
 export interface IOrg extends Document {
-  sfId?:            number;
+  sfsg_id?:         number;
   name:             string;
   alternate_name?:  string;
   email?:           string;
@@ -148,7 +148,7 @@ const NoteSchema = new Schema<INote>({
 }, { _id: false });
 
 const ServiceSchema = new Schema<IService>({
-  sfId:                            { type: Number },
+  sfsg_id:                         { type: Number },
   name:                            { type: String, required: false, default: 'Unnamed Service' },
   alternate_name:                  { type: String },
   email:                           { type: String },
@@ -180,7 +180,7 @@ const HistoryEntrySchema = new Schema<IHistoryEntry>({
 }, { _id: false });
 
 const OrgSchema = new Schema<IOrg>({
-  sfId:             { type: Number },
+  sfsg_id:          { type: Number },
   name:             { type: String, required: true },
   alternate_name:   { type: String },
   email:            { type: String },
@@ -222,7 +222,7 @@ console.leave();
 // history is an append-only audit trail — never delete entries
 // history[].by is 'unknown' placeholder until authentication is added
 // history[].detail is optional context e.g. "incomplete → pending" on a move
-// sfId is assigned by SF Service Guide after submission
+// sfsg_id is assigned by SF Service Guide after submission
 // timestamps: true adds createdAt and updatedAt automatically
 
 // #endregion ------------------------------------------------------------------

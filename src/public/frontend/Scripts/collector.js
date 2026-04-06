@@ -224,13 +224,13 @@ async function submitFormData() {
   console.log('[SUBMIT] 1. Payload collected:', JSON.stringify(payload, null, 2));
   console.log('[SUBMIT] 2. Mode:', payload.organization ? 'Organization' : 'Service');
   console.log('[SUBMIT] 3. Atlas org _id:', orgId);
-  let sfId = null;
+  let sfsg_id = null;
 
   try {
     if (payload.organization) {
       console.log('[SUBMIT] 4. Calling submitNewOrg...');
-      sfId = await submitNewOrg(payload);
-      console.log('[SUBMIT] 5. submitNewOrg succeeded, sfId:', sfId);
+      sfsg_id = await submitNewOrg(payload);
+      console.log('[SUBMIT] 5. submitNewOrg succeeded, sfsg_id:', sfsg_id);
     } else {
       console.log('[SUBMIT] 4. Calling submitService...');
       await submitService(payload);
@@ -243,16 +243,16 @@ async function submitFormData() {
     return;
   }
 
-  // Write sfId back to Atlas and move to complete
+  // Write sfsg_id back to Atlas and move to complete
   const moveResponse = await fetch(`${API_BASE}/buckets/submit`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
     credentials: 'include',
-    body: JSON.stringify({ id: orgId, sfId })
+    body: JSON.stringify({ id: orgId, sfsg_id })
   });
   console.log('[SUBMIT] 6. Atlas submit response status:', moveResponse.status);
 
-  const sfIdLine = sfId ? `<br><br>New Org ID: <strong>${sfId}</strong>` : '';
+  const sfIdLine = sfsg_id ? `<br><br>New Org ID: <strong>${sfsg_id}</strong>` : '';
   if (moveResponse.ok) {
     document.getElementById('submitResultMessage').innerHTML = `File saved and submitted successfully.<br><br>Moved to Complete.${sfIdLine}`;
   } else {

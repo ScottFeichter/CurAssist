@@ -77,13 +77,13 @@ describe('hydrateTemplate', () => {
 
   // ── SFSG import flag ───────────────────────────────────────────────────────
 
-  it('sets importedFileFromSFSG=true when org has sfId', async () => {
-    const html = await hydrateTemplate(makeOrg({ sfId: 1234 }));
+  it('sets importedFileFromSFSG=true when org has sfsg_id', async () => {
+    const html = await hydrateTemplate(makeOrg({ sfsg_id: 1234 }));
     expect(html).toContain('let importedFileFromSFSG = true;');
   });
 
-  it('leaves importedFileFromSFSG=false when org has no sfId', async () => {
-    const html = await hydrateTemplate(makeOrg({ sfId: undefined }));
+  it('leaves importedFileFromSFSG=false when org has no sfsg_id', async () => {
+    const html = await hydrateTemplate(makeOrg({ sfsg_id: undefined }));
     expect(html).toContain('let importedFileFromSFSG = false;');
   });
 

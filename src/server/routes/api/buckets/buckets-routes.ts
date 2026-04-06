@@ -67,17 +67,17 @@ bucketsRouter.get('/:bucket/:subdir/:id', async (req: Request, res: Response, ne
   }
 });
 
-// POST /api/buckets/submit — Write sfId back to Atlas and move to complete after successful SFSG submission
+// POST /api/buckets/submit — Write sfsg_id back to Atlas and move to complete after successful SFSG submission
 bucketsRouter.post('/submit', async (req: Request, res: Response, next: NextFunction) => {
   log.enter('POST /api/buckets/submit', log.brack);
   try {
-    const { id, sfId } = req.body;
+    const { id, sfsg_id } = req.body;
     if (!id) return res.status(400).json({ success: false, error: 'id is required' });
 
     const org = await Org.findById(id);
     if (!org) return res.status(404).json({ success: false, error: 'Org not found' });
 
-    if (sfId) org.sfId = sfId;
+    if (sfsg_id) org.sfsg_id = sfsg_id;
     org.status      = 'complete';
     org.submittedAt = new Date();
     org.history.push({ action: 'submitted', by: 'unknown', at: new Date() });
@@ -266,7 +266,7 @@ bucketsRouter.post('/import-file-resolve', async (req: Request, res: Response, n
     const orgName = action === 'rename' ? newName : resource.name;
 
     const newOrg = await Org.create({
-      sfId:             resource.id,
+      sfsg_id:          resource.id,
       name:             orgName,
       alternate_name:   resource.alternate_name   || '',
       email:            resource.email            || '',
@@ -281,7 +281,7 @@ bucketsRouter.post('/import-file-resolve', async (req: Request, res: Response, n
       notes:     (resource.notes     || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
       schedule:  resource.schedule || { schedule_days: [] },
       services:  (resource.services || []).map((s: any) => ({
-        sfId: s.id, name: s.name || '', alternate_name: s.alternate_name || '', email: s.email || '', url: s.url || '',
+        sfsg_id: s.id, name: s.name || '', alternate_name: s.alternate_name || '', email: s.email || '', url: s.url || '',
         fee: s.fee || '', wait_time: s.wait_time || '', application_process: s.application_process || '',
         required_documents: s.required_documents || '', interpretation_services: s.interpretation_services || '',
         internal_note: s.internal_note || '', clinician_actions: s.clinician_actions || '',
@@ -340,7 +340,7 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
     }
 
     const newOrg = await Org.create({
-      sfId:      resource.id,
+      sfsg_id:   resource.id,
       name:      resource.name,
       alternate_name:   resource.alternate_name   || '',
       email:            resource.email            || '',
@@ -365,7 +365,7 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
       notes:    (resource.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
       schedule: resource.schedule || { schedule_days: [] },
       services: (resource.services || []).map((s: any) => ({
-        sfId:                            s.id,
+        sfsg_id:                         s.id,
         name:                            s.name                            || '',
         alternate_name:                  s.alternate_name                  || '',
         email:                           s.email                           || '',
