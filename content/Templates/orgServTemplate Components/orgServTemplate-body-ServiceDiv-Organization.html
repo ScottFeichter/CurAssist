@@ -1708,10 +1708,7 @@
 
                         const pill = document.createElement('div');
                         pill.className = 'Select-value';
-                        pill.innerHTML = `
-                          <span class="Select-value-icon" aria-hidden="true">×</span>
-                          <span class="Select-value-label">${item}</span>
-                        `;
+                        pill.innerHTML = `<span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${item}</span>`;
 
                         pill.querySelector('.Select-value-icon').addEventListener('click', () => {
                           dataObject[item] = false;

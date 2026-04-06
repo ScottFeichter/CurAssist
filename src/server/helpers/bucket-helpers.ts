@@ -5,7 +5,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import * as XLSX from 'xlsx';
 import { Bucket } from '../../database/models/bucket.model';
-import { Org, IOrg } from '../../database/models/org.model';
+import { Org, IOrg, ISpreadsheetService } from '../../database/models/org.model';
 import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap } from './buckets-map';
 import {
   sanitizePhoneName,
@@ -144,16 +144,27 @@ export async function generateOrgDocuments(
       phones:    phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
       notes:     [],
       schedule:  { schedule_days: [] },
-      services: [{
+      services:  [],
+      spreadsheetService: {
         name:                            sanitizeName(row[serviceFieldMap.service_name] || name),
+        alternate_name:                  sanitizeAlternateName(row[serviceFieldMap.service_alternate_name] || ''),
+        email:                           sanitizeEmail(row[serviceFieldMap.service_email] || ''),
+        url:                             sanitizeWebsite(row[serviceFieldMap.service_website] || ''),
+        fee:                             sanitizeServiceCost(row[serviceFieldMap.service_cost] || ''),
+        wait_time:                       sanitizeServiceWaitTime(row[serviceFieldMap.service_wait_time] || ''),
+        application_process:             sanitizeServiceApplicationProcess(row[serviceFieldMap.service_application_process] || ''),
+        required_documents:              sanitizeServiceRequiredDocuments(row[serviceFieldMap.service_required_documents] || ''),
+        interpretation_services:         sanitizeServiceInterpretationServices(row[serviceFieldMap.service_interpretation_services] || ''),
+        internal_note:                   sanitizeInternalNotes(row[serviceFieldMap.service_internal_notes] || ''),
+        clinician_actions:               sanitizeServiceClinicianActions(row[serviceFieldMap.service_clinician_actions] || ''),
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
         eligibilities,
         categories,
-        addresses:                       [],
-        phones:                          [],
-      }],
+        addresses:                       address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [],
+        phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
+      } as ISpreadsheetService,
       history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `imported from spreadsheet` }],
     };
 
@@ -238,9 +249,12 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
   // Stamp org _id on body so frontend can reference it on save
   html = html.replace('<body', `<body data-org-id="${org._id}"`);
 
-  // If org was imported from SFSG, set importedFileFromSFSG flag and show sfsg_id
-  if (org.sfsg_id) {
+  // importedFileFromSFSG = true only when org has sfsg_id AND no spreadsheetService
+  // (SFSG imports lock both toggles; spreadsheet imports enable the service toggle)
+  if (org.sfsg_id && !org.spreadsheetService) {
     html = html.replace('let importedFileFromSFSG = false;', 'let importedFileFromSFSG = true;');
+  }
+  if (org.sfsg_id) {
     html = html.replace('>TBD</span>', `>${org.sfsg_id}</span>`);
   }
 
@@ -283,6 +297,62 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
       /<ul[^>]*id="organization_phones"[^>]*>\s*<\/ul>/,
       `<ul id="organization_phones" class="edit--section--list--item--sublist phone-row-list">${phoneHtml}</ul>`
     );
+  }
+
+  // ── Spreadsheet Service ────────────────────────────────────────────────────
+  if (org.spreadsheetService) {
+    const svc = org.spreadsheetService;
+    html = injectInput(html,    'service_name',                    svc.name                     || '');
+    html = injectInput(html,    'service_alternate_name',          svc.alternate_name            || '');
+    html = injectInput(html,    'service_email',                   svc.email                    || '');
+    html = injectInput(html,    'service_website',                 svc.url                      || '');
+    html = injectInput(html,    'service_cost',                    svc.fee                      || '');
+    html = injectInput(html,    'service_wait_time',               svc.wait_time                || '');
+    html = injectTextarea(html, 'service_description',             svc.long_description         || '');
+    html = injectTextarea(html, 'service_short_description',       svc.short_description        || '');
+    html = injectTextarea(html, 'service_application_process',     svc.application_process      || '');
+    html = injectTextarea(html, 'service_required_documents',      svc.required_documents       || '');
+    html = injectTextarea(html, 'service_interpretation_services', svc.interpretation_services  || '');
+    html = injectTextarea(html, 'service_clinician_actions',       svc.clinician_actions        || '');
+    html = injectTextarea(html, 'service_internal_notes',          svc.internal_note            || '');
+
+    if (svc.phones?.length) {
+      const phoneHtml = svc.phones.map((p: any) =>
+        `<li data-number="${p.number}" data-type="${p.service_type || ''}"><strong>${p.service_type || ''}</strong> ${p.number}</li>`
+      ).join('');
+      html = injectPhoneList(html, 'service_phones', phoneHtml);
+    }
+
+    if (svc.addresses?.length) {
+      const locHtml = svc.addresses.map((a: any) =>
+        `<div>${a.address_1 || ''}, ${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</div>`
+      ).join('');
+      html = injectLocationDiv(html, 'service_locations', locHtml);
+    }
+
+    if (svc.categories?.length) {
+      const pillsHtml = svc.categories.map((c: any) =>
+        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+      ).join('');
+      html = html.replace(
+        /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+      );
+    }
+
+    if (svc.eligibilities?.length) {
+      const pillsHtml = svc.eligibilities.map((e: any) =>
+        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+      ).join('');
+      html = html.replace(
+        /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+      );
+    }
+
+    if (svc.service_belongs_to_org) {
+      html = injectInput(html, 'serviceBelongsToOrg', svc.service_belongs_to_org);
+    }
   }
 
   // ── Services ───────────────────────────────────────────────────────────────

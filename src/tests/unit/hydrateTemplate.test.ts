@@ -77,9 +77,14 @@ describe('hydrateTemplate', () => {
 
   // ── SFSG import flag ───────────────────────────────────────────────────────
 
-  it('sets importedFileFromSFSG=true when org has sfsg_id', async () => {
+  it('sets importedFileFromSFSG=true when org has sfsg_id and no spreadsheetService', async () => {
     const html = await hydrateTemplate(makeOrg({ sfsg_id: 1234 }));
     expect(html).toContain('let importedFileFromSFSG = true;');
+  });
+
+  it('leaves importedFileFromSFSG=false when org has sfsg_id but also has spreadsheetService', async () => {
+    const html = await hydrateTemplate(makeOrg({ sfsg_id: 1234, spreadsheetService: { name: 'Test Svc', notes: [], schedule: { schedule_days: [] }, shouldInheritScheduleFromParent: true, eligibilities: [], categories: [], addresses: [], phones: [] } as any }));
+    expect(html).toContain('let importedFileFromSFSG = false;');
   });
 
   it('leaves importedFileFromSFSG=false when org has no sfsg_id', async () => {

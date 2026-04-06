@@ -857,8 +857,8 @@
                       gap: 3px;
                       height: auto;
                     }
-                    .phone-row-actions button:hover { color: #276ce5; }
-                    .phone-row-actions .remove-btn:hover { color: #e34646; }
+                    .phone-row-actions button:hover { background: #276ce5; color: #fff; }
+                    .phone-row-actions .remove-btn:hover { background: #e34646; color: #fff; }
                     .location-row-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
                     .location-row {
                       display: flex;
@@ -895,8 +895,8 @@
                       gap: 3px;
                       height: auto;
                     }
-                    .location-row-actions button:hover { color: #276ce5; }
-                    .location-row-actions .remove-btn:hover { color: #e34646; }
+                    .location-row-actions button:hover { background: #276ce5; color: #fff; }
+                    .location-row-actions .remove-btn:hover { background: #e34646; color: #fff; }
                   </style>
 <style>
                     /* Service Section Modal Styles */
@@ -2008,6 +2008,48 @@
                       const phoneModal = document.getElementById('addPhoneModal');
                       const noteModal = document.getElementById('addNoteModal');
 
+                      function wireLocationRow(row) {
+                        row.querySelector('.remove-btn').addEventListener('click', () => {
+                          const list = row.closest('#organization_locations');
+                          row.remove();
+                          Array.from(list.children).forEach((r, i) => {
+                            r.querySelector('.location-row-num').textContent = (i + 1) + '.';
+                          });
+                        });
+                        row.querySelector('.edit-btn').addEventListener('click', () => {
+                          document.getElementById('locationName').value  = row.dataset.name  || '';
+                          document.getElementById('addressLine1').value  = row.dataset.addr1 || '';
+                          document.getElementById('addressLine2').value  = row.dataset.addr2 || '';
+                          document.getElementById('city').value          = row.dataset.city  || '';
+                          document.getElementById('state').value         = row.dataset.state || '';
+                          document.getElementById('zip').value           = row.dataset.zip   || '';
+                          document.getElementById('addLocationModal').dataset.editingRow = 'true';
+                          row.dataset.editing = 'true';
+                          document.getElementById('addLocationModal').style.display = 'flex';
+                        });
+                      }
+
+                      function wirePhoneRow(li) {
+                        li.querySelector('.remove-btn').addEventListener('click', () => {
+                          const list = li.closest('#organization_phones');
+                          li.remove();
+                          Array.from(list.children).forEach((r, i) => {
+                            r.querySelector('.phone-row-num').textContent = (i + 1) + '.';
+                          });
+                        });
+                        li.querySelector('.edit-btn').addEventListener('click', () => {
+                          document.getElementById('phoneName').value   = li.dataset.name   || '';
+                          document.getElementById('phoneNumber').value = li.dataset.number || '';
+                          document.getElementById('addPhoneModal').dataset.editingRow = 'true';
+                          li.dataset.editing = 'true';
+                          document.getElementById('addPhoneModal').style.display = 'flex';
+                        });
+                      }
+
+                      // Wire up any hydrated rows
+                      document.querySelectorAll('#organization_locations .location-row').forEach(wireLocationRow);
+                      document.querySelectorAll('#organization_phones .phone-row').forEach(wirePhoneRow);
+
                       // Find all Add buttons by their text content
                       const allButtons = document.querySelectorAll('button');
 
@@ -2041,44 +2083,37 @@
                         const city  = document.getElementById('city').value;
                         const state = document.getElementById('state').value;
                         const zip   = document.getElementById('zip').value;
-
-                        const locationList = document.getElementById('organization_locations');
-                        const num = locationList.children.length + 1;
-
                         const addrParts = [addr1, addr2, city, state, zip].filter(Boolean).join('  ');
 
-                        const row = document.createElement('div');
-                        row.className = 'location-row';
-                        row.dataset.name  = name;
-                        row.dataset.addr1 = addr1;
-                        row.dataset.addr2 = addr2;
-                        row.dataset.city  = city;
-                        row.dataset.state = state;
-                        row.dataset.zip   = zip;
-                        row.innerHTML = `
-                          <span class="location-row-num">${num}.</span>
-                          <span class="location-row-name">${name || ''}</span>
-                          <span class="location-row-addr">${addrParts}</span>
-                          <span class="location-row-actions">
-                            <button type="button" class="edit-btn" title="Edit">
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                              EDIT
-                            </button>
-                            <button type="button" class="remove-btn" title="Remove">
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                              REMOVE
-                            </button>
-                          </span>`;
+                        const locationList = document.getElementById('organization_locations');
+                        const editingRow = locationList.querySelector('[data-editing="true"]');
 
-                        row.querySelector('.remove-btn').addEventListener('click', () => {
-                          row.remove();
-                          // Renumber remaining rows
-                          Array.from(locationList.children).forEach((r, i) => {
-                            r.querySelector('.location-row-num').textContent = (i + 1) + '.';
-                          });
-                        });
-
-                        locationList.appendChild(row);
+                        if (editingRow) {
+                          // Update existing row
+                          editingRow.dataset.name  = name;
+                          editingRow.dataset.addr1 = addr1;
+                          editingRow.dataset.addr2 = addr2;
+                          editingRow.dataset.city  = city;
+                          editingRow.dataset.state = state;
+                          editingRow.dataset.zip   = zip;
+                          editingRow.querySelector('.location-row-name').textContent = name || '';
+                          editingRow.querySelector('.location-row-addr').textContent = addrParts;
+                          delete editingRow.dataset.editing;
+                        } else {
+                          // Add new row
+                          const num = locationList.children.length + 1;
+                          const row = document.createElement('div');
+                          row.className = 'location-row';
+                          row.dataset.name  = name;
+                          row.dataset.addr1 = addr1;
+                          row.dataset.addr2 = addr2;
+                          row.dataset.city  = city;
+                          row.dataset.state = state;
+                          row.dataset.zip   = zip;
+                          row.innerHTML = `<span class="location-row-num">${num}.</span><span class="location-row-name">${name || ''}</span><span class="location-row-addr">${addrParts}</span><span class="location-row-actions"><button type="button" class="edit-btn" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn" title="Remove"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span>`;
+                          wireLocationRow(row);
+                          locationList.appendChild(row);
+                        }
 
                         // Clear and close
                         document.getElementById('locationName').value = '';
@@ -2087,6 +2122,7 @@
                         document.getElementById('city').value = '';
                         document.getElementById('state').value = '';
                         document.getElementById('zip').value = '';
+                        delete locationModal.dataset.editingRow;
                         locationModal.style.display = 'none';
                       });
 
@@ -2098,36 +2134,34 @@
                       document.getElementById('addPhoneBtn').addEventListener('click', () => {
                         const name   = document.getElementById('phoneName').value;
                         const number = document.getElementById('phoneNumber').value;
-
                         const phoneList = document.getElementById('organization_phones');
-                        const num = phoneList.children.length + 1;
+                        const editingLi = phoneList.querySelector('[data-editing="true"]');
 
-                        const li = document.createElement('li');
-                        li.className = 'phone-row';
-                        li.dataset.name   = name;
-                        li.dataset.number = number;
-                        li.innerHTML = `
-                          <span class="phone-row-num">${num}.</span>
-                          <span class="phone-row-name">${name || ''}</span>
-                          <span class="phone-row-number">${number || ''}</span>
-                          <span class="phone-row-actions">
-                            <button type="button" class="edit-btn" title="Edit">
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
-                              EDIT
-                            </button>
-                            <button type="button" class="remove-btn" title="Remove">
-                              <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg>
-                              REMOVE
-                            </button>
-                          </span>`;
+                        if (editingLi) {
+                          // Update existing row
+                          editingLi.dataset.name   = name;
+                          editingLi.dataset.number = number;
+                          editingLi.querySelector('.phone-row-name').textContent   = name   || '';
+                          editingLi.querySelector('.phone-row-number').textContent = number || '';
+                          delete editingLi.dataset.editing;
+                        } else {
+                          // Add new row
+                          const num = phoneList.children.length + 1;
+                          const li = document.createElement('li');
+                          li.className = 'phone-row';
+                          li.dataset.name   = name;
+                          li.dataset.number = number;
+                          li.innerHTML = `<span class="phone-row-num">${num}.</span><span class="phone-row-name">${name || ''}</span><span class="phone-row-number">${number || ''}</span><span class="phone-row-actions"><button type="button" class="edit-btn" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn" title="Remove"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span>`;
+                          wirePhoneRow(li);
+                          phoneList.appendChild(li);
+                        }
 
-                        li.querySelector('.remove-btn').addEventListener('click', () => {
-                          li.remove();
-                          Array.from(phoneList.children).forEach((r, i) => {
-                            r.querySelector('.phone-row-num').textContent = (i + 1) + '.';
-                          });
-                        });
-
+                        // Clear and close
+                        document.getElementById('phoneName').value = '';
+                        document.getElementById('phoneNumber').value = '';
+                        delete phoneModal.dataset.editingRow;
+                        phoneModal.style.display = 'none';
+                      });
                         phoneList.appendChild(li);
 
                         // Clear and close
@@ -4523,10 +4557,7 @@
 
                         const pill = document.createElement('div');
                         pill.className = 'Select-value';
-                        pill.innerHTML = `
-                          <span class="Select-value-icon" aria-hidden="true">×</span>
-                          <span class="Select-value-label">${item}</span>
-                        `;
+                        pill.innerHTML = `<span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${item}</span>`;
 
                         pill.querySelector('.Select-value-icon').addEventListener('click', () => {
                           dataObject[item] = false;

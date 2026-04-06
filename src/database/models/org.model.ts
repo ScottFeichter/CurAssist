@@ -46,6 +46,37 @@ export interface INote {
   note: string;
 }
 
+/**
+ * A standalone service from a spreadsheet import.
+ * Populates the serviceDivSpreadsheet toggle — separate from org.services[].
+ * Includes service_belongs_to_org for submitting to an existing SFSG org.
+ */
+export interface ISpreadsheetService {
+  name?:                           string;
+  alternate_name?:                 string;
+  email?:                          string;
+  url?:                            string;
+  fee?:                            string;
+  wait_time?:                      string;
+  application_process?:            string;
+  required_documents?:             string;
+  interpretation_services?:        string;
+  internal_note?:                  string;
+  clinician_actions?:              string;
+  short_description?:              string;
+  long_description?:               string;
+  eligibility?:                    string;
+  notes:                           INote[];
+  schedule:                        ISchedule;
+  shouldInheritScheduleFromParent: boolean;
+  eligibilities:                   string[];
+  categories:                      string[];
+  addresses:                       IAddress[];
+  phones:                          IPhone[];
+  /** SFSG org ID this service belongs to — filled by volunteer or from spreadsheet */
+  service_belongs_to_org?:         string;
+}
+
 /** A service offered by an org. Embedded directly in the org document. */
 export interface IService {
   /** SF Service Guide assigned ID — populated after submission. */
@@ -92,6 +123,7 @@ export interface IHistoryEntry {
  */
 export interface IOrg extends Document {
   sfsg_id?:         number;
+  spreadsheetService?: ISpreadsheetService;
   name:             string;
   alternate_name?:  string;
   email?:           string;
@@ -147,6 +179,31 @@ const NoteSchema = new Schema<INote>({
   note: { type: String },
 }, { _id: false });
 
+const SpreadsheetServiceSchema = new Schema<ISpreadsheetService>({
+  name:                            { type: String },
+  alternate_name:                  { type: String },
+  email:                           { type: String },
+  url:                             { type: String },
+  fee:                             { type: String },
+  wait_time:                       { type: String },
+  application_process:             { type: String },
+  required_documents:              { type: String },
+  interpretation_services:         { type: String },
+  internal_note:                   { type: String },
+  clinician_actions:               { type: String },
+  short_description:               { type: String },
+  long_description:                { type: String },
+  eligibility:                     { type: String },
+  notes:                           { type: [NoteSchema], default: [] },
+  schedule:                        { type: ScheduleSchema, default: () => ({ schedule_days: [] }) },
+  shouldInheritScheduleFromParent: { type: Boolean, default: true },
+  eligibilities:                   { type: [String], default: [] },
+  categories:                      { type: [String], default: [] },
+  addresses:                       { type: [AddressSchema], default: [] },
+  phones:                          { type: [PhoneSchema], default: [] },
+  service_belongs_to_org:          { type: String },
+}, { _id: false });
+
 const ServiceSchema = new Schema<IService>({
   sfsg_id:                         { type: Number },
   name:                            { type: String, required: false, default: 'Unnamed Service' },
@@ -180,7 +237,8 @@ const HistoryEntrySchema = new Schema<IHistoryEntry>({
 }, { _id: false });
 
 const OrgSchema = new Schema<IOrg>({
-  sfsg_id:          { type: Number },
+  sfsg_id:             { type: Number },
+  spreadsheetService:  { type: SpreadsheetServiceSchema },
   name:             { type: String, required: true },
   alternate_name:   { type: String },
   email:            { type: String },
@@ -223,6 +281,8 @@ console.leave();
 // history[].by is 'unknown' placeholder until authentication is added
 // history[].detail is optional context e.g. "incomplete → pending" on a move
 // sfsg_id is assigned by SF Service Guide after submission
+// spreadsheetService is populated from spreadsheet import — drives the Service toggle
+// spreadsheetService is absent on SFSG-imported orgs and manually created orgs
 // timestamps: true adds createdAt and updatedAt automatically
 
 // #endregion ------------------------------------------------------------------

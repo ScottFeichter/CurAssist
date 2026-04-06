@@ -130,44 +130,56 @@ bucketsRouter.post('/save', async (req: Request, res: Response, next: NextFuncti
     }
 
     // ── Service fields ──────────────────────────────────────────────────────────
-    if (org.services.length === 0) org.services.push({ name: org.name } as any);
-    const svc = org.services[0] as any;
+    // service_belongs_to_org present = service mode (spreadsheetService)
+    // otherwise = org mode (org.services[0])
+    const isServiceMode = fields.service_belongs_to_org != null;
 
-    if (fields.service_name                    != null) svc.name                    = fields.service_name;
-    if (fields.service_alternate_name          != null) svc.alternate_name          = fields.service_alternate_name;
-    if (fields.service_email                   != null) svc.email                   = fields.service_email;
-    if (fields.service_website                 != null) svc.url                     = fields.service_website;
-    if (fields.service_cost                    != null) svc.fee                     = fields.service_cost;
-    if (fields.service_wait_time               != null) svc.wait_time               = fields.service_wait_time;
-    if (fields.service_description             != null) svc.long_description        = fields.service_description;
-    if (fields.service_short_description       != null) svc.short_description       = fields.service_short_description;
-    if (fields.service_application_process     != null) svc.application_process     = fields.service_application_process;
-    if (fields.service_required_documents      != null) svc.required_documents      = fields.service_required_documents;
-    if (fields.service_interpretation_services != null) svc.interpretation_services = fields.service_interpretation_services;
-    if (fields.service_clinician_actions       != null) svc.clinician_actions       = fields.service_clinician_actions;
-    if (fields.service_internal_notes          != null) svc.internal_note           = fields.service_internal_notes;
-
-    if (Array.isArray(fields.service_top_categories))    svc.categories    = [...(fields.service_top_categories || []), ...(fields.service_sub_categories || [])];
-    if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = [...(fields.service_top_eligibilities || []), ...(fields.service_sub_eligibilities || [])];
-
-    if (Array.isArray(fields.service_phones)) {
-      svc.phones = fields.service_phones
-        .filter((p: any) => p.phone_number)
-        .map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
-    }
-
-    if (Array.isArray(fields.service_locations)) {
-      svc.addresses = fields.service_locations.map((l: any) => ({
-        address_1:      l.address_1 || '',
-        address_2:      l.address_2 || '',
-        city:           l.city      || '',
-        state_province: l.state     || '',
-        postal_code:    l.zip       || ''
-      }));
+    if (isServiceMode) {
+      if (!org.spreadsheetService) org.spreadsheetService = { notes: [], schedule: { schedule_days: [] }, shouldInheritScheduleFromParent: true, eligibilities: [], categories: [], addresses: [], phones: [] } as any;
+      const svc = org.spreadsheetService as any;
+      if (fields.service_name                    != null) svc.name                    = fields.service_name;
+      if (fields.service_alternate_name          != null) svc.alternate_name          = fields.service_alternate_name;
+      if (fields.service_email                   != null) svc.email                   = fields.service_email;
+      if (fields.service_website                 != null) svc.url                     = fields.service_website;
+      if (fields.service_cost                    != null) svc.fee                     = fields.service_cost;
+      if (fields.service_wait_time               != null) svc.wait_time               = fields.service_wait_time;
+      if (fields.service_description             != null) svc.long_description        = fields.service_description;
+      if (fields.service_short_description       != null) svc.short_description       = fields.service_short_description;
+      if (fields.service_application_process     != null) svc.application_process     = fields.service_application_process;
+      if (fields.service_required_documents      != null) svc.required_documents      = fields.service_required_documents;
+      if (fields.service_interpretation_services != null) svc.interpretation_services = fields.service_interpretation_services;
+      if (fields.service_clinician_actions       != null) svc.clinician_actions       = fields.service_clinician_actions;
+      if (fields.service_internal_notes          != null) svc.internal_note           = fields.service_internal_notes;
+      svc.service_belongs_to_org = fields.service_belongs_to_org;
+      if (Array.isArray(fields.service_top_categories))    svc.categories    = [...(fields.service_top_categories || []), ...(fields.service_sub_categories || [])];
+      if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = [...(fields.service_top_eligibilities || []), ...(fields.service_sub_eligibilities || [])];
+      if (Array.isArray(fields.service_phones))    svc.phones    = fields.service_phones.filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
+      if (Array.isArray(fields.service_locations)) svc.addresses = fields.service_locations.map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' }));
+      org.markModified('spreadsheetService');
+    } else {
+      if (org.services.length === 0) org.services.push({ name: org.name } as any);
+      const svc = org.services[0] as any;
+      if (fields.service_name                    != null) svc.name                    = fields.service_name;
+      if (fields.service_alternate_name          != null) svc.alternate_name          = fields.service_alternate_name;
+      if (fields.service_email                   != null) svc.email                   = fields.service_email;
+      if (fields.service_website                 != null) svc.url                     = fields.service_website;
+      if (fields.service_cost                    != null) svc.fee                     = fields.service_cost;
+      if (fields.service_wait_time               != null) svc.wait_time               = fields.service_wait_time;
+      if (fields.service_description             != null) svc.long_description        = fields.service_description;
+      if (fields.service_short_description       != null) svc.short_description       = fields.service_short_description;
+      if (fields.service_application_process     != null) svc.application_process     = fields.service_application_process;
+      if (fields.service_required_documents      != null) svc.required_documents      = fields.service_required_documents;
+      if (fields.service_interpretation_services != null) svc.interpretation_services = fields.service_interpretation_services;
+      if (fields.service_clinician_actions       != null) svc.clinician_actions       = fields.service_clinician_actions;
+      if (fields.service_internal_notes          != null) svc.internal_note           = fields.service_internal_notes;
+      if (Array.isArray(fields.service_top_categories))    svc.categories    = [...(fields.service_top_categories || []), ...(fields.service_sub_categories || [])];
+      if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = [...(fields.service_top_eligibilities || []), ...(fields.service_sub_eligibilities || [])];
+      if (Array.isArray(fields.service_phones))    svc.phones    = fields.service_phones.filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
+      if (Array.isArray(fields.service_locations)) svc.addresses = fields.service_locations.map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' }));
+      org.markModified('services');
     }
 
     org.history.push({ action: 'edited', by: 'unknown', at: new Date() });
-    org.markModified('services');
     org.markModified('phones');
     org.markModified('addresses');
     org.markModified('history');
