@@ -207,10 +207,11 @@ function collectFormData() {
 
 /**
  * Saves the file, collects form data, submits to SF API, and moves file to Complete on success.
+ * @param {'new'|'update'} [mode='new'] - 'new' creates a fresh org, 'update' sends a change_request
  * @returns {Promise<void>}
  */
-async function submitFormData() {
-  console.log('[SUBMIT] submitFormData called');
+async function submitFormData(mode = 'new') {
+  console.log('[SUBMIT] submitFormData called, mode:', mode);
   const saved = await saveFile(true);
   console.log('[SUBMIT] saveFile result:', saved);
   if (!saved) {

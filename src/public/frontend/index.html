@@ -702,6 +702,18 @@
     </div>
   </div>
 
+  <!-- Submit warning modal — shown when org already has a sfsg_id -->
+  <div id="submitWarnModal" class="modal">
+    <div class="modal-content">
+      <p>This org already has an SFSG ID: <strong><span id="submitWarnSfsgId"></span></strong>.<br><br>How would you like to proceed?</p>
+      <div class="modal-buttons">
+        <button class="submit-btn" onclick="confirmSubmitUpdate()">Update Existing</button>
+        <button class="submit-btn" onclick="confirmSubmitNew()">Create New</button>
+        <button class="cancel-btn" onclick="cancelSubmitWarn()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Submit result modal -->
   <div id="submitResultModal" class="modal">
     <div class="modal-content">

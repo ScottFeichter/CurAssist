@@ -487,7 +487,7 @@ function cancelDelete() {
 }
 
 /**
- * Submit file - Show confirmation modal, or alert if already Complete.
+ * Submit file - Show confirmation modal, or warn if org already has a sfsg_id.
  */
 function submitFile() {
   if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
@@ -495,16 +495,24 @@ function submitFile() {
     document.getElementById('alreadyCompleteModal').style.display = 'block';
     return;
   }
+  const iframe = document.getElementById('formFrame');
+  const sfsgIdEl = iframe.contentDocument?.getElementById('organization_sfsg_id');
+  const sfsgId = sfsgIdEl ? sfsgIdEl.textContent.trim() : 'TBD';
+  if (sfsgId && sfsgId !== 'TBD') {
+    document.getElementById('submitWarnSfsgId').textContent = sfsgId;
+    document.getElementById('submitWarnModal').style.display = 'block';
+    return;
+  }
   document.getElementById('submitModal').style.display = 'block';
 }
 
 /**
- * Confirms submit — closes modal and triggers `submitFormData`.
+ * Confirms submit — closes modal and triggers `submitFormData` as a new org.
  */
 function confirmSubmit() {
   console.log('[SUBMIT] confirmSubmit called');
   document.getElementById('submitModal').style.display = 'none';
-  submitFormData();
+  submitFormData('new');
 }
 
 /**
@@ -512,6 +520,22 @@ function confirmSubmit() {
  */
 function cancelSubmit() {
   document.getElementById('submitModal').style.display = 'none';
+}
+
+/** Update Existing path — triggers change_requests flow. */
+function confirmSubmitUpdate() {
+  document.getElementById('submitWarnModal').style.display = 'none';
+  submitFormData('update');
+}
+
+/** Create New path — ignores existing sfsg_id and creates a fresh org. */
+function confirmSubmitNew() {
+  document.getElementById('submitWarnModal').style.display = 'none';
+  submitFormData('new');
+}
+
+function cancelSubmitWarn() {
+  document.getElementById('submitWarnModal').style.display = 'none';
 }
 
 /**
