@@ -189,8 +189,4 @@ html = html.replace(
   button.remove-item { background: transparent !important; color: #e34646 !important; border: 1px solid #e34646 !important; }\n</style>\n</head>`
 );
 
-const CYAN  = '\x1b[36m';
-const RESET = '\x1b[0m';
 
-fs.writeFileSync(outputFile, html, 'utf8');
-console.log(`${CYAN}[tmplate]${RESET}  INFOR : Test combined template created -> ${outputName}\n`);

@@ -345,7 +345,7 @@ async function onCopyBucketChange() {
  * Executes the file copy to the selected destination.
  * @returns {Promise<void>}
  */
-async function confirmCopy() {
+async function confirmCopy(shouldSave) {
   const toBucket = document.getElementById('copyToBucket').value;
   const toSubdir = document.getElementById('copyToSubdir').value;
   const copyName = document.getElementById('copyFileName').value.trim();
@@ -354,6 +354,8 @@ async function confirmCopy() {
   document.getElementById('copyModal').style.display = 'none';
 
   try {
+    if (shouldSave) await saveFile(true);
+
     const response = await fetch(`${API_BASE}/buckets/create-file`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
