@@ -28,6 +28,7 @@ export interface ISchedule {
 export interface IPhone {
   number:        string;
   service_type?: string;
+  extension?:    string;
 }
 
 /** A physical address. All fields optional to match SFSG API flexibility. */
@@ -62,6 +63,7 @@ export interface IService {
   clinician_actions?:              string;
   short_description?:              string;
   long_description?:               string;
+  eligibility?:                    string;
   notes:                           INote[];
   schedule:                        ISchedule;
   /** If true, service inherits the parent org schedule. */
@@ -89,14 +91,15 @@ export interface IHistoryEntry {
  * Mirrors the SF Service Guide API shape with additional CurAssist metadata.
  */
 export interface IOrg extends Document {
-  sfId?:           number;
-  name:            string;
-  alternate_name?: string;
-  email?:          string;
-  website?:        string;
+  sfId?:            number;
+  name:             string;
+  alternate_name?:  string;
+  email?:           string;
+  website?:         string;
   long_description?: string;
-  legal_status?:   string;
-  internal_note?:  string;
+  short_description?: string;
+  legal_status?:    string;
+  internal_note?:   string;
   addresses:       IAddress[];
   notes:           INote[];
   schedule:        ISchedule;
@@ -128,6 +131,7 @@ const ScheduleSchema = new Schema<ISchedule>({
 const PhoneSchema = new Schema<IPhone>({
   number:       { type: String },
   service_type: { type: String },
+  extension:    { type: String },
 }, { _id: false });
 
 const AddressSchema = new Schema<IAddress>({
@@ -158,6 +162,7 @@ const ServiceSchema = new Schema<IService>({
   clinician_actions:               { type: String },
   short_description:               { type: String },
   long_description:                { type: String },
+  eligibility:                     { type: String },
   notes:                           { type: [NoteSchema], default: [] },
   schedule:                        { type: ScheduleSchema, default: () => ({ schedule_days: [] }) },
   shouldInheritScheduleFromParent: { type: Boolean, default: true },
@@ -181,6 +186,7 @@ const OrgSchema = new Schema<IOrg>({
   email:            { type: String },
   website:          { type: String },
   long_description: { type: String },
+  short_description: { type: String },
   legal_status:     { type: String },
   internal_note:    { type: String },
   addresses:        { type: [AddressSchema],  default: [] },

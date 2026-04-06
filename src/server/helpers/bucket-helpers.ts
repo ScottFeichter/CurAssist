@@ -197,7 +197,7 @@ export function transformOrgToSFPayload(org: IOrg): { orgBody: any, services: an
     wait_time:                      svc.wait_time                || null,
     url:                            svc.url                      || null,
     addresses:                      svc.addresses                || [],
-    phones:                         (svc.phones || []).map(p => ({ number: p.number, description: p.service_type || null })),
+    phones:                         (svc.phones || []).map(p => ({ number: p.number, ...(p.service_type ? { service_type: p.service_type } : {}), ...(p.extension ? { extension: p.extension } : {}) })),
     schedule:                       svc.schedule                 || { schedule_days: [] },
     notes:                          svc.notes                    || [],
     categories:                     (svc.categories || []).map(name => ({ name, id: null, top_level: false, featured: false })),
@@ -215,7 +215,7 @@ export function transformOrgToSFPayload(org: IOrg): { orgBody: any, services: an
       legal_status:     org.legal_status     || null,
       internal_note:    org.internal_note    || null,
       addresses:        org.addresses        || [],
-      phones:           (org.phones || []).map(p => ({ number: p.number, description: p.service_type || null })),
+      phones:           (org.phones || []).map(p => ({ number: p.number, ...(p.service_type ? { service_type: p.service_type } : {}), ...(p.extension ? { extension: p.extension } : {}) })),
       notes:            org.notes            || [],
       schedule:         org.schedule         || { schedule_days: [] }
     }]

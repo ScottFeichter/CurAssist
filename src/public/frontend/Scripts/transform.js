@@ -93,7 +93,7 @@ function transformPhones(phones) {
     .filter(p => p.phone_number)
     .map(p => {
       const phone = { number: p.phone_number };
-      if (p.phone_name) phone.description = p.phone_name;
+      if (p.phone_name) phone.service_type = p.phone_name;
       return phone;
     });
 }

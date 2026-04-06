@@ -220,6 +220,7 @@ async function submitFormData() {
   }
 
   const payload = collectFormData();
+  const orgId = currentFiles[currentIndex]._id;
   console.log('[SUBMIT] 1. Payload collected:', JSON.stringify(payload, null, 2));
   console.log('[SUBMIT] 2. Mode:', payload.organization ? 'Organization' : 'Service');
   console.log('[SUBMIT] 3. Atlas org _id:', orgId);
