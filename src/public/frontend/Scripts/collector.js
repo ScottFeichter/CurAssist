@@ -210,7 +210,9 @@ function collectFormData() {
  * @returns {Promise<void>}
  */
 async function submitFormData() {
+  console.log('[SUBMIT] submitFormData called');
   const saved = await saveFile(true);
+  console.log('[SUBMIT] saveFile result:', saved);
   if (!saved) {
     document.getElementById('submitResultMessage').innerHTML = 'Save failed — submission cancelled.';
     document.getElementById('submitResultModal').style.display = 'block';
@@ -218,18 +220,23 @@ async function submitFormData() {
   }
 
   const payload = collectFormData();
-  console.log('Submit payload:', JSON.stringify(payload, null, 2));
-
-  const orgId = currentFiles[currentIndex]._id;
+  console.log('[SUBMIT] 1. Payload collected:', JSON.stringify(payload, null, 2));
+  console.log('[SUBMIT] 2. Mode:', payload.organization ? 'Organization' : 'Service');
+  console.log('[SUBMIT] 3. Atlas org _id:', orgId);
   let sfId = null;
 
   try {
     if (payload.organization) {
+      console.log('[SUBMIT] 4. Calling submitNewOrg...');
       sfId = await submitNewOrg(payload);
+      console.log('[SUBMIT] 5. submitNewOrg succeeded, sfId:', sfId);
     } else {
+      console.log('[SUBMIT] 4. Calling submitService...');
       await submitService(payload);
+      console.log('[SUBMIT] 5. submitService succeeded');
     }
   } catch (err) {
+    console.log('[SUBMIT] ERROR in submit:', err.message);
     document.getElementById('submitResultMessage').innerHTML = 'File saved successfully.<br><br>Submission failed: ' + err.message;
     document.getElementById('submitResultModal').style.display = 'block';
     return;
@@ -242,6 +249,7 @@ async function submitFormData() {
     credentials: 'include',
     body: JSON.stringify({ id: orgId, sfId })
   });
+  console.log('[SUBMIT] 6. Atlas submit response status:', moveResponse.status);
 
   const sfIdLine = sfId ? `<br><br>New Org ID: <strong>${sfId}</strong>` : '';
   if (moveResponse.ok) {

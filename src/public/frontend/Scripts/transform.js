@@ -62,14 +62,16 @@ function transformHours(service_hours) {
  * @returns {Object[]}
  */
 function transformLocations(locations) {
-  return locations.map(loc => ({
-    name:       loc.location_name || null,
-    address_1:  loc.address_1     || null,
-    address_2:  loc.address_2     || null,
-    city:       loc.city          || null,
-    state_province: loc.state     || null,
-    postal_code: loc.zip          || null
-  }));
+  return locations.map(loc => {
+    const addr = {};
+    if (loc.location_name) addr.name            = loc.location_name;
+    if (loc.address_1)     addr.address_1       = loc.address_1;
+    if (loc.address_2)     addr.address_2       = loc.address_2;
+    if (loc.city)          addr.city            = loc.city;
+    if (loc.state)         addr.state_province  = loc.state;
+    if (loc.zip)           addr.postal_code     = loc.zip;
+    return addr;
+  }).filter(addr => Object.keys(addr).length > 0);
 }
 
 /**
@@ -89,10 +91,11 @@ function transformNotes(notes) {
 function transformPhones(phones) {
   return phones
     .filter(p => p.phone_number)
-    .map(p => ({
-      number:      p.phone_number || null,
-      description: p.phone_name   || null
-    }));
+    .map(p => {
+      const phone = { number: p.phone_number };
+      if (p.phone_name) phone.description = p.phone_name;
+      return phone;
+    });
 }
 
 // #endregion ------------------------------------------------------------------
@@ -105,28 +108,29 @@ function transformPhones(phones) {
  * @returns {Object} SF API-shaped service object
  */
 function transformService(svc) {
-  return {
-    id:                       -1,
-    name:                     svc.service_name                  || null,
-    alternate_name:           svc.service_alternate_name        || null,
-    email:                    svc.service_email                 || null,
-    long_description:         svc.service_description           || null,
-    short_description:        svc.service_short_description     || null,
-    application_process:      svc.service_application_process   || null,
-    required_documents:       svc.service_required_documents    || null,
-    interpretation_services:  svc.service_interpretation_services || null,
-    internal_note:            svc.service_internal_notes        || null,
-    fee:                      svc.service_cost                  || null,
-    wait_time:                svc.service_wait_time             || null,
-    url:                      svc.service_website               || null,
-    addresses:                transformLocations(svc.service_locations),
-    phones:                   transformPhones(svc.service_phones || []),
-    schedule:                 transformHours(svc.service_hours),
-    notes:                    transformNotes(svc.service_markdown_notes),
-    categories:               transformCategories(svc.service_top_categories, svc.service_sub_categories),
-    eligibilities:            transformEligibilities(svc.service_top_eligibilities, svc.service_sub_eligibilities),
+  const service = {
+    id:           -1,
+    name:         svc.service_name || null,
+    addresses:    transformLocations(svc.service_locations),
+    phones:       transformPhones(svc.service_phones || []),
+    schedule:     transformHours(svc.service_hours),
+    notes:        transformNotes(svc.service_markdown_notes),
+    categories:   transformCategories(svc.service_top_categories, svc.service_sub_categories),
+    eligibilities: transformEligibilities(svc.service_top_eligibilities, svc.service_sub_eligibilities),
     shouldInheritScheduleFromParent: false
   };
+  if (svc.service_alternate_name)           service.alternate_name          = svc.service_alternate_name;
+  if (svc.service_email)                    service.email                   = svc.service_email;
+  if (svc.service_description)              service.long_description        = svc.service_description;
+  if (svc.service_short_description)        service.short_description       = svc.service_short_description;
+  if (svc.service_application_process)      service.application_process     = svc.service_application_process;
+  if (svc.service_required_documents)       service.required_documents      = svc.service_required_documents;
+  if (svc.service_interpretation_services)  service.interpretation_services = svc.service_interpretation_services;
+  if (svc.service_internal_notes)           service.internal_note           = svc.service_internal_notes;
+  if (svc.service_cost)                     service.fee                     = svc.service_cost;
+  if (svc.service_wait_time)                service.wait_time               = svc.service_wait_time;
+  if (svc.service_website)                  service.url                     = svc.service_website;
+  return service;
 }
 
 /**
@@ -138,24 +142,21 @@ function transformNewOrg(payload) {
   const org = payload.organization;
   const services = Object.values(org.services || {}).map(transformService);
 
-  return {
-    orgBody: {
-      resources: [{
-        name:           org.organization_name          || null,
-        alternate_name: org.organization_alternate_name || null,
-        email:          org.organization_email         || null,
-        website:        org.organization_website       || null,
-        long_description: org.organization_description || null,
-        legal_status:   org.organization_legal_status  || null,
-        internal_note:  org.organization_internal_notes || null,
-        addresses:      transformLocations(org.organization_locations),
-        phones:         transformPhones(org.organization_phones),
-        notes:          transformNotes(org.organization_markdown_notes),
-        schedule:       { schedule_days: [] }
-      }]
-    },
-    services
+  const resource = {
+    name:      org.organization_name || null,
+    addresses: transformLocations(org.organization_locations),
+    phones:    transformPhones(org.organization_phones),
+    notes:     transformNotes(org.organization_markdown_notes),
+    schedule:  { schedule_days: [] }
   };
+  if (org.organization_alternate_name) resource.alternate_name   = org.organization_alternate_name;
+  if (org.organization_email)          resource.email            = org.organization_email;
+  if (org.organization_website)        resource.website          = org.organization_website;
+  if (org.organization_description)    resource.long_description = org.organization_description;
+  if (org.organization_legal_status)   resource.legal_status     = org.organization_legal_status;
+  if (org.organization_internal_notes) resource.internal_note    = org.organization_internal_notes;
+
+  return { orgBody: { resources: [resource] }, services };
 }
 
 /**

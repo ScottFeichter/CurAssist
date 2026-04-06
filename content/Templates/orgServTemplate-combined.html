@@ -1362,7 +1362,7 @@
   function searchAllServices(event) {
     event.preventDefault();
     const links = Array.from(document.querySelectorAll('#servicesList a'));
-    console.log('searchAllServices: found', links.length, 'links');
+    //DISABLED: console.log('searchAllServices: found', links.length, 'links');
     links.forEach((link, i) => {
       const name = link.textContent.trim();
       if (!name) return;
@@ -1373,11 +1373,11 @@
   }
 
   function addNewService() {
-    console.log('addNewService called');
+    //DISABLED: console.log('addNewService called');
     
     // Generate unique service ID
     const serviceId = 'service-' + Date.now();
-    console.log('serviceId:', serviceId);
+    //DISABLED: console.log('serviceId:', serviceId);
     
     // Determine next placeholder name
     const servicesList = document.getElementById('servicesList');
@@ -1393,7 +1393,7 @@
     });
     
     const placeholderName = `New Service ${maxNum + 1}`;
-    console.log('placeholderName:', placeholderName);
+    //DISABLED: console.log('placeholderName:', placeholderName);
     
     // Add service link to navbar
     const li = document.createElement('li');
@@ -1405,12 +1405,12 @@
     link.setAttribute('onclick', `event.preventDefault(); var t=document.getElementById('${serviceId}'); if(t) t.scrollIntoView({behavior:'smooth'});`);
     li.appendChild(link);
     servicesList.appendChild(li);
-    console.log('Added link to navbar');
+    //DISABLED: console.log('Added link to navbar');
     
     // Find the ServiceDiv template to clone
     const serviceTemplate = document.getElementById('serviceDivOrganization');
     if (!serviceTemplate) {
-      console.error('serviceDivOrganization not found');
+      //DISABLED: //DISABLED: console.error('serviceDivOrganization not found');
       return;
     }
     
@@ -1418,13 +1418,13 @@
     const newServiceDiv = serviceTemplate.cloneNode(true);
     newServiceDiv.id = serviceId;
     newServiceDiv.style.display = '';
-    console.log('Cloned service div');
+    //DISABLED: console.log('Cloned service div');
     
     // Clear all inputs to make it blank
     newServiceDiv.querySelectorAll('input, textarea').forEach(input => input.value = '');
     newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
     newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
-    console.log('Cleared inputs');
+    //DISABLED: console.log('Cleared inputs');
 
     // Wire up autocomplete for category/eligibility fields on this cloned div
     if (typeof window.setupServiceAutocomplete === 'function') {
@@ -1457,14 +1457,14 @@
     
     // Append to orgServicesDiv container
     const orgServicesDiv = document.getElementById('orgServicesDiv');
-    console.log('orgServicesDiv:', orgServicesDiv);
+    //DISABLED: console.log('orgServicesDiv:', orgServicesDiv);
     if (!orgServicesDiv) {
-      console.error('orgServicesDiv container not found');
+      //DISABLED: console.error('orgServicesDiv container not found');
       return;
     }
     
     orgServicesDiv.appendChild(newServiceDiv);
-    console.log('Appended to orgServicesDiv');
+    //DISABLED: console.log('Appended to orgServicesDiv');
     
     // Scroll to new service
     setTimeout(() => {
@@ -1603,16 +1603,16 @@
   }
 
   // Update organization name in navbar when input changes
-  console.log('[navBar] script executing, readyState:', document.readyState);
+  //DISABLED: console.log('[navBar] script executing, readyState:', document.readyState);
   document.addEventListener('DOMContentLoaded', function() {
-    console.log('[navBar] DOMContentLoaded fired');
+    //DISABLED: console.log('[navBar] DOMContentLoaded fired');
     const orgNameInput = document.getElementById('organization_name');
     const orgNavLink = document.getElementById('orgNavLink');
-    console.log('[navBar] orgNameInput:', orgNameInput, 'value:', orgNameInput && orgNameInput.value);
-    console.log('[navBar] orgNavLink:', orgNavLink);
+    //DISABLED: console.log('[navBar] orgNameInput:', orgNameInput, 'value:', orgNameInput && orgNameInput.value);
+    //DISABLED: console.log('[navBar] orgNavLink:', orgNavLink);
     if (orgNameInput && orgNavLink) {
       orgNavLink.textContent = orgNameInput.value || '{{organization_name}}';
-      console.log('[navBar] set orgNavLink to:', orgNavLink.textContent);
+      //DISABLED: console.log('[navBar] set orgNavLink to:', orgNavLink.textContent);
       orgNameInput.addEventListener('input', function() {
         orgNavLink.textContent = this.value || '{{organization_name}}';
       });
@@ -4285,15 +4285,15 @@
                   });
 
                   function initServiceModals(root) {
-                    console.log('[initServiceModals] called, root id:', root && root.id);
+                    //DISABLED: console.log('[initServiceModals] called, root id:', root && root.id);
                     // Service Section Modal References — scoped to root
                     const serviceLocationModal = root.querySelector('#serviceAddLocationModal');
                     const servicePhoneModal = root.querySelector('#serviceAddPhoneModal');
                     const serviceNoteModal = root.querySelector('#serviceAddNoteModal');
-                    console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
+                    //DISABLED: console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
 
                     const locationTrigger = root.querySelector('#serviceAddLocationTrigger');
-                    console.log('[initServiceModals] locationTrigger:', locationTrigger);
+                    //DISABLED: console.log('[initServiceModals] locationTrigger:', locationTrigger);
                     // Note: locationTrigger click is handled by the copy-from-org handler below
                     const noteTrigger = root.querySelector('#serviceAddNoteTrigger');
                     if (noteTrigger) {
@@ -4352,19 +4352,19 @@
                     const copyFromOrgCancel  = document.getElementById('copyFromOrgCancel');
                     const addFromOrgTrigger  = root.querySelector('#serviceAddLocationTrigger');
 
-                    console.log('[copyFromOrg] addFromOrgTrigger:', addFromOrgTrigger);
-                    console.log('[copyFromOrg] copyFromOrgModal:', copyFromOrgModal);
+                    //DISABLED: console.log('[copyFromOrg] addFromOrgTrigger:', addFromOrgTrigger);
+                    //DISABLED: console.log('[copyFromOrg] copyFromOrgModal:', copyFromOrgModal);
 
                     if (addFromOrgTrigger) {
                       addFromOrgTrigger.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        console.log('[copyFromOrg] trigger clicked');
-                        if (!copyFromOrgModal) { console.log('[copyFromOrg] modal not found'); return; }
+                        //DISABLED: console.log('[copyFromOrg] trigger clicked');
+                        if (!copyFromOrgModal) { //DISABLED: console.log('[copyFromOrg] modal not found'); return; }
                         // Store reference to this service's location list
                         copyFromOrgModal._targetLocationList = root.querySelector('#service_locations');
                         // Populate select from org locations
                         const orgLocations = document.querySelectorAll('#organization_locations .location-row');
-                        console.log('[copyFromOrg] orgLocations found:', orgLocations.length);
+                        //DISABLED: console.log('[copyFromOrg] orgLocations found:', orgLocations.length);
                         copyFromOrgSelect.innerHTML = '<option value="">Select a location...</option>';
                         orgLocations.forEach((loc, i) => {
                           const name  = loc.querySelector('.location-row-name')?.textContent || '';

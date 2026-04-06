@@ -20,8 +20,20 @@ function _closeNotify() {
 document.getElementById('notifyOkBtn').addEventListener('click', _closeNotify);
 
 document.addEventListener('keydown', function(e) {
-  if (document.getElementById('notifyModal').style.display === 'block') {
-    if (e.key === 'Enter' || e.key === 'Escape') _closeNotify();
+  if (e.key === 'Enter' || e.key === 'Escape') {
+    // Close notifyModal
+    if (document.getElementById('notifyModal').style.display === 'block') {
+      _closeNotify();
+      return;
+    }
+    // Close any other visible modal that has a focused or available OK/cancel button
+    const visibleModal = Array.from(document.querySelectorAll('.modal')).find(
+      m => m.style.display === 'block'
+    );
+    if (visibleModal) {
+      const okBtn = visibleModal.querySelector('.cancel-btn, .submit-btn, #notifyOkBtn');
+      if (okBtn) okBtn.click();
+    }
   }
 });
 
@@ -482,6 +494,7 @@ function submitFile() {
  * Confirms submit — closes modal and triggers `submitFormData`.
  */
 function confirmSubmit() {
+  console.log('[SUBMIT] confirmSubmit called');
   document.getElementById('submitModal').style.display = 'none';
   submitFormData();
 }
@@ -643,13 +656,91 @@ async function processCreateBucket() {
     document.getElementById('createBucketModal').style.display = 'none';
 
     if (directSubmit && response.ok) {
-      const failed = data.failed || [];
-      let msg = `Submitted ${data.succeeded} of ${data.total} orgs to SF Service Guide.`;
+      const orgs = data.orgs || [];
+      const bucketName = data.bucketName;
+      document.getElementById('createBucketModal').style.display = 'none';
+
+      // Browser-side submit loop using the existing SF proxy
+      let succeeded = 0;
+      const failed = [];
+
+      for (let i = 0; i < orgs.length; i++) {
+        const org = orgs[i];
+        document.getElementById('progressBar').style.width = `${Math.round(((i + 1) / orgs.length) * 100)}%`;
+        document.getElementById('progressBar').textContent = `Submitting ${i + 1} of ${orgs.length}: ${org.name}...`;
+
+        try {
+          // Load the org's hydrated data from Atlas
+          const hydrateRes = await fetch(`${API_BASE}/buckets/${bucketName}/incomplete/${org._id}`);
+          if (!hydrateRes.ok) throw new Error(`Failed to load org: ${hydrateRes.status}`);
+
+          // Parse the hydrated HTML to collect form data
+          const html = await hydrateRes.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // Collect org data from the parsed document
+          const payload = { organization: collectOrganization(doc) };
+          const locs = doc.querySelectorAll('#organization_locations .location-row');
+          console.log('[BATCH SUBMIT] location rows found:', locs.length, locs.length > 0 ? 'first row dataset:' + JSON.stringify(locs[0].dataset) : '');
+          console.log('[BATCH SUBMIT] collected payload for', org.name, ':', JSON.stringify(payload).substring(0, 300));
+          const { orgBody, services } = transformNewOrg(payload);
+          console.log('[BATCH SUBMIT] orgBody:', JSON.stringify(orgBody).substring(0, 300));
+
+          // Step 1 — create org via SF proxy
+          const orgRes = await fetch(`${API_BASE}/sf/resources`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+            credentials: 'include',
+            body: JSON.stringify(orgBody)
+          });
+          if (!orgRes.ok) {
+            const err = await orgRes.json().catch(() => ({}));
+            throw new Error(`SFSG ${orgRes.status}: ${JSON.stringify(err)}`);
+          }
+          const orgData = await orgRes.json();
+          const sfId = orgData.resources?.[0]?.resource?.id;
+          if (!sfId) throw new Error('No org ID returned from SFSG');
+
+          // Step 2 — create services if any
+          if (services.length > 0) {
+            services.forEach((svc, idx) => svc.id = -(idx + 2));
+            const svcRes = await fetch(`${API_BASE}/sf/resources/${sfId}/services`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+              credentials: 'include',
+              body: JSON.stringify({ services })
+            });
+            if (!svcRes.ok) {
+              const err = await svcRes.json().catch(() => ({}));
+              throw new Error(`Services failed ${svcRes.status}: ${JSON.stringify(err)}`);
+            }
+          }
+
+          // Step 3 — write sfId back to Atlas
+          await fetch(`${API_BASE}/buckets/submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+            credentials: 'include',
+            body: JSON.stringify({ id: org._id, sfId })
+          });
+
+          succeeded++;
+        } catch (err) {
+          failed.push({ name: org.name, error: err.message });
+        }
+      }
+
+      document.getElementById('progressBar').style.width = '100%';
+      document.getElementById('progressBar').textContent = '100%';
+
+      let msg = `Submitted ${succeeded} of ${orgs.length} orgs to SF Service Guide.`;
       if (failed.length) {
-        msg += `\n\nFailed (${failed.length}):` + failed.map((f) => `\n  • ${f.name}: ${f.error}`).join('');
+        msg += `\n\nFailed (${failed.length}):` + failed.map(f => `\n  • ${f.name}: ${f.error}`).join('');
       }
       document.getElementById('directSubmitResultMessage').textContent = msg;
       document.getElementById('directSubmitResultModal').style.display = 'block';
+      init();
     } else if (response.ok) {
       notify(data.message || 'Bucket created successfully');
       init();

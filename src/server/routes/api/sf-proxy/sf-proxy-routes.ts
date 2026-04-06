@@ -43,6 +43,10 @@ sfProxyRouter.post('/*', async (req: Request, res: Response) => {
   // Forward browser cookies so SFSG session auth is preserved
   const cookieHeader = req.headers['cookie'] || '';
 
+  log.infor(`sf-proxy POST -> ${url}`);
+  log.infor(`sf-proxy cookies present: ${!!cookieHeader}`);
+  log.infor(`sf-proxy request body: ${JSON.stringify(req.body).substring(0, 500)}`);
+
   try {
     const sfRes = await fetch(url, {
       method: 'POST',
@@ -56,12 +60,15 @@ sfProxyRouter.post('/*', async (req: Request, res: Response) => {
       body: JSON.stringify(req.body)
     });
 
+    log.infor(`sf-proxy SFSG response status: ${sfRes.status}`);
     const data = await sfRes.json().catch(() => ({}));
+    log.infor(`sf-proxy SFSG response body: ${JSON.stringify(data).substring(0, 500)}`);
     console.super('SF Proxy Response', sfRes.status, data);
     log.retrn('sf-proxy POST', log.kcarb);
     res.status(sfRes.status).json(data);
   } catch (err: any) {
     log.retrn('sf-proxy POST error', log.kcarb);
+    console.error('sf-proxy POST exception:', err.message);
     res.status(502).json({ error: 'SF proxy request failed', detail: err.message });
   }
 });

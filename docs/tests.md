@@ -31,8 +31,9 @@ Tests the `hydrateTemplate()` function against the real combined HTML template.
 
 
 Tests the core transformation logic used in `src/public/frontend/Scripts/transform.js`.
-- `transformLocations` — maps collected location objects to SF API address format
-- `transformPhones` — filters empty phone numbers, maps to SF API format
+- `transformLocations` — maps collected location objects to SF API address format, strips empty/null fields
+- `transformPhones` — filters empty phone numbers, strips null description field
+- Note: `transformNewOrg` and `transformService` only include optional fields when they have values — null fields omitted to match SFSG API requirements
 - `transformNotes` — wraps note strings into `{ note: string }` objects
 - `transformHours` — skips days with no times, maps to SF API schedule_days format
 

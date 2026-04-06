@@ -2,7 +2,8 @@
 
 ## In Progress
 
-- Test the full submit flow end to end with a real SFSG session
+- Test the full submit flow end to end with a real SFSG submission
+- Batch spreadsheet submit — browser-side loop calling SF proxy per org, pending test confirmation
 
 ---
 

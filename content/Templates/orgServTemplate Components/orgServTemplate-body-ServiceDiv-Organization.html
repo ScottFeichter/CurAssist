@@ -1474,15 +1474,15 @@
                   });
 
                   function initServiceModals(root) {
-                    console.log('[initServiceModals] called, root id:', root && root.id);
+                    //DISABLED: console.log('[initServiceModals] called, root id:', root && root.id);
                     // Service Section Modal References — scoped to root
                     const serviceLocationModal = root.querySelector('#serviceAddLocationModal');
                     const servicePhoneModal = root.querySelector('#serviceAddPhoneModal');
                     const serviceNoteModal = root.querySelector('#serviceAddNoteModal');
-                    console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
+                    //DISABLED: console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
 
                     const locationTrigger = root.querySelector('#serviceAddLocationTrigger');
-                    console.log('[initServiceModals] locationTrigger:', locationTrigger);
+                    //DISABLED: console.log('[initServiceModals] locationTrigger:', locationTrigger);
                     // Note: locationTrigger click is handled by the copy-from-org handler below
                     const noteTrigger = root.querySelector('#serviceAddNoteTrigger');
                     if (noteTrigger) {
@@ -1541,19 +1541,19 @@
                     const copyFromOrgCancel  = document.getElementById('copyFromOrgCancel');
                     const addFromOrgTrigger  = root.querySelector('#serviceAddLocationTrigger');
 
-                    console.log('[copyFromOrg] addFromOrgTrigger:', addFromOrgTrigger);
-                    console.log('[copyFromOrg] copyFromOrgModal:', copyFromOrgModal);
+                    //DISABLED: console.log('[copyFromOrg] addFromOrgTrigger:', addFromOrgTrigger);
+                    //DISABLED: console.log('[copyFromOrg] copyFromOrgModal:', copyFromOrgModal);
 
                     if (addFromOrgTrigger) {
                       addFromOrgTrigger.addEventListener('click', (e) => {
                         e.stopPropagation();
-                        console.log('[copyFromOrg] trigger clicked');
-                        if (!copyFromOrgModal) { console.log('[copyFromOrg] modal not found'); return; }
+                        //DISABLED: console.log('[copyFromOrg] trigger clicked');
+                        if (!copyFromOrgModal) { //DISABLED: console.log('[copyFromOrg] modal not found'); return; }
                         // Store reference to this service's location list
                         copyFromOrgModal._targetLocationList = root.querySelector('#service_locations');
                         // Populate select from org locations
                         const orgLocations = document.querySelectorAll('#organization_locations .location-row');
-                        console.log('[copyFromOrg] orgLocations found:', orgLocations.length);
+                        //DISABLED: console.log('[copyFromOrg] orgLocations found:', orgLocations.length);
                         copyFromOrgSelect.innerHTML = '<option value="">Select a location...</option>';
                         orgLocations.forEach((loc, i) => {
                           const name  = loc.querySelector('.location-row-name')?.textContent || '';
