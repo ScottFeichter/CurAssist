@@ -4,11 +4,11 @@
   "description": "Backend for CurAssist workflow app",
   "main": "dist/entry.js",
   "scripts": {
-    "build": "node content/Templates/build-template.js && node content/Templates/build-test-template.js && tsc && cp -r src/views dist/ && cp -r src/public dist/ && node scripts/typedoc-runner.js",
+    "build": "node content/Templates/build-template.js && tsc && cp -r src/views dist/ && cp -r src/public dist/ && node scripts/typedoc-runner.js",
     "start": "node dist/entry.js",
     "dev": "npm run build && node dev-runner.js",
     "watch": "tsc --watch",
-    "watch:template": "nodemon --watch content/Templates --ext js,html --ignore content/Templates/orgServTemplate-combined*.html --exec \"node content/Templates/build-test-template.js\"",
+    "watch:template": "nodemon --watch content/Templates --ext js,html --ignore content/Templates/orgServTemplate-combined.html --exec \"node content/Templates/build-template.js\"",
     "serve": "nodemon --delay 1 dist/entry.js",
     "docs": "node scripts/typedoc-runner.js",
     "test": "NODE_ENV=test jest",
