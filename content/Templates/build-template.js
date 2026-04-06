@@ -135,8 +135,5 @@ combined = combined.replace(
 );
 
 // Write the combined file
-const CYAN  = '\x1b[36m';
-const RESET = '\x1b[0m';
-
 fs.writeFileSync(outputFile, combined, 'utf8');
-console.log(`${CYAN}[tmplate]${RESET}  INFOR : Blank Combined template created -> ${outputName}\n`);
+console.log(`Blank Combined template created -> ${outputName}\n`);

@@ -14,7 +14,22 @@ Tests every sanitizer function in `src/server/helpers/bucket-sanitizers.ts` in i
 - `sanitizeServiceCategories`, `sanitizeServiceEligibilitiesList` — comma-split to array, empty filtering
 - All pass-through sanitizers (`sanitizeAlternateName`, `sanitizeWebsite`, `sanitizeEmail`, `sanitizeDescription`, `sanitizeInternalNotes`, `sanitizeZip`, `sanitizeOrganizationLegalStatus`, `sanitizeServiceShortDescription`, `sanitizeServiceCost`, `sanitizeServiceWaitTime`) — trim and return string, handle null
 
-**`transform.test.ts`** (6 tests)
+**`hydrateTemplate.test.ts`** (21 tests)
+Tests the `hydrateTemplate()` function against the real combined HTML template.
+- `data-org-id` stamped on body tag
+- `importedFileFromSFSG` flag set correctly based on `sfId` presence
+- All org scalar fields injected (name, alternate_name, website, email, description)
+- Addresses injected as `location-row` divs with sequential numbers and name
+- Phones injected as `phone-row` list items with sequential numbers
+- Services injected into `orgServicesDiv` with unique IDs
+- Multiple services get unique `service-org-N` IDs
+- Sidebar nav links populated with service names
+- Unnamed services use "Service N" as sidebar label
+- Categories and eligibilities injected as pills
+- Service scalar fields (description, fee, wait_time) injected
+- Empty org (no addresses/phones/services) handled without error
+
+
 Tests the core transformation logic used in `src/public/frontend/Scripts/transform.js`.
 - `transformLocations` — maps collected location objects to SF API address format
 - `transformPhones` — filters empty phone numbers, maps to SF API format

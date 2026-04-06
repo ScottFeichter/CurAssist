@@ -190,3 +190,5 @@ html = html.replace(
 );
 
 
+fs.writeFileSync(outputFile, html, 'utf8');
+console.log(`Test combined template created -> ${outputName}\n`);

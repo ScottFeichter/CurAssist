@@ -2,6 +2,29 @@
 /** @type {string} Base URL for all local API calls */
 const API_BASE = '/api';
 
+/**
+ * Shows the reusable notification modal with a message.
+ * Dismissed by clicking OK or pressing Enter/Escape.
+ * @param {string} message
+ */
+function notify(message) {
+  document.getElementById('notifyMessage').textContent = message;
+  document.getElementById('notifyModal').style.display = 'block';
+  document.getElementById('notifyOkBtn').focus();
+}
+
+function _closeNotify() {
+  document.getElementById('notifyModal').style.display = 'none';
+}
+
+document.getElementById('notifyOkBtn').addEventListener('click', _closeNotify);
+
+document.addEventListener('keydown', function(e) {
+  if (document.getElementById('notifyModal').style.display === 'block') {
+    if (e.key === 'Enter' || e.key === 'Escape') _closeNotify();
+  }
+});
+
 let currentBucket = '';
 let currentSubdir = '';
 let currentFiles = [];  // now array of { _id, name } objects
@@ -284,16 +307,16 @@ async function confirmMove(shouldSave) {
     });
 
     if (moveResponse.ok) {
-      alert(`File moved to ${toBucket} / ${toSubdir}`);
+      notify(`File moved to ${toBucket} / ${toSubdir}`);
       loadSubdir();
     } else if (moveResponse.status === 409) {
       const data = await moveResponse.json();
-      alert(data.error || 'A file with this name already exists in the destination');
+      notify(data.error || 'A file with this name already exists in the destination');
     } else {
-      alert('Failed to move file');
+      notify('Failed to move file');
     }
   } catch (error) {
-    alert('Error moving file: ' + error.message);
+    notify('Error moving file: ' + error.message);
   }
 }
 
@@ -369,13 +392,13 @@ async function confirmCopy(shouldSave) {
     });
     const data = await response.json();
     if (response.ok) {
-      alert(`File copied to ${toBucket} / ${toSubdir} as ${data.name}`);
+      notify(`File copied to ${toBucket} / ${toSubdir} as ${data.name}`);
       if (toBucket === currentBucket && toSubdir === currentSubdir) loadSubdir();
     } else {
-      alert(data.error || 'Failed to copy file');
+      notify(data.error || 'Failed to copy file');
     }
   } catch (error) {
-    alert('Error copying file: ' + error.message);
+    notify('Error copying file: ' + error.message);
   }
 }
 
@@ -423,14 +446,14 @@ async function finalDelete() {
     });
 
     if (response.ok) {
-      alert('File deleted successfully');
+      notify('File deleted successfully');
       document.getElementById('deleteModal2').style.display = 'none';
       loadSubdir();
     } else {
-      alert('Failed to delete file');
+      notify('Failed to delete file');
     }
   } catch (error) {
-    alert('Error deleting file: ' + error.message);
+    notify('Error deleting file: ' + error.message);
   }
 }
 
@@ -581,14 +604,14 @@ async function processCreateBucket() {
       });
       const data = await response.json();
       if (response.ok) {
-        alert(`Bucket "${bucketName}" created successfully`);
+        notify(`Bucket "${bucketName}" created successfully`);
         document.getElementById('createBucketModal').style.display = 'none';
         init();
       } else {
-        alert(data.error || 'Failed to create bucket');
+        notify(data.error || 'Failed to create bucket');
       }
     } catch (error) {
-      alert('Error creating bucket: ' + error.message);
+      notify('Error creating bucket: ' + error.message);
     }
     return;
   }
@@ -628,13 +651,13 @@ async function processCreateBucket() {
       document.getElementById('directSubmitResultMessage').textContent = msg;
       document.getElementById('directSubmitResultModal').style.display = 'block';
     } else if (response.ok) {
-      alert(data.message || 'Bucket created successfully');
+      notify(data.message || 'Bucket created successfully');
       init();
     } else {
-      alert(data.error || 'Failed to create bucket');
+      notify(data.error || 'Failed to create bucket');
     }
   } catch (error) {
-    alert('Error creating bucket: ' + error.message);
+    notify('Error creating bucket: ' + error.message);
   } finally {
     document.getElementById('createBucketBtn').disabled = false;
   }
@@ -713,14 +736,14 @@ async function finalDeleteBucket() {
     });
     
     if (response.ok) {
-      alert('Bucket deleted successfully');
+      notify('Bucket deleted successfully');
       document.getElementById('deleteBucketModal2').style.display = 'none';
       init();
     } else {
-      alert('Failed to delete bucket');
+      notify('Failed to delete bucket');
     }
   } catch (error) {
-    alert('Error deleting bucket: ' + error.message);
+    notify('Error deleting bucket: ' + error.message);
   }
 }
 
@@ -832,14 +855,14 @@ async function confirmCreateFile() {
     });
     const data = await response.json();
     if (response.ok) {
-      alert(`File created: ${data.name}`);
+      notify(`File created: ${data.name}`);
       document.getElementById('createFileModal').style.display = 'none';
       if (bucket === currentBucket && subdir === currentSubdir) loadSubdir();
     } else {
-      alert(data.error || 'Failed to create file');
+      notify(data.error || 'Failed to create file');
     }
   } catch (error) {
-    alert('Error creating file: ' + error.message);
+    notify('Error creating file: ' + error.message);
   }
 }
 
