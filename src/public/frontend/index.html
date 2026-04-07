@@ -622,6 +622,7 @@
         <option value="">Select subdirectory...</option>
       </select>
       <p style="margin-top: 16px;">Do you want to save changes before moving?</p>
+      <div id="moveWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       <div class="modal-buttons">
         <button class="save-btn" onclick="confirmMove(true)">Save And Move</button>
         <button onclick="confirmMove(false)">Move Without Saving</button>
@@ -642,6 +643,7 @@
       </select>
       <p style="margin-top: 16px;">Enter A Name For The New Copy</p>
       <input type="text" id="copyFileName" class="modal-input" style="margin-bottom: 8px;" />
+      <div id="copyWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       <div class="modal-buttons" style="margin-top: 16px; flex-wrap: wrap;">
         <button class="save-btn" onclick="confirmCopy(true)">Save And Copy</button>
         <button class="create-btn" onclick="confirmCopy(false)" style="white-space:nowrap;">Copy Without Saving</button>
@@ -677,6 +679,7 @@
   <div id="submitModal" class="modal">
     <div class="modal-content">
       <p>This will save any changes and submit the information in the file to the live database.<br><br>You will not be able to resubmit this file again.<br><br>Would you like to proceed?</p>
+      <div id="submitWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       <div class="modal-buttons">
         <button class="submit-btn" onclick="confirmSubmit()">Submit</button>
         <button class="cancel-btn" onclick="cancelSubmit()">Cancel</button>
@@ -688,6 +691,7 @@
   <div id="submitWarnModal" class="modal">
     <div class="modal-content">
       <p>This org already has an SFSG ID: <strong><span id="submitWarnSfsgId"></span></strong>.<br><br>How would you like to proceed?</p>
+      <div id="submitWarnWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       <div class="modal-buttons">
         <button class="submit-btn" onclick="confirmSubmitUpdate()">Update Existing</button>
         <button class="submit-btn" onclick="confirmSubmitNew()">Create New</button>
@@ -816,6 +820,7 @@
 
       <p id="importFileError" style="color: #c4243a; font-size: 13px; min-height: 18px;"></p>
 
+      <div id="importFileWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       <div class="modal-buttons" style="margin-top: 8px;">
         <button class="create-btn" onclick="confirmImportFile()">Import</button>
         <button class="cancel-btn" onclick="cancelImportFile()">Cancel</button>
@@ -838,6 +843,7 @@
       <input type="text" id="importDuplicateNewName" class="modal-input" placeholder="Enter new name" style="display:none;">
 
       <div id="importDuplicateError" style="color:red; font-size:13px; margin-bottom:8px;"></div>
+      <div id="importDuplicateWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       <div class="modal-buttons">
         <button class="create-btn" onclick="confirmImportDuplicate()">Confirm</button>
         <button class="cancel-btn" onclick="document.getElementById('importDuplicateModal').style.display='none'">Cancel</button>

@@ -308,7 +308,8 @@ async function confirmMove(shouldSave) {
   const toSubdir = document.getElementById('moveToSubdir').value;
   if (!toBucket || !toSubdir) { alert('Please select a destination bucket and subdirectory'); return; }
   if (toBucket === currentBucket && toSubdir === currentSubdir) { alert('Destination is the same as the current location'); return; }
-  document.getElementById('moveModal').style.display = 'none';
+  document.getElementById('moveWorking').textContent = 'Working...';
+  document.getElementById('moveWorking').style.display = 'block';
 
   try {
     if (shouldSave) await saveFile(true);
@@ -327,15 +328,23 @@ async function confirmMove(shouldSave) {
     });
 
     if (moveResponse.ok) {
-      notify(`File moved to ${toBucket} / ${toSubdir}`);
+      document.getElementById('moveModal').style.display = 'none';
+      document.getElementById('moveWorking').style.display = 'none';
+      notify(`File successfully moved to\nBucket: ${toBucket}\nSubdirectory: ${toSubdir}`);
       loadSubdir();
     } else if (moveResponse.status === 409) {
       const data = await moveResponse.json();
+      document.getElementById('moveModal').style.display = 'none';
+      document.getElementById('moveWorking').style.display = 'none';
       notify(data.error || 'A file with this name already exists in the destination');
     } else {
+      document.getElementById('moveModal').style.display = 'none';
+      document.getElementById('moveWorking').style.display = 'none';
       notify('Failed to move file');
     }
   } catch (error) {
+    document.getElementById('moveModal').style.display = 'none';
+    document.getElementById('moveWorking').style.display = 'none';
     notify('Error moving file: ' + error.message);
   }
 }
@@ -394,7 +403,8 @@ async function confirmCopy(shouldSave) {
   const copyName = document.getElementById('copyFileName').value.trim();
   if (!toBucket || !toSubdir) { alert('Please select a destination bucket and subdirectory'); return; }
   if (!copyName) { alert('Please enter a file name'); return; }
-  document.getElementById('copyModal').style.display = 'none';
+  document.getElementById('copyWorking').textContent = 'Working...';
+  document.getElementById('copyWorking').style.display = 'block';
 
   try {
     if (shouldSave) await saveFile(true);
@@ -411,6 +421,8 @@ async function confirmCopy(shouldSave) {
       })
     });
     const data = await response.json();
+    document.getElementById('copyModal').style.display = 'none';
+    document.getElementById('copyWorking').style.display = 'none';
     if (response.ok) {
       notify(`File successfully copied to\nBucket: ${toBucket}\nSubdirectory: ${toSubdir}`);
       if (toBucket === currentBucket && toSubdir === currentSubdir) loadSubdir();
@@ -418,6 +430,8 @@ async function confirmCopy(shouldSave) {
       notify(data.error || 'Failed to copy file');
     }
   } catch (error) {
+    document.getElementById('copyModal').style.display = 'none';
+    document.getElementById('copyWorking').style.display = 'none';
     notify('Error copying file: ' + error.message);
   }
 }
@@ -511,8 +525,12 @@ function submitFile() {
  */
 function confirmSubmit() {
   console.log('[SUBMIT] confirmSubmit called');
-  document.getElementById('submitModal').style.display = 'none';
-  submitFormData('new');
+  document.getElementById('submitWorking').textContent = 'Working...';
+  document.getElementById('submitWorking').style.display = 'block';
+  submitFormData('new').finally(() => {
+    document.getElementById('submitModal').style.display = 'none';
+    document.getElementById('submitWorking').style.display = 'none';
+  });
 }
 
 /**
@@ -524,14 +542,22 @@ function cancelSubmit() {
 
 /** Update Existing path — triggers change_requests flow. */
 function confirmSubmitUpdate() {
-  document.getElementById('submitWarnModal').style.display = 'none';
-  submitFormData('update');
+  document.getElementById('submitWarnWorking').textContent = 'Working...';
+  document.getElementById('submitWarnWorking').style.display = 'block';
+  submitFormData('update').finally(() => {
+    document.getElementById('submitWarnModal').style.display = 'none';
+    document.getElementById('submitWarnWorking').style.display = 'none';
+  });
 }
 
 /** Create New path — ignores existing sfsg_id and creates a fresh org. */
 function confirmSubmitNew() {
-  document.getElementById('submitWarnModal').style.display = 'none';
-  submitFormData('new');
+  document.getElementById('submitWarnWorking').textContent = 'Working...';
+  document.getElementById('submitWarnWorking').style.display = 'block';
+  submitFormData('new').finally(() => {
+    document.getElementById('submitWarnModal').style.display = 'none';
+    document.getElementById('submitWarnWorking').style.display = 'none';
+  });
 }
 
 function cancelSubmitWarn() {
@@ -1152,6 +1178,9 @@ async function confirmImportFile() {
     return;
   }
 
+  document.getElementById('importFileWorking').textContent = 'Working...';
+  document.getElementById('importFileWorking').style.display = 'block';
+
   const res = await fetch('/api/buckets/import-file', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
@@ -1159,6 +1188,7 @@ async function confirmImportFile() {
   });
 
   document.getElementById('importFileModal').style.display = 'none';
+  document.getElementById('importFileWorking').style.display = 'none';
   const msgEl = document.getElementById('importResultMessage');
 
   let data;
@@ -1224,7 +1254,8 @@ async function confirmImportDuplicate() {
   if (!action)                          { errEl.textContent = 'Please select an option.'; return; }
   if (action === 'rename' && !newName)  { errEl.textContent = 'Please enter a new name.'; return; }
 
-  document.getElementById('importDuplicateModal').style.display = 'none';
+  document.getElementById('importDuplicateWorking').textContent = 'Working...';
+  document.getElementById('importDuplicateWorking').style.display = 'block';
 
   const res = await fetch(`${API_BASE}/buckets/import-file-resolve`, {
     method: 'POST',
@@ -1236,6 +1267,8 @@ async function confirmImportDuplicate() {
   const msgEl = document.getElementById('importResultMessage');
   let data;
   try { data = await res.json(); } catch (e) {
+    document.getElementById('importDuplicateModal').style.display = 'none';
+    document.getElementById('importDuplicateWorking').style.display = 'none';
     msgEl.innerHTML = `Import failed.<br>Server error (${res.status}).`;
     document.getElementById('importResultModal').style.display = 'block';
     return;
@@ -1247,6 +1280,8 @@ async function confirmImportDuplicate() {
     msgEl.innerHTML = `File successfully imported to<br><br>Bucket: ${ctx.bucket}<br>Subdirectory: ${ctx.subdir}`;
     if (currentBucket === ctx.bucket && currentSubdir === ctx.subdir) await loadSubdir();
   }
+  document.getElementById('importDuplicateModal').style.display = 'none';
+  document.getElementById('importDuplicateWorking').style.display = 'none';
   document.getElementById('importResultModal').style.display = 'block';
 }
 
