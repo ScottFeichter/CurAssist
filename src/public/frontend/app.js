@@ -21,6 +21,8 @@ document.getElementById('notifyOkBtn').addEventListener('click', _closeNotify);
 
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter' || e.key === 'Escape') {
+    // Don't auto-click modal buttons when user is typing in an input/textarea
+    if (e.key === 'Enter' && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
     // Close notifyModal
     if (document.getElementById('notifyModal').style.display === 'block') {
       _closeNotify();

@@ -16,7 +16,7 @@
 
 
 
-- When deleting a bucket, if you type "delete" and tab and press enter, a browser alert appears saying you must type "delete" exactly even though it's already there. Works fine with mouse click.
+
 
 - Where I do things to buckets such as delete, the list of buckets gets out of whack and I have to refresh the browser.
 

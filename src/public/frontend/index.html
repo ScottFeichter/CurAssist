@@ -667,7 +667,7 @@
   <div id="deleteModal2" class="modal">
     <div class="modal-content">
       <p>Are you sure you want to delete?<br><br>If so type "delete" and press the delete button.</p>
-      <input type="text" id="deleteConfirmInput" class="modal-input" placeholder='Type "delete" to confirm'>
+      <input type="text" id="deleteConfirmInput" class="modal-input" placeholder='Type "delete" to confirm' onkeydown="if(event.key==='Enter')finalDelete()">
       <div class="modal-buttons">
         <button class="delete-btn" onclick="finalDelete()">Delete</button>
         <button class="cancel-btn" onclick="cancelDelete()">Cancel</button>
@@ -758,7 +758,7 @@
   <div id="deleteBucketModal2" class="modal">
     <div class="modal-content">
       <p id="deleteBucketWarning"></p>
-      <input type="text" id="deleteBucketConfirmInput" class="modal-input" placeholder='Type "delete" to confirm'>
+      <input type="text" id="deleteBucketConfirmInput" class="modal-input" placeholder='Type "delete" to confirm' onkeydown="if(event.key==='Enter')finalDeleteBucket()">
       <div class="modal-buttons">
         <button class="delete-btn" onclick="finalDeleteBucket()">Delete</button>
         <button class="cancel-btn" onclick="cancelDeleteBucket()">Cancel</button>
