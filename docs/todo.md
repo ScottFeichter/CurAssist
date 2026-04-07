@@ -12,20 +12,6 @@
 
 
 
-
-
-
-
-
-
-- Where I do things to buckets such as delete, the list of buckets gets out of whack and I have to refresh the browser.
-
-
-
-
-
-
-
 - Add time picker not working
 - Inherit schedule in service not working
 - Add markdown note in organization not working

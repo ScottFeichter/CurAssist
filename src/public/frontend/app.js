@@ -77,8 +77,15 @@ async function fetchCsrfToken() {
 async function init() {
   await fetchCsrfToken();
   document.getElementById('fileCount').textContent = 'File 0 of 0';
+  document.getElementById('subdirSelect').innerHTML = '<option value="">Select subdirectory...</option>';
+  document.getElementById('fileInfo').innerHTML = '<option value="">Select file...</option>';
+  currentBucket = '';
+  currentSubdir = '';
+  currentFiles = [];
+  currentIndex = 0;
   const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
   const bucketSelect = document.getElementById('bucketSelect');
+  bucketSelect.innerHTML = '<option value="">Select bucket...</option>';
   buckets.forEach(bucket => {
     const option = document.createElement('option');
     option.value = bucket;
