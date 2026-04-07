@@ -743,13 +743,9 @@ async function processCreateBucket() {
     });
     const data = await response.json();
 
-    document.getElementById('createBucketProgress').style.display = 'none';
-    document.getElementById('createBucketModal').style.display = 'none';
-
     if (directSubmit && response.ok) {
       const orgs = data.orgs || [];
       const bucketName = data.bucketName;
-      document.getElementById('createBucketModal').style.display = 'none';
 
       // Browser-side submit loop using the existing SF proxy
       let succeeded = 0;
@@ -822,6 +818,7 @@ async function processCreateBucket() {
       }
 
       document.getElementById('createBucketProgress').style.display = 'none';
+      document.getElementById('createBucketModal').style.display = 'none';
 
       let msg = `Submitted ${succeeded} of ${orgs.length} orgs to SF Service Guide.`;
       if (failed.length) {
@@ -831,12 +828,18 @@ async function processCreateBucket() {
       document.getElementById('directSubmitResultModal').style.display = 'block';
       init();
     } else if (response.ok) {
+      document.getElementById('createBucketProgress').style.display = 'none';
+      document.getElementById('createBucketModal').style.display = 'none';
       notify(data.message || 'Bucket created successfully');
       init();
     } else {
+      document.getElementById('createBucketProgress').style.display = 'none';
+      document.getElementById('createBucketModal').style.display = 'none';
       notify(data.error || 'Failed to create bucket');
     }
   } catch (error) {
+    document.getElementById('createBucketProgress').style.display = 'none';
+    document.getElementById('createBucketModal').style.display = 'none';
     notify('Error creating bucket: ' + error.message);
   } finally {
     document.getElementById('createBucketBtn').disabled = false;
