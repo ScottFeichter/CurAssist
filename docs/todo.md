@@ -13,9 +13,9 @@
 
 
 
-delete modal add line break between sentances in both the 1st and 2nd modals
 
-add line break and padding in success modal for import file
+
+
 
 
 
