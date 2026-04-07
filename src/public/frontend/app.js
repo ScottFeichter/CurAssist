@@ -412,7 +412,7 @@ async function confirmCopy(shouldSave) {
     });
     const data = await response.json();
     if (response.ok) {
-      notify(`File copied to ${toBucket} / ${toSubdir} as ${data.name}`);
+      notify(`File successfully copied to\nBucket: ${toBucket}\nSubdirectory: ${toSubdir}`);
       if (toBucket === currentBucket && toSubdir === currentSubdir) loadSubdir();
     } else {
       notify(data.error || 'Failed to copy file');

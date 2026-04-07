@@ -11,13 +11,7 @@
 - **Submit 500 error** — `POST /api/sf/resources` returns 500 when org has a populated `addresses` array. Working payload only ever sent `addresses: []`. Need to determine if SFSG accepts addresses on initial create or requires them via `change_requests` after org exists.
 
 
-in the copy file modal the copy without saving is a bit scrunched
 
-in the copy file its success modal lets have a line break in the text
-
-lets have words be something like "file successfully moved to
-                                        bucket: bucket name
-                                        sub directory: sub dir name
 
 delete modal add line break between sentances in both the 1st and 2nd modals
 

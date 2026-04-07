@@ -642,9 +642,9 @@
       </select>
       <p style="margin-top: 16px;">Enter A Name For The New Copy</p>
       <input type="text" id="copyFileName" class="modal-input" style="margin-bottom: 8px;" />
-      <div class="modal-buttons" style="margin-top: 16px;">
+      <div class="modal-buttons" style="margin-top: 16px; flex-wrap: wrap;">
         <button class="save-btn" onclick="confirmCopy(true)">Save And Copy</button>
-        <button class="create-btn" onclick="confirmCopy(false)">Copy Without Saving</button>
+        <button class="create-btn" onclick="confirmCopy(false)" style="white-space:nowrap;">Copy Without Saving</button>
         <button class="cancel-btn" onclick="document.getElementById('copyModal').style.display='none'">Cancel</button>
       </div>
     </div>
