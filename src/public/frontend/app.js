@@ -771,6 +771,8 @@ async function processCreateBucket() {
           console.log('[BATCH SUBMIT] location rows found:', locs.length, locs.length > 0 ? 'first row dataset:' + JSON.stringify(locs[0].dataset) : '');
           console.log('[BATCH SUBMIT] collected payload for', org.name, ':', JSON.stringify(payload).substring(0, 300));
           const { orgBody, services } = transformNewOrg(payload);
+          // SFSG rejects populated addresses on initial create — strip them
+          if (orgBody.resources?.[0]) orgBody.resources[0].addresses = [];
           console.log('[BATCH SUBMIT] orgBody:', JSON.stringify(orgBody).substring(0, 300));
 
           // Step 1 — create org via SF proxy
