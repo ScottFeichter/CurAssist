@@ -20,15 +20,30 @@ function _closeNotify() {
 document.getElementById('notifyOkBtn').addEventListener('click', _closeNotify);
 
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' || e.key === 'Escape') {
-    // Don't interfere when focus is on an interactive element (input, textarea, button)
-    if (e.key === 'Enter' && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA' || e.target.tagName === 'BUTTON')) return;
-    // Close notifyModal
+  if (e.key === 'Escape') {
+    // Escape closes the topmost visible modal without clicking any action button
     if (document.getElementById('notifyModal').style.display === 'block') {
       _closeNotify();
       return;
     }
-    // Close any other visible modal that has a focused or available OK/cancel button
+    const visibleModal = Array.from(document.querySelectorAll('.modal')).find(
+      m => m.style.display === 'block'
+    );
+    if (visibleModal) {
+      const cancelBtn = visibleModal.querySelector('.cancel-btn');
+      if (cancelBtn) cancelBtn.click();
+    }
+    return;
+  }
+  if (e.key === 'Enter') {
+    // Let interactive elements handle Enter natively
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT') return;
+    // Otherwise close the topmost notify/modal
+    if (document.getElementById('notifyModal').style.display === 'block') {
+      _closeNotify();
+      return;
+    }
     const visibleModal = Array.from(document.querySelectorAll('.modal')).find(
       m => m.style.display === 'block'
     );
