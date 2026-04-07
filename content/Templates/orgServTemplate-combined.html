@@ -1233,11 +1233,7 @@
 </script>
 <!---=========================================================================== HEADER START ===============================================================================--->
 <!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
-                <header class="edit--main--header" style="position:relative;">
-
-                  <div id="organization_sfsg_id_display" style="position:absolute;top:0;right:0;font-size:12px;color:#888;font-family:'Open Sans',Arial,sans-serif;">
-                    SFSG ID: <span id="organization_sfsg_id">TBD</span>
-                  </div>
+                <header class="edit--main--header">
 
                   <h1 class="edit--main--header--title" id="headerTitle">
                     Is this an Organization or a Service?
@@ -1668,9 +1664,15 @@
 
                     <header class="edit--section--header" style="display: flex; flex-direction: column; align-items: flex-start;">
                       <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">▶</button>
-                      <h4>
-                        New Organization
-                      </h4>
+                      <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <h4>
+                          New Organization
+                        </h4>
+                        <div id="organization_sfsg_id_display" style="display:flex; align-items:center; gap:6px; font-size:0.85em; color:#888; font-family:'Open Sans',Arial,sans-serif; white-space:nowrap;">
+                          SFSG ID:
+                          <input type="text" id="organization_sfsg_id" value="TBD" placeholder="—" style="width:70px; padding:2px 6px; font-size:0.85em; border:1px solid #ccc; border-radius:3px; text-align:center; font-family:inherit; color:#30383a;" disabled>
+                        </div>
+                      </div>
                     </header>
                     <br>
 

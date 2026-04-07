@@ -255,7 +255,7 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
     html = html.replace('let importedFileFromSFSG = false;', 'let importedFileFromSFSG = true;');
   }
   if (org.sfsg_id) {
-    html = html.replace('>TBD</span>', `>${org.sfsg_id}</span>`);
+    html = html.replace('value="TBD" placeholder="\u2014"', `value="${org.sfsg_id}" placeholder="\u2014"`);
   }
 
   // ── Org scalar fields ──────────────────────────────────────────────────────

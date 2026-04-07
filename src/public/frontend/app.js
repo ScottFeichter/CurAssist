@@ -160,7 +160,7 @@ async function loadFile(index) {
     const doc = iframe.contentDocument;
     const orgId = doc?.body?.dataset?.orgId;
     const sfIdEl = doc?.getElementById('organization_sfsg_id');
-    const sfsg_id = sfIdEl ? sfIdEl.textContent : 'TBD';
+    const sfsg_id = sfIdEl ? sfIdEl.value : 'TBD';
     console.log('[LOAD] File loaded:', file.name, '| Atlas _id:', orgId, '| SFSG sfsg_id:', sfsg_id);
   };
 
@@ -497,7 +497,7 @@ function submitFile() {
   }
   const iframe = document.getElementById('formFrame');
   const sfsgIdEl = iframe.contentDocument?.getElementById('organization_sfsg_id');
-  const sfsgId = sfsgIdEl ? sfsgIdEl.textContent.trim() : 'TBD';
+  const sfsgId = sfsgIdEl ? sfsgIdEl.value.trim() : 'TBD';
   if (sfsgId && sfsgId !== 'TBD') {
     document.getElementById('submitWarnSfsgId').textContent = sfsgId;
     document.getElementById('submitWarnModal').style.display = 'block';

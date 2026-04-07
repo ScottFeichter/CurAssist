@@ -230,7 +230,7 @@ async function submitFormData(mode = 'new') {
   try {
     if (payload.organization && mode === 'update') {
       const iframeDoc = document.getElementById('formFrame').contentDocument;
-      const existingSfsgId = iframeDoc?.getElementById('organization_sfsg_id')?.textContent?.trim();
+      const existingSfsgId = iframeDoc?.getElementById('organization_sfsg_id')?.value?.trim();
       console.log('[SUBMIT] 4. Calling submitUpdateOrg, existingSfsgId:', existingSfsgId);
       sfsg_id = await submitUpdateOrg(payload, existingSfsgId);
       console.log('[SUBMIT] 5. submitUpdateOrg succeeded, sfsg_id:', sfsg_id);
