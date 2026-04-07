@@ -11,16 +11,6 @@
 - **Submit 500 error** — `POST /api/sf/resources` returns 500 when org has a populated `addresses` array. Working payload only ever sent `addresses: []`. Need to determine if SFSG accepts addresses on initial create or requires them via `change_requests` after org exists.
 
 
-
-
-
-
-
-
-- **Modal OK button colors** — some OK buttons use the same color as Submit buttons. Should use a neutral color unless in the submit workflow itself.
-
-
-
 some times a modal will go away while something is in process and it is impossible to tell if the process is still working until a new success or fail modal appears
 
 
