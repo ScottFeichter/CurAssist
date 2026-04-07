@@ -17,9 +17,9 @@
 
 
 
-
-
 - **Modal OK button colors** — some OK buttons use the same color as Submit buttons. Should use a neutral color unless in the submit workflow itself.
+
+
 
 some times a modal will go away while something is in process and it is impossible to tell if the process is still working until a new success or fail modal appears
 

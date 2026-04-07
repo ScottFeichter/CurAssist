@@ -1188,7 +1188,7 @@ async function confirmImportFile() {
   if (!res.ok || !data.success) {
     msgEl.innerHTML = `Import failed.<br>${data.error || 'Unknown error.'}`;
   } else {
-    msgEl.innerHTML = `Import successful!<br>${data.name}`;
+    msgEl.innerHTML = `File successfully imported to<br><br>Bucket: ${bucket}<br>Subdirectory: ${subdir}`;
     if (currentBucket === bucket && currentSubdir === subdir) {
       await loadSubdir();
     }
@@ -1244,8 +1244,7 @@ async function confirmImportDuplicate() {
   if (!res.ok || !data.success) {
     msgEl.innerHTML = `Import failed.<br>${data.error || 'Unknown error.'}`;
   } else {
-    console.log('Import resolve result:', data);
-    msgEl.innerHTML = `Import successful!<br>${data.name}`;
+    msgEl.innerHTML = `File successfully imported to<br><br>Bucket: ${ctx.bucket}<br>Subdirectory: ${ctx.subdir}`;
     if (currentBucket === ctx.bucket && currentSubdir === ctx.subdir) await loadSubdir();
   }
   document.getElementById('importResultModal').style.display = 'block';
