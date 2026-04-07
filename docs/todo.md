@@ -10,6 +10,8 @@
 
 - **Submit 500 error** — `POST /api/sf/resources` returns 500 when org has a populated `addresses` array. Working payload only ever sent `addresses: []`. Need to determine if SFSG accepts addresses on initial create or requires them via `change_requests` after org exists.
 
+
+
 - Add time picker not working
 - Inherit schedule in service not working
 - Add markdown note in organization not working
