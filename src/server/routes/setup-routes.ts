@@ -52,6 +52,12 @@ export const setupRoutes = (SERVER: Application) => {
   }
 
 
+  // Info page — available in all environments
+  SERVER.get('/docs/spreadsheet-format', (_req: Request, res: Response) => {
+    res.sendFile(join(__dirname, '../../../docs/spreadsheet-format.html'));
+  });
+
+
   // Backend test page
   SERVER.get('/test', (_req: Request, res: Response) => {
     res.sendFile(

@@ -15,13 +15,46 @@
     }
 
     #header {
-      height: 60px;
+      height: auto;
       background: linear-gradient(135deg, #3d7ef0, #1a5bb8);
       color: white;
-      padding: 0 20px;
+      padding: 8px 20px 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #header-top {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      width: 100%;
+    }
+
+    #header-divider {
+      width: 60%;
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.3);
+      margin: 6px 0 4px;
+    }
+
+    #header-info {
+      margin-bottom: 6px;
+    }
+
+    .info-btn {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 4px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .info-btn:hover {
+      background: rgba(255,255,255,0.3);
     }
 
     .header-side {
@@ -560,12 +593,18 @@
 </head>
 <body>
   <div id="header">
-    <div class="header-side">
-      <button class="leftSidebar-toggle-btn" onclick="toggleSidebar()"><svg style="display:block" width="14" height="14" viewBox="0 0 18 18" fill="white" xmlns="http://www.w3.org/2000/svg"><rect y="3" width="18" height="2" rx="1"/><rect y="8" width="18" height="2" rx="1"/><rect y="13" width="18" height="2" rx="1"/></svg> Bucket Menu</button>
+    <div id="header-top">
+      <div class="header-side">
+        <button class="leftSidebar-toggle-btn" onclick="toggleSidebar()"><svg style="display:block" width="14" height="14" viewBox="0 0 18 18" fill="white" xmlns="http://www.w3.org/2000/svg"><rect y="3" width="18" height="2" rx="1"/><rect y="8" width="18" height="2" rx="1"/><rect y="13" width="18" height="2" rx="1"/></svg> Bucket Menu</button>
+      </div>
+      <h2 style="margin:0;">CurAssist WorkFlow</h2>
+      <div class="header-side">
+        <button class="rightSidebar-toggle-btn" onclick="toggleRightSidebar()">File Menu <svg style="display:block" width="14" height="14" viewBox="0 0 18 18" fill="white" xmlns="http://www.w3.org/2000/svg"><rect y="3" width="18" height="2" rx="1"/><rect y="8" width="18" height="2" rx="1"/><rect y="13" width="18" height="2" rx="1"/></svg></button>
+      </div>
     </div>
-    <h2>CurAssist WorkFlow</h2>
-    <div class="header-side">
-      <button class="rightSidebar-toggle-btn" onclick="toggleRightSidebar()">File Menu <svg style="display:block" width="14" height="14" viewBox="0 0 18 18" fill="white" xmlns="http://www.w3.org/2000/svg"><rect y="3" width="18" height="2" rx="1"/><rect y="8" width="18" height="2" rx="1"/><rect y="13" width="18" height="2" rx="1"/></svg></button>
+    <hr id="header-divider">
+    <div id="header-info">
+      <button class="info-btn" onclick="window.open('/docs/spreadsheet-format','_blank')">Info</button>
     </div>
   </div>
 

@@ -10,7 +10,11 @@
 
 - **Submit 500 error** — `POST /api/sf/resources` returns 500 when org has a populated `addresses` array. Working payload only ever sent `addresses: []`. Need to determine if SFSG accepts addresses on initial create or requires them via `change_requests` after org exists.
 
+imported organization in html when imported
 
+side being truncated probaby because of the added lines in address and phone
+
+if we have the Submit directly option checked in the create Bucket modal the Create Bucket button in the model should be same color as Submit butten when it is activated
 
 - Add time picker not working
 - Inherit schedule in service not working
