@@ -130,22 +130,22 @@ describe('POST /api/buckets/move', () => {
 });
 
 describe('POST /api/buckets/submit', () => {
-  it('sets status to complete, writes sfId, sets submittedAt', async () => {
+  it('sets status to complete, writes sfsg_id, sets submittedAt', async () => {
     const org = await Org.create(mockOrg);
     const res = await agent.post('/api/buckets/submit').set('XSRF-Token', csrfToken).send({
-      id: org._id, sfId: 12345
+      id: org._id, sfsg_id: 12345
     });
     expect(res.status).toBe(200);
     const updated = await Org.findById(org._id);
     expect(updated?.status).toBe('complete');
-    expect(updated?.sfId).toBe(12345);
+    expect(updated?.sfsg_id).toBe(12345);
     expect(updated?.submittedAt).toBeDefined();
   });
 
   it('appends submitted entry to history', async () => {
     const org = await Org.create(mockOrg);
     await agent.post('/api/buckets/submit').set('XSRF-Token', csrfToken).send({
-      id: org._id, sfId: 12345
+      id: org._id, sfsg_id: 12345
     });
     const updated = await Org.findById(org._id);
     expect(updated?.history.some(h => h.action === 'submitted')).toBe(true);

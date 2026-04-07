@@ -182,7 +182,7 @@ Only available when `NODE_ENV=development`:
 - `POST /api/buckets/import-file` — Direct import from SF org ID
 - `POST /api/buckets/create-bucket-empty` — Create a named empty bucket
 - `POST /api/buckets/create-bucket-spreadsheet` — Create new bucket from spreadsheet upload
-- `POST /api/buckets/create-bucket-spreadsheet-submit` — Create bucket from spreadsheet and submit all orgs directly to SFSG
+- `POST /api/buckets/create-bucket-spreadsheet-submit` — Create bucket from spreadsheet, return org list for browser-side SFSG submission
 - `DELETE /api/buckets/delete` — Delete a single org
 - `DELETE /api/buckets/:bucket` — Delete entire bucket and all its orgs
 
@@ -198,7 +198,7 @@ Tests use Jest with `mongodb-memory-server` (in-memory MongoDB) and `supertest` 
 
 ```bash
 npm test                  # run all tests
-npm run test:unit         # unit tests only (sanitizers, transform logic)
+npm run test:unit         # unit tests only (sanitizers, transform logic, hydrateTemplate)
 npm run test:integration  # integration tests only (API routes)
 npm run test:coverage     # all tests with coverage report
 ```

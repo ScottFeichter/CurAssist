@@ -507,6 +507,84 @@
                       margin: 0;
                       cursor: pointer;
                     }
+
+                    /* Phone row styles */
+                    .phone-row-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; list-style: none; padding: 0; }
+                    .phone-row {
+                      display: flex;
+                      align-items: center;
+                      background: #f4f4f4;
+                      border-radius: 4px;
+                      padding: 6px 10px;
+                      gap: 12px;
+                      min-width: 0;
+                      overflow: hidden;
+                    }
+                    .phone-row-num    { flex-shrink: 0; font-size: 12px; color: #888; min-width: 18px; }
+                    .phone-row-name   { flex-shrink: 0; font-weight: 600; font-size: 13px; white-space: nowrap; }
+                    .phone-row-number {
+                      flex: 1;
+                      font-size: 13px;
+                      font-weight: 400;
+                      color: #555;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      min-width: 0;
+                    }
+                    .phone-row-actions { flex-shrink: 0; display: flex; align-items: center; gap: 6px; margin-left: auto; }
+                    .phone-row-actions button {
+                      background: none;
+                      border: none;
+                      cursor: pointer;
+                      padding: 2px 4px;
+                      font-size: 12px;
+                      color: #666;
+                      display: flex;
+                      align-items: center;
+                      gap: 3px;
+                      height: auto;
+                    }
+                    .phone-row-actions button:hover { background: #276ce5; color: #fff !important; }
+                    .phone-row-actions .remove-btn:hover { background: #e34646; color: #fff !important; }
+                    .location-row-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+                    .location-row {
+                      display: flex;
+                      align-items: center;
+                      background: #f4f4f4;
+                      border-radius: 4px;
+                      padding: 6px 10px;
+                      gap: 12px;
+                      min-width: 0;
+                      overflow: hidden;
+                    }
+                    .location-row-num  { flex-shrink: 0; font-size: 12px; color: #888; min-width: 18px; }
+                    .location-row-name { flex-shrink: 0; font-weight: 600; font-size: 13px; white-space: nowrap; }
+                    .location-row-addr {
+                      flex: 1;
+                      font-size: 13px;
+                      font-weight: 400;
+                      color: #555;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      min-width: 0;
+                    }
+                    .location-row-actions { flex-shrink: 0; display: flex; align-items: center; gap: 6px; margin-left: auto; }
+                    .location-row-actions button {
+                      background: none;
+                      border: none;
+                      cursor: pointer;
+                      padding: 2px 4px;
+                      font-size: 12px;
+                      color: #666;
+                      display: flex;
+                      align-items: center;
+                      gap: 3px;
+                      height: auto;
+                    }
+                    .location-row-actions button:hover { background: #276ce5; color: #fff !important; }
+                    .location-row-actions .remove-btn:hover { background: #e34646; color: #fff !important; }
                   </style>
   </head>
 <!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HEAD END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
@@ -519,9 +597,15 @@
 
                     <header class="edit--section--header" style="display: flex; flex-direction: column; align-items: flex-start;">
                       <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">▶</button>
-                      <h4>
-                        New Organization
-                      </h4>
+                      <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <h4>
+                          New Organization
+                        </h4>
+                        <div id="organization_sfsg_id_display" style="display:flex; align-items:center; gap:6px; font-size:0.85em; color:#888; font-family:'Open Sans',Arial,sans-serif; white-space:nowrap;">
+                          SFSG ID:
+                          <input type="text" id="organization_sfsg_id" value="TBD" placeholder="—" style="width:70px; padding:2px 6px; font-size:0.85em; border:1px solid #ccc; border-radius:3px; text-align:center; font-family:inherit; color:#30383a;" disabled>
+                        </div>
+                      </div>
                     </header>
                     <br>
 
@@ -579,7 +663,7 @@
                         <div class="app-components-edit-EditAddress-module__addressListTitle--Y1zCq">
                           Location
                         </div>
-                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1">
+                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1 location-row-list">
                         </div>
                         <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
                           Add Location
@@ -591,7 +675,7 @@
                         <label for="edit-item">
                           Phones
                         </label>
-                        <ul id="organization_phones" class="edit--section--list--item--sublist">
+                        <ul id="organization_phones" class="edit--section--list--item--sublist phone-row-list">
                         </ul>
                         <button type="button" class="edit--section--list--item--button solid-brand">
                           Add Phone
@@ -859,6 +943,48 @@
                       const phoneModal = document.getElementById('addPhoneModal');
                       const noteModal = document.getElementById('addNoteModal');
 
+                      function wireLocationRow(row) {
+                        row.querySelector('.remove-btn').addEventListener('click', () => {
+                          const list = row.closest('#organization_locations');
+                          row.remove();
+                          Array.from(list.children).forEach((r, i) => {
+                            r.querySelector('.location-row-num').textContent = (i + 1) + '.';
+                          });
+                        });
+                        row.querySelector('.edit-btn').addEventListener('click', () => {
+                          document.getElementById('locationName').value  = row.dataset.name  || '';
+                          document.getElementById('addressLine1').value  = row.dataset.addr1 || '';
+                          document.getElementById('addressLine2').value  = row.dataset.addr2 || '';
+                          document.getElementById('city').value          = row.dataset.city  || '';
+                          document.getElementById('state').value         = row.dataset.state || '';
+                          document.getElementById('zip').value           = row.dataset.zip   || '';
+                          document.getElementById('addLocationModal').dataset.editingRow = 'true';
+                          row.dataset.editing = 'true';
+                          document.getElementById('addLocationModal').style.display = 'flex';
+                        });
+                      }
+
+                      function wirePhoneRow(li) {
+                        li.querySelector('.remove-btn').addEventListener('click', () => {
+                          const list = li.closest('#organization_phones');
+                          li.remove();
+                          Array.from(list.children).forEach((r, i) => {
+                            r.querySelector('.phone-row-num').textContent = (i + 1) + '.';
+                          });
+                        });
+                        li.querySelector('.edit-btn').addEventListener('click', () => {
+                          document.getElementById('phoneName').value   = li.dataset.name   || '';
+                          document.getElementById('phoneNumber').value = li.dataset.number || '';
+                          document.getElementById('addPhoneModal').dataset.editingRow = 'true';
+                          li.dataset.editing = 'true';
+                          document.getElementById('addPhoneModal').style.display = 'flex';
+                        });
+                      }
+
+                      // Wire up any hydrated rows
+                      document.querySelectorAll('#organization_locations .location-row').forEach(wireLocationRow);
+                      document.querySelectorAll('#organization_phones .phone-row').forEach(wirePhoneRow);
+
                       // Find all Add buttons by their text content
                       const allButtons = document.querySelectorAll('button');
 
@@ -886,18 +1012,43 @@
                       });
 
                       document.getElementById('addLocationBtn').addEventListener('click', () => {
-                        const name = document.getElementById('locationName').value;
+                        const name  = document.getElementById('locationName').value;
                         const addr1 = document.getElementById('addressLine1').value;
                         const addr2 = document.getElementById('addressLine2').value;
-                        const city = document.getElementById('city').value;
+                        const city  = document.getElementById('city').value;
                         const state = document.getElementById('state').value;
-                        const zip = document.getElementById('zip').value;
+                        const zip   = document.getElementById('zip').value;
+                        const addrParts = [addr1, addr2, city, state, zip].filter(Boolean).join('  ');
 
-                        // Find the location list
                         const locationList = document.getElementById('organization_locations');
-                        const div = document.createElement('div');
-                        div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
-                        locationList.appendChild(div);
+                        const editingRow = locationList.querySelector('[data-editing="true"]');
+
+                        if (editingRow) {
+                          // Update existing row
+                          editingRow.dataset.name  = name;
+                          editingRow.dataset.addr1 = addr1;
+                          editingRow.dataset.addr2 = addr2;
+                          editingRow.dataset.city  = city;
+                          editingRow.dataset.state = state;
+                          editingRow.dataset.zip   = zip;
+                          editingRow.querySelector('.location-row-name').textContent = name || '';
+                          editingRow.querySelector('.location-row-addr').textContent = addrParts;
+                          delete editingRow.dataset.editing;
+                        } else {
+                          // Add new row
+                          const num = locationList.children.length + 1;
+                          const row = document.createElement('div');
+                          row.className = 'location-row';
+                          row.dataset.name  = name;
+                          row.dataset.addr1 = addr1;
+                          row.dataset.addr2 = addr2;
+                          row.dataset.city  = city;
+                          row.dataset.state = state;
+                          row.dataset.zip   = zip;
+                          row.innerHTML = `<span class="location-row-num">${num}.</span><span class="location-row-name">${name || ''}</span><span class="location-row-addr">${addrParts}</span><span class="location-row-actions"><button type="button" class="edit-btn" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn" title="Remove"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span>`;
+                          wireLocationRow(row);
+                          locationList.appendChild(row);
+                        }
 
                         // Clear and close
                         document.getElementById('locationName').value = '';
@@ -906,6 +1057,7 @@
                         document.getElementById('city').value = '';
                         document.getElementById('state').value = '';
                         document.getElementById('zip').value = '';
+                        delete locationModal.dataset.editingRow;
                         locationModal.style.display = 'none';
                       });
 
@@ -915,18 +1067,34 @@
                       });
 
                       document.getElementById('addPhoneBtn').addEventListener('click', () => {
-                        const name = document.getElementById('phoneName').value;
+                        const name   = document.getElementById('phoneName').value;
                         const number = document.getElementById('phoneNumber').value;
+                        const phoneList = document.getElementById('organization_phones');
+                        const editingLi = phoneList.querySelector('[data-editing="true"]');
 
-                        // Find the phone sublist
-                        const phoneSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[1];
-                        const li = document.createElement('li');
-                        li.innerHTML = `<strong>${name}:</strong> ${number}`;
-                        phoneSublist.appendChild(li);
+                        if (editingLi) {
+                          // Update existing row
+                          editingLi.dataset.name   = name;
+                          editingLi.dataset.number = number;
+                          editingLi.querySelector('.phone-row-name').textContent   = name   || '';
+                          editingLi.querySelector('.phone-row-number').textContent = number || '';
+                          delete editingLi.dataset.editing;
+                        } else {
+                          // Add new row
+                          const num = phoneList.children.length + 1;
+                          const li = document.createElement('li');
+                          li.className = 'phone-row';
+                          li.dataset.name   = name;
+                          li.dataset.number = number;
+                          li.innerHTML = `<span class="phone-row-num">${num}.</span><span class="phone-row-name">${name || ''}</span><span class="phone-row-number">${number || ''}</span><span class="phone-row-actions"><button type="button" class="edit-btn" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn" title="Remove"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span>`;
+                          wirePhoneRow(li);
+                          phoneList.appendChild(li);
+                        }
 
                         // Clear and close
                         document.getElementById('phoneName').value = '';
                         document.getElementById('phoneNumber').value = '';
+                        delete phoneModal.dataset.editingRow;
                         phoneModal.style.display = 'none';
                       });
 
@@ -1060,6 +1228,20 @@
 
                 </div>
 <!---=========================================================================== EDIT (ORG) SECTIONS END ============================================================================-->
+
+<!-- Shared copy-from-org modal (used by service location Add from Organization button) -->
+<div class="copy-from-org-modal" id="copyFromOrgModal" style="display:none;">
+  <div class="copy-from-org-modal-content">
+    <h3>Add Location from Organization</h3>
+    <select id="copyFromOrgSelect">
+      <option value="">Select a location...</option>
+    </select>
+    <div class="copy-from-org-modal-buttons">
+      <button class="copy-from-org-btn-confirm" id="copyFromOrgConfirm">Add</button>
+      <button class="copy-from-org-btn-cancel" id="copyFromOrgCancel">Cancel</button>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>

@@ -14,10 +14,26 @@ Tests every sanitizer function in `src/server/helpers/bucket-sanitizers.ts` in i
 - `sanitizeServiceCategories`, `sanitizeServiceEligibilitiesList` — comma-split to array, empty filtering
 - All pass-through sanitizers (`sanitizeAlternateName`, `sanitizeWebsite`, `sanitizeEmail`, `sanitizeDescription`, `sanitizeInternalNotes`, `sanitizeZip`, `sanitizeOrganizationLegalStatus`, `sanitizeServiceShortDescription`, `sanitizeServiceCost`, `sanitizeServiceWaitTime`) — trim and return string, handle null
 
-**`transform.test.ts`** (6 tests)
+**`hydrateTemplate.test.ts`** (21 tests)
+Tests the `hydrateTemplate()` function against the real combined HTML template.
+- `data-org-id` stamped on body tag
+- `importedFileFromSFSG` flag set correctly based on `sfId` presence
+- All org scalar fields injected (name, alternate_name, website, email, description)
+- Addresses injected as `location-row` divs with sequential numbers and name
+- Phones injected as `phone-row` list items with sequential numbers
+- Services injected into `orgServicesDiv` with unique IDs
+- Multiple services get unique `service-org-N` IDs
+- Sidebar nav links populated with service names
+- Unnamed services use "Service N" as sidebar label
+- Categories and eligibilities injected as pills
+- Service scalar fields (description, fee, wait_time) injected
+- Empty org (no addresses/phones/services) handled without error
+
+
 Tests the core transformation logic used in `src/public/frontend/Scripts/transform.js`.
-- `transformLocations` — maps collected location objects to SF API address format
-- `transformPhones` — filters empty phone numbers, maps to SF API format
+- `transformLocations` — maps collected location objects to SF API address format, strips empty/null fields
+- `transformPhones` — filters empty phone numbers, strips null description field
+- Note: `transformNewOrg` and `transformService` only include optional fields when they have values — null fields omitted to match SFSG API requirements
 - `transformNotes` — wraps note strings into `{ note: string }` objects
 - `transformHours` — skips days with no times, maps to SF API schedule_days format
 
@@ -71,8 +87,9 @@ The full submit flow is not tested because it requires a live SFSG session:
 - `POST /api/buckets/create-bucket-empty`
 - `POST /api/buckets/create-bucket-spreadsheet`
 - `POST /api/buckets/create-bucket-spreadsheet-submit` (requires mocking SFSG API and live session cookies)
-- `POST /api/buckets/import-file`
 - `importMultipleFiles` frontend flow
+
+**Known normalization:** The SFSG API returns `addresses`, `phones`, `notes`, `categories`, and `eligibilities` as objects with extra fields. These are normalized to match the Mongoose schema on import via `normalizeSFSGStringArray()` and explicit field mapping.
 
 ### Save Route — Full Field Coverage
 The save route integration test only verifies `organization_name` is updated. It does not verify that phones, addresses, service fields, categories, or eligibilities are correctly persisted.

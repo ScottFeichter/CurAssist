@@ -207,10 +207,13 @@ function collectFormData() {
 
 /**
  * Saves the file, collects form data, submits to SF API, and moves file to Complete on success.
+ * @param {'new'|'update'} [mode='new'] - 'new' creates a fresh org, 'update' sends a change_request
  * @returns {Promise<void>}
  */
-async function submitFormData() {
+async function submitFormData(mode = 'new') {
+  console.log('[SUBMIT] submitFormData called, mode:', mode);
   const saved = await saveFile(true);
+  console.log('[SUBMIT] saveFile result:', saved);
   if (!saved) {
     document.getElementById('submitResultMessage').innerHTML = 'Save failed — submission cancelled.';
     document.getElementById('submitResultModal').style.display = 'block';
@@ -218,32 +221,45 @@ async function submitFormData() {
   }
 
   const payload = collectFormData();
-  console.log('Submit payload:', JSON.stringify(payload, null, 2));
-
   const orgId = currentFiles[currentIndex]._id;
-  let sfId = null;
+  console.log('[SUBMIT] 1. Payload collected:', JSON.stringify(payload, null, 2));
+  console.log('[SUBMIT] 2. Mode:', payload.organization ? 'Organization' : 'Service');
+  console.log('[SUBMIT] 3. Atlas org _id:', orgId);
+  let sfsg_id = null;
 
   try {
-    if (payload.organization) {
-      sfId = await submitNewOrg(payload);
+    if (payload.organization && mode === 'update') {
+      const iframeDoc = document.getElementById('formFrame').contentDocument;
+      const existingSfsgId = iframeDoc?.getElementById('organization_sfsg_id')?.value?.trim();
+      console.log('[SUBMIT] 4. Calling submitUpdateOrg, existingSfsgId:', existingSfsgId);
+      sfsg_id = await submitUpdateOrg(payload, existingSfsgId);
+      console.log('[SUBMIT] 5. submitUpdateOrg succeeded, sfsg_id:', sfsg_id);
+    } else if (payload.organization) {
+      console.log('[SUBMIT] 4. Calling submitNewOrg...');
+      sfsg_id = await submitNewOrg(payload);
+      console.log('[SUBMIT] 5. submitNewOrg succeeded, sfsg_id:', sfsg_id);
     } else {
+      console.log('[SUBMIT] 4. Calling submitService...');
       await submitService(payload);
+      console.log('[SUBMIT] 5. submitService succeeded');
     }
   } catch (err) {
+    console.log('[SUBMIT] ERROR in submit:', err.message);
     document.getElementById('submitResultMessage').innerHTML = 'File saved successfully.<br><br>Submission failed: ' + err.message;
     document.getElementById('submitResultModal').style.display = 'block';
     return;
   }
 
-  // Write sfId back to Atlas and move to complete
+  // Write sfsg_id back to Atlas and move to complete
   const moveResponse = await fetch(`${API_BASE}/buckets/submit`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
     credentials: 'include',
-    body: JSON.stringify({ id: orgId, sfId })
+    body: JSON.stringify({ id: orgId, sfsg_id })
   });
+  console.log('[SUBMIT] 6. Atlas submit response status:', moveResponse.status);
 
-  const sfIdLine = sfId ? `<br><br>New Org ID: <strong>${sfId}</strong>` : '';
+  const sfIdLine = sfsg_id ? `<br><br>New Org ID: <strong>${sfsg_id}</strong>` : '';
   if (moveResponse.ok) {
     document.getElementById('submitResultMessage').innerHTML = `File saved and submitted successfully.<br><br>Moved to Complete.${sfIdLine}`;
   } else {

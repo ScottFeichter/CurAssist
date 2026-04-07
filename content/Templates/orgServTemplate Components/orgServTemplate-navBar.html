@@ -619,7 +619,7 @@
   function searchAllServices(event) {
     event.preventDefault();
     const links = Array.from(document.querySelectorAll('#servicesList a'));
-    console.log('searchAllServices: found', links.length, 'links');
+    //DISABLED: console.log('searchAllServices: found', links.length, 'links');
     links.forEach((link, i) => {
       const name = link.textContent.trim();
       if (!name) return;
@@ -630,11 +630,11 @@
   }
 
   function addNewService() {
-    console.log('addNewService called');
+    //DISABLED: console.log('addNewService called');
     
     // Generate unique service ID
     const serviceId = 'service-' + Date.now();
-    console.log('serviceId:', serviceId);
+    //DISABLED: console.log('serviceId:', serviceId);
     
     // Determine next placeholder name
     const servicesList = document.getElementById('servicesList');
@@ -650,7 +650,7 @@
     });
     
     const placeholderName = `New Service ${maxNum + 1}`;
-    console.log('placeholderName:', placeholderName);
+    //DISABLED: console.log('placeholderName:', placeholderName);
     
     // Add service link to navbar
     const li = document.createElement('li');
@@ -662,12 +662,12 @@
     link.setAttribute('onclick', `event.preventDefault(); var t=document.getElementById('${serviceId}'); if(t) t.scrollIntoView({behavior:'smooth'});`);
     li.appendChild(link);
     servicesList.appendChild(li);
-    console.log('Added link to navbar');
+    //DISABLED: console.log('Added link to navbar');
     
     // Find the ServiceDiv template to clone
     const serviceTemplate = document.getElementById('serviceDivOrganization');
     if (!serviceTemplate) {
-      console.error('serviceDivOrganization not found');
+      //DISABLED: //DISABLED: console.error('serviceDivOrganization not found');
       return;
     }
     
@@ -675,13 +675,13 @@
     const newServiceDiv = serviceTemplate.cloneNode(true);
     newServiceDiv.id = serviceId;
     newServiceDiv.style.display = '';
-    console.log('Cloned service div');
+    //DISABLED: console.log('Cloned service div');
     
     // Clear all inputs to make it blank
     newServiceDiv.querySelectorAll('input, textarea').forEach(input => input.value = '');
     newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
     newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
-    console.log('Cleared inputs');
+    //DISABLED: console.log('Cleared inputs');
 
     // Wire up autocomplete for category/eligibility fields on this cloned div
     if (typeof window.setupServiceAutocomplete === 'function') {
@@ -714,14 +714,14 @@
     
     // Append to orgServicesDiv container
     const orgServicesDiv = document.getElementById('orgServicesDiv');
-    console.log('orgServicesDiv:', orgServicesDiv);
+    //DISABLED: console.log('orgServicesDiv:', orgServicesDiv);
     if (!orgServicesDiv) {
-      console.error('orgServicesDiv container not found');
+      //DISABLED: console.error('orgServicesDiv container not found');
       return;
     }
     
     orgServicesDiv.appendChild(newServiceDiv);
-    console.log('Appended to orgServicesDiv');
+    //DISABLED: console.log('Appended to orgServicesDiv');
     
     // Scroll to new service
     setTimeout(() => {
@@ -860,16 +860,16 @@
   }
 
   // Update organization name in navbar when input changes
-  console.log('[navBar] script executing, readyState:', document.readyState);
+  //DISABLED: console.log('[navBar] script executing, readyState:', document.readyState);
   document.addEventListener('DOMContentLoaded', function() {
-    console.log('[navBar] DOMContentLoaded fired');
+    //DISABLED: console.log('[navBar] DOMContentLoaded fired');
     const orgNameInput = document.getElementById('organization_name');
     const orgNavLink = document.getElementById('orgNavLink');
-    console.log('[navBar] orgNameInput:', orgNameInput, 'value:', orgNameInput && orgNameInput.value);
-    console.log('[navBar] orgNavLink:', orgNavLink);
+    //DISABLED: console.log('[navBar] orgNameInput:', orgNameInput, 'value:', orgNameInput && orgNameInput.value);
+    //DISABLED: console.log('[navBar] orgNavLink:', orgNavLink);
     if (orgNameInput && orgNavLink) {
       orgNavLink.textContent = orgNameInput.value || '{{organization_name}}';
-      console.log('[navBar] set orgNavLink to:', orgNavLink.textContent);
+      //DISABLED: console.log('[navBar] set orgNavLink to:', orgNavLink.textContent);
       orgNameInput.addEventListener('input', function() {
         orgNavLink.textContent = this.value || '{{organization_name}}';
       });
