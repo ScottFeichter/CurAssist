@@ -30,6 +30,9 @@ EventEmitter.defaultMaxListeners = 20;
 // Add the custom colors before creating the logger
 winston.addColors(customLevels.colors);
 
+// In test environment use a silent logger — no file writes, no console noise
+const isTest = process.env.NODE_ENV === 'test';
+
 // Create the logger
 const logger = winston.createLogger({
     level: process.env.WINSTON_LOG_LEVEL || 'debug',
@@ -39,7 +42,9 @@ const logger = winston.createLogger({
         winston.format.errors({ stack: true }),
         baseLogFormat
     ),
-    transports: [
+    transports: isTest
+      ? [ new winston.transports.Console({ silent: true }) ]
+      : [
         errorTransport,
         warniTransport,
         inforTransport,
@@ -51,7 +56,7 @@ const logger = winston.createLogger({
         allLogsNoAnsiTransport,
         allLogsWithAnsiTransport,
         consoleTransport
-    ]
+      ]
 });
 
 // Set max listeners on the logger instance

@@ -7,6 +7,7 @@ import express, { Request, Response, NextFunction, Application } from 'express';
 // import SEQUELIZE from '../../database/sequelize';
 import apiRouter from './api/api-router';
 import { routeCatchAll } from './setups/catchAll-unmatched-routes';
+import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap, serviceLocationFieldMap } from '../helpers/buckets-map';
 
 
 
@@ -15,8 +16,46 @@ console.enter();
 
 // #region ====================== START ========================================
 
+/**
+ * Sets up all Express routes.
+ * Dev-only documentation routes are mounted first (/docs/*).
+ * API routes are mounted under /api via apiRouter.
+ * A catch-all handles unmatched routes.
+ * @param SERVER - The Express application instance
+ */
 export const setupRoutes = (SERVER: Application) => {
   log.enter("setupRoutes()", log.brack);
+
+
+  // Dev-only documentation routes
+  if (process.env.NODE_ENV !== 'production') {
+    SERVER.use('/docs/typedocs', express.static(join(__dirname, '../../../docs/typedocs')));
+    SERVER.get('/docs/readme', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../README.md'));
+    });
+    SERVER.get('/docs/deployment', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../docs/deployment-DB-noS3.md'));
+    });
+    SERVER.get('/docs/deployment-nodb', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../docs/deployment-S3-noDB.md'));
+    });
+    SERVER.get('/docs/deploy-log', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../docs/curassistDeployFirst.md'));
+    });
+    SERVER.get('/docs/tests', (_req: Request, res: Response) => {
+      res.sendFile(join(__dirname, '../../../docs/tests.md'));
+    });
+    SERVER.get('/docs/buckets-map', (_req: Request, res: Response) => {
+      const maps = { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, serviceLocationFieldMap, organizationPhoneFieldMap };
+      res.send(`<!DOCTYPE html><html><head><title>Buckets Map</title><style>body{font-family:monospace;padding:20px;}h2{margin-top:30px;}pre{background:#f4f4f4;padding:16px;border-radius:4px;}</style></head><body><h1>Buckets Field Maps</h1>${Object.entries(maps).map(([name, map]) => `<h2>${name}</h2><pre>${JSON.stringify(map, null, 2)}</pre>`).join('')}</body></html>`);
+    });
+  }
+
+
+  // Info page — available in all environments
+  SERVER.get('/docs/spreadsheet-format', (_req: Request, res: Response) => {
+    res.sendFile(join(__dirname, '../../../docs/spreadsheet-format.html'));
+  });
 
 
   // Backend test page

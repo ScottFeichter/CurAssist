@@ -1,9 +1,11 @@
 {
-    "entryPoints": ["src/index.ts"],
-    "out": "docs",
-    "name": "Your Project Name",
-    "excludePrivate": true,
-    "excludeProtected": true,
-    "theme": "default",
-    "readme": "README.md"
-  }
+  "entryPoints": ["src"],
+  "entryPointStrategy": "expand",
+  "out": "docs/typedocs",
+  "name": "CurAssist",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "exclude": ["**/*.d.ts", "**/node_modules/**", "**/dist/**"],
+  "theme": "default",
+  "readme": "README.md"
+}

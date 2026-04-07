@@ -26,6 +26,8 @@ declare global {
       SERVER_PORT: string;
       BASE_URL: string;
       NODE_ENV: string;
+      DB_CONNECT: string;
+      WINSTON_LOG_LEVEL: string;
     }
   }
 }

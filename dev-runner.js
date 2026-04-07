@@ -4,12 +4,7 @@
  * Development runner that concurrently runs:
  * 1. TypeScript compiler in watch mode (tsc --watch) - recompiles on .ts file changes
  * 2. Nodemon watching dist folder - restarts server when compiled files change
- * 3. File watcher on src/public and content/ (excluding content/Buckets) -
- *    runs build-template + copy to dist on changes
- *
- * NOTE: On file changes, only build-test-template.js is called directly.
- * It internally calls build-template.js first, so both templates are rebuilt
- * in a single pass. Calling build-template.js separately would build it twice.
+ * 3. File watcher on src/public and content/ - runs build-template + copy to dist on changes
  */
 
 const { spawn, execSync } = require('child_process');
@@ -25,8 +20,8 @@ function formatLine(prefix, line) {
   return `${num}  [${prefix}] ${line}`;
 }
 
-function runProcess(command, args, prefix) {
-  const proc = spawn(command, args, { shell: true });
+function runProcess(command, args, prefix, env = {}) {
+  const proc = spawn(command, args, { shell: true, env: { ...process.env, ...env } });
   const rlOut = readline.createInterface({ input: proc.stdout });
   const rlErr = readline.createInterface({ input: proc.stderr });
   rlOut.on('line', (line) => console.log(formatLine(prefix, line)));
@@ -41,7 +36,7 @@ function scheduleCopy() {
   rebuildTimer = setTimeout(() => {
     console.log(formatLine('watch', 'ALERT : Change detected — rebuilding template and copying assets...'));
     try {
-      const out1 = execSync('node content/Templates/build-test-template.js').toString().trim();
+      const out1 = execSync('node content/Templates/build-template.js').toString().trim();
       if (out1) out1.split('\n').forEach(l => console.log(formatLine('watch', `ALERT : ${l}`)));
       execSync('cp -r src/public dist/ && cp -r src/views dist/');
       console.log(formatLine('watch', 'ALERT : Assets copied to dist/'));
@@ -81,7 +76,7 @@ watchFiles.forEach(file => {
 });
 
 const tsc = runProcess('npx', ['tsc', '--watch', '--preserveWatchOutput'], 'tsc');
-const app = runProcess('npx', ['nodemon', '--delay', '1', '-w', 'dist', 'dist/entry.js'], 'app');
+const app = runProcess('npx', ['nodemon', '--delay', '1', '-w', 'dist', 'dist/entry.js'], 'app', { NODE_ENV: 'development' });
 
 process.on('SIGINT', () => {
   tsc.kill();

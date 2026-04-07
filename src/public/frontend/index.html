@@ -15,13 +15,49 @@
     }
 
     #header {
-      height: 60px;
-      background: #276CE5;
+      background: linear-gradient(135deg, #3d7ef0, #1a5bb8);
       color: white;
-      padding: 0 20px;
+      padding: 6px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
+    }
+
+    #header-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #header-center h2 {
+      margin: 0;
+      line-height: 1.2;
+    }
+
+    #header-divider {
+      width: 60%;
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.3);
+      margin: 4px 0 3px;
+    }
+
+    #header-info {
+      margin: 0;
+    }
+
+    .info-btn {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 4px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .info-btn:hover {
+      background: rgba(255,255,255,0.3);
     }
 
     .header-side {
@@ -37,19 +73,25 @@
     }
 
     .leftSidebar-toggle-btn, .rightSidebar-toggle-btn {
-      width: 30px;
+      width: 130px;
       height: 30px;
-      padding: 0;
+      padding: 0 10px;
       background: rgba(255,255,255,0.2);
       color: white;
       border: none;
       border-radius: 4px;
       cursor: pointer;
-      font-size: 18px;
+      font-size: 14px;
+      line-height: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+      gap: 6px;
       flex-shrink: 0;
+    }
+
+    .leftSidebar-toggle-btn.sidebar-closed, .rightSidebar-toggle-btn.sidebar-closed {
+      background: rgba(255,255,255,0.08);
     }
 
     .leftSidebar-toggle-btn:hover, .rightSidebar-toggle-btn:hover {
@@ -258,93 +300,116 @@
 
 
     .createBucket-btn {
-      background: green;
+      background: linear-gradient(135deg, #2d9e2d, #1a6b1a);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .createBucket-btn:hover {
-      background: darkgreen;
+      background: linear-gradient(135deg, #258025, #145214);
     }
 
     .deleteBucket-btn {
-      background: red;
+      background: linear-gradient(135deg, #e53535, #a01010);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .deleteBucket-btn:hover {
-      background: darkred;
+      background: linear-gradient(135deg, #c82020, #800a0a);
     }
 
 
     .moveFile-btn {
-      background: #f0a060;
+      background: linear-gradient(135deg, #999, #606060);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .moveFile-btn:hover {
-      background: #dc9050;
+      background: linear-gradient(135deg, #808080, #484848);
     }
 
     .moveFile-btn:active {
-      background: #c88040;
+      background: linear-gradient(135deg, #686868, #303030);
     }
 
     .copyFile-btn {
-      background: #222;
+      background: linear-gradient(135deg, #444, #111);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .copyFile-btn:hover {
-      background: #111;
+      background: linear-gradient(135deg, #333, #000);
     }
 
     .copyFile-btn:active {
-      background: #000;
+      background: linear-gradient(135deg, #222, #000);
     }
 
     .createFile-btn {
-      background: green;
+      background: linear-gradient(135deg, #2d9e2d, #1a6b1a);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .createFile-btn:hover {
-      background: darkgreen;
+      background: linear-gradient(135deg, #258025, #145214);
+    }
+
+    .importFile-btn {
+      background: linear-gradient(135deg, #f0a060, #c87030);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .importFile-btn:hover {
+      background: linear-gradient(135deg, #dc8c50, #b06020);
+    }
+
+    .importFile-btn:active {
+      background: linear-gradient(135deg, #c87840, #985010);
     }
 
 
     .saveFile-btn {
-      background: #276CE5;
+      background: linear-gradient(135deg, #3d7ef0, #1a5bb8);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .saveFile-btn:hover {
-      background: #1a5bb8;
+      background: linear-gradient(135deg, #2a6ad8, #1248a0);
     }
 
     .deleteFile-btn {
-      background: red;
+      background: linear-gradient(135deg, #e53535, #a01010);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .deleteFile-btn:hover {
-      background: darkred;
+      background: linear-gradient(135deg, #c82020, #800a0a);
     }
 
     .submitFile-btn {
-      background: plum;
+      background: linear-gradient(135deg, #f953c6, #b91d73);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .submitFile-btn:hover {
-      background: purple;
+      background: linear-gradient(135deg, #e040b0, #a01060);
     }
 
     #fileInfo {
@@ -401,15 +466,20 @@
       width: 100%;
       height: 100%;
       background-color: rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
     }
 
     .modal-content {
       background-color: white;
-      margin: 15% auto;
+      margin: 5% auto;
       padding: 30px;
       border-radius: 8px;
       width: 400px;
       text-align: center;
+      max-height: 85vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
 
     .modal-content p {
@@ -431,33 +501,36 @@
     }
 
     .delete-btn {
-      background: red;
+      background: linear-gradient(135deg, #e53535, #a01010);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .delete-btn:hover {
-      background: darkred;
+      background: linear-gradient(135deg, #c82020, #800a0a);
     }
 
     .cancel-btn {
-      background: #276CE5;
+      background: linear-gradient(135deg, #3d7ef0, #1a5bb8);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .cancel-btn:hover {
-      background: #1a5bb8;
+      background: linear-gradient(135deg, #2a6ad8, #1248a0);
     }
 
     .submit-btn {
-      background: plum;
+      background: linear-gradient(135deg, #f953c6, #b91d73);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .submit-btn:hover {
-      background: purple;
+      background: linear-gradient(135deg, #e040b0, #a01060);
     }
 
     .modal-input {
@@ -489,54 +562,52 @@
       background: #e3f2fd;
     }
 
-    .progress-container {
-      width: 100%;
-      background: #f0f0f0;
-      border-radius: 4px;
-      height: 30px;
-      margin-bottom: 20px;
-      display: none;
-    }
-
-    .progress-bar {
-      height: 100%;
-      background: #276CE5;
-      border-radius: 4px;
-      width: 0%;
-      transition: width 0.3s;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: 600;
+    @keyframes blink {
+      50% { opacity: 0; }
     }
 
     .create-btn {
-      background: green;
+      background: linear-gradient(135deg, #2d9e2d, #1a6b1a);
       color: white;
       font-weight: 600;
+      border: none;
     }
 
     .create-btn:hover {
-      background: darkgreen;
+      background: linear-gradient(135deg, #258025, #145214);
     }
 
     .create-btn:disabled {
       background: #ccc;
       cursor: not-allowed;
     }
+
+    .directImport-btn {
+      background: linear-gradient(135deg, #f0a060, #c87030);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .directImport-btn:hover {
+      background: linear-gradient(135deg, #dc8c50, #b06020);
+    }
   </style>
 </head>
 <body>
   <div id="header">
     <div class="header-side">
-      <button class="leftSidebar-toggle-btn" onclick="toggleSidebar()">☰</button>
-      <span class="header-label">Bucket Actions</span>
+      <button class="leftSidebar-toggle-btn" onclick="toggleSidebar()"><svg style="display:block" width="14" height="14" viewBox="0 0 18 18" fill="white" xmlns="http://www.w3.org/2000/svg"><rect y="3" width="18" height="2" rx="1"/><rect y="8" width="18" height="2" rx="1"/><rect y="13" width="18" height="2" rx="1"/></svg> Bucket Menu</button>
     </div>
-    <h2>CurAssist WorkFlow</h2>
+    <div id="header-center">
+      <h2>CurAssist WorkFlow</h2>
+      <hr id="header-divider">
+      <div id="header-info">
+        <button class="info-btn" onclick="window.open('/docs/spreadsheet-format','_blank')">Info</button>
+      </div>
+    </div>
     <div class="header-side">
-      <span class="header-label">File Actions</span>
-      <button class="rightSidebar-toggle-btn" onclick="toggleRightSidebar()">☰</button>
+      <button class="rightSidebar-toggle-btn" onclick="toggleRightSidebar()">File Menu <svg style="display:block" width="14" height="14" viewBox="0 0 18 18" fill="white" xmlns="http://www.w3.org/2000/svg"><rect y="3" width="18" height="2" rx="1"/><rect y="8" width="18" height="2" rx="1"/><rect y="13" width="18" height="2" rx="1"/></svg></button>
     </div>
   </div>
 
@@ -545,6 +616,7 @@
     <div id="leftSidebar">
       <div id="resizeHandle"></div>
       <div class="section-title">Bucket Actions</div>
+      <button class="directImport-btn" onclick="importMultipleFiles()">Import Bucket</button>
       <button class="createBucket-btn" onclick="createBucket()">Create Bucket</button>
       <button class="deleteBucket-btn" onclick="deleteBucket()">Delete Bucket</button>
       <select id="bucketSelect" onchange="loadBucket()">
@@ -561,6 +633,7 @@
         <button onclick="loadNext()">Next →</button>
       </div>
       <div id="fileCount"></div>
+
     </div>
 
     <div id="content">
@@ -570,11 +643,12 @@
     <div id="rightSidebar">
       <div id="rightResizeHandle"></div>
       <div class="section-title">File Actions</div>
+      <button class="importFile-btn" onclick="importFile()">Import File</button>
       <button class="createFile-btn" onclick="createFile()">Create File</button>
       <button class="deleteFile-btn" onclick="deleteFile()">Delete File</button>
       <button class="moveFile-btn" onclick="moveFile()">Move File</button>
       <button class="copyFile-btn" onclick="copyFile()">Copy File</button>
-      <button class="saveFile-btn" onclick="saveFile()">Save Changes</button>
+      <button class="saveFile-btn" onclick="saveFile()">Save File</button>
       <button class="submitFile-btn" onclick="submitFile()">Submit</button>
     </div>
   </div>
@@ -590,6 +664,7 @@
         <option value="">Select subdirectory...</option>
       </select>
       <p style="margin-top: 16px;">Do you want to save changes before moving?</p>
+      <div id="moveWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       <div class="modal-buttons">
         <button class="save-btn" onclick="confirmMove(true)">Save And Move</button>
         <button onclick="confirmMove(false)">Move Without Saving</button>
@@ -600,7 +675,7 @@
 
   <!-- Copy file modal -->
   <div id="copyModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="width: 480px;">
       <p>Select destination</p>
       <select id="copyToBucket" class="modal-input" onchange="onCopyBucketChange()">
         <option value="">Select bucket...</option>
@@ -610,8 +685,10 @@
       </select>
       <p style="margin-top: 16px;">Enter A Name For The New Copy</p>
       <input type="text" id="copyFileName" class="modal-input" style="margin-bottom: 8px;" />
-      <div class="modal-buttons" style="margin-top: 16px;">
-        <button class="create-btn" onclick="confirmCopy()">Copy File</button>
+      <div id="copyWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
+      <div class="modal-buttons" style="margin-top: 16px; flex-wrap: wrap;">
+        <button class="save-btn" onclick="confirmCopy(true)">Save And Copy</button>
+        <button class="create-btn" onclick="confirmCopy(false)" style="white-space:nowrap;">Copy Without Saving</button>
         <button class="cancel-btn" onclick="document.getElementById('copyModal').style.display='none'">Cancel</button>
       </div>
     </div>
@@ -620,7 +697,7 @@
   <!-- Delete confirmation modal - Step 1 -->
   <div id="deleteModal1" class="modal">
     <div class="modal-content">
-      <p>This will delete the file permanently - would you like to proceed?</p>
+      <p>This will delete the file permanently.<br><br>Would you like to proceed?</p>
       <div class="modal-buttons">
         <button class="delete-btn" onclick="confirmDelete()">Yes Delete</button>
         <button class="cancel-btn" onclick="cancelDelete()">Cancel Delete</button>
@@ -631,8 +708,8 @@
   <!-- Delete confirmation modal - Step 2 -->
   <div id="deleteModal2" class="modal">
     <div class="modal-content">
-      <p>Are you sure you want to delete? If so type "delete" and press the delete button</p>
-      <input type="text" id="deleteConfirmInput" class="modal-input" placeholder='Type "delete" to confirm'>
+      <p>Are you sure you want to delete?<br><br>If so type "delete" and press the delete button.</p>
+      <input type="text" id="deleteConfirmInput" class="modal-input" placeholder='Type "delete" to confirm' onkeydown="if(event.key==='Enter')finalDelete()">
       <div class="modal-buttons">
         <button class="delete-btn" onclick="finalDelete()">Delete</button>
         <button class="cancel-btn" onclick="cancelDelete()">Cancel</button>
@@ -644,9 +721,23 @@
   <div id="submitModal" class="modal">
     <div class="modal-content">
       <p>This will save any changes and submit the information in the file to the live database.<br><br>You will not be able to resubmit this file again.<br><br>Would you like to proceed?</p>
+      <div id="submitWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       <div class="modal-buttons">
         <button class="submit-btn" onclick="confirmSubmit()">Submit</button>
         <button class="cancel-btn" onclick="cancelSubmit()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Submit warning modal — shown when org already has a sfsg_id -->
+  <div id="submitWarnModal" class="modal">
+    <div class="modal-content">
+      <p>This org already has an SFSG ID: <strong><span id="submitWarnSfsgId"></span></strong>.<br><br>How would you like to proceed?</p>
+      <div id="submitWarnWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
+      <div class="modal-buttons">
+        <button class="submit-btn" onclick="confirmSubmitUpdate()">Update Existing</button>
+        <button class="submit-btn" onclick="confirmSubmitNew()">Create New</button>
+        <button class="cancel-btn" onclick="cancelSubmitWarn()">Cancel</button>
       </div>
     </div>
   </div>
@@ -666,7 +757,17 @@
     <div class="modal-content">
       <p id="saveFeedbackMessage"></p>
       <div class="modal-buttons">
-        <button class="submit-btn" onclick="document.getElementById('saveFeedbackModal').style.display='none'">OK</button>
+        <button class="cancel-btn" onclick="document.getElementById('saveFeedbackModal').style.display='none'">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- General notification modal -->
+  <div id="notifyModal" class="modal">
+    <div class="modal-content">
+      <p id="notifyMessage" style="white-space:pre-line;"></p>
+      <div class="modal-buttons">
+        <button id="notifyOkBtn" class="cancel-btn">OK</button>
       </div>
     </div>
   </div>
@@ -699,7 +800,7 @@
   <div id="deleteBucketModal2" class="modal">
     <div class="modal-content">
       <p id="deleteBucketWarning"></p>
-      <input type="text" id="deleteBucketConfirmInput" class="modal-input" placeholder='Type "delete" to confirm'>
+      <input type="text" id="deleteBucketConfirmInput" class="modal-input" placeholder='Type "delete" to confirm' onkeydown="if(event.key==='Enter')finalDeleteBucket()">
       <div class="modal-buttons">
         <button class="delete-btn" onclick="finalDeleteBucket()">Delete</button>
         <button class="cancel-btn" onclick="cancelDeleteBucket()">Cancel</button>
@@ -709,19 +810,150 @@
 
   <!-- Create bucket modal -->
   <div id="createBucketModal" class="modal">
-    <div class="modal-content">
-      <p>Upload Spreadsheet to Create Bucket</p>
-      <div id="fileUploadArea" class="file-upload-area" onclick="document.getElementById('fileInput').click()">
-        <p id="uploadText">Click to select file or drag and drop</p>
-        <p style="font-size: 12px; color: #666; margin-top: 10px;">Supported: .xlsx, .xls, .csv, .ods</p>
+    <div class="modal-content" style="text-align:left;">
+      <p style="font-size:16px; font-weight:600; margin-bottom:16px;">Create Bucket</p>
+
+      <label style="font-size:13px; color:#666;">Bucket Name</label>
+      <input type="text" id="createBucketName" class="modal-input" placeholder="Enter bucket name">
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:16px;">
+        <input type="checkbox" id="createBucketEmpty" onchange="toggleCreateBucketEmpty()">
+        Create empty bucket (no spreadsheet)
+      </label>
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:16px;">
+        <input type="checkbox" id="createBucketDirectSubmit" onchange="toggleCreateBucketDirectSubmit()">
+        Submit directly to SF Service Guide (skip curation)
+      </label>
+
+      <div id="createBucketSpreadsheetSection">
+        <div id="fileUploadArea" class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+          <p id="uploadText">Click to select file or drag and drop</p>
+          <p style="font-size: 12px; color: #666; margin-top: 10px;">Supported: .xlsx, .xls, .csv, .ods</p>
+        </div>
+        <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.ods" style="display: none;" onchange="handleFileSelect(event)">
+        <div id="createBucketProgress" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
       </div>
-      <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.ods" style="display: none;" onchange="handleFileSelect(event)">
-      <div class="progress-container" id="progressContainer">
-        <div class="progress-bar" id="progressBar">0%</div>
-      </div>
+
       <div class="modal-buttons">
         <button class="create-btn" id="createBucketBtn" onclick="processCreateBucket()" disabled>Create Bucket</button>
         <button class="cancel-btn" onclick="cancelCreateBucket()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import file modal -->
+  <div id="importFileModal" class="modal">
+    <div class="modal-content" style="width: 420px; text-align: left;">
+      <p style="margin-bottom: 16px; font-size: 16px; font-weight: 600;">Import File from SF Service Guide</p>
+
+      <label style="font-size: 13px; color: #666;">SF Org ID</label>
+      <input type="text" id="importOrgId" class="modal-input" placeholder="e.g. 1241">
+
+      <label style="font-size: 13px; color: #666;">Destination Bucket</label>
+      <select id="importFileBucket" class="modal-input" onchange="onImportFileBucketChange()">
+        <option value="">Select bucket...</option>
+      </select>
+
+      <label style="font-size: 13px; color: #666;">Destination Subdirectory</label>
+      <select id="importFileSubdir" class="modal-input">
+        <option value="">Select subdirectory...</option>
+      </select>
+
+      <p id="importFileError" style="color: #c4243a; font-size: 13px; min-height: 18px;"></p>
+
+      <div id="importFileWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
+      <div class="modal-buttons" style="margin-top: 8px;">
+        <button class="create-btn" onclick="confirmImportFile()">Import</button>
+        <button class="cancel-btn" onclick="cancelImportFile()">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import duplicate modal -->
+  <div id="importDuplicateModal" class="modal">
+    <div class="modal-content" style="text-align:left;">
+      <p style="font-size:16px; font-weight:600; margin-bottom:12px;">Duplicate Found</p>
+      <p id="importDuplicateMessage" style="margin-bottom:16px; font-size:14px;"></p>
+
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:16px;">
+        <input type="radio" name="importDuplicateAction" value="overwrite" id="importDuplicateOverwrite"> Overwrite existing record
+      </label>
+      <label style="display:flex; align-items:center; gap:8px; font-size:14px; margin-bottom:8px;">
+        <input type="radio" name="importDuplicateAction" value="rename" id="importDuplicateRename"> Import with a new name
+      </label>
+      <input type="text" id="importDuplicateNewName" class="modal-input" placeholder="Enter new name" style="display:none;">
+
+      <div id="importDuplicateError" style="color:red; font-size:13px; margin-bottom:8px;"></div>
+      <div id="importDuplicateWorking" style="display:none; font-size:13px; color:#666; margin-bottom:8px; animation: blink 1s step-end infinite;"></div>
+      <div class="modal-buttons">
+        <button class="create-btn" onclick="confirmImportDuplicate()">Confirm</button>
+        <button class="cancel-btn" onclick="document.getElementById('importDuplicateModal').style.display='none'">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import result modal -->
+  <div id="importResultModal" class="modal">
+    <div class="modal-content" style="padding: 20px 24px;">
+      <p id="importResultMessage" style="margin: 0 0 16px;"></p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="document.getElementById('importResultModal').style.display='none'">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Direct submit result modal -->
+  <div id="directSubmitResultModal" class="modal">
+    <div class="modal-content">
+      <p id="directSubmitResultMessage" style="white-space:pre-line;"></p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="document.getElementById('directSubmitResultModal').style.display='none'; init();">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Bucket modal -->
+  <div id="importBucketModal" class="modal">
+    <div class="modal-content" style="width:500px; text-align:left;">
+      <p style="font-size:16px; font-weight:600; margin-bottom:16px;">Import Bucket from SF Service Guide</p>
+
+      <label style="font-size:13px; color:#666;">Bucket Name</label>
+      <input type="text" id="importBucketName" class="modal-input" placeholder="Enter bucket name">
+
+      <div style="margin-bottom:12px;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; margin-bottom:8px;">
+          <input type="checkbox" id="importBucketUseRange"> Range (inclusive)
+        </label>
+        <div style="display:flex; gap:10px; padding-left:24px;">
+          <input type="number" id="importBucketRangeStart" class="modal-input" placeholder="Start ID" style="margin-bottom:0; flex:1;">
+          <input type="number" id="importBucketRangeEnd" class="modal-input" placeholder="End ID" style="margin-bottom:0; flex:1;">
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <label style="display:flex; align-items:center; gap:8px; font-size:14px; font-weight:600; margin-bottom:8px;">
+          <input type="checkbox" id="importBucketUseSeries"> Series (comma separated)
+        </label>
+        <textarea id="importBucketSeries" class="modal-input" placeholder="e.g. 1234, 5678, 9012" style="margin-bottom:0; height:70px; resize:vertical;"></textarea>
+      </div>
+
+      <div id="importBucketError" style="color:red; font-size:13px; margin-bottom:8px;"></div>
+      <div id="importBucketProgress" style="display:none; font-size:13px; color:#666; margin-bottom:8px;"></div>
+
+      <div class="modal-buttons">
+        <button class="create-btn" onclick="confirmImportBucket()">Import</button>
+        <button class="cancel-btn" onclick="document.getElementById('importBucketModal').style.display='none'">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Import Bucket result modal -->
+  <div id="importBucketResultModal" class="modal">
+    <div class="modal-content">
+      <p id="importBucketResultMessage"></p>
+      <div class="modal-buttons">
+        <button class="cancel-btn" onclick="document.getElementById('importBucketResultModal').style.display='none'; init();">OK</button>
       </div>
     </div>
   </div>
@@ -765,6 +997,7 @@
   <script src="Scripts/lookup-tables.js"></script>
   <script src="Scripts/transform.js"></script>
   <script src="Scripts/submitNewOrg.js"></script>
+  <script src="Scripts/submitUpdateOrg.js"></script>
   <script src="Scripts/submitService.js"></script>
   <script src="Scripts/collector.js"></script>
   <script src="app.js"></script>

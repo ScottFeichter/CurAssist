@@ -2,9 +2,61 @@
 /** @type {string} Base URL for all local API calls */
 const API_BASE = '/api';
 
+/**
+ * Shows the reusable notification modal with a message.
+ * Dismissed by clicking OK or pressing Enter/Escape.
+ * @param {string} message
+ */
+function notify(message) {
+  document.getElementById('notifyMessage').textContent = message;
+  document.getElementById('notifyModal').style.display = 'block';
+  document.getElementById('notifyOkBtn').focus();
+}
+
+function _closeNotify() {
+  document.getElementById('notifyModal').style.display = 'none';
+}
+
+document.getElementById('notifyOkBtn').addEventListener('click', _closeNotify);
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') {
+    // Escape closes the topmost visible modal without clicking any action button
+    if (document.getElementById('notifyModal').style.display === 'block') {
+      _closeNotify();
+      return;
+    }
+    const visibleModal = Array.from(document.querySelectorAll('.modal')).find(
+      m => m.style.display === 'block'
+    );
+    if (visibleModal) {
+      const cancelBtn = visibleModal.querySelector('.cancel-btn');
+      if (cancelBtn) cancelBtn.click();
+    }
+    return;
+  }
+  if (e.key === 'Enter') {
+    // Let interactive elements handle Enter natively
+    const tag = e.target.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'BUTTON' || tag === 'SELECT') return;
+    // Otherwise close the topmost notify/modal
+    if (document.getElementById('notifyModal').style.display === 'block') {
+      _closeNotify();
+      return;
+    }
+    const visibleModal = Array.from(document.querySelectorAll('.modal')).find(
+      m => m.style.display === 'block'
+    );
+    if (visibleModal) {
+      const okBtn = visibleModal.querySelector('.cancel-btn, .submit-btn, #notifyOkBtn');
+      if (okBtn) okBtn.click();
+    }
+  }
+});
+
 let currentBucket = '';
 let currentSubdir = '';
-let currentFiles = [];
+let currentFiles = [];  // now array of { _id, name } objects
 let currentIndex = 0;
 let csrfToken = '';
 
@@ -40,8 +92,15 @@ async function fetchCsrfToken() {
 async function init() {
   await fetchCsrfToken();
   document.getElementById('fileCount').textContent = 'File 0 of 0';
+  document.getElementById('subdirSelect').innerHTML = '<option value="">Select subdirectory...</option>';
+  document.getElementById('fileInfo').innerHTML = '<option value="">Select file...</option>';
+  currentBucket = '';
+  currentSubdir = '';
+  currentFiles = [];
+  currentIndex = 0;
   const buckets = await fetch(`${API_BASE}/buckets`).then(r => r.json());
   const bucketSelect = document.getElementById('bucketSelect');
+  bucketSelect.innerHTML = '<option value="">Select bucket...</option>';
   buckets.forEach(bucket => {
     const option = document.createElement('option');
     option.value = bucket;
@@ -89,15 +148,14 @@ async function loadSubdir() {
 
   const fileSelect = document.getElementById('fileInfo');
   fileSelect.innerHTML = '<option value="">Select file...</option>';
-  
+
   currentFiles.forEach((file, index) => {
     const option = document.createElement('option');
     option.value = index;
-    option.textContent = file;
+    option.textContent = file.name;
     fileSelect.appendChild(option);
   });
 
-  // Update file list only
   if (currentFiles.length > 0) {
     fileSelect.selectedIndex = 1;
     loadFile(0);
@@ -115,12 +173,20 @@ async function loadFile(index) {
   if (index < 0 || index >= currentFiles.length) return;
 
   currentIndex = index;
-  const filename = currentFiles[index];
+  const file = currentFiles[index];
 
-  const content = await fetch(`${API_BASE}/buckets/${currentBucket}/${currentSubdir}/${filename}`).then(r => r.text());
+  const content = await fetch(`${API_BASE}/buckets/${currentBucket}/${currentSubdir}/${file._id}`).then(r => r.text());
 
   const iframe = document.getElementById('formFrame');
   iframe.srcdoc = content;
+
+  iframe.onload = () => {
+    const doc = iframe.contentDocument;
+    const orgId = doc?.body?.dataset?.orgId;
+    const sfIdEl = doc?.getElementById('organization_sfsg_id');
+    const sfsg_id = sfIdEl ? sfIdEl.value : 'TBD';
+    console.log('[LOAD] File loaded:', file.name, '| Atlas _id:', orgId, '| SFSG sfsg_id:', sfsg_id);
+  };
 
   const fileSelect = document.getElementById('fileInfo');
   fileSelect.selectedIndex = index + 1;
@@ -177,8 +243,18 @@ async function saveFile(silent = false) {
   if (!currentFiles[currentIndex]) return false;
 
   const iframe = document.getElementById('formFrame');
-  syncIframeValues(iframe.contentDocument);
-  const content = iframe.contentDocument.documentElement.outerHTML;
+  const iframeDoc = iframe.contentDocument;
+
+  // Use collector to extract structured field values from the iframe
+  let fields = {};
+  try {
+    const payload = collectFormData();
+    fields = payload.organization || payload.service || {};
+  } catch (e) {
+    fields = {};
+  }
+
+  const orgId = iframeDoc?.body?.dataset?.orgId || currentFiles[currentIndex]._id;
 
   try {
     const res = await fetch(`${API_BASE}/buckets/save`, {
@@ -188,12 +264,7 @@ async function saveFile(silent = false) {
         'XSRF-Token': getCsrfToken()
       },
       credentials: 'include',
-      body: JSON.stringify({
-        bucket: currentBucket,
-        subdir: currentSubdir,
-        filename: currentFiles[currentIndex],
-        content: '<!DOCTYPE html>\n' + content
-      })
+      body: JSON.stringify({ id: orgId, fields })
     });
 
     if (!res.ok) throw new Error('Server returned ' + res.status);
@@ -261,38 +332,44 @@ async function confirmMove(shouldSave) {
   const toSubdir = document.getElementById('moveToSubdir').value;
   if (!toBucket || !toSubdir) { alert('Please select a destination bucket and subdirectory'); return; }
   if (toBucket === currentBucket && toSubdir === currentSubdir) { alert('Destination is the same as the current location'); return; }
-  document.getElementById('moveModal').style.display = 'none';
+  document.getElementById('moveWorking').textContent = 'Working...';
+  document.getElementById('moveWorking').style.display = 'block';
 
   try {
-    if (shouldSave) {
-      const iframe = document.getElementById('formFrame');
-      const content = iframe.contentDocument.documentElement.outerHTML;
-      await fetch(`${API_BASE}/buckets/save`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
-        credentials: 'include',
-        body: JSON.stringify({ bucket: currentBucket, subdir: currentSubdir, filename: currentFiles[currentIndex], content: '<!DOCTYPE html>\n' + content })
-      });
-    }
+    if (shouldSave) await saveFile(true);
 
     const moveResponse = await fetch(`${API_BASE}/buckets/move`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
       credentials: 'include',
-      body: JSON.stringify({ fromBucket: currentBucket, fromSubdir: currentSubdir, toBucket, toSubdir, filename: currentFiles[currentIndex] })
+      body: JSON.stringify({
+        id: currentFiles[currentIndex]._id,
+        fromBucket: currentBucket,
+        fromSubdir: currentSubdir,
+        toBucket,
+        toSubdir
+      })
     });
 
     if (moveResponse.ok) {
-      alert(`File moved to ${toBucket} / ${toSubdir}`);
+      document.getElementById('moveModal').style.display = 'none';
+      document.getElementById('moveWorking').style.display = 'none';
+      notify(`File successfully moved to\nBucket: ${toBucket}\nSubdirectory: ${toSubdir}`);
       loadSubdir();
     } else if (moveResponse.status === 409) {
       const data = await moveResponse.json();
-      alert(data.error || 'A file with this name already exists in the destination');
+      document.getElementById('moveModal').style.display = 'none';
+      document.getElementById('moveWorking').style.display = 'none';
+      notify(data.error || 'A file with this name already exists in the destination');
     } else {
-      alert('Failed to move file');
+      document.getElementById('moveModal').style.display = 'none';
+      document.getElementById('moveWorking').style.display = 'none';
+      notify('Failed to move file');
     }
   } catch (error) {
-    alert('Error moving file: ' + error.message);
+    document.getElementById('moveModal').style.display = 'none';
+    document.getElementById('moveWorking').style.display = 'none';
+    notify('Error moving file: ' + error.message);
   }
 }
 
@@ -322,7 +399,7 @@ async function copyFile() {
   });
   bucketSel.value = currentBucket || '';
   await onCopyBucketChange();
-  document.getElementById('copyFileName').value = currentFiles[currentIndex].replace(/\.html$/i, '');
+  document.getElementById('copyFileName').value = currentFiles[currentIndex].name;
   document.getElementById('copyModal').style.display = 'block';
 }
 
@@ -344,15 +421,18 @@ async function onCopyBucketChange() {
  * Executes the file copy to the selected destination.
  * @returns {Promise<void>}
  */
-async function confirmCopy() {
+async function confirmCopy(shouldSave) {
   const toBucket = document.getElementById('copyToBucket').value;
   const toSubdir = document.getElementById('copyToSubdir').value;
   const copyName = document.getElementById('copyFileName').value.trim();
   if (!toBucket || !toSubdir) { alert('Please select a destination bucket and subdirectory'); return; }
   if (!copyName) { alert('Please enter a file name'); return; }
-  document.getElementById('copyModal').style.display = 'none';
+  document.getElementById('copyWorking').textContent = 'Working...';
+  document.getElementById('copyWorking').style.display = 'block';
 
   try {
+    if (shouldSave) await saveFile(true);
+
     const response = await fetch(`${API_BASE}/buckets/create-file`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
@@ -360,21 +440,23 @@ async function confirmCopy() {
       body: JSON.stringify({
         bucket: toBucket,
         subdir: toSubdir,
-        filename: copyName + '.html',
-        fromBucket: currentBucket,
-        fromSubdir: currentSubdir,
-        fromFilename: currentFiles[currentIndex]
+        filename: copyName,
+        fromId: currentFiles[currentIndex]._id
       })
     });
     const data = await response.json();
+    document.getElementById('copyModal').style.display = 'none';
+    document.getElementById('copyWorking').style.display = 'none';
     if (response.ok) {
-      alert(`File copied to ${toBucket} / ${toSubdir} as ${data.filename}`);
+      notify(`File successfully copied to\nBucket: ${toBucket}\nSubdirectory: ${toSubdir}`);
       if (toBucket === currentBucket && toSubdir === currentSubdir) loadSubdir();
     } else {
-      alert(data.error || 'Failed to copy file');
+      notify(data.error || 'Failed to copy file');
     }
   } catch (error) {
-    alert('Error copying file: ' + error.message);
+    document.getElementById('copyModal').style.display = 'none';
+    document.getElementById('copyWorking').style.display = 'none';
+    notify('Error copying file: ' + error.message);
   }
 }
 
@@ -404,7 +486,7 @@ function confirmDelete() {
  */
 async function finalDelete() {
   const input = document.getElementById('deleteConfirmInput').value;
-  
+
   if (input !== 'delete') {
     alert('You must type "delete" exactly to confirm');
     return;
@@ -413,27 +495,23 @@ async function finalDelete() {
   try {
     const response = await fetch(`${API_BASE}/buckets/delete`, {
       method: 'DELETE',
-      headers: { 
+      headers: {
         'Content-Type': 'application/json',
         'XSRF-Token': getCsrfToken()
       },
       credentials: 'include',
-      body: JSON.stringify({
-        bucket: currentBucket,
-        subdir: currentSubdir,
-        filename: currentFiles[currentIndex]
-      })
+      body: JSON.stringify({ id: currentFiles[currentIndex]._id })
     });
 
     if (response.ok) {
-      alert('File deleted successfully');
+      notify('File deleted successfully');
       document.getElementById('deleteModal2').style.display = 'none';
       loadSubdir();
     } else {
-      alert('Failed to delete file');
+      notify('Failed to delete file');
     }
   } catch (error) {
-    alert('Error deleting file: ' + error.message);
+    notify('Error deleting file: ' + error.message);
   }
 }
 
@@ -447,7 +525,7 @@ function cancelDelete() {
 }
 
 /**
- * Submit file - Show confirmation modal, or alert if already Complete.
+ * Submit file - Show confirmation modal, or warn if org already has a sfsg_id.
  */
 function submitFile() {
   if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
@@ -455,15 +533,28 @@ function submitFile() {
     document.getElementById('alreadyCompleteModal').style.display = 'block';
     return;
   }
+  const iframe = document.getElementById('formFrame');
+  const sfsgIdEl = iframe.contentDocument?.getElementById('organization_sfsg_id');
+  const sfsgId = sfsgIdEl ? sfsgIdEl.value.trim() : 'TBD';
+  if (sfsgId && sfsgId !== 'TBD') {
+    document.getElementById('submitWarnSfsgId').textContent = sfsgId;
+    document.getElementById('submitWarnModal').style.display = 'block';
+    return;
+  }
   document.getElementById('submitModal').style.display = 'block';
 }
 
 /**
- * Confirms submit — closes modal and triggers `submitFormData`.
+ * Confirms submit — closes modal and triggers `submitFormData` as a new org.
  */
 function confirmSubmit() {
-  document.getElementById('submitModal').style.display = 'none';
-  submitFormData();
+  console.log('[SUBMIT] confirmSubmit called');
+  document.getElementById('submitWorking').textContent = 'Working...';
+  document.getElementById('submitWorking').style.display = 'block';
+  submitFormData('new').finally(() => {
+    document.getElementById('submitModal').style.display = 'none';
+    document.getElementById('submitWorking').style.display = 'none';
+  });
 }
 
 /**
@@ -471,6 +562,30 @@ function confirmSubmit() {
  */
 function cancelSubmit() {
   document.getElementById('submitModal').style.display = 'none';
+}
+
+/** Update Existing path — triggers change_requests flow. */
+function confirmSubmitUpdate() {
+  document.getElementById('submitWarnWorking').textContent = 'Working...';
+  document.getElementById('submitWarnWorking').style.display = 'block';
+  submitFormData('update').finally(() => {
+    document.getElementById('submitWarnModal').style.display = 'none';
+    document.getElementById('submitWarnWorking').style.display = 'none';
+  });
+}
+
+/** Create New path — ignores existing sfsg_id and creates a fresh org. */
+function confirmSubmitNew() {
+  document.getElementById('submitWarnWorking').textContent = 'Working...';
+  document.getElementById('submitWarnWorking').style.display = 'block';
+  submitFormData('new').finally(() => {
+    document.getElementById('submitWarnModal').style.display = 'none';
+    document.getElementById('submitWarnWorking').style.display = 'none';
+  });
+}
+
+function cancelSubmitWarn() {
+  document.getElementById('submitWarnModal').style.display = 'none';
 }
 
 /**
@@ -493,7 +608,7 @@ async function reloadSubdirNoLoad() {
   currentFiles.forEach((file, index) => {
     const option = document.createElement('option');
     option.value = index;
-    option.textContent = file;
+    option.textContent = file.name;
     fileSelect.appendChild(option);
   });
   document.getElementById('fileCount').textContent = `File 0 of ${currentFiles.length}`;
@@ -505,12 +620,31 @@ async function reloadSubdirNoLoad() {
  */
 function createBucket() {
   selectedFile = null;
+  document.getElementById('createBucketName').value = '';
+  document.getElementById('createBucketEmpty').checked = false;
+  document.getElementById('createBucketDirectSubmit').checked = false;
+  document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   document.getElementById('uploadText').textContent = 'Click to select file or drag and drop';
   document.getElementById('createBucketBtn').disabled = true;
-  document.getElementById('progressContainer').style.display = 'none';
-  document.getElementById('progressBar').style.width = '0%';
-  document.getElementById('progressBar').textContent = '0%';
+  document.getElementById('createBucketProgress').style.display = 'none';
+  document.getElementById('createBucketProgress').textContent = '';
   document.getElementById('createBucketModal').style.display = 'block';
+}
+
+function toggleCreateBucketEmpty() {
+  const isEmpty = document.getElementById('createBucketEmpty').checked;
+  if (isEmpty) document.getElementById('createBucketDirectSubmit').checked = false;
+  document.getElementById('createBucketSpreadsheetSection').style.display = isEmpty ? 'none' : 'block';
+  document.getElementById('createBucketBtn').disabled = !isEmpty && !selectedFile;
+}
+
+function toggleCreateBucketDirectSubmit() {
+  const isDirect = document.getElementById('createBucketDirectSubmit').checked;
+  if (isDirect) {
+    document.getElementById('createBucketEmpty').checked = false;
+    document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
+    document.getElementById('createBucketBtn').disabled = !selectedFile;
+  }
 }
 
 /**
@@ -522,7 +656,8 @@ function handleFileSelect(event) {
   if (file) {
     selectedFile = file;
     document.getElementById('uploadText').textContent = `Selected: ${file.name}`;
-    document.getElementById('createBucketBtn').disabled = false;
+    const isEmpty = document.getElementById('createBucketEmpty').checked;
+    if (!isEmpty) document.getElementById('createBucketBtn').disabled = false;
   }
 }
 
@@ -557,41 +692,157 @@ if (uploadArea) {
  * @returns {Promise<void>}
  */
 async function processCreateBucket() {
-  if (!selectedFile) return;
+  const bucketName     = document.getElementById('createBucketName').value.trim();
+  const isEmpty        = document.getElementById('createBucketEmpty').checked;
+  const directSubmit   = document.getElementById('createBucketDirectSubmit').checked;
 
-  const bucketName = prompt('Enter bucket name:');
-  if (!bucketName) return;
+  if (!bucketName) { alert('Please enter a bucket name'); return; }
+
+  if (isEmpty) {
+    try {
+      const response = await fetch(`${API_BASE}/buckets/create-bucket-empty`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+        credentials: 'include',
+        body: JSON.stringify({ bucketName })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        notify(`Bucket "${bucketName}" created successfully`);
+        document.getElementById('createBucketModal').style.display = 'none';
+        init();
+      } else {
+        notify(data.error || 'Failed to create bucket');
+      }
+    } catch (error) {
+      notify('Error creating bucket: ' + error.message);
+    }
+    return;
+  }
+
+  if (!selectedFile) return;
 
   const formData = new FormData();
   formData.append('spreadsheet', selectedFile);
   formData.append('bucketName', bucketName);
 
   document.getElementById('createBucketBtn').disabled = true;
-  document.getElementById('progressContainer').style.display = 'block';
+  document.getElementById('createBucketProgress').style.display = 'block';
+  document.getElementById('createBucketProgress').textContent = 'Working...';
+
+  const endpoint = directSubmit
+    ? `${API_BASE}/buckets/create-bucket-spreadsheet-submit`
+    : `${API_BASE}/buckets/create-bucket-spreadsheet`;
 
   try {
-    const response = await fetch(`${API_BASE}/buckets/create`, {
+    const response = await fetch(endpoint, {
       method: 'POST',
-      headers: {
-        'XSRF-Token': getCsrfToken()
-      },
+      headers: { 'XSRF-Token': getCsrfToken() },
       credentials: 'include',
       body: formData
     });
+    const data = await response.json();
 
-    if (response.ok) {
-      const data = await response.json();
-      document.getElementById('progressBar').style.width = '100%';
-      document.getElementById('progressBar').textContent = '100%';
-      alert(data.message || 'Bucket created successfully');
+    if (directSubmit && response.ok) {
+      const orgs = data.orgs || [];
+      const bucketName = data.bucketName;
+
+      // Browser-side submit loop using the existing SF proxy
+      let succeeded = 0;
+      const failed = [];
+
+      for (let i = 0; i < orgs.length; i++) {
+        const org = orgs[i];
+        document.getElementById('createBucketProgress').textContent = `Submitting ${i + 1} of ${orgs.length}: ${org.name}...`;
+
+        try {
+          // Load the org's hydrated data from Atlas
+          const hydrateRes = await fetch(`${API_BASE}/buckets/${bucketName}/incomplete/${org._id}`);
+          if (!hydrateRes.ok) throw new Error(`Failed to load org: ${hydrateRes.status}`);
+
+          // Parse the hydrated HTML to collect form data
+          const html = await hydrateRes.text();
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+
+          // Collect org data from the parsed document
+          const payload = { organization: collectOrganization(doc) };
+          const locs = doc.querySelectorAll('#organization_locations .location-row');
+          console.log('[BATCH SUBMIT] location rows found:', locs.length, locs.length > 0 ? 'first row dataset:' + JSON.stringify(locs[0].dataset) : '');
+          console.log('[BATCH SUBMIT] collected payload for', org.name, ':', JSON.stringify(payload).substring(0, 300));
+          const { orgBody, services } = transformNewOrg(payload);
+          // SFSG rejects populated addresses on initial create — strip them
+          if (orgBody.resources?.[0]) orgBody.resources[0].addresses = [];
+          console.log('[BATCH SUBMIT] orgBody:', JSON.stringify(orgBody).substring(0, 300));
+
+          // Step 1 — create org via SF proxy
+          const orgRes = await fetch(`${API_BASE}/sf/resources`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+            credentials: 'include',
+            body: JSON.stringify(orgBody)
+          });
+          if (!orgRes.ok) {
+            const err = await orgRes.json().catch(() => ({}));
+            throw new Error(`SFSG ${orgRes.status}: ${JSON.stringify(err)}`);
+          }
+          const orgData = await orgRes.json();
+          const sfsg_id = orgData.resources?.[0]?.resource?.id;
+          if (!sfsg_id) throw new Error('No org ID returned from SFSG');
+
+          // Step 2 — create services if any
+          if (services.length > 0) {
+            services.forEach((svc, idx) => svc.id = -(idx + 2));
+            const svcRes = await fetch(`${API_BASE}/sf/resources/${sfsg_id}/services`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+              credentials: 'include',
+              body: JSON.stringify({ services })
+            });
+            if (!svcRes.ok) {
+              const err = await svcRes.json().catch(() => ({}));
+              throw new Error(`Services failed ${svcRes.status}: ${JSON.stringify(err)}`);
+            }
+          }
+
+          // Step 3 — write sfsg_id back to Atlas
+          await fetch(`${API_BASE}/buckets/submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+            credentials: 'include',
+            body: JSON.stringify({ id: org._id, sfsg_id })
+          });
+
+          succeeded++;
+        } catch (err) {
+          failed.push({ name: org.name, error: err.message });
+        }
+      }
+
+      document.getElementById('createBucketProgress').style.display = 'none';
       document.getElementById('createBucketModal').style.display = 'none';
+
+      let msg = `Submitted ${succeeded} of ${orgs.length} orgs to SF Service Guide.`;
+      if (failed.length) {
+        msg += `\n\nFailed (${failed.length}):` + failed.map(f => `\n  • ${f.name}: ${f.error}`).join('');
+      }
+      document.getElementById('directSubmitResultMessage').textContent = msg;
+      document.getElementById('directSubmitResultModal').style.display = 'block';
+      init();
+    } else if (response.ok) {
+      document.getElementById('createBucketProgress').style.display = 'none';
+      document.getElementById('createBucketModal').style.display = 'none';
+      notify(data.message || 'Bucket created successfully');
       init();
     } else {
-      const error = await response.json();
-      alert(error.error || 'Failed to create bucket');
+      document.getElementById('createBucketProgress').style.display = 'none';
+      document.getElementById('createBucketModal').style.display = 'none';
+      notify(data.error || 'Failed to create bucket');
     }
   } catch (error) {
-    alert('Error creating bucket: ' + error.message);
+    document.getElementById('createBucketProgress').style.display = 'none';
+    document.getElementById('createBucketModal').style.display = 'none';
+    notify('Error creating bucket: ' + error.message);
   } finally {
     document.getElementById('createBucketBtn').disabled = false;
   }
@@ -602,6 +853,10 @@ async function processCreateBucket() {
  */
 function cancelCreateBucket() {
   document.getElementById('createBucketModal').style.display = 'none';
+  document.getElementById('createBucketName').value = '';
+  document.getElementById('createBucketEmpty').checked = false;
+  document.getElementById('createBucketDirectSubmit').checked = false;
+  document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   selectedFile = null;
 }
 
@@ -666,14 +921,14 @@ async function finalDeleteBucket() {
     });
     
     if (response.ok) {
-      alert('Bucket deleted successfully');
+      notify('Bucket deleted successfully');
       document.getElementById('deleteBucketModal2').style.display = 'none';
       init();
     } else {
-      alert('Failed to delete bucket');
+      notify('Failed to delete bucket');
     }
   } catch (error) {
-    alert('Error deleting bucket: ' + error.message);
+    notify('Error deleting bucket: ' + error.message);
   }
 }
 
@@ -753,7 +1008,8 @@ async function onCreateFileFromSubdirChange() {
   const files = await fetch(`${API_BASE}/buckets/${bucket}/${subdir}/files`).then(r => r.json());
   files.forEach(f => {
     const opt = document.createElement('option');
-    opt.value = f; opt.textContent = f;
+    opt.value = f._id;
+    opt.textContent = f.name;
     fileSel.appendChild(opt);
   });
 }
@@ -766,18 +1022,14 @@ async function confirmCreateFile() {
   const filename = document.getElementById('createFileName').value.trim();
   const bucket = document.getElementById('createFileBucket').value;
   const subdir = document.getElementById('createFileSubdir').value;
-  const fromBucket = document.getElementById('createFileFromBucket').value;
-  const fromSubdir = document.getElementById('createFileFromSubdir').value;
-  const fromFilename = document.getElementById('createFileFromFile').value;
+  const fromId = document.getElementById('createFileFromFile').value;
 
   if (!filename) { alert('Please enter a file name'); return; }
-  if (!bucket) { alert('Please select a destination bucket'); return; }
-  if (!subdir) { alert('Please select a destination subdirectory'); return; }
+  if (!bucket)   { alert('Please select a destination bucket'); return; }
+  if (!subdir)   { alert('Please select a destination subdirectory'); return; }
 
   const body = { bucket, subdir, filename };
-  if (fromBucket && fromSubdir && fromFilename) {
-    Object.assign(body, { fromBucket, fromSubdir, fromFilename });
-  }
+  if (fromId) Object.assign(body, { fromId });
 
   try {
     const response = await fetch(`${API_BASE}/buckets/create-file`, {
@@ -788,15 +1040,14 @@ async function confirmCreateFile() {
     });
     const data = await response.json();
     if (response.ok) {
-      alert(`File created: ${data.filename}`);
+      notify(`File created: ${data.name}`);
       document.getElementById('createFileModal').style.display = 'none';
-      // Reload file list if we're in the same bucket/subdir
       if (bucket === currentBucket && subdir === currentSubdir) loadSubdir();
     } else {
-      alert(data.error || 'Failed to create file');
+      notify(data.error || 'Failed to create file');
     }
   } catch (error) {
-    alert('Error creating file: ' + error.message);
+    notify('Error creating file: ' + error.message);
   }
 }
 
@@ -805,6 +1056,262 @@ async function confirmCreateFile() {
  */
 function cancelCreateFile() {
   document.getElementById('createFileModal').style.display = 'none';
+}
+
+/**
+ * Opens the Import Bucket modal.
+ */
+function importMultipleFiles() {
+  document.getElementById('importBucketName').value = '';
+  document.getElementById('importBucketRangeStart').value = '';
+  document.getElementById('importBucketRangeEnd').value = '';
+  document.getElementById('importBucketSeries').value = '';
+  document.getElementById('importBucketUseRange').checked = false;
+  document.getElementById('importBucketUseSeries').checked = false;
+  document.getElementById('importBucketError').textContent = '';
+  document.getElementById('importBucketProgress').style.display = 'none';
+  document.getElementById('importBucketModal').style.display = 'block';
+}
+
+/**
+ * Collects org IDs from range and/or series, creates a bucket, and imports each org.
+ */
+async function confirmImportBucket() {
+  const bucketName  = document.getElementById('importBucketName').value.trim();
+  const useRange    = document.getElementById('importBucketUseRange').checked;
+  const useSeries   = document.getElementById('importBucketUseSeries').checked;
+  const rangeStart  = parseInt(document.getElementById('importBucketRangeStart').value);
+  const rangeEnd    = parseInt(document.getElementById('importBucketRangeEnd').value);
+  const seriesRaw   = document.getElementById('importBucketSeries').value;
+  const errEl       = document.getElementById('importBucketError');
+  const progressEl  = document.getElementById('importBucketProgress');
+
+  errEl.textContent = '';
+
+  if (!bucketName)              { errEl.textContent = 'Bucket name is required.'; return; }
+  if (!useRange && !useSeries)  { errEl.textContent = 'Select at least one of Range or Series.'; return; }
+  if (useRange && (isNaN(rangeStart) || isNaN(rangeEnd))) { errEl.textContent = 'Range requires a valid start and end ID.'; return; }
+  if (useRange && rangeStart > rangeEnd) { errEl.textContent = 'Range start must be less than or equal to end.'; return; }
+
+  // Build deduplicated list of org IDs
+  const ids = new Set();
+  if (useRange) {
+    for (let i = rangeStart; i <= rangeEnd; i++) ids.add(i);
+  }
+  if (useSeries) {
+    seriesRaw.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n)).forEach(n => ids.add(n));
+  }
+
+  if (ids.size === 0) { errEl.textContent = 'No valid org IDs found.'; return; }
+
+  // Create the bucket first
+  try {
+    const bucketRes = await fetch(`${API_BASE}/buckets/create-bucket-empty`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+      credentials: 'include',
+      body: JSON.stringify({ bucketName })
+    });
+    if (!bucketRes.ok) {
+      const data = await bucketRes.json();
+      errEl.textContent = data.error || 'Failed to create bucket.';
+      return;
+    }
+  } catch (err) {
+    errEl.textContent = 'Failed to create bucket: ' + err.message;
+    return;
+  }
+
+  // Import each org ID
+  progressEl.style.display = 'block';
+  const idList = Array.from(ids);
+  let succeeded = 0;
+  let failed = [];
+
+  for (let i = 0; i < idList.length; i++) {
+    const orgId = idList[i];
+    progressEl.textContent = `Importing ${i + 1} of ${idList.length} (ID: ${orgId})...`;
+    try {
+      const res = await fetch(`${API_BASE}/buckets/import-file`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+        credentials: 'include',
+        body: JSON.stringify({ orgId, bucket: bucketName, subdir: 'incomplete' })
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        succeeded++;
+      } else {
+        failed.push(orgId);
+      }
+    } catch (err) {
+      failed.push(orgId);
+    }
+  }
+
+  document.getElementById('importBucketModal').style.display = 'none';
+
+  const msg = `Imported ${succeeded} of ${idList.length} orgs into "${bucketName}".`
+    + (failed.length ? `\n\nFailed IDs: ${failed.join(', ')}` : '');
+  document.getElementById('importBucketResultMessage').textContent = msg;
+  document.getElementById('importBucketResultModal').style.display = 'block';
+}
+
+/**
+ * Opens the Import File modal, populating the bucket dropdown.
+ */
+async function importFile() {
+  document.getElementById('importFileError').textContent = '';
+  const bucketSel = document.getElementById('importFileBucket');
+  bucketSel.innerHTML = '<option value="">Select bucket...</option>';
+  document.getElementById('importFileSubdir').innerHTML = '<option value="">Select subdirectory...</option>';
+
+  const buckets = await fetch('/api/buckets').then(r => r.json()).catch(() => []);
+  buckets.forEach(b => {
+    const opt = document.createElement('option');
+    opt.value = b; opt.textContent = b;
+    bucketSel.appendChild(opt);
+  });
+
+  document.getElementById('importFileModal').style.display = 'block';
+}
+
+/**
+ * Populates the subdirectory dropdown when a bucket is selected in the import modal.
+ */
+async function onImportFileBucketChange() {
+  const bucket = document.getElementById('importFileBucket').value;
+  const subdirSel = document.getElementById('importFileSubdir');
+  subdirSel.innerHTML = '<option value="">Select subdirectory...</option>';
+  if (!bucket) return;
+  const subdirs = await fetch(`/api/buckets/${encodeURIComponent(bucket)}/subdirs`).then(r => r.json()).catch(() => []);
+  subdirs.forEach(s => {
+    const opt = document.createElement('option');
+    opt.value = s; opt.textContent = s;
+    subdirSel.appendChild(opt);
+  });
+}
+
+/**
+ * Submits the import-file request to the server.
+ */
+async function confirmImportFile() {
+  const orgId = document.getElementById('importOrgId').value.trim();
+  const bucket = document.getElementById('importFileBucket').value;
+  const subdir = document.getElementById('importFileSubdir').value;
+  const errEl = document.getElementById('importFileError');
+  errEl.textContent = '';
+
+  if (!orgId || !bucket || !subdir) {
+    errEl.textContent = 'Org ID, bucket, and subdirectory are required.';
+    return;
+  }
+
+  document.getElementById('importFileWorking').textContent = 'Working...';
+  document.getElementById('importFileWorking').style.display = 'block';
+
+  const res = await fetch('/api/buckets/import-file', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+    body: JSON.stringify({ orgId, bucket, subdir })
+  });
+
+  document.getElementById('importFileModal').style.display = 'none';
+  document.getElementById('importFileWorking').style.display = 'none';
+  const msgEl = document.getElementById('importResultMessage');
+
+  let data;
+  try {
+    data = await res.json();
+  } catch (e) {
+    msgEl.innerHTML = `Import failed.<br>Server error (${res.status}).`;
+    document.getElementById('importResultModal').style.display = 'block';
+    return;
+  }
+
+  if (res.status === 409 && data.duplicate) {
+    // Duplicate found — show resolution modal
+    document.getElementById('importDuplicateMessage').textContent =
+      `An org named "${data.existingName}" already exists in this bucket. What would you like to do?`;
+    document.getElementById('importDuplicateOverwrite').checked = false;
+    document.getElementById('importDuplicateRename').checked = false;
+    document.getElementById('importDuplicateNewName').style.display = 'none';
+    document.getElementById('importDuplicateNewName').value = '';
+    document.getElementById('importDuplicateError').textContent = '';
+    // Store context for the resolve call
+    window._importDuplicateContext = { bucket, subdir, existingId: data.existingId, resource: data.resource };
+    document.getElementById('importDuplicateModal').style.display = 'block';
+    return;
+  }
+
+  if (!res.ok || !data.success) {
+    msgEl.innerHTML = `Import failed.<br>${data.error || 'Unknown error.'}`;
+  } else {
+    msgEl.innerHTML = `File successfully imported to<br><br>Bucket: ${bucket}<br>Subdirectory: ${subdir}`;
+    if (currentBucket === bucket && currentSubdir === subdir) {
+      await loadSubdir();
+    }
+  }
+
+  document.getElementById('importResultModal').style.display = 'block';
+}
+
+function cancelImportFile() {
+  document.getElementById('importFileModal').style.display = 'none';
+}
+
+/**
+ * Toggles the rename input field visibility based on selected duplicate action.
+ */
+document.addEventListener('change', function(e) {
+  if (e.target.name === 'importDuplicateAction') {
+    const nameInput = document.getElementById('importDuplicateNewName');
+    nameInput.style.display = e.target.value === 'rename' ? 'block' : 'none';
+  }
+});
+
+/**
+ * Submits the duplicate resolution — overwrite or rename.
+ */
+async function confirmImportDuplicate() {
+  const action   = document.querySelector('input[name="importDuplicateAction"]:checked')?.value;
+  const newName  = document.getElementById('importDuplicateNewName').value.trim();
+  const errEl    = document.getElementById('importDuplicateError');
+  const ctx      = window._importDuplicateContext;
+  errEl.textContent = '';
+
+  if (!action)                          { errEl.textContent = 'Please select an option.'; return; }
+  if (action === 'rename' && !newName)  { errEl.textContent = 'Please enter a new name.'; return; }
+
+  document.getElementById('importDuplicateWorking').textContent = 'Working...';
+  document.getElementById('importDuplicateWorking').style.display = 'block';
+
+  const res = await fetch(`${API_BASE}/buckets/import-file-resolve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+    credentials: 'include',
+    body: JSON.stringify({ bucket: ctx.bucket, subdir: ctx.subdir, existingId: ctx.existingId, action, newName, resource: ctx.resource })
+  });
+
+  const msgEl = document.getElementById('importResultMessage');
+  let data;
+  try { data = await res.json(); } catch (e) {
+    document.getElementById('importDuplicateModal').style.display = 'none';
+    document.getElementById('importDuplicateWorking').style.display = 'none';
+    msgEl.innerHTML = `Import failed.<br>Server error (${res.status}).`;
+    document.getElementById('importResultModal').style.display = 'block';
+    return;
+  }
+
+  if (!res.ok || !data.success) {
+    msgEl.innerHTML = `Import failed.<br>${data.error || 'Unknown error.'}`;
+  } else {
+    msgEl.innerHTML = `File successfully imported to<br><br>Bucket: ${ctx.bucket}<br>Subdirectory: ${ctx.subdir}`;
+    if (currentBucket === ctx.bucket && currentSubdir === ctx.subdir) await loadSubdir();
+  }
+  document.getElementById('importDuplicateModal').style.display = 'none';
+  document.getElementById('importDuplicateWorking').style.display = 'none';
+  document.getElementById('importResultModal').style.display = 'block';
 }
 
 // #endregion ------------------------------------------------------------------
@@ -816,7 +1323,9 @@ function cancelCreateFile() {
  */
 function toggleSidebar() {
   const el = document.getElementById('leftSidebar');
+  const btn = document.querySelector('.leftSidebar-toggle-btn');
   el.classList.toggle('collapsed');
+  btn.classList.toggle('sidebar-closed', el.classList.contains('collapsed'));
   if (el.classList.contains('collapsed')) {
     if (parseInt(el.style.width) > 0) el.dataset.prevWidth = el.style.width;
     el.style.width = '';
@@ -832,7 +1341,9 @@ function toggleSidebar() {
  */
 function toggleRightSidebar() {
   const el = document.getElementById('rightSidebar');
+  const btn = document.querySelector('.rightSidebar-toggle-btn');
   el.classList.toggle('collapsed');
+  btn.classList.toggle('sidebar-closed', el.classList.contains('collapsed'));
   if (el.classList.contains('collapsed')) {
     if (parseInt(el.style.width) > 0) el.dataset.prevWidth = el.style.width;
     el.style.width = '';

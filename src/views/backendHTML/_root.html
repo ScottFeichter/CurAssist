@@ -1,54 +1,46 @@
 <!DOCTYPE html>
-  <html>
-    <head>
-      <title>API Test Links</title>
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          padding: 20px;
-          line-height: 1.6;
-        }
-        a {
-          color: #0066cc;
-          text-decoration: none;
-        }
-        a:hover {
-          text-decoration: underline;
-        }
-      </style>
-    </head>
-    <body>
-      <h1>Welcome to the root of the backend!!!</h1>
-      <h2>Test Endpoints</h2>
-      <p>
-        Test Express, CSRF, and basic routing at
-        <a href="/test/express">http://localhost:5555/test/express</a>
-      </p>
-      <p>
-        Test PostgreSQL - Sequelize connection at
-        <a href="/test/database">http://localhost:5555/test/database</a>
-      </p>
-      <h2>API Information</h2>
-      <p>
-        Restore CSRF at:
-        <a href="/api/csrf/restore">http://localhost:5555/api/csrf/restore</a>
-      </p>
-      <p>
-        Pre Made Demo Users:
-        <a href="/api/demousers">http://localhost:5555/api/demousers</a>
-      </p>
-      <h2>Test Errors</h2>
-      <p>
-        Non existent route:
-        <a href="/false">http://localhost:5555/false</a>
-      </p>
-      <p>
-        Resource not found:
-        <a href="/test/404">http://localhost:5555/test/404</a>
-      </p>
-      <p>
-        Requested info not in database:
-        <a href="/api/demousers/1000">http://localhost:5555/api/demousers/1000</a>
-      </p>
-    </body>
-  </html>
+<html>
+  <head>
+    <title>CurAssist — Dev Test Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        line-height: 1.6;
+        max-width: 800px;
+      }
+      h2 { margin-top: 30px; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+      a { color: #0066cc; text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      ul { margin: 0; padding-left: 20px; }
+      li { margin: 4px 0; }
+    </style>
+  </head>
+  <body>
+    <h1>CurAssist — Dev Test Page</h1>
+
+    <h2>Test Endpoints</h2>
+    <ul>
+      <li><a href="/test/express">/test/express</a> — Express, routing test</li>
+      <li><a href="/test/404">/test/404</a> — 404 error handling</li>
+      <li><a href="/false">/false</a> — Non-existent route (catch-all)</li>
+    </ul>
+
+    <h2>API</h2>
+    <ul>
+      <li><a href="/api/csrf/restore">/api/csrf/restore</a> — Restore CSRF token</li>
+      <li><a href="/api/buckets">/api/buckets</a> — List all buckets</li>
+    </ul>
+
+    <h2>Documentation</h2>
+    <ul>
+      <li><a href="/docs/typedocs">/docs/typedocs</a> — TypeDoc API documentation</li>
+      <li><a href="/docs/readme">/docs/readme</a> — README</li>
+      <li><a href="/docs/deployment">/docs/deployment</a> — Deployment guide (MongoDB, no S3)</li>
+      <li><a href="/docs/deployment-nodb">/docs/deployment-nodb</a> — Deployment guide (S3, no DB, historical)</li>
+      <li><a href="/docs/deploy-log">/docs/deploy-log</a> — Full deployment log and infrastructure notes</li>
+      <li><a href="/docs/buckets-map">/docs/buckets-map</a> — Spreadsheet field maps</li>
+      <li><a href="/docs/tests">/docs/tests</a> — Test coverage documentation</li>
+    </ul>
+  </body>
+</html>

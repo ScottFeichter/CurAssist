@@ -22,6 +22,25 @@ When a user opens a file, server marks it "checked out" in an in-memory map or `
 
 ---
 
+## Hosting Options Evaluated
+
+### Ruled out
+- **Cloudflare Pages/Workers** — serverless/edge only, no persistent disk, no long-running Node process. Would require major rewrite.
+- **Vercel / Netlify** — same problem, built for static sites or serverless functions. File writes won't persist.
+- **Render free tier** — spins down after 15 min inactivity, cold starts are bad UX for volunteers.
+- **AWS App Runner / Elastic Beanstalk** — file writes don't persist across deploys without EFS attached (~$3+/mo extra). More complexity than needed.
+
+### Viable options
+
+| Provider | Always-on | Persistent disk | Est. cost |
+|---|---|---|---|
+| **Fly.io** | Yes (3 free VMs) | Yes (3GB free) | **$0–3/mo** |
+| **Railway** | Yes | Yes (~$0.25/GB) | ~$6–8/mo |
+| **AWS EC2 t3.micro** | Yes | Yes | $0 (12mo free tier) then ~$10/mo |
+| **Render paid** | Yes | Paid add-on | ~$7/mo |
+
+---
+
 ## Hosting Decision: AWS EC2 t3.micro
 
 No containerization — plain Linux box running Node directly via PM2.
@@ -123,3 +142,4 @@ pm2 restart curassist
 ```
 
 `content/Buckets/` is never touched by a redeploy as long as you don't wipe the directory.
+

@@ -3,13 +3,12 @@ import { extendedConsole as console } from '../../streams/consoles/customConsole
 import { log } from '../../utils/logger/logger-setup/logger-wrapper';
 import fs from 'fs/promises';
 import path from 'path';
-import { exec } from 'child_process';
-import { promisify } from 'util';
 import * as XLSX from 'xlsx';
+import { Bucket } from '../../database/models/bucket.model';
+import { Org, IOrg, ISpreadsheetService } from '../../database/models/org.model';
 import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap } from './buckets-map';
-const { injectInput, injectTextarea, injectPhoneList, injectLocationDiv } = require('../../../content/Templates/inject-values');
-import { 
-  sanitizePhoneName, 
+import {
+  sanitizePhoneName,
   sanitizeOrganizationPhones,
   sanitizeLocationName,
   sanitizeAddress,
@@ -22,7 +21,6 @@ import {
   sanitizeEmail,
   sanitizeDescription,
   sanitizeInternalNotes,
-  sanitizeHours,
   sanitizeMarkdownNotes,
   sanitizeOrganizationLegalStatus,
   sanitizeServiceShortDescription,
@@ -30,224 +28,436 @@ import {
   sanitizeServiceRequiredDocuments,
   sanitizeServiceInterpretationServices,
   sanitizeServiceClinicianActions,
-  sanitizeServiceEligibilities,
   sanitizeServiceCost,
   sanitizeServiceWaitTime,
   sanitizeServiceCategories,
   sanitizeServiceEligibilitiesList
 } from './bucket-sanitizers';
+const { injectInput, injectTextarea, injectPhoneList, injectLocationDiv } = require('../../../content/Templates/inject-values');
 // #endregion ------------------------------------------------------------------
 
 console.enter();
 
 // #region ===================== HELPERS =======================================
 
-const execAsync = promisify(exec);
-
-const BUCKETS_PATH = path.join(process.cwd(), 'content', 'Buckets');
+const TEMPLATE_PATH = path.join(process.cwd(), 'content', 'Templates', 'orgServTemplate-combined.html');
 
 /**
- * Creates bucket directory structure:
- * - content/Buckets/[bucketName]/
- * - content/Buckets/[bucketName]/complete/
- * - content/Buckets/[bucketName]/incomplete/
- * - content/Buckets/[bucketName]/pending/
+ * Creates a new bucket document in MongoDB.
+ * @param bucketName - The name of the bucket to create
  */
 export async function createBucketStructure(bucketName: string): Promise<void> {
-  log.enter("createBucketStructure()", log.brack);
-  const bucketPath = path.join(BUCKETS_PATH, bucketName);
-  
-  await fs.mkdir(bucketPath, { recursive: true });
-  await fs.mkdir(path.join(bucketPath, 'complete'), { recursive: true });
-  await fs.mkdir(path.join(bucketPath, 'incomplete'), { recursive: true });
-  await fs.mkdir(path.join(bucketPath, 'pending'), { recursive: true });
-  log.retrn("createBucketStructure()", log.kcarb);
+  log.enter('createBucketStructure()', log.brack);
+  await Bucket.create({ name: bucketName });
+  log.retrn('createBucketStructure()', log.kcarb);
 }
 
 /**
- * Parses spreadsheet file and returns array of row data
- * First row is treated as headers
+ * Parses a spreadsheet buffer and returns headers and row data.
+ * First row is treated as headers.
+ * @param fileBuffer - The spreadsheet file buffer
  */
 export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: string[], rows: any[] }> {
-  log.enter("parseSpreadsheet()", log.brack);
+  log.enter('parseSpreadsheet()', log.brack);
   const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
   const sheetName = workbook.SheetNames[0];
   const sheet = workbook.Sheets[sheetName];
   const data = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
-  
+
   if (data.length < 2) {
     throw new Error('Spreadsheet must have at least a header row and one data row');
   }
-  
+
   const headers = data[0] as string[];
   const rows = data.slice(1).map(row => {
     const obj: any = {};
-    headers.forEach((header, index) => {
-      obj[header] = row[index] || '';
-    });
+    headers.forEach((header, index) => { obj[header] = row[index] || ''; });
     return obj;
   });
-  
-  log.retrn("parseSpreadsheet()", log.kcarb);
+
+  log.retrn('parseSpreadsheet()', log.kcarb);
   return { headers, rows };
 }
 
 /**
- * Generates HTML files from template using spreadsheet data
- * Saves files to incomplete folder with progress updates
+ * Generates Org documents from spreadsheet rows and inserts them into MongoDB.
+ * Replaces the old file-based generateHtmlFiles function.
+ * @param bucketName - The bucket to assign the orgs to
+ * @param rows - Spreadsheet row data
+ * @param progressCallback - Called with progress percentage after each row
  */
-export async function generateHtmlFiles(
-  templatePath: string,
+export async function generateOrgDocuments(
   bucketName: string,
-  data: any[],
+  rows: any[],
   progressCallback: (progress: number) => void
 ): Promise<void> {
-  log.enter("generateHtmlFiles()", log.brack);
-  const incompletePath = path.join(BUCKETS_PATH, bucketName, 'incomplete');
-  const buildScriptPath = path.join(process.cwd(), 'content', 'Templates', 'build-template.js');
-  
-  for (let i = 0; i < data.length; i++) {
-    const row = data[i];
-    
-    // Generate filename from name field or first column
-    const nameValue = row['name'] || row['Name'] || Object.values(row)[0] as string;
-    const sanitizedName = sanitizeName(nameValue || '');
-    const filename = sanitizedName
-      ? `${sanitizedName.replace(/[^a-z0-9]/gi, '_')}_${i}.html`
-      : `file_${i}.html`;
-    
-    // Run build-template.js to generate the HTML file
-    await execAsync(`node "${buildScriptPath}" "${filename}" "${incompletePath}"`);
-    
-    // Read the generated file and populate with data
-    const filePath = path.join(incompletePath, filename);
-    let html = await fs.readFile(filePath, 'utf-8');
-    
-    // Populate both organization and service sections with same spreadsheet data
-    const allFieldMaps = { ...orgFieldMap, ...serviceFieldMap };
-    
-    // Map of field IDs to their sanitizer functions
-    const sanitizers: Record<string, (value: any) => string> = {
-      organization_internal_notes: sanitizeInternalNotes,
-      organization_name: sanitizeName,
-      organization_alternate_name: sanitizeAlternateName,
-      organization_website: sanitizeWebsite,
-      organization_email: sanitizeEmail,
-      organization_description: sanitizeDescription,
-      organization_legal_status: sanitizeOrganizationLegalStatus,
-      organization_markdown_notes: sanitizeMarkdownNotes,
-      service_internal_notes: sanitizeInternalNotes,
-      service_name: sanitizeName,
-      service_alternate_name: sanitizeAlternateName,
-      service_email: sanitizeEmail,
-      service_description: sanitizeDescription,
-      service_short_description: sanitizeServiceShortDescription,
-      service_application_process: sanitizeServiceApplicationProcess,
-      service_required_documents: sanitizeServiceRequiredDocuments,
-      service_interpretation_services: sanitizeServiceInterpretationServices,
-      service_clinician_actions: sanitizeServiceClinicianActions,
-      service_eligibilities: sanitizeServiceEligibilities,
-      service_cost: sanitizeServiceCost,
-      service_wait_time: sanitizeServiceWaitTime,
-      service_website: sanitizeWebsite,
-      service_markdown_notes: sanitizeMarkdownNotes
+  log.enter('generateOrgDocuments()', log.brack);
+
+  const sanitizers: Record<string, (value: any) => string> = {
+    organization_name:                   sanitizeName,
+    organization_alternate_name:         sanitizeAlternateName,
+    organization_website:                sanitizeWebsite,
+    organization_email:                  sanitizeEmail,
+    organization_description:            sanitizeDescription,
+    organization_internal_notes:         sanitizeInternalNotes,
+    organization_legal_status:           sanitizeOrganizationLegalStatus,
+    organization_markdown_notes:         sanitizeMarkdownNotes,
+    service_name:                        sanitizeName,
+    service_alternate_name:              sanitizeAlternateName,
+    service_email:                       sanitizeEmail,
+    service_description:                 sanitizeDescription,
+    service_short_description:           sanitizeServiceShortDescription,
+    service_application_process:         sanitizeServiceApplicationProcess,
+    service_required_documents:          sanitizeServiceRequiredDocuments,
+    service_interpretation_services:     sanitizeServiceInterpretationServices,
+    service_clinician_actions:           sanitizeServiceClinicianActions,
+    service_cost:                        sanitizeServiceCost,
+    service_wait_time:                   sanitizeServiceWaitTime,
+    service_website:                     sanitizeWebsite,
+    service_internal_notes:              sanitizeInternalNotes,
+    service_markdown_notes:              sanitizeMarkdownNotes,
+  };
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+
+    // Build org fields from spreadsheet row
+    const name = sanitizeName(row[orgFieldMap.organization_name] || '');
+
+    const address1  = sanitizeAddress(row[organizationLocationFieldMap.address] || '');
+    const city      = sanitizeCity(row[organizationLocationFieldMap.city] || '');
+    const state     = sanitizeState(row[organizationLocationFieldMap.state] || '');
+    const zip       = sanitizeZip(row[organizationLocationFieldMap.zip] || '');
+    const locName   = sanitizeLocationName(row[organizationLocationFieldMap.location_name] || '');
+
+    const phoneNum  = sanitizeOrganizationPhones(row[organizationPhoneFieldMap.phone] || '');
+    const phoneName = sanitizePhoneName(row[organizationPhoneFieldMap.phone_name] || '');
+
+    const categories    = sanitizeServiceCategories(row[serviceFieldMap.service_top_categories] || '');
+    const eligibilities = sanitizeServiceEligibilitiesList(row[serviceFieldMap.service_top_eligibilities] || '');
+
+    const orgDoc: Partial<IOrg> = {
+      name:      name || `New Service ${i + 1}`,
+      bucket:    bucketName,
+      status:    'incomplete',
+      addresses: address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [],
+      phones:    phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
+      notes:     [],
+      schedule:  { schedule_days: [] },
+      services:  [],
+      spreadsheetService: {
+        name:                            sanitizeName(row[serviceFieldMap.service_name] || name),
+        alternate_name:                  sanitizeAlternateName(row[serviceFieldMap.service_alternate_name] || ''),
+        email:                           sanitizeEmail(row[serviceFieldMap.service_email] || ''),
+        url:                             sanitizeWebsite(row[serviceFieldMap.service_website] || ''),
+        fee:                             sanitizeServiceCost(row[serviceFieldMap.service_cost] || ''),
+        wait_time:                       sanitizeServiceWaitTime(row[serviceFieldMap.service_wait_time] || ''),
+        application_process:             sanitizeServiceApplicationProcess(row[serviceFieldMap.service_application_process] || ''),
+        required_documents:              sanitizeServiceRequiredDocuments(row[serviceFieldMap.service_required_documents] || ''),
+        interpretation_services:         sanitizeServiceInterpretationServices(row[serviceFieldMap.service_interpretation_services] || ''),
+        internal_note:                   sanitizeInternalNotes(row[serviceFieldMap.service_internal_notes] || ''),
+        clinician_actions:               sanitizeServiceClinicianActions(row[serviceFieldMap.service_clinician_actions] || ''),
+        notes:                           [],
+        schedule:                        { schedule_days: [] },
+        shouldInheritScheduleFromParent: true,
+        eligibilities,
+        categories,
+        addresses:                       address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [],
+        phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
+      } as ISpreadsheetService,
+      history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `imported from spreadsheet` }],
     };
-    
-    for (const [htmlId, spreadsheetColumn] of Object.entries(allFieldMaps)) {
-      // Skip the multi-select fields, handle them separately
-      if (['service_top_categories', 'service_sub_categories', 'service_top_eligibilities', 'service_sub_eligibilities'].includes(htmlId)) {
-        continue;
-      }
-      
-      const rawValue = row[spreadsheetColumn] || '';
-      const value = sanitizers[htmlId] ? sanitizers[htmlId](rawValue) : rawValue;
-      
-      html = injectInput(html, htmlId, value);
-      html = injectTextarea(html, htmlId, value);
-    }
-    
-    // Handle organization location data - combine address fields into location list
-    const orgLocationName = sanitizeLocationName(row[organizationLocationFieldMap.location_name] || '');
-    const orgAddress = sanitizeAddress(row[organizationLocationFieldMap.address] || '');
-    const orgCity = sanitizeCity(row[organizationLocationFieldMap.city] || '');
-    const orgState = sanitizeState(row[organizationLocationFieldMap.state] || '');
-    const orgZip = sanitizeZip(row[organizationLocationFieldMap.zip] || '');
-    
-    if (orgAddress || orgCity || orgState || orgZip) {
-      const locationLabel = orgLocationName ? `<strong style="font-weight: bold;">${orgLocationName}</strong>` : '';
-      const locationHtml = `<div>${locationLabel}${locationLabel ? '<br>' : ''}${orgAddress}${orgAddress ? '<br>' : ''}${orgCity}, ${orgState} ${orgZip}</div>`;
-      html = injectLocationDiv(html, 'organization_locations', locationHtml);
-      html = injectLocationDiv(html, 'service_locations', locationHtml);
-    }
-    
-    // Handle organization phone data - combine phone fields into phone list
-    const orgPhoneName = sanitizePhoneName(row[organizationPhoneFieldMap.phone_name] || '');
-    const orgPhone = sanitizeOrganizationPhones(row[organizationPhoneFieldMap.phone] || '');
-    
-    if (orgPhoneName || orgPhone) {
-      const phoneHtml = `<li><strong>${orgPhoneName}</strong> ${orgPhone}</li>`;
-      html = injectPhoneList(html, 'organization_phones', phoneHtml);
-    }
-    
-    // Write the populated HTML back to the file
-    await fs.writeFile(filePath, html, 'utf-8');
-    
-    // Handle multi-select fields (categories and eligibilities)
-    const multiSelectFields = [
-      { id: 'service_top_categories', column: serviceFieldMap.service_top_categories },
-      { id: 'service_sub_categories', column: serviceFieldMap.service_sub_categories },
-      { id: 'service_top_eligibilities', column: serviceFieldMap.service_top_eligibilities },
-      { id: 'service_sub_eligibilities', column: serviceFieldMap.service_sub_eligibilities }
-    ];
-    
-    for (const field of multiSelectFields) {
-      const rawValue = row[field.column] || '';
-      const items = field.id.includes('categories') 
-        ? sanitizeServiceCategories(rawValue)
-        : sanitizeServiceEligibilitiesList(rawValue);
-      
-      if (items.length > 0) {
-        // Generate pills HTML
-        const pillsHtml = items.map(item => 
-          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${item}</span></div>`
-        ).join('');
-        
-        // Find the wrapper div and insert pills before the input
-        const wrapperRegex = new RegExp(
-          `(<div[^>]*id="${field.id}"[^>]*>)([\\s\\S]*?)(<div class="Select-placeholder">)`,
-          'i'
-        );
-        
-        html = html.replace(wrapperRegex, `$1${pillsHtml}$3`);
-        
-        // Hide the placeholder
-        html = html.replace(
-          new RegExp(`(<div[^>]*id="${field.id}"[^>]*>[\\s\\S]*?)(<div class="Select-placeholder">)`, 'i'),
-          '$1<div class="Select-placeholder" style="display: none;">'  
-        );
-        
-        // Update the corresponding object to set selected items to true
-        const objectName = field.id.includes('top_categories') ? 'topCategory' :
-                          field.id.includes('sub_categories') ? 'subCategory' :
-                          field.id.includes('top_eligibilities') ? 'topEligibility' : 'subEligibility';
-        
-        items.forEach(item => {
-          const setTrueRegex = new RegExp(`("${item.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}":\s*)false`, 'i');
-          html = html.replace(setTrueRegex, '$1true');
-        });
-      }
-    }
-    
-    // Write the final HTML with pills
-    await fs.writeFile(filePath, html, 'utf-8');
-    
-    // Update progress
-    const progress = Math.round(((i + 1) / data.length) * 100);
-    progressCallback(progress);
+
+    await Org.create(orgDoc);
+
+    progressCallback(Math.round(((i + 1) / rows.length) * 100));
   }
-  log.retrn("generateHtmlFiles()", log.kcarb);
+
+  log.retrn('generateOrgDocuments()', log.kcarb);
+}
+
+/**
+ * Normalizes a SFSG categories or eligibilities array to plain strings.
+ * SFSG returns objects like { name, id, top_level, featured } — we store only the name.
+ * @param items - Array of strings or SFSG objects
+ */
+export function normalizeSFSGStringArray(items: any[]): string[] {
+  return (items || []).map((item: any) => typeof item === 'string' ? item : item?.name).filter(Boolean);
+}
+
+/**
+ * Transforms an IOrg document into the SF Service Guide API payload shape.
+ * Mirrors the browser-side transformNewOrg() in transform.js.
+ * @param org - The org document to transform
+ */
+export function transformOrgToSFPayload(org: IOrg): { orgBody: any, services: any[] } {
+  log.enter('transformOrgToSFPayload()', log.brack);
+
+  const services = org.services.map((svc, i) => ({
+    id:                             -(i + 2),
+    name:                           svc.name                     || null,
+    alternate_name:                 svc.alternate_name            || null,
+    email:                          svc.email                    || null,
+    long_description:               svc.long_description         || null,
+    short_description:              svc.short_description        || null,
+    application_process:            svc.application_process      || null,
+    required_documents:             svc.required_documents       || null,
+    interpretation_services:        svc.interpretation_services  || null,
+    internal_note:                  svc.internal_note            || null,
+    fee:                            svc.fee                      || null,
+    wait_time:                      svc.wait_time                || null,
+    url:                            svc.url                      || null,
+    addresses:                      svc.addresses                || [],
+    phones:                         (svc.phones || []).map(p => ({ number: p.number, ...(p.service_type ? { service_type: p.service_type } : {}), ...(p.extension ? { extension: p.extension } : {}) })),
+    schedule:                       svc.schedule                 || { schedule_days: [] },
+    notes:                          svc.notes                    || [],
+    categories:                     (svc.categories || []).map(name => ({ name, id: null, top_level: false, featured: false })),
+    eligibilities:                  (svc.eligibilities || []).map(name => ({ name, id: null, feature_rank: null })),
+    shouldInheritScheduleFromParent: svc.shouldInheritScheduleFromParent ?? true
+  }));
+
+  const orgBody = {
+    resources: [{
+      name:             org.name             || null,
+      alternate_name:   org.alternate_name   || null,
+      email:            org.email            || null,
+      website:          org.website          || null,
+      long_description: org.long_description || null,
+      legal_status:     org.legal_status     || null,
+      internal_note:    org.internal_note    || null,
+      addresses:        org.addresses        || [],
+      phones:           (org.phones || []).map(p => ({ number: p.number, ...(p.service_type ? { service_type: p.service_type } : {}), ...(p.extension ? { extension: p.extension } : {}) })),
+      notes:            org.notes            || [],
+      schedule:         org.schedule         || { schedule_days: [] }
+    }]
+  };
+
+  log.retrn('transformOrgToSFPayload()', log.kcarb);
+  return { orgBody, services };
+}
+
+/**
+ * Hydrates the combined HTML template with data from an Org document.
+ * Returns the populated HTML string ready to be served to the iframe.
+ * @param org - The Org document to hydrate the template with
+ */
+export async function hydrateTemplate(org: IOrg): Promise<string> {
+  log.enter('hydrateTemplate()', log.brack);
+
+  let html = await fs.readFile(TEMPLATE_PATH, 'utf-8');
+
+  // Stamp org _id on body so frontend can reference it on save
+  html = html.replace('<body', `<body data-org-id="${org._id}"`);
+
+  // importedFileFromSFSG = true only when org has sfsg_id AND no spreadsheetService
+  // (SFSG imports lock both toggles; spreadsheet imports enable the service toggle)
+  if (org.sfsg_id && !org.spreadsheetService) {
+    html = html.replace('let importedFileFromSFSG = false;', 'let importedFileFromSFSG = true;');
+  }
+  if (org.sfsg_id) {
+    html = html.replace('value="TBD" placeholder="\u2014"', `value="${org.sfsg_id}" placeholder="\u2014"`);
+  }
+
+  // ── Org scalar fields ──────────────────────────────────────────────────────
+  html = injectInput(html,    'organization_name',           org.name             || '');
+  html = injectInput(html,    'organization_alternate_name', org.alternate_name   || '');
+  html = injectInput(html,    'organization_website',        org.website          || '');
+  html = injectInput(html,    'organization_email',          org.email            || '');
+  html = injectInput(html,    'organization_legal_status',   org.legal_status     || '');
+  html = injectTextarea(html, 'organization_description',    org.long_description || '');
+  html = injectTextarea(html, 'organization_internal_notes', org.internal_note    || '');
+
+  // ── Org markdown notes ─────────────────────────────────────────────────────
+  if (org.notes?.length) {
+    const notesHtml = org.notes.map(n => `<li>${n.note}</li>`).join('');
+    html = html.replace(
+      /(<ul[^>]*id="organization_markdown_notes"[^>]*>)([\s\S]*?)(<\/ul>)/,
+      `$1${notesHtml}$3`
+    );
+  }
+
+  // ── Org addresses ──────────────────────────────────────────────────────────
+  if (org.addresses?.length) {
+    const locHtml = org.addresses.map((a, i) => {
+      const addrParts = [a.address_1, a.address_2, a.city, a.state_province, a.postal_code].filter(Boolean).join('  ');
+      return `<div class="location-row" data-name="${a.name || ''}" data-addr1="${a.address_1 || ''}" data-addr2="${a.address_2 || ''}" data-city="${a.city || ''}" data-state="${a.state_province || ''}" data-zip="${a.postal_code || ''}"><span class="location-row-num">${i + 1}.</span><span class="location-row-name">${a.name || ''}</span><span class="location-row-addr">${addrParts}</span><span class="location-row-actions"><button type="button" class="edit-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span></div>`;
+    }).join('');
+    html = html.replace(
+      /<div[^>]*id="organization_locations"[^>]*>\s*<\/div>/,
+      `<div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1 location-row-list">${locHtml}</div>`
+    );
+  }
+
+  // ── Org phones ─────────────────────────────────────────────────────────────
+  if (org.phones?.length) {
+    const phoneHtml = org.phones.map((p, i) =>
+      `<li class="phone-row" data-number="${p.number}" data-type="${p.service_type || ''}"><span class="phone-row-num">${i + 1}.</span><span class="phone-row-name">${p.service_type || ''}</span><span class="phone-row-number">${p.number}</span><span class="phone-row-actions"><button type="button" class="edit-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span></li>`
+    ).join('');
+    html = html.replace(
+      /<ul[^>]*id="organization_phones"[^>]*>\s*<\/ul>/,
+      `<ul id="organization_phones" class="edit--section--list--item--sublist phone-row-list">${phoneHtml}</ul>`
+    );
+  }
+
+  // ── Spreadsheet Service ────────────────────────────────────────────────────
+  if (org.spreadsheetService) {
+    const svc = org.spreadsheetService;
+    html = injectInput(html,    'service_name',                    svc.name                     || '');
+    html = injectInput(html,    'service_alternate_name',          svc.alternate_name            || '');
+    html = injectInput(html,    'service_email',                   svc.email                    || '');
+    html = injectInput(html,    'service_website',                 svc.url                      || '');
+    html = injectInput(html,    'service_cost',                    svc.fee                      || '');
+    html = injectInput(html,    'service_wait_time',               svc.wait_time                || '');
+    html = injectTextarea(html, 'service_description',             svc.long_description         || '');
+    html = injectTextarea(html, 'service_short_description',       svc.short_description        || '');
+    html = injectTextarea(html, 'service_application_process',     svc.application_process      || '');
+    html = injectTextarea(html, 'service_required_documents',      svc.required_documents       || '');
+    html = injectTextarea(html, 'service_interpretation_services', svc.interpretation_services  || '');
+    html = injectTextarea(html, 'service_clinician_actions',       svc.clinician_actions        || '');
+    html = injectTextarea(html, 'service_internal_notes',          svc.internal_note            || '');
+
+    if (svc.phones?.length) {
+      const phoneHtml = svc.phones.map((p: any) =>
+        `<li data-number="${p.number}" data-type="${p.service_type || ''}"><strong>${p.service_type || ''}</strong> ${p.number}</li>`
+      ).join('');
+      html = injectPhoneList(html, 'service_phones', phoneHtml);
+    }
+
+    if (svc.addresses?.length) {
+      const locHtml = svc.addresses.map((a: any) =>
+        `<div>${a.address_1 || ''}, ${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</div>`
+      ).join('');
+      html = injectLocationDiv(html, 'service_locations', locHtml);
+    }
+
+    if (svc.categories?.length) {
+      const pillsHtml = svc.categories.map((c: any) =>
+        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+      ).join('');
+      html = html.replace(
+        /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+      );
+    }
+
+    if (svc.eligibilities?.length) {
+      const pillsHtml = svc.eligibilities.map((e: any) =>
+        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+      ).join('');
+      html = html.replace(
+        /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+      );
+    }
+
+    if (svc.service_belongs_to_org) {
+      html = injectInput(html, 'serviceBelongsToOrg', svc.service_belongs_to_org);
+    }
+  }
+
+  // ── Services ───────────────────────────────────────────────────────────────
+  if (org.services?.length) {
+
+    // Extract the service template block from the hidden serviceDivOrgTemplate
+    const templateMatch = html.match(/<div[^>]*id="serviceDivOrganization"[\s\S]*?(?=<!---={10,}\s*EDIT SERVICES ENDS)/);
+    const serviceTemplateHtml = templateMatch ? templateMatch[0] : null;
+
+    if (serviceTemplateHtml) {
+      const populatedServices = org.services.map((svc, i) => {
+        let s = serviceTemplateHtml;
+
+        // Give each service a unique id
+        s = s.replace('id="serviceDivOrganization"', `id="service-org-${i}"`);
+
+        s = injectInput(s,    'service_name',                    svc.name                     || '');
+        s = injectInput(s,    'service_alternate_name',          svc.alternate_name            || '');
+        s = injectInput(s,    'service_email',                   svc.email                    || '');
+        s = injectInput(s,    'service_website',                 svc.url                      || '');
+        s = injectInput(s,    'service_cost',                    svc.fee                      || '');
+        s = injectInput(s,    'service_wait_time',               svc.wait_time                || '');
+        s = injectTextarea(s, 'service_description',             svc.long_description         || '');
+        s = injectTextarea(s, 'service_short_description',       svc.short_description        || '');
+        s = injectTextarea(s, 'service_application_process',     svc.application_process      || '');
+        s = injectTextarea(s, 'service_required_documents',      svc.required_documents       || '');
+        s = injectTextarea(s, 'service_interpretation_services', svc.interpretation_services  || '');
+        s = injectTextarea(s, 'service_clinician_actions',       svc.clinician_actions        || '');
+        s = injectTextarea(s, 'service_internal_notes',          svc.internal_note            || '');
+
+        // Service phones
+        if (svc.phones?.length) {
+          const phoneHtml = svc.phones.map((p: any) =>
+            `<li data-number="${p.number}" data-type="${p.service_type || ''}"><strong>${p.service_type || ''}</strong> ${p.number}</li>`
+          ).join('');
+          s = injectPhoneList(s, 'service_phones', phoneHtml);
+        }
+
+        // Service addresses
+        if (svc.addresses?.length) {
+          const locHtml = svc.addresses.map((a: any) =>
+            `<li data-address1="${a.address_1 || ''}" data-city="${a.city || ''}" data-state="${a.state_province || ''}" data-zip="${a.postal_code || ''}">${a.address_1 || ''}, ${a.city || ''}, ${a.state_province || ''} ${a.postal_code || ''}</li>`
+          ).join('');
+          s = s.replace(
+            /(<ul[^>]*id="service_locations"[^>]*>)([\s\S]*?)(<\/ul>)/,
+            `$1${locHtml}$3`
+          );
+        }
+
+        // Categories as pills
+        if (svc.categories?.length) {
+          const pillsHtml = svc.categories.map((c: any) =>
+            `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+          ).join('');
+          s = s.replace(
+            /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+            `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+          );
+        }
+
+        // Eligibilities as pills
+        if (svc.eligibilities?.length) {
+          const pillsHtml = svc.eligibilities.map((e: any) =>
+            `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+          ).join('');
+          s = s.replace(
+            /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+            `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+          );
+        }
+
+        return s;
+      }).join('\n');
+
+      // Inject all populated services into orgServicesDiv
+      html = html.replace(
+        '<div class="edit--orgServices" id="orgServicesDiv"></div>',
+        `<div class="edit--orgServices" id="orgServicesDiv">${populatedServices}</div>`
+      );
+
+      // Populate sidebar service links
+      const navLis = org.services.map((svc, i) =>
+        `<li class="app-components-edit-EditSidebar-module__listItem--HBckV" data-service-id="service-org-${i}"><a href="#service-org-${i}" onclick="event.preventDefault(); var t=document.getElementById('service-org-${i}'); if(t) t.scrollIntoView({behavior:'smooth'});">${svc.name || 'Service ' + (i + 1)}</a></li>`
+      ).join('\n');
+
+      html = html.replace(
+        /(<ul[^>]*id="servicesList"[^>]*>)\s*(<\/ul>)/,
+        `$1\n${navLis}\n$2`
+      );
+    }
+  }
+
+  log.retrn('hydrateTemplate()', log.kcarb);
+  return '<!DOCTYPE html>\n' + html;
 }
 
 // #endregion ------------------------------------------------------------------
 
 console.leave();
+
+// #region ====================== NOTES ========================================
+
+// generateOrgDocuments() replaces generateHtmlFiles() — stores data in MongoDB instead of HTML files
+// hydrateTemplate() replaces file reads — injects DB data into the combined template at request time
+// parseSpreadsheet() is unchanged — still reads spreadsheet buffer into row objects
+// createBucketStructure() now creates a Bucket document instead of filesystem directories
+
+// #endregion ------------------------------------------------------------------

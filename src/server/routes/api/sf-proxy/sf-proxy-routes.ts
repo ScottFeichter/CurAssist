@@ -6,15 +6,46 @@ console.enter();
 
 // #region ====================== START ========================================
 
+/**
+ * Base URL for the SF Service Guide API.
+ * All proxy requests are forwarded to this base.
+ */
 const SF_BASE = 'https://www.sfserviceguide.org/api';
 
 const sfProxyRouter = Router();
+
+sfProxyRouter.get('/v2/resources/:id', async (req: Request, res: Response) => {
+  log.enter('sf-proxy GET resource', log.brack);
+  const url = `${SF_BASE}/v2/resources/${req.params.id}`;
+  try {
+    const sfRes = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'Origin': 'https://www.sfserviceguide.org',
+        'Referer': 'https://www.sfserviceguide.org/organizations/new'
+      }
+    });
+    const data = await sfRes.json().catch(() => ({}));
+    log.retrn('sf-proxy GET resource', log.kcarb);
+    res.status(sfRes.status).json(data);
+  } catch (err: any) {
+    log.retrn('sf-proxy GET resource error', log.kcarb);
+    res.status(502).json({ error: 'SF proxy request failed', detail: err.message });
+  }
+});
 
 sfProxyRouter.post('/*', async (req: Request, res: Response) => {
   log.enter('sf-proxy POST', log.brack);
 
   const sfPath = (req.params as any)[0] || '';
   const url = `${SF_BASE}/${sfPath}`;
+
+  // Forward browser cookies so SFSG session auth is preserved
+  const cookieHeader = req.headers['cookie'] || '';
+
+  log.infor(`sf-proxy POST -> ${url}`);
+  log.infor(`sf-proxy cookies present: ${!!cookieHeader}`);
+  log.infor(`sf-proxy request body: ${JSON.stringify(req.body).substring(0, 500)}`);
 
   try {
     const sfRes = await fetch(url, {
@@ -23,17 +54,21 @@ sfProxyRouter.post('/*', async (req: Request, res: Response) => {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
         'Origin': 'https://www.sfserviceguide.org',
-        'Referer': 'https://www.sfserviceguide.org/organizations/new'
+        'Referer': 'https://www.sfserviceguide.org/organizations/new',
+        ...(cookieHeader ? { 'Cookie': cookieHeader } : {})
       },
       body: JSON.stringify(req.body)
     });
 
+    log.infor(`sf-proxy SFSG response status: ${sfRes.status}`);
     const data = await sfRes.json().catch(() => ({}));
+    log.infor(`sf-proxy SFSG response body: ${JSON.stringify(data).substring(0, 500)}`);
     console.super('SF Proxy Response', sfRes.status, data);
     log.retrn('sf-proxy POST', log.kcarb);
     res.status(sfRes.status).json(data);
   } catch (err: any) {
     log.retrn('sf-proxy POST error', log.kcarb);
+    console.error('sf-proxy POST exception:', err.message);
     res.status(502).json({ error: 'SF proxy request failed', detail: err.message });
   }
 });

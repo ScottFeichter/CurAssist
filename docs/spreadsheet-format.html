@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CurAssist — Spreadsheet Format Guide</title>
+  <style>
+    body { font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 30px 20px; color: #30383a; line-height: 1.5; }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+    h2 { font-size: 18px; font-weight: 700; color: #1a5bb8; margin-top: 30px; margin-bottom: 10px; }
+    p { font-size: 14px; margin-bottom: 12px; }
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 13px; }
+    th { background: #3d7ef0; color: white; text-align: left; padding: 8px 12px; font-weight: 600; }
+    td { padding: 8px 12px; border-bottom: 1px solid #e0e0e0; }
+    tr:hover { background: #f5f8ff; }
+    .required { color: #c4243a; font-weight: 600; }
+    .optional { color: #888; }
+    .note { background: #f9f9f9; border-left: 3px solid #3d7ef0; padding: 10px 14px; font-size: 13px; margin: 16px 0; }
+    .example-table { overflow-x: auto; }
+    .example-table table { min-width: 700px; }
+    .example-table td, .example-table th { white-space: nowrap; font-size: 12px; padding: 6px 10px; }
+    hr { border: none; border-top: 1px solid #e0e0e0; margin: 24px 0; }
+    .subtitle { font-size: 14px; color: #666; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+
+  <h1>CurAssist — Spreadsheet Format Guide</h1>
+  <p class="subtitle">Required column headers for creating a bucket from a spreadsheet upload.</p>
+  <hr>
+
+  <p>The first row of the spreadsheet must contain column headers that match the names listed below. Each subsequent row represents one organization record. Supported formats: <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong>, <strong>.ods</strong></p>
+
+  <div class="note">Headers are case-sensitive and must match exactly. Only the first sheet in the workbook is read.</div>
+
+  <h2>Organization Fields</h2>
+  <table>
+    <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
+    <tr><td>Name</td><td>Organization name</td><td class="required">Yes</td></tr>
+    <tr><td>Nickname</td><td>Alternate name</td><td class="optional">No</td></tr>
+    <tr><td>Website</td><td>Organization website URL</td><td class="optional">No</td></tr>
+    <tr><td>Email</td><td>Organization email</td><td class="optional">No</td></tr>
+    <tr><td>Description</td><td>Full description</td><td class="optional">No</td></tr>
+    <tr><td>Legal Status</td><td>Legal status</td><td class="optional">No</td></tr>
+    <tr><td>Internal Notes</td><td>Notes for editors (not displayed to users)</td><td class="optional">No</td></tr>
+  </table>
+
+  <h2>Location Fields</h2>
+  <table>
+    <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
+    <tr><td>Location Name</td><td>Name of the location</td><td class="optional">No</td></tr>
+    <tr><td>Address</td><td>Street address</td><td class="optional">No</td></tr>
+    <tr><td>City</td><td>City</td><td class="optional">No</td></tr>
+    <tr><td>State</td><td>State (e.g. CA)</td><td class="optional">No</td></tr>
+    <tr><td>Zip</td><td>Postal code</td><td class="optional">No</td></tr>
+  </table>
+  <div class="note">Each row supports one location. If Address is provided, City, State, and Zip should also be provided.</div>
+
+  <h2>Phone Fields</h2>
+  <table>
+    <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
+    <tr><td>Phone</td><td>Phone number (10 digits, formatted automatically)</td><td class="optional">No</td></tr>
+    <tr><td>Phone Name</td><td>Label for the phone (e.g. "Main", "Fax")</td><td class="optional">No</td></tr>
+  </table>
+  <div class="note">Each row supports one phone number. 10-digit numbers are auto-formatted with dashes (e.g. 415-555-1234).</div>
+
+  <h2>Service Fields</h2>
+  <p>Each organization row can also include service data.<br>If service fields are present, a service is created and embedded with the organization.</p>
+  <table>
+    <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
+    <tr><td>Name</td><td>Service name (defaults to org name if blank)</td><td class="optional">No</td></tr>
+    <tr><td>Nickname</td><td>Service alternate name</td><td class="optional">No</td></tr>
+    <tr><td>Email</td><td>Service email</td><td class="optional">No</td></tr>
+    <tr><td>Website</td><td>Service website URL</td><td class="optional">No</td></tr>
+    <tr><td>Description</td><td>Full service description</td><td class="optional">No</td></tr>
+    <tr><td>Short Description</td><td>Brief service description</td><td class="optional">No</td></tr>
+    <tr><td>Application Process</td><td>How to apply</td><td class="optional">No</td></tr>
+    <tr><td>Required Documents</td><td>Documents needed</td><td class="optional">No</td></tr>
+    <tr><td>Interpretation Services</td><td>Languages or interpretation available</td><td class="optional">No</td></tr>
+    <tr><td>Clinician Actions</td><td>Clinician-specific actions</td><td class="optional">No</td></tr>
+    <tr><td>Cost</td><td>Service cost</td><td class="optional">No</td></tr>
+    <tr><td>Wait Time</td><td>Expected wait time</td><td class="optional">No</td></tr>
+    <tr><td>Internal Notes</td><td>Editor notes for the service</td><td class="optional">No</td></tr>
+    <tr><td>Top Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
+    <tr><td>Top Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
+  </table>
+  <div class="note">Service fields like Name, Email, and Website share the same header names as organization fields. The same column value maps to both.</div>
+
+  <hr>
+
+  <h2>Example</h2>
+  <div class="example-table">
+    <table>
+      <tr><th>Name</th><th>Address</th><th>City</th><th>State</th><th>Zip</th><th>Phone</th><th>Email</th><th>Description</th><th>Top Categories</th></tr>
+      <tr><td>Bay Area Food Bank</td><td>123 Main St</td><td>San Francisco</td><td>CA</td><td>94110</td><td>415-555-1234</td><td>info@example.org</td><td>Provides food assistance</td><td>Food, Emergency</td></tr>
+      <tr><td>SF Youth Center</td><td>456 Oak Ave</td><td>San Francisco</td><td>CA</td><td>94102</td><td>415-555-5678</td><td>hello@example.org</td><td>Youth programs and services</td><td>Youth, Education</td></tr>
+    </table>
+  </div>
+
+  <hr>
+
+  <h2>Auto-Formatting</h2>
+  <table>
+    <tr><th>Field</th><th>Formatting Applied</th></tr>
+    <tr><td>Names</td><td>Converted to title case</td></tr>
+    <tr><td>State</td><td>Converted to uppercase</td></tr>
+    <tr><td>Phone</td><td>10-digit numbers formatted with dashes</td></tr>
+    <tr><td>Address, City</td><td>Converted to title case</td></tr>
+    <tr><td>Categories, Eligibilities</td><td>Split on commas into individual items</td></tr>
+  </table>
+
+</body>
+</html>

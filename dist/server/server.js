@@ -13,15 +13,23 @@ const setup_routes_1 = require("./routes/setup-routes");
 const setup_post_route_middleware_1 = require("./middlewares/setup-post-route-middleware");
 // import SEQUELIZE from '../../database/sequelize';
 const env_module_1 = require("../config/env-module");
+const atlas_1 = require("../database/atlas");
 const cors_1 = __importDefault(require("cors"));
-const api_1 = __importDefault(require("./routes/api"));
 // #endregion ------------------------------------------------------------------
 customConsoles_1.extendedConsole.enter();
 // #region ====================== START ========================================
 logger_wrapper_1.log.infor(`NODE_ENV at runtime from server.ts: ${process.env.NODE_ENV}`);
-// Instantiate the server
+/**
+ * The Express application instance.
+ * Exported so it can be passed into start() from entry.ts.
+ */
 exports.SERVER = (0, express_1.default)();
-// Function to start the server (called in entry.ts)
+/**
+ * Starts the Express server.
+ * Connects to MongoDB Atlas before binding to the port —
+ * the server will not start if the DB connection fails.
+ * @param SERVER - The Express application instance
+ */
 const start = async (SERVER) => {
     logger_wrapper_1.log.enter("start()", logger_wrapper_1.log.brack);
     try {
@@ -32,11 +40,8 @@ const start = async (SERVER) => {
         (0, setup_pre_route_middleware_1.setupPreRouteMiddleware)(SERVER);
         (0, setup_routes_1.setupRoutes)(SERVER);
         (0, setup_post_route_middleware_1.setupPostRouteMiddleware)(SERVER);
-        // Authenticate Sequelize instance to ensure the DB connection is successful
-        // await SEQUELIZE.authenticate();
-        // log.infor('Database connection has been established successfully!');
-        // Routes
-        SERVER.use('/api', api_1.default);
+        // Connect to MongoDB Atlas — server will not start if connection fails
+        await (0, atlas_1.connectToAtlas)();
         SERVER.listen(env_module_1.SERVER_PORT, () => {
             logger_wrapper_1.log.blank();
             customConsoles_1.extendedConsole.infor('To prevent terminal line wrapping run: tput rmam');

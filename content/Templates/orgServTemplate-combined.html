@@ -585,6 +585,22 @@
                         background-color: #154a8a;; /* darker blue than #276CE5 */
                       }
 
+                      .toggle-button:disabled {
+                        cursor: default;
+                        opacity: 0.6;
+                      }
+
+                      .toggle-button:disabled:hover {
+                        color: #999;
+                        background-color: #fff;
+                        border-color: #ccc;
+                      }
+
+                      .toggle-button.active:disabled:hover {
+                        background-color: #276CE5;
+                        border-color: #276CE5;
+                      }
+
 
 
                       #OrganizationButton.active {
@@ -803,6 +819,84 @@
                       margin: 0;
                       cursor: pointer;
                     }
+
+                    /* Phone row styles */
+                    .phone-row-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; list-style: none; padding: 0; }
+                    .phone-row {
+                      display: flex;
+                      align-items: center;
+                      background: #f4f4f4;
+                      border-radius: 4px;
+                      padding: 6px 10px;
+                      gap: 12px;
+                      min-width: 0;
+                      overflow: hidden;
+                    }
+                    .phone-row-num    { flex-shrink: 0; font-size: 12px; color: #888; min-width: 18px; }
+                    .phone-row-name   { flex-shrink: 0; font-weight: 600; font-size: 13px; white-space: nowrap; }
+                    .phone-row-number {
+                      flex: 1;
+                      font-size: 13px;
+                      font-weight: 400;
+                      color: #555;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      min-width: 0;
+                    }
+                    .phone-row-actions { flex-shrink: 0; display: flex; align-items: center; gap: 6px; margin-left: auto; }
+                    .phone-row-actions button {
+                      background: none;
+                      border: none;
+                      cursor: pointer;
+                      padding: 2px 4px;
+                      font-size: 12px;
+                      color: #666;
+                      display: flex;
+                      align-items: center;
+                      gap: 3px;
+                      height: auto;
+                    }
+                    .phone-row-actions button:hover { background: #276ce5; color: #fff !important; }
+                    .phone-row-actions .remove-btn:hover { background: #e34646; color: #fff !important; }
+                    .location-row-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+                    .location-row {
+                      display: flex;
+                      align-items: center;
+                      background: #f4f4f4;
+                      border-radius: 4px;
+                      padding: 6px 10px;
+                      gap: 12px;
+                      min-width: 0;
+                      overflow: hidden;
+                    }
+                    .location-row-num  { flex-shrink: 0; font-size: 12px; color: #888; min-width: 18px; }
+                    .location-row-name { flex-shrink: 0; font-weight: 600; font-size: 13px; white-space: nowrap; }
+                    .location-row-addr {
+                      flex: 1;
+                      font-size: 13px;
+                      font-weight: 400;
+                      color: #555;
+                      white-space: nowrap;
+                      overflow: hidden;
+                      text-overflow: ellipsis;
+                      min-width: 0;
+                    }
+                    .location-row-actions { flex-shrink: 0; display: flex; align-items: center; gap: 6px; margin-left: auto; }
+                    .location-row-actions button {
+                      background: none;
+                      border: none;
+                      cursor: pointer;
+                      padding: 2px 4px;
+                      font-size: 12px;
+                      color: #666;
+                      display: flex;
+                      align-items: center;
+                      gap: 3px;
+                      height: auto;
+                    }
+                    .location-row-actions button:hover { background: #276ce5; color: #fff !important; }
+                    .location-row-actions .remove-btn:hover { background: #e34646; color: #fff !important; }
                   </style>
 <style>
                     /* Service Section Modal Styles */
@@ -979,6 +1073,47 @@
                     .Select-arrow-zone {
                       display: none;
                     }
+
+                    /* Service location row styles (reuses location-row from org component) */
+                    .location-row-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px; }
+                    .location-row {
+                      display: flex; align-items: center; background: #f4f4f4;
+                      border-radius: 4px; padding: 6px 10px; gap: 12px; min-width: 0; overflow: hidden;
+                    }
+                    .location-row-num  { flex-shrink: 0; font-size: 12px; color: #888; min-width: 18px; }
+                    .location-row-name { flex-shrink: 0; font-weight: 600; font-size: 13px; white-space: nowrap; }
+                    .location-row-addr {
+                      flex: 1; font-size: 13px; font-weight: 400; color: #555;
+                      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;
+                    }
+                    .location-row-actions { flex-shrink: 0; display: flex; align-items: center; gap: 6px; margin-left: auto; }
+                    .location-row-actions button {
+                      background: none; border: none; cursor: pointer; padding: 2px 4px;
+                      font-size: 12px; color: #666; display: flex; align-items: center; gap: 3px; height: auto;
+                    }
+                    .location-row-actions button:hover { color: #276ce5; }
+                    .location-row-actions .remove-btn:hover { color: #e34646; }
+
+                    /* Copy from org modal */
+                    .copy-from-org-modal {
+                      display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+                      width: 100%; height: 100%; background: rgba(0,0,0,0.4);
+                    }
+                    .copy-from-org-modal-content {
+                      background: #fff; margin: 15% auto; padding: 24px; border-radius: 8px;
+                      width: 420px; font-family: "Open Sans", Arial, sans-serif;
+                    }
+                    .copy-from-org-modal-content h3 { margin-bottom: 16px; font-size: 16px; font-weight: 600; }
+                    .copy-from-org-modal-content select {
+                      width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;
+                      font-size: 14px; margin-bottom: 16px;
+                    }
+                    .copy-from-org-modal-buttons { display: flex; gap: 10px; justify-content: center; }
+                    .copy-from-org-modal-buttons button {
+                      padding: 8px 20px; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; border: none;
+                    }
+                    .copy-from-org-btn-confirm { background: #276ce5; color: #fff; }
+                    .copy-from-org-btn-cancel  { background: #888; color: #fff; }
                   </style>
 </head>
 <!-- [[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[  HEAD END  ]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] -->
@@ -1100,7 +1235,7 @@
 <!------------------------------------------------------------------------------ HTML ------------------------------------------------------------------------------->
                 <header class="edit--main--header">
 
-                  <h1 class="edit--main--header--title">
+                  <h1 class="edit--main--header--title" id="headerTitle">
                     Is this an Organization or a Service?
                   </h1>
 
@@ -1132,6 +1267,7 @@
                     const servBtn = document.getElementById('ServiceButton');
 
                     let Organization = true;
+                    let importedFileFromSFSG = false;
 
 
                     function toggleView() {
@@ -1163,6 +1299,11 @@
 
                     document.addEventListener('DOMContentLoaded', function() {
                       toggleView();
+                      if (importedFileFromSFSG) {
+                        orgBtn.disabled = true;
+                        servBtn.disabled = true;
+                        document.getElementById('headerTitle').textContent = 'Imported File From Existing Organization';
+                      }
                     });
                   </script>
 
@@ -1221,7 +1362,7 @@
   function searchAllServices(event) {
     event.preventDefault();
     const links = Array.from(document.querySelectorAll('#servicesList a'));
-    console.log('searchAllServices: found', links.length, 'links');
+    //DISABLED: console.log('searchAllServices: found', links.length, 'links');
     links.forEach((link, i) => {
       const name = link.textContent.trim();
       if (!name) return;
@@ -1232,11 +1373,11 @@
   }
 
   function addNewService() {
-    console.log('addNewService called');
+    //DISABLED: console.log('addNewService called');
     
     // Generate unique service ID
     const serviceId = 'service-' + Date.now();
-    console.log('serviceId:', serviceId);
+    //DISABLED: console.log('serviceId:', serviceId);
     
     // Determine next placeholder name
     const servicesList = document.getElementById('servicesList');
@@ -1252,7 +1393,7 @@
     });
     
     const placeholderName = `New Service ${maxNum + 1}`;
-    console.log('placeholderName:', placeholderName);
+    //DISABLED: console.log('placeholderName:', placeholderName);
     
     // Add service link to navbar
     const li = document.createElement('li');
@@ -1264,12 +1405,12 @@
     link.setAttribute('onclick', `event.preventDefault(); var t=document.getElementById('${serviceId}'); if(t) t.scrollIntoView({behavior:'smooth'});`);
     li.appendChild(link);
     servicesList.appendChild(li);
-    console.log('Added link to navbar');
+    //DISABLED: console.log('Added link to navbar');
     
     // Find the ServiceDiv template to clone
     const serviceTemplate = document.getElementById('serviceDivOrganization');
     if (!serviceTemplate) {
-      console.error('serviceDivOrganization not found');
+      //DISABLED: //DISABLED: console.error('serviceDivOrganization not found');
       return;
     }
     
@@ -1277,13 +1418,13 @@
     const newServiceDiv = serviceTemplate.cloneNode(true);
     newServiceDiv.id = serviceId;
     newServiceDiv.style.display = '';
-    console.log('Cloned service div');
+    //DISABLED: console.log('Cloned service div');
     
     // Clear all inputs to make it blank
     newServiceDiv.querySelectorAll('input, textarea').forEach(input => input.value = '');
     newServiceDiv.querySelectorAll('.Select-multi-value-wrapper .Select-value').forEach(pill => pill.remove());
     newServiceDiv.querySelectorAll('.Select-placeholder').forEach(ph => ph.style.display = 'block');
-    console.log('Cleared inputs');
+    //DISABLED: console.log('Cleared inputs');
 
     // Wire up autocomplete for category/eligibility fields on this cloned div
     if (typeof window.setupServiceAutocomplete === 'function') {
@@ -1316,14 +1457,14 @@
     
     // Append to orgServicesDiv container
     const orgServicesDiv = document.getElementById('orgServicesDiv');
-    console.log('orgServicesDiv:', orgServicesDiv);
+    //DISABLED: console.log('orgServicesDiv:', orgServicesDiv);
     if (!orgServicesDiv) {
-      console.error('orgServicesDiv container not found');
+      //DISABLED: console.error('orgServicesDiv container not found');
       return;
     }
     
     orgServicesDiv.appendChild(newServiceDiv);
-    console.log('Appended to orgServicesDiv');
+    //DISABLED: console.log('Appended to orgServicesDiv');
     
     // Scroll to new service
     setTimeout(() => {
@@ -1462,16 +1603,16 @@
   }
 
   // Update organization name in navbar when input changes
-  console.log('[navBar] script executing, readyState:', document.readyState);
+  //DISABLED: console.log('[navBar] script executing, readyState:', document.readyState);
   document.addEventListener('DOMContentLoaded', function() {
-    console.log('[navBar] DOMContentLoaded fired');
+    //DISABLED: console.log('[navBar] DOMContentLoaded fired');
     const orgNameInput = document.getElementById('organization_name');
     const orgNavLink = document.getElementById('orgNavLink');
-    console.log('[navBar] orgNameInput:', orgNameInput, 'value:', orgNameInput && orgNameInput.value);
-    console.log('[navBar] orgNavLink:', orgNavLink);
+    //DISABLED: console.log('[navBar] orgNameInput:', orgNameInput, 'value:', orgNameInput && orgNameInput.value);
+    //DISABLED: console.log('[navBar] orgNavLink:', orgNavLink);
     if (orgNameInput && orgNavLink) {
       orgNavLink.textContent = orgNameInput.value || '{{organization_name}}';
-      console.log('[navBar] set orgNavLink to:', orgNavLink.textContent);
+      //DISABLED: console.log('[navBar] set orgNavLink to:', orgNavLink.textContent);
       orgNameInput.addEventListener('input', function() {
         orgNavLink.textContent = this.value || '{{organization_name}}';
       });
@@ -1523,9 +1664,15 @@
 
                     <header class="edit--section--header" style="display: flex; flex-direction: column; align-items: flex-start;">
                       <button class="sidebar-toggle" id="sidebarToggle" title="Toggle sidebar">▶</button>
-                      <h4>
-                        New Organization
-                      </h4>
+                      <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
+                        <h4>
+                          New Organization
+                        </h4>
+                        <div id="organization_sfsg_id_display" style="display:flex; align-items:center; gap:6px; font-size:0.85em; color:#888; font-family:'Open Sans',Arial,sans-serif; white-space:nowrap;">
+                          SFSG ID:
+                          <input type="text" id="organization_sfsg_id" value="TBD" placeholder="—" style="width:70px; padding:2px 6px; font-size:0.85em; border:1px solid #ccc; border-radius:3px; text-align:center; font-family:inherit; color:#30383a;" disabled>
+                        </div>
+                      </div>
                     </header>
                     <br>
 
@@ -1583,7 +1730,7 @@
                         <div class="app-components-edit-EditAddress-module__addressListTitle--Y1zCq">
                           Location
                         </div>
-                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1">
+                        <div id="organization_locations" class="app-components-edit-EditAddress-module__addressList--sQxt1 location-row-list">
                         </div>
                         <button class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
                           Add Location
@@ -1595,7 +1742,7 @@
                         <label for="edit-item">
                           Phones
                         </label>
-                        <ul id="organization_phones" class="edit--section--list--item--sublist">
+                        <ul id="organization_phones" class="edit--section--list--item--sublist phone-row-list">
                         </ul>
                         <button type="button" class="edit--section--list--item--button solid-brand">
                           Add Phone
@@ -1863,6 +2010,48 @@
                       const phoneModal = document.getElementById('addPhoneModal');
                       const noteModal = document.getElementById('addNoteModal');
 
+                      function wireLocationRow(row) {
+                        row.querySelector('.remove-btn').addEventListener('click', () => {
+                          const list = row.closest('#organization_locations');
+                          row.remove();
+                          Array.from(list.children).forEach((r, i) => {
+                            r.querySelector('.location-row-num').textContent = (i + 1) + '.';
+                          });
+                        });
+                        row.querySelector('.edit-btn').addEventListener('click', () => {
+                          document.getElementById('locationName').value  = row.dataset.name  || '';
+                          document.getElementById('addressLine1').value  = row.dataset.addr1 || '';
+                          document.getElementById('addressLine2').value  = row.dataset.addr2 || '';
+                          document.getElementById('city').value          = row.dataset.city  || '';
+                          document.getElementById('state').value         = row.dataset.state || '';
+                          document.getElementById('zip').value           = row.dataset.zip   || '';
+                          document.getElementById('addLocationModal').dataset.editingRow = 'true';
+                          row.dataset.editing = 'true';
+                          document.getElementById('addLocationModal').style.display = 'flex';
+                        });
+                      }
+
+                      function wirePhoneRow(li) {
+                        li.querySelector('.remove-btn').addEventListener('click', () => {
+                          const list = li.closest('#organization_phones');
+                          li.remove();
+                          Array.from(list.children).forEach((r, i) => {
+                            r.querySelector('.phone-row-num').textContent = (i + 1) + '.';
+                          });
+                        });
+                        li.querySelector('.edit-btn').addEventListener('click', () => {
+                          document.getElementById('phoneName').value   = li.dataset.name   || '';
+                          document.getElementById('phoneNumber').value = li.dataset.number || '';
+                          document.getElementById('addPhoneModal').dataset.editingRow = 'true';
+                          li.dataset.editing = 'true';
+                          document.getElementById('addPhoneModal').style.display = 'flex';
+                        });
+                      }
+
+                      // Wire up any hydrated rows
+                      document.querySelectorAll('#organization_locations .location-row').forEach(wireLocationRow);
+                      document.querySelectorAll('#organization_phones .phone-row').forEach(wirePhoneRow);
+
                       // Find all Add buttons by their text content
                       const allButtons = document.querySelectorAll('button');
 
@@ -1890,18 +2079,43 @@
                       });
 
                       document.getElementById('addLocationBtn').addEventListener('click', () => {
-                        const name = document.getElementById('locationName').value;
+                        const name  = document.getElementById('locationName').value;
                         const addr1 = document.getElementById('addressLine1').value;
                         const addr2 = document.getElementById('addressLine2').value;
-                        const city = document.getElementById('city').value;
+                        const city  = document.getElementById('city').value;
                         const state = document.getElementById('state').value;
-                        const zip = document.getElementById('zip').value;
+                        const zip   = document.getElementById('zip').value;
+                        const addrParts = [addr1, addr2, city, state, zip].filter(Boolean).join('  ');
 
-                        // Find the location list
                         const locationList = document.getElementById('organization_locations');
-                        const div = document.createElement('div');
-                        div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
-                        locationList.appendChild(div);
+                        const editingRow = locationList.querySelector('[data-editing="true"]');
+
+                        if (editingRow) {
+                          // Update existing row
+                          editingRow.dataset.name  = name;
+                          editingRow.dataset.addr1 = addr1;
+                          editingRow.dataset.addr2 = addr2;
+                          editingRow.dataset.city  = city;
+                          editingRow.dataset.state = state;
+                          editingRow.dataset.zip   = zip;
+                          editingRow.querySelector('.location-row-name').textContent = name || '';
+                          editingRow.querySelector('.location-row-addr').textContent = addrParts;
+                          delete editingRow.dataset.editing;
+                        } else {
+                          // Add new row
+                          const num = locationList.children.length + 1;
+                          const row = document.createElement('div');
+                          row.className = 'location-row';
+                          row.dataset.name  = name;
+                          row.dataset.addr1 = addr1;
+                          row.dataset.addr2 = addr2;
+                          row.dataset.city  = city;
+                          row.dataset.state = state;
+                          row.dataset.zip   = zip;
+                          row.innerHTML = `<span class="location-row-num">${num}.</span><span class="location-row-name">${name || ''}</span><span class="location-row-addr">${addrParts}</span><span class="location-row-actions"><button type="button" class="edit-btn" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn" title="Remove"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span>`;
+                          wireLocationRow(row);
+                          locationList.appendChild(row);
+                        }
 
                         // Clear and close
                         document.getElementById('locationName').value = '';
@@ -1910,6 +2124,7 @@
                         document.getElementById('city').value = '';
                         document.getElementById('state').value = '';
                         document.getElementById('zip').value = '';
+                        delete locationModal.dataset.editingRow;
                         locationModal.style.display = 'none';
                       });
 
@@ -1919,18 +2134,34 @@
                       });
 
                       document.getElementById('addPhoneBtn').addEventListener('click', () => {
-                        const name = document.getElementById('phoneName').value;
+                        const name   = document.getElementById('phoneName').value;
                         const number = document.getElementById('phoneNumber').value;
+                        const phoneList = document.getElementById('organization_phones');
+                        const editingLi = phoneList.querySelector('[data-editing="true"]');
 
-                        // Find the phone sublist
-                        const phoneSublist = document.querySelectorAll('#organizationDiv .edit--section--list--item--sublist')[1];
-                        const li = document.createElement('li');
-                        li.innerHTML = `<strong>${name}:</strong> ${number}`;
-                        phoneSublist.appendChild(li);
+                        if (editingLi) {
+                          // Update existing row
+                          editingLi.dataset.name   = name;
+                          editingLi.dataset.number = number;
+                          editingLi.querySelector('.phone-row-name').textContent   = name   || '';
+                          editingLi.querySelector('.phone-row-number').textContent = number || '';
+                          delete editingLi.dataset.editing;
+                        } else {
+                          // Add new row
+                          const num = phoneList.children.length + 1;
+                          const li = document.createElement('li');
+                          li.className = 'phone-row';
+                          li.dataset.name   = name;
+                          li.dataset.number = number;
+                          li.innerHTML = `<span class="phone-row-num">${num}.</span><span class="phone-row-name">${name || ''}</span><span class="phone-row-number">${number || ''}</span><span class="phone-row-actions"><button type="button" class="edit-btn" title="Edit"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn" title="Remove"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span>`;
+                          wirePhoneRow(li);
+                          phoneList.appendChild(li);
+                        }
 
                         // Clear and close
                         document.getElementById('phoneName').value = '';
                         document.getElementById('phoneNumber').value = '';
+                        delete phoneModal.dataset.editingRow;
                         phoneModal.style.display = 'none';
                       });
 
@@ -2064,6 +2295,20 @@
 
                 </div>
 <!---=========================================================================== EDIT (ORG) SECTIONS END ============================================================================-->
+
+<!-- Shared copy-from-org modal (used by service location Add from Organization button) -->
+<div class="copy-from-org-modal" id="copyFromOrgModal" style="display:none;">
+  <div class="copy-from-org-modal-content">
+    <h3>Add Location from Organization</h3>
+    <select id="copyFromOrgSelect">
+      <option value="">Select a location...</option>
+    </select>
+    <div class="copy-from-org-modal-buttons">
+      <button class="copy-from-org-btn-confirm" id="copyFromOrgConfirm">Add</button>
+      <button class="copy-from-org-btn-cancel" id="copyFromOrgCancel">Cancel</button>
+    </div>
+  </div>
+</div>
 <!---=========================================================================== ORG SERVICES CONTAINER START ============================================================================-->
 <div class="edit--orgServices" id="orgServicesDiv"></div>
 <!---=========================================================================== ORG SERVICES CONTAINER END ==============================================================================-->
@@ -3249,12 +3494,11 @@
                                   </select>
                                   -->
                                 </label>
-                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6">
+                                <div id="service_locations" class="app-components-edit-ProvidedService-module__addressList--qs9O6 location-row-list">
                                 </div>
 
-
                                 <button id="serviceAddLocationTrigger" class="app-components-edit-EditAddress-module__newAddressButton--hupgo" type="button">
-                                  Add Location
+                                  Add from Organization
                                 </button>
                              </li>
 
@@ -4061,26 +4305,29 @@
 
 <script>
                   document.addEventListener('DOMContentLoaded', function() {
+                    // Init modals on the template div
                     const serviceRoot = document.getElementById('serviceDivOrganization');
                     initServiceModals(serviceRoot);
+                    // Also init on any hydrated service divs in orgServicesDiv
+                    const orgServicesDiv = document.getElementById('orgServicesDiv');
+                    if (orgServicesDiv) {
+                      Array.from(orgServicesDiv.children).forEach(function(svcDiv) {
+                        initServiceModals(svcDiv);
+                      });
+                    }
                   });
 
                   function initServiceModals(root) {
-                    console.log('[initServiceModals] called, root id:', root && root.id);
+                    //DISABLED: console.log('[initServiceModals] called, root id:', root && root.id);
                     // Service Section Modal References — scoped to root
                     const serviceLocationModal = root.querySelector('#serviceAddLocationModal');
                     const servicePhoneModal = root.querySelector('#serviceAddPhoneModal');
                     const serviceNoteModal = root.querySelector('#serviceAddNoteModal');
-                    console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
+                    //DISABLED: console.log('[initServiceModals] locationModal:', serviceLocationModal, 'trigger:', root.querySelector('#serviceAddLocationTrigger'));
 
                     const locationTrigger = root.querySelector('#serviceAddLocationTrigger');
-                    console.log('[initServiceModals] locationTrigger:', locationTrigger);
-                    if (locationTrigger) {
-                      locationTrigger.addEventListener('click', () => {
-                        console.log('[initServiceModals] Add Location clicked');
-                        serviceLocationModal.style.display = 'flex';
-                      });
-                    }
+                    //DISABLED: console.log('[initServiceModals] locationTrigger:', locationTrigger);
+                    // Note: locationTrigger click is handled by the copy-from-org handler below
                     const noteTrigger = root.querySelector('#serviceAddNoteTrigger');
                     if (noteTrigger) {
                       noteTrigger.addEventListener('click', () => {
@@ -4096,16 +4343,30 @@
 
                     const addLocationBtn = root.querySelector('#serviceAddLocationBtn');
                     if (addLocationBtn) addLocationBtn.addEventListener('click', () => {
-                      const name = root.querySelector('#serviceLocationName').value;
+                      const name  = root.querySelector('#serviceLocationName').value;
                       const addr1 = root.querySelector('#serviceAddressLine1').value;
                       const addr2 = root.querySelector('#serviceAddressLine2').value;
-                      const city = root.querySelector('#serviceCity').value;
+                      const city  = root.querySelector('#serviceCity').value;
                       const state = root.querySelector('#serviceState').value;
-                      const zip = root.querySelector('#serviceZip').value;
+                      const zip   = root.querySelector('#serviceZip').value;
 
                       const locationList = root.querySelector('#service_locations');
+                      const num = locationList.children.length + 1;
+                      const addrParts = [addr1, addr2, city, state, zip].filter(Boolean).join('  ');
+
                       const div = document.createElement('div');
-                      div.innerHTML = `<strong>${name}</strong><br>${addr1}${addr2 ? '<br>' + addr2 : ''}<br>${city}, ${state} ${zip}`;
+                      div.className = 'location-row';
+                      div.dataset.name  = name;
+                      div.dataset.addr1 = addr1;
+                      div.dataset.addr2 = addr2;
+                      div.dataset.city  = city;
+                      div.dataset.state = state;
+                      div.dataset.zip   = zip;
+                      div.innerHTML = `<span class="location-row-num">${num}.</span><span class="location-row-name">${name || ''}</span><span class="location-row-addr">${addrParts}</span><span class="location-row-actions"><button type="button" class="edit-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg> EDIT</button><button type="button" class="remove-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span>`;
+                      div.querySelector('.remove-btn').addEventListener('click', () => {
+                        div.remove();
+                        Array.from(locationList.children).forEach((r, i) => { r.querySelector('.location-row-num').textContent = (i+1)+'.'; });
+                      });
                       locationList.appendChild(div);
 
                       root.querySelector('#serviceLocationName').value = '';
@@ -4116,6 +4377,72 @@
                       root.querySelector('#serviceZip').value = '';
                       serviceLocationModal.style.display = 'none';
                     });
+
+                    // Copy from org location handler — use event delegation since buttons are cloned
+                    const copyFromOrgModal   = document.getElementById('copyFromOrgModal');
+                    const copyFromOrgSelect  = document.getElementById('copyFromOrgSelect');
+                    const copyFromOrgConfirm = document.getElementById('copyFromOrgConfirm');
+                    const copyFromOrgCancel  = document.getElementById('copyFromOrgCancel');
+                    const addFromOrgTrigger  = root.querySelector('#serviceAddLocationTrigger');
+
+                    //DISABLED: console.log('[copyFromOrg] addFromOrgTrigger:', addFromOrgTrigger);
+                    //DISABLED: console.log('[copyFromOrg] copyFromOrgModal:', copyFromOrgModal);
+
+                    if (addFromOrgTrigger) {
+                      addFromOrgTrigger.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        //DISABLED: console.log('[copyFromOrg] trigger clicked');
+                        if (!copyFromOrgModal) { return; } //DISABLED: console.log('[copyFromOrg] modal not found');
+                        // Store reference to this service's location list
+                        copyFromOrgModal._targetLocationList = root.querySelector('#service_locations');
+                        // Populate select from org locations
+                        const orgLocations = document.querySelectorAll('#organization_locations .location-row');
+                        //DISABLED: console.log('[copyFromOrg] orgLocations found:', orgLocations.length);
+                        copyFromOrgSelect.innerHTML = '<option value="">Select a location...</option>';
+                        orgLocations.forEach((loc, i) => {
+                          const name  = loc.querySelector('.location-row-name')?.textContent || '';
+                          const addr  = loc.querySelector('.location-row-addr')?.textContent || '';
+                          const opt   = document.createElement('option');
+                          opt.value   = i;
+                          opt.textContent = [name, addr].filter(Boolean).join(' — ');
+                          opt.dataset.name  = loc.dataset.name  || name;
+                          opt.dataset.addr1 = loc.dataset.addr1 || '';
+                          opt.dataset.addr2 = loc.dataset.addr2 || '';
+                          opt.dataset.city  = loc.dataset.city  || '';
+                          opt.dataset.state = loc.dataset.state || '';
+                          opt.dataset.zip   = loc.dataset.zip   || '';
+                          copyFromOrgSelect.appendChild(opt);
+                        });
+                        copyFromOrgModal.style.display = 'block';
+                      });
+
+                      copyFromOrgCancel.addEventListener('click', () => { copyFromOrgModal.style.display = 'none'; });
+
+                      copyFromOrgConfirm.addEventListener('click', () => {
+                        const selected = copyFromOrgSelect.options[copyFromOrgSelect.selectedIndex];
+                        if (!selected || !selected.value) return;
+
+                        const locationList = copyFromOrgModal._targetLocationList;
+                        const num = locationList.children.length + 1;
+                        const addrParts = [selected.dataset.addr1, selected.dataset.addr2, selected.dataset.city, selected.dataset.state, selected.dataset.zip].filter(Boolean).join('  ');
+
+                        const div = document.createElement('div');
+                        div.className = 'location-row';
+                        div.dataset.name  = selected.dataset.name  || '';
+                        div.dataset.addr1 = selected.dataset.addr1 || '';
+                        div.dataset.addr2 = selected.dataset.addr2 || '';
+                        div.dataset.city  = selected.dataset.city  || '';
+                        div.dataset.state = selected.dataset.state || '';
+                        div.dataset.zip   = selected.dataset.zip   || '';
+                        div.innerHTML = `<span class="location-row-num">${num}.</span><span class="location-row-name">${selected.dataset.name || ''}</span><span class="location-row-addr">${addrParts}</span><span class="location-row-actions"><button type="button" class="remove-btn"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/></svg> REMOVE</button></span>`;
+                        div.querySelector('.remove-btn').addEventListener('click', () => {
+                          div.remove();
+                          Array.from(locationList.children).forEach((r, i) => { r.querySelector('.location-row-num').textContent = (i+1)+'.'; });
+                        });
+                        locationList.appendChild(div);
+                        copyFromOrgModal.style.display = 'none';
+                      });
+                    }
 
                     // Service Phone modal handlers
                     const cancelPhoneBtn = root.querySelector('#serviceCancelPhoneBtn');
@@ -4225,10 +4552,7 @@
 
                         const pill = document.createElement('div');
                         pill.className = 'Select-value';
-                        pill.innerHTML = `
-                          <span class="Select-value-icon" aria-hidden="true">×</span>
-                          <span class="Select-value-label">${item}</span>
-                        `;
+                        pill.innerHTML = `<span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${item}</span>`;
 
                         pill.querySelector('.Select-value-icon').addEventListener('click', () => {
                           dataObject[item] = false;

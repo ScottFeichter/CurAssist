@@ -1,26 +1,40 @@
-import { extendedConsole as console } from '../../streams/consoles/customConsoles';
-import { log } from '../../utils/logger/logger-setup/logger-wrapper';
-
-console.enter();
+// #region ===================== IMPORTS =======================================
+import { MongoMemoryServer } from 'mongodb-memory-server';
+import mongoose from 'mongoose';
+// #endregion ------------------------------------------------------------------
 
 // #region ====================== START ========================================
 
-export const testConfig = {
-  database: {
-    dialect: process.env.TEST_DB_DIALECT || 'postgres',
-    host: process.env.TEST_DB_HOST || 'localhost',
-    port: parseInt(process.env.TEST_DB_PORT || '5432'),
-    username: process.env.TEST_DB_USER || 'postgres',
-    password: process.env.TEST_DB_PASSWORD || 'password',
-    database: process.env.TEST_DB_NAME || 'your_app_test',
-    logging: false // Disable logging during tests
+let mongoServer: MongoMemoryServer;
+
+/**
+ * Starts an in-memory MongoDB server and connects Mongoose to it.
+ * Call in beforeAll().
+ */
+export async function connectTestDb(): Promise<void> {
+  mongoServer = await MongoMemoryServer.create();
+  await mongoose.connect(mongoServer.getUri());
+}
+
+/**
+ * Drops all collections and disconnects Mongoose.
+ * Call in afterAll().
+ */
+export async function disconnectTestDb(): Promise<void> {
+  await mongoose.connection.dropDatabase();
+  await mongoose.disconnect();
+  await mongoServer.stop();
+}
+
+/**
+ * Clears all collections between tests.
+ * Call in afterEach() to keep tests isolated.
+ */
+export async function clearTestDb(): Promise<void> {
+  const collections = mongoose.connection.collections;
+  for (const key in collections) {
+    await collections[key].deleteMany({});
   }
-};
-
-// #endregion ------------------------------------------------------------------
-
-console.leave();
-
-// #region ====================== NOTES ========================================
+}
 
 // #endregion ------------------------------------------------------------------

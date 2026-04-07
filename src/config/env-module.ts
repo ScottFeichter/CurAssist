@@ -37,7 +37,11 @@ if (environmentVariables.error) {
 }
 
 
-// Array for helper function to ensure required environment variables are defined
+/**
+ * Array of required environment variable names.
+ * Importing this from entry.ts triggers env-module.ts to execute,
+ * which loads the correct .env file and validates all required vars.
+ */
 export const requiredEnvVars = [
   // 'PG_DB_HOST',
   // 'PG_DB_USERNAME',
@@ -48,10 +52,8 @@ export const requiredEnvVars = [
   'SERVER_PORT',
   'NODE_ENV',
   'BASE_URL',
-  // 'JWT_ACCESS_TOKEN_SECRET',
-  // 'JWT_REFRESH_TOKEN_SECRET',
-  'WINSTON_LOG_LEVEL'
-  // 'SEQUELIZE_LOGGING'
+  'WINSTON_LOG_LEVEL',
+  'DB_CONNECT'
 ];
 
 
@@ -65,19 +67,11 @@ requiredEnvVars.forEach((envVar) => {
 
 // Export variables of the process.env
 export const {
-  // PG_DB_NAME,
-  // PG_DB_DIALECT,
-  // PG_DB_HOST,
-  // PG_DB_PORT,
-  // PG_DB_USERNAME,
-  // PG_DB_PASSWORD,
   SERVER_PORT,
   NODE_ENV,
   BASE_URL,
-  // JWT_ACCESS_TOKEN_SECRET,
-  // JWT_REFRESH_TOKEN_SECRET,
-  WINSTON_LOG_LEVEL
-  // SEQUELIZE_LOGGING,
+  WINSTON_LOG_LEVEL,
+  DB_CONNECT
 } = process.env;
 
 
