@@ -576,16 +576,25 @@ function createBucket() {
   document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   document.getElementById('uploadText').textContent = 'Click to select file or drag and drop';
   document.getElementById('createBucketBtn').disabled = true;
-  document.getElementById('progressContainer').style.display = 'none';
-  document.getElementById('progressBar').style.width = '0%';
-  document.getElementById('progressBar').textContent = '0%';
+  document.getElementById('createBucketProgress').style.display = 'none';
+  document.getElementById('createBucketProgress').textContent = '';
   document.getElementById('createBucketModal').style.display = 'block';
 }
 
 function toggleCreateBucketEmpty() {
   const isEmpty = document.getElementById('createBucketEmpty').checked;
+  if (isEmpty) document.getElementById('createBucketDirectSubmit').checked = false;
   document.getElementById('createBucketSpreadsheetSection').style.display = isEmpty ? 'none' : 'block';
   document.getElementById('createBucketBtn').disabled = !isEmpty && !selectedFile;
+}
+
+function toggleCreateBucketDirectSubmit() {
+  const isDirect = document.getElementById('createBucketDirectSubmit').checked;
+  if (isDirect) {
+    document.getElementById('createBucketEmpty').checked = false;
+    document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
+    document.getElementById('createBucketBtn').disabled = !selectedFile;
+  }
 }
 
 /**
@@ -668,7 +677,8 @@ async function processCreateBucket() {
   formData.append('bucketName', bucketName);
 
   document.getElementById('createBucketBtn').disabled = true;
-  document.getElementById('progressContainer').style.display = 'block';
+  document.getElementById('createBucketProgress').style.display = 'block';
+  document.getElementById('createBucketProgress').textContent = 'Working...';
 
   const endpoint = directSubmit
     ? `${API_BASE}/buckets/create-bucket-spreadsheet-submit`
@@ -683,8 +693,7 @@ async function processCreateBucket() {
     });
     const data = await response.json();
 
-    document.getElementById('progressBar').style.width = '100%';
-    document.getElementById('progressBar').textContent = '100%';
+    document.getElementById('createBucketProgress').style.display = 'none';
     document.getElementById('createBucketModal').style.display = 'none';
 
     if (directSubmit && response.ok) {
@@ -698,8 +707,7 @@ async function processCreateBucket() {
 
       for (let i = 0; i < orgs.length; i++) {
         const org = orgs[i];
-        document.getElementById('progressBar').style.width = `${Math.round(((i + 1) / orgs.length) * 100)}%`;
-        document.getElementById('progressBar').textContent = `Submitting ${i + 1} of ${orgs.length}: ${org.name}...`;
+        document.getElementById('createBucketProgress').textContent = `Submitting ${i + 1} of ${orgs.length}: ${org.name}...`;
 
         try {
           // Load the org's hydrated data from Atlas
@@ -763,8 +771,7 @@ async function processCreateBucket() {
         }
       }
 
-      document.getElementById('progressBar').style.width = '100%';
-      document.getElementById('progressBar').textContent = '100%';
+      document.getElementById('createBucketProgress').style.display = 'none';
 
       let msg = `Submitted ${succeeded} of ${orgs.length} orgs to SF Service Guide.`;
       if (failed.length) {
