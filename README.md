@@ -169,6 +169,10 @@ Only available when `NODE_ENV=development`:
 - `GET /docs/buckets-map` — Spreadsheet field maps
 - `GET /docs/tests` — Test coverage documentation
 
+### Info (all environments)
+
+- `GET /docs/spreadsheet-format` — Spreadsheet column header guide for bucket creation
+
 ### Buckets (internal)
 
 - `GET /api/buckets` — List all bucket names

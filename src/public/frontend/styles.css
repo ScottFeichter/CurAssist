@@ -1,0 +1,612 @@
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    #header {
+      background: linear-gradient(135deg, #3d7ef0, #1a5bb8);
+      color: white;
+      padding: 6px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    #header-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #header-center h2 {
+      margin: .25rem 0 .25rem 0;
+      font-size:xx-large;
+      /* line-height: 1.5; */
+    }
+
+    #header-divider {
+      width: 60%;
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.3);
+      margin: 4px 0 3px;
+    }
+
+    #header-info {
+      margin: 0;
+    }
+
+    .info-btn {
+      background: none;
+      color: rgba(255,255,255,0.7);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .info-btn:hover {
+      color: rgba(255,255,255,0.4);
+      background: none;
+      border: none;
+    }
+
+
+    #header-settings {
+      margin: 0;
+    }
+
+    .settings-btn {
+      background: none;
+      color: rgba(255,255,255,0.7);
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+    }
+
+    .settings-btn:hover {
+      color: rgba(255,255,255,0.4);
+      background: none;
+      border: none;
+    }
+
+
+    .header-side {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: white;
+    }
+
+    .leftSidebar-toggle-btn, .rightSidebar-toggle-btn {
+      width: 130px;
+      height: 30px;
+      padding: 0 10px;
+      background: rgba(255,255,255,0.2);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      line-height: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .leftSidebar-toggle-btn.sidebar-closed, .rightSidebar-toggle-btn.sidebar-closed {
+      background: rgba(255,255,255,0.08);
+    }
+
+    .leftSidebar-toggle-btn:hover, .rightSidebar-toggle-btn:hover {
+      background: rgba(255,255,255,0.35);
+    }
+
+    #main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    #leftSidebar {
+      width: 250px;
+      background: #f0f0f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    #leftSidebar.collapsed {
+      width: 0;
+      min-width: 0;
+      padding: 0;
+      overflow: hidden;
+      transition: width 0.3s, padding 0.3s;
+    }
+
+    #resizeHandle {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 60px;
+      background: transparent;
+      cursor: ew-resize;
+      border-radius: 4px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    #resizeHandle::before,
+    #resizeHandle::after {
+      content: '';
+      width: 2px;
+      height: 20px;
+      background: #999;
+      border-radius: 1px;
+    }
+
+    #resizeHandle:hover::before,
+    #resizeHandle:hover::after {
+      background: #276CE5;
+    }
+
+    #rightSidebar {
+      width: 250px;
+      background: #f0f0f0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      border-left: 1px solid #ccc;
+      overflow-y: auto;
+      overflow-x: hidden;
+      position: relative;
+      flex-shrink: 0;
+      direction: rtl;
+    }
+
+    #rightSidebar > * {
+      direction: ltr;
+    }
+
+    #leftSidebar::-webkit-scrollbar,
+    #rightSidebar::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    #leftSidebar::-webkit-scrollbar-track,
+    #rightSidebar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    #leftSidebar::-webkit-scrollbar-thumb,
+    #rightSidebar::-webkit-scrollbar-thumb {
+      background: #7aa3d4;
+      border-radius: 4px;
+    }
+
+    #leftSidebar::-webkit-scrollbar-thumb:hover,
+    #rightSidebar::-webkit-scrollbar-thumb:hover {
+      background: #276CE5;
+    }
+
+    #leftSidebar {
+      scrollbar-width: thin;
+      scrollbar-color: #7aa3d4 transparent;
+    }
+
+    #rightSidebar {
+      scrollbar-width: thin;
+      scrollbar-color: #7aa3d4 transparent;
+    }
+
+    #rightSidebar.collapsed {
+      width: 0;
+      min-width: 0;
+      padding: 0;
+      overflow: hidden;
+      transition: width 0.3s, padding 0.3s;
+    }
+
+    #rightResizeHandle {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px;
+      height: 60px;
+      background: transparent;
+      cursor: ew-resize;
+      border-radius: 4px;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    #rightResizeHandle::before,
+    #rightResizeHandle::after {
+      content: '';
+      width: 2px;
+      height: 20px;
+      background: #999;
+      border-radius: 1px;
+    }
+
+    #rightResizeHandle:hover::before,
+    #rightResizeHandle:hover::after {
+      background: #276CE5;
+    }
+
+    #collapseBtn {
+      display: none;
+    }
+
+    #content {
+      flex: 1;
+      overflow: hidden;
+      padding: 20px;
+      background: white url('Images/CAlogo.png') center center no-repeat;
+      background-size: 300px auto;
+      min-width: 0;
+    }
+
+    iframe {
+      width: 100%;
+      min-width: 800px;
+      height: 100%;
+      border: none;
+    }
+
+    button {
+      padding: 12px 20px;
+      cursor: pointer;
+      border: 1px solid #ccc;
+      background: white;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-buttons button {
+      flex: 1;
+      padding: 8px 4px;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      background: #f5f5f5;
+      border-color: #276CE5;
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+
+    .createBucket-btn {
+      background: linear-gradient(135deg, #2d9e2d, #1a6b1a);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .createBucket-btn:hover {
+      background: linear-gradient(135deg, #258025, #145214);
+    }
+
+    .deleteBucket-btn {
+      background: linear-gradient(135deg, #e53535, #a01010);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .deleteBucket-btn:hover {
+      background: linear-gradient(135deg, #c82020, #800a0a);
+    }
+
+
+    .moveFile-btn {
+      background: linear-gradient(135deg, #999, #606060);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .moveFile-btn:hover {
+      background: linear-gradient(135deg, #808080, #484848);
+    }
+
+    .moveFile-btn:active {
+      background: linear-gradient(135deg, #686868, #303030);
+    }
+
+    .copyFile-btn {
+      background: linear-gradient(135deg, #444, #111);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .copyFile-btn:hover {
+      background: linear-gradient(135deg, #333, #000);
+    }
+
+    .copyFile-btn:active {
+      background: linear-gradient(135deg, #222, #000);
+    }
+
+    .createFile-btn {
+      background: linear-gradient(135deg, #2d9e2d, #1a6b1a);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .createFile-btn:hover {
+      background: linear-gradient(135deg, #258025, #145214);
+    }
+
+    .importFile-btn {
+      background: linear-gradient(135deg, #f0a060, #c87030);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .importFile-btn:hover {
+      background: linear-gradient(135deg, #dc8c50, #b06020);
+    }
+
+    .importFile-btn:active {
+      background: linear-gradient(135deg, #c87840, #985010);
+    }
+
+
+    .saveFile-btn {
+      background: linear-gradient(135deg, #3d7ef0, #1a5bb8);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .saveFile-btn:hover {
+      background: linear-gradient(135deg, #2a6ad8, #1248a0);
+    }
+
+    .deleteFile-btn {
+      background: linear-gradient(135deg, #e53535, #a01010);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .deleteFile-btn:hover {
+      background: linear-gradient(135deg, #c82020, #800a0a);
+    }
+
+    .submitFile-btn {
+      background: linear-gradient(135deg, #f953c6, #b91d73);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .submitFile-btn:hover {
+      background: linear-gradient(135deg, #e040b0, #a01060);
+    }
+
+    #fileInfo {
+      padding: 8px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+      width: 100%;
+    }
+
+    #fileCount {
+      text-align: center;
+      padding: 1px;
+      border-radius: 4px;
+      font-size: 13px;
+      color: #666;
+      white-space: nowrap;
+    }
+
+    #fileMove {
+      text-align: center;
+      padding: 1px;
+      /* background: white; */
+      border-radius: 4px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #666;
+      text-transform: uppercase;
+      margin-top: 10px;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    select {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background-color: white;
+      margin: 5% auto;
+      padding: 30px;
+      border-radius: 8px;
+      width: 400px;
+      text-align: center;
+      max-height: 85vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-content p {
+      margin-bottom: 20px;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .modal-buttons button {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .delete-btn {
+      background: linear-gradient(135deg, #e53535, #a01010);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .delete-btn:hover {
+      background: linear-gradient(135deg, #c82020, #800a0a);
+    }
+
+    .cancel-btn {
+      background: linear-gradient(135deg, #3d7ef0, #1a5bb8);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .cancel-btn:hover {
+      background: linear-gradient(135deg, #2a6ad8, #1248a0);
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #f953c6, #b91d73);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .submit-btn:hover {
+      background: linear-gradient(135deg, #e040b0, #a01060);
+    }
+
+    .modal-input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .file-upload-area {
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      padding: 40px;
+      text-align: center;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .file-upload-area:hover {
+      border-color: #276CE5;
+      background: #f5f5f5;
+    }
+
+    .file-upload-area.drag-over {
+      border-color: #276CE5;
+      background: #e3f2fd;
+    }
+
+    @keyframes blink {
+      50% { opacity: 0; }
+    }
+
+    .create-btn {
+      background: linear-gradient(135deg, #2d9e2d, #1a6b1a);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .create-btn:hover {
+      background: linear-gradient(135deg, #258025, #145214);
+    }
+
+    .create-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+
+    .directImport-btn {
+      background: linear-gradient(135deg, #f0a060, #c87030);
+      color: white;
+      font-weight: 600;
+      border: none;
+    }
+
+    .directImport-btn:hover {
+      background: linear-gradient(135deg, #dc8c50, #b06020);
+    }

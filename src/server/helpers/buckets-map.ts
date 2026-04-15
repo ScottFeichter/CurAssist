@@ -45,31 +45,33 @@ export const orgFieldMap: Record<string, string> = {
   organization_legal_status: 'Legal Status',
   organiztion_hours: "Hours", // need to work on it
   organization_markdown_notes: 'Markdown Notes',
+  organization_top_categories: 'Categories',
+  organization_top_eligibilities: 'Eligibilities',
 };
 
-// Service section fields (using id attributes)
+// Service section fields (using id attributes) — spreadsheet headers prefixed with "Service"
 export const serviceFieldMap: Record<string, string> = {
-  service_internal_notes: 'Internal Notes',
-  service_name: 'Name',
-  service_alternate_name: 'Nickname',
-  service_locations: 'Locations', // Special: uses serviceLocationFieldMap for actual data
-  service_email: 'Email',
-  service_description: 'Description',
-  service_short_description: 'Short Description',
-  service_application_process: 'Application Process',
-  service_required_documents: 'Required Documents',
-  service_interpretation_services: 'Interpretation Services',
-  service_clinician_actions: 'Clinician Actions',
-  service_eligibilities: 'Eligibility', // need to work on it
-  service_cost: "Cost",
-  service_wait_time: 'Wait Time',
-  service_website: 'Website',
-  service_hours: "Hours", // need to work on it
-  service_markdown_notes: 'Markdown Notes',
-  service_top_categories: 'Top Categories', // Special: uses FieldMap for actual data
-  service_sub_categories: 'Sub Categories', //   Special: uses FieldMap for actual data
-  service_top_eligibilities: 'Top Eligibilities', // Special: uses FieldMap for actual data
-  service_sub_eligibilities: 'Sub Eligibilities', //   Special: uses FieldMap for actual data
+  service_internal_notes: 'Service Internal Notes',
+  service_name: 'Service Name',
+  service_alternate_name: 'Service Nickname',
+  service_locations: 'Service Locations', // Special: uses serviceLocationFieldMap for actual data
+  service_email: 'Service Email',
+  service_description: 'Service Description',
+  service_short_description: 'Service Short Description',
+  service_application_process: 'Service Application Process',
+  service_required_documents: 'Service Required Documents',
+  service_interpretation_services: 'Service Interpretation Services',
+  service_clinician_actions: 'Service Clinician Actions',
+  service_eligibilities: 'Service Eligibility', // need to work on it
+  service_cost: 'Service Cost',
+  service_wait_time: 'Service Wait Time',
+  service_website: 'Service Website',
+  service_hours: 'Service Hours', // need to work on it
+  service_markdown_notes: 'Service Markdown Notes',
+  service_top_categories: 'Service Categories',
+  service_sub_categories: 'Service Sub Categories',
+  service_top_eligibilities: 'Service Eligibilities',
+  service_sub_eligibilities: 'Service Sub Eligibilities',
   service_belongs_to_org: 'Organization ID', // ID of the org this service belongs to
 };
 
@@ -82,13 +84,19 @@ export const organizationLocationFieldMap = {
   zip: 'Zip',
 };
 
-// Service location fields mapping (uses same columns as organization locations)
+// Service location fields mapping — prefixed headers
 export const serviceLocationFieldMap = {
-  location_name: "Location Name",
-  address: 'Address',
-  city: 'City',
-  state: 'State',
-  zip: 'Zip',
+  location_name: 'Service Location Name',
+  address: 'Service Address',
+  city: 'Service City',
+  state: 'Service State',
+  zip: 'Service Zip',
+};
+
+// Service phone fields mapping — prefixed headers
+export const servicePhoneFieldMap = {
+  phone_name: 'Service Phone Name',
+  phone: 'Service Phone',
 };
 
 // Phone fields mapping (special handling required)
