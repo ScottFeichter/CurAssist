@@ -768,17 +768,24 @@ async function processCreateBucket() {
     if (directSubmit && response.ok) {
       const orgs = data.orgs || [];
       const bucketName = data.bucketName;
-
-      // Download the import report if present
-      if (data.report) downloadReport(data.report, data.reportFilename);
+      const dbResults = data.dbResults || [];
+      const workbookBase64 = data.workbookBase64;
 
       // Browser-side submit loop using the existing SF proxy
       let succeeded = 0;
       const failed = [];
+      const sfsgResults = [];
 
       for (let i = 0; i < orgs.length; i++) {
         const org = orgs[i];
         document.getElementById('createBucketProgress').textContent = `Submitting ${i + 1} of ${orgs.length}: ${org.name}...`;
+
+        // Skip SFSG submit if DB creation failed for this row
+        if (dbResults[i] && dbResults[i].status === 'Failed') {
+          sfsgResults.push({ row: i, status: 'Skipped', detail: 'DB creation failed', sfsgId: '' });
+          failed.push({ name: org.name, error: 'Skipped — DB creation failed' });
+          continue;
+        }
 
         try {
           // Load the org's hydrated data from Atlas
@@ -838,10 +845,27 @@ async function processCreateBucket() {
             body: JSON.stringify({ id: org._id, sfsg_id })
           });
 
+          sfsgResults.push({ row: i, status: 'Success', detail: '', sfsgId: sfsg_id });
           succeeded++;
         } catch (err) {
+          sfsgResults.push({ row: i, status: 'Failed', detail: err.message, sfsgId: '' });
           failed.push({ name: org.name, error: err.message });
         }
+      }
+
+      // Build combined report with DB + SFSG results
+      document.getElementById('createBucketProgress').textContent = 'Building report...';
+      try {
+        const reportRes = await fetch(`${API_BASE}/buckets/build-report`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+          credentials: 'include',
+          body: JSON.stringify({ workbookBase64, dbResults, sfsgResults, bucketName })
+        });
+        const reportData = await reportRes.json();
+        if (reportData.report) downloadReport(reportData.report, reportData.reportFilename);
+      } catch (reportErr) {
+        console.error('Failed to build report:', reportErr);
       }
 
       document.getElementById('createBucketProgress').style.display = 'none';

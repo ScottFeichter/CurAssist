@@ -273,13 +273,22 @@ export async function generateOrgDocuments(
   return results;
 }
 
+/** Result of a single SFSG submission attempt. */
+export interface ISfsgResult {
+  row: number;
+  status: 'Success' | 'Failed' | 'Skipped';
+  detail: string;
+  sfsgId?: number;
+}
+
 /**
  * Appends import status columns to the original workbook and returns an xlsx buffer.
  * @param workbook - The original parsed workbook
- * @param results - Per-row import results
+ * @param results - Per-row DB creation results
  * @param bucketName - The bucket name used for the import
+ * @param sfsgResults - Optional per-row SFSG submission results (direct submit only)
  */
-export function buildReportBuffer(workbook: XLSX.WorkBook, results: IRowResult[], bucketName: string): Buffer {
+export function buildReportBuffer(workbook: XLSX.WorkBook, results: IRowResult[], bucketName: string, sfsgResults?: ISfsgResult[]): Buffer {
   log.enter('buildReportBuffer()', log.brack);
 
   const sheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -287,11 +296,18 @@ export function buildReportBuffer(workbook: XLSX.WorkBook, results: IRowResult[]
   const headers = data[0] as string[];
   const timestamp = new Date().toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
 
-  headers.push('Import Status', 'Import Detail', 'Bucket Name', 'Import Date');
+  headers.push('DB Status', 'DB Detail');
+  if (sfsgResults) headers.push('SFSG Status', 'SFSG Detail', 'SFSG Org ID');
+  headers.push('Bucket Name', 'Import Date');
 
   for (let i = 0; i < results.length; i++) {
     const dataRow = data[i + 1] || [];
-    dataRow.push(results[i].status, results[i].detail, bucketName, timestamp);
+    dataRow.push(results[i].status, results[i].detail);
+    if (sfsgResults) {
+      const sfsg = sfsgResults[i] || { status: 'Skipped', detail: 'No SFSG result', sfsgId: '' };
+      dataRow.push(sfsg.status, sfsg.detail, sfsg.sfsgId || '');
+    }
+    dataRow.push(bucketName, timestamp);
     data[i + 1] = dataRow;
   }
 

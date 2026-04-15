@@ -441,9 +441,16 @@
     display: flex;
     flex-direction: column;
     position: sticky;
-    top: 5rem;
-    height: 94vh;
+    top: 0;
+    height: 100vh;
     transition: width 0.3s ease;
+    flex-shrink: 0;
+  }
+
+  .edit--main {
+    flex: 1;
+    min-width: 0;
+    width: auto;
   }
 
   .app-components-edit-EditSidebar-module__sidebar--npORK.collapsed {

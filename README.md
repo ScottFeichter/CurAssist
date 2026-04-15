@@ -189,6 +189,7 @@ Only available when `NODE_ENV=development`:
 - `POST /api/buckets/create-bucket-empty` — Create a named empty bucket
 - `POST /api/buckets/create-bucket-spreadsheet` — Create new bucket from spreadsheet upload; returns import report as base64 xlsx
 - `POST /api/buckets/create-bucket-spreadsheet-submit` — Create bucket from spreadsheet, return org list for browser-side SFSG submission; returns import report as base64 xlsx
+- `POST /api/buckets/build-report` — Build combined import report from DB + SFSG results; returns xlsx as base64
 - `DELETE /api/buckets/delete` — Delete a single org
 - `DELETE /api/buckets/:bucket` — Delete entire bucket and all its orgs
 

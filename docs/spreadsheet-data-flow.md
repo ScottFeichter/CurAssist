@@ -128,15 +128,35 @@ If a field was not stored during import, it will be empty in the form.
 
 ## Import Report
 
-After processing all rows, `buildReportBuffer()` appends four columns to the original spreadsheet and returns it as an `.xlsx` buffer:
+After processing all rows, `buildReportBuffer()` appends status columns to the original spreadsheet and returns it as an `.xlsx` buffer.
+
+### Standard bucket creation (no direct submit)
+
+Report columns appended:
 
 | Column | Description |
 |---|---|
-| Import Status | `Success` or `Failed` |
-| Import Detail | Empty on success; error message on failure |
+| DB Status | `Success` or `Failed` |
+| DB Detail | Empty on success; error message on failure |
 | Bucket Name | The bucket the import targeted |
 | Import Date | Timestamp of the import (UTC) |
 
-The report is returned as a base64-encoded string in the JSON response (`report` and `reportFilename` fields). The browser decodes it and triggers an automatic file download.
+The report is returned as base64 in the JSON response and auto-downloaded by the browser.
 
-Each row is processed independently — a failure on one row does not prevent other rows from being created. The notification message shows the success/failure count.
+### Direct submit to SFSG
+
+The report is deferred until after the browser-side SFSG submission loop completes. The browser collects SFSG results per row, then POSTs them along with the DB results and original workbook to `POST /api/buckets/build-report`, which builds a combined report.
+
+Report columns appended:
+
+| Column | Description |
+|---|---|
+| DB Status | `Success` or `Failed` |
+| DB Detail | Empty on success; error message on failure |
+| SFSG Status | `Success`, `Failed`, or `Skipped` |
+| SFSG Detail | Empty on success; error message on failure |
+| SFSG Org ID | The SFSG-assigned org ID on success |
+| Bucket Name | The bucket the import targeted |
+| Import Date | Timestamp of the import (UTC) |
+
+Each row is processed independently — a failure on one row does not prevent other rows from being created or submitted.
