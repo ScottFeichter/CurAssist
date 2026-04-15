@@ -623,6 +623,7 @@ function createBucket() {
   document.getElementById('createBucketName').value = '';
   document.getElementById('createBucketEmpty').checked = false;
   document.getElementById('createBucketDirectSubmit').checked = false;
+  document.getElementById('createServiceFromOrg').checked = false;
   document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   document.getElementById('uploadText').textContent = 'Click to select file or drag and drop';
   document.getElementById('createBucketBtn').disabled = true;
@@ -688,6 +689,26 @@ if (uploadArea) {
 }
 
 /**
+ * Decodes a base64-encoded xlsx report and triggers a browser download.
+ * @param {string} base64 - Base64-encoded file content
+ * @param {string} filename - Suggested download filename
+ */
+function downloadReport(base64, filename) {
+  const bytes = atob(base64);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  const blob = new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename || 'import_report.xlsx';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
  * Uploads the selected spreadsheet and creates a new bucket.
  * @returns {Promise<void>}
  */
@@ -725,6 +746,7 @@ async function processCreateBucket() {
   const formData = new FormData();
   formData.append('spreadsheet', selectedFile);
   formData.append('bucketName', bucketName);
+  formData.append('createServiceFromOrg', document.getElementById('createServiceFromOrg').checked);
 
   document.getElementById('createBucketBtn').disabled = true;
   document.getElementById('createBucketProgress').style.display = 'block';
@@ -746,14 +768,24 @@ async function processCreateBucket() {
     if (directSubmit && response.ok) {
       const orgs = data.orgs || [];
       const bucketName = data.bucketName;
+      const dbResults = data.dbResults || [];
+      const workbookBase64 = data.workbookBase64;
 
       // Browser-side submit loop using the existing SF proxy
       let succeeded = 0;
       const failed = [];
+      const sfsgResults = [];
 
       for (let i = 0; i < orgs.length; i++) {
         const org = orgs[i];
         document.getElementById('createBucketProgress').textContent = `Submitting ${i + 1} of ${orgs.length}: ${org.name}...`;
+
+        // Skip SFSG submit if DB creation failed for this row
+        if (dbResults[i] && dbResults[i].status === 'Failed') {
+          sfsgResults.push({ row: i, status: 'Skipped', detail: 'DB creation failed', sfsgId: '' });
+          failed.push({ name: org.name, error: 'Skipped — DB creation failed' });
+          continue;
+        }
 
         try {
           // Load the org's hydrated data from Atlas
@@ -813,10 +845,27 @@ async function processCreateBucket() {
             body: JSON.stringify({ id: org._id, sfsg_id })
           });
 
+          sfsgResults.push({ row: i, status: 'Success', detail: '', sfsgId: sfsg_id });
           succeeded++;
         } catch (err) {
+          sfsgResults.push({ row: i, status: 'Failed', detail: err.message, sfsgId: '' });
           failed.push({ name: org.name, error: err.message });
         }
+      }
+
+      // Build combined report with DB + SFSG results
+      document.getElementById('createBucketProgress').textContent = 'Building report...';
+      try {
+        const reportRes = await fetch(`${API_BASE}/buckets/build-report`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
+          credentials: 'include',
+          body: JSON.stringify({ workbookBase64, dbResults, sfsgResults, bucketName })
+        });
+        const reportData = await reportRes.json();
+        if (reportData.report) downloadReport(reportData.report, reportData.reportFilename);
+      } catch (reportErr) {
+        console.error('Failed to build report:', reportErr);
       }
 
       document.getElementById('createBucketProgress').style.display = 'none';
@@ -832,6 +881,7 @@ async function processCreateBucket() {
     } else if (response.ok) {
       document.getElementById('createBucketProgress').style.display = 'none';
       document.getElementById('createBucketModal').style.display = 'none';
+      if (data.report) downloadReport(data.report, data.reportFilename);
       notify(data.message || 'Bucket created successfully');
       init();
     } else {
@@ -856,6 +906,7 @@ function cancelCreateBucket() {
   document.getElementById('createBucketName').value = '';
   document.getElementById('createBucketEmpty').checked = false;
   document.getElementById('createBucketDirectSubmit').checked = false;
+  document.getElementById('createServiceFromOrg').checked = false;
   document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   selectedFile = null;
 }

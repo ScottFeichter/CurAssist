@@ -5,7 +5,8 @@ import { extendedConsole as console } from '../../../../streams/consoles/customC
 import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { Bucket } from '../../../../database/models/bucket.model';
 import { Org } from '../../../../database/models/org.model';
-import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, normalizeSFSGStringArray } from '../../../helpers/bucket-helpers';
+import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, normalizeSFSGStringArray, buildReportBuffer } from '../../../helpers/bucket-helpers';
+import * as XLSX from 'xlsx';
 // #endregion ------------------------------------------------------------------
 
 console.enter();
@@ -449,18 +450,45 @@ bucketsRouter.post('/create-bucket-spreadsheet-submit', upload.single('spreadshe
     if (!bucketName) return res.status(400).json({ success: false, error: 'Bucket name is required' });
 
     // Create bucket and org documents — same as create-bucket-spreadsheet
+    const createServiceFromOrg = req.body.createServiceFromOrg === 'true';
     await createBucketStructure(bucketName);
-    const { rows } = await parseSpreadsheet(file.buffer);
-    await generateOrgDocuments(bucketName, rows, () => {});
+    const { rows, workbook } = await parseSpreadsheet(file.buffer);
+    const results = await generateOrgDocuments(bucketName, rows, () => {}, createServiceFromOrg);
+
+    const succeeded = results.filter(r => r.status === 'Success').length;
+    const failed = results.filter(r => r.status === 'Failed').length;
+
+    // Send workbook as base64 so browser can POST it back with SFSG results for combined report
+    const workbookBase64 = Buffer.from(XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' })).toString('base64');
 
     // Return the list of created orgs so the browser can loop and submit each one
     const orgs = await Org.find({ bucket: bucketName, status: 'incomplete' }).select('_id name');
 
     log.retrn('POST /api/buckets/create-bucket-spreadsheet-submit', log.kcarb);
-    res.json({ success: true, bucketName, orgs: orgs.map(o => ({ _id: o._id, name: o.name })) });
+    res.json({ success: true, bucketName, orgs: orgs.map(o => ({ _id: o._id, name: o.name })), succeeded, failed, dbResults: results, workbookBase64 });
 
   } catch (error) {
     log.retrn('POST /api/buckets/create-bucket-spreadsheet-submit', log.kcarb);
+    next(error);
+  }
+});
+
+// POST /api/buckets/build-report — Build combined import report from DB + SFSG results
+bucketsRouter.post('/build-report', async (req: Request, res: Response, next: NextFunction) => {
+  log.enter('POST /api/buckets/build-report', log.brack);
+  try {
+    const { workbookBase64, dbResults, sfsgResults, bucketName } = req.body;
+    if (!workbookBase64 || !dbResults || !bucketName) return res.status(400).json({ success: false, error: 'Missing required fields' });
+
+    const workbook = XLSX.read(Buffer.from(workbookBase64, 'base64'), { type: 'buffer' });
+    const reportBuffer = buildReportBuffer(workbook, dbResults, bucketName, sfsgResults);
+    const report = reportBuffer.toString('base64');
+    const reportFilename = `${bucketName.replace(/[^a-zA-Z0-9._-]/g, '_')}_report.xlsx`;
+
+    log.retrn('POST /api/buckets/build-report', log.kcarb);
+    res.json({ success: true, report, reportFilename });
+  } catch (error) {
+    log.retrn('POST /api/buckets/build-report', log.kcarb);
     next(error);
   }
 });
@@ -475,12 +503,19 @@ bucketsRouter.post('/create-bucket-spreadsheet', upload.single('spreadsheet'), a
     if (!file)       return res.status(400).json({ success: false, error: 'No spreadsheet file uploaded' });
     if (!bucketName) return res.status(400).json({ success: false, error: 'Bucket name is required' });
 
+    const createServiceFromOrg = req.body.createServiceFromOrg === 'true';
     await createBucketStructure(bucketName);
-    const { rows } = await parseSpreadsheet(file.buffer);
-    await generateOrgDocuments(bucketName, rows, (_progress) => {});
+    const { rows, workbook } = await parseSpreadsheet(file.buffer);
+    const results = await generateOrgDocuments(bucketName, rows, (_progress) => {}, createServiceFromOrg);
+
+    const succeeded = results.filter(r => r.status === 'Success').length;
+    const failed = results.filter(r => r.status === 'Failed').length;
+    const reportBuffer = buildReportBuffer(workbook, results, bucketName);
+    const report = reportBuffer.toString('base64');
+    const reportFilename = `${bucketName.replace(/[^a-zA-Z0-9._-]/g, '_')}_report.xlsx`;
 
     log.retrn('POST /api/buckets/create-bucket-spreadsheet', log.kcarb);
-    res.json({ success: true, message: 'Bucket created successfully!' });
+    res.json({ success: true, message: `Bucket created: ${succeeded} succeeded, ${failed} failed`, succeeded, failed, report, reportFilename });
   } catch (error) {
     log.retrn('POST /api/buckets/create-bucket-spreadsheet', log.kcarb);
     next(error);
