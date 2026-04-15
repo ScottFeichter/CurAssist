@@ -30,8 +30,9 @@
     }
 
     #header-center h2 {
-      margin: 0;
-      line-height: 1.2;
+      margin: .25rem 0 .25rem 0;
+      font-size:xx-large;
+      /* line-height: 1.5; */
     }
 
     #header-divider {
@@ -59,6 +60,27 @@
     .info-btn:hover {
       background: rgba(255,255,255,0.3);
     }
+
+
+    #header-settings {
+      margin: 0;
+    }
+
+    .settings-btn {
+      background: rgba(255,255,255,0.15);
+      color: white;
+      border: 0.5px solid rgba(255,255,255,0.2);
+      border-radius: 4px;
+      padding: 2px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .settings-btn:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
 
     .header-side {
       display: flex;
@@ -599,13 +621,11 @@
     <div class="header-side">
       <button class="leftSidebar-toggle-btn" onclick="toggleSidebar()"><svg style="display:block" width="14" height="14" viewBox="0 0 18 18" fill="white" xmlns="http://www.w3.org/2000/svg"><rect y="3" width="18" height="2" rx="1"/><rect y="8" width="18" height="2" rx="1"/><rect y="13" width="18" height="2" rx="1"/></svg> Bucket Menu</button>
     </div>
+    <button class="info-btn" onclick="window.open('/docs/spreadsheet-format','_blank')" title="Info"><svg viewBox="0 0 16 16" fill="currentColor" width="16" height="16"><path d="M7 4.75c0-.412.338-.75.75-.75h.5c.412 0 .75.338.75.75v.5c0 .412-.338.75-.75.75h-.5A.753.753 0 0 1 7 5.25v-.5zM10 12H6v-1h1V8H6V7h3v4h1z"/><path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zm0 14.5a6.5 6.5 0 1 1 0-13 6.5 6.5 0 0 1 0 13z"/></svg></button>
     <div id="header-center">
       <h2>CurAssist WorkFlow</h2>
-      <hr id="header-divider">
-      <div id="header-info">
-        <button class="info-btn" onclick="window.open('/docs/spreadsheet-format','_blank')">Info</button>
-      </div>
     </div>
+    <button class="settings-btn" onclick="window.open('/docs/settings-format','_blank')" title="Settings"><svg viewBox="0 0 512 512" fill="currentColor" width="16" height="16"><path d="M470.39 300l-.47-.38-31.56-24.75a16.11 16.11 0 01-6.1-13.33v-11.56a16 16 0 016.11-13.22L469.92 212l.47-.38a26.68 26.68 0 005.9-34.06l-42.71-73.9a1.59 1.59 0 01-.13-.22A26.86 26.86 0 00401 92.14l-.35.13-37.1 14.93a15.94 15.94 0 01-14.47-1.29q-4.92-3.1-10-5.86a15.94 15.94 0 01-8.19-11.82l-5.59-39.59-.12-.72A27.22 27.22 0 00298.76 26h-85.52a26.92 26.92 0 00-26.45 22.39l-.09.56-5.57 39.67a16 16 0 01-8.13 11.82 175.21 175.21 0 00-10 5.82 15.92 15.92 0 01-14.43 1.27l-37.13-15-.35-.14a26.87 26.87 0 00-32.48 11.34l-.13.22-42.77 73.95a26.71 26.71 0 005.9 34.1l.47.38 31.56 24.75a16.11 16.11 0 016.1 13.33v11.56a16 16 0 01-6.11 13.22L42.08 300l-.47.38a26.68 26.68 0 00-5.9 34.06l42.71 73.9a1.59 1.59 0 01.13.22 26.86 26.86 0 0032.45 11.3l.35-.13 37.07-14.93a15.94 15.94 0 0114.47 1.29q4.92 3.11 10 5.86a15.94 15.94 0 018.19 11.82l5.56 39.59.12.72A27.22 27.22 0 00213.24 486h85.52a26.92 26.92 0 0026.45-22.39l.09-.56 5.57-39.67a16 16 0 018.18-11.82c3.42-1.84 6.76-3.79 10-5.82a15.92 15.92 0 0114.43-1.27l37.13 14.95.35.14a26.85 26.85 0 0032.48-11.34 2.53 2.53 0 01.13-.22l42.71-73.89a26.7 26.7 0 00-5.89-34.11zm-215.4 53.8a97.8 97.8 0 1197.8-97.8 97.91 97.91 0 01-97.8 97.8z"/></svg></button>
     <div class="header-side">
       <button class="rightSidebar-toggle-btn" onclick="toggleRightSidebar()">File Menu <svg style="display:block" width="14" height="14" viewBox="0 0 18 18" fill="white" xmlns="http://www.w3.org/2000/svg"><rect y="3" width="18" height="2" rx="1"/><rect y="8" width="18" height="2" rx="1"/><rect y="13" width="18" height="2" rx="1"/></svg></button>
     </div>
