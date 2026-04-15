@@ -177,9 +177,9 @@ export async function generateOrgDocuments(
       });
     }
 
-    // spreadsheetService always uses org-level headers
-    const ssCategories    = sanitizeServiceCategories(row[orgFieldMap.organization_description] ? '' : '');
-    const ssEligibilities = sanitizeServiceEligibilitiesList('');
+    // spreadsheetService uses org-level headers including Top Categories / Top Eligibilities
+    const ssCategories    = sanitizeServiceCategories(row[orgFieldMap.organization_top_categories] || '');
+    const ssEligibilities = sanitizeServiceEligibilitiesList(row[orgFieldMap.organization_top_eligibilities] || '');
 
     const orgDoc: Partial<IOrg> = {
       name:      name || `New Service ${i + 1}`,
@@ -205,8 +205,8 @@ export async function generateOrgDocuments(
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
-        eligibilities:                   [],
-        categories:                      [],
+        eligibilities:                   ssEligibilities,
+        categories:                      ssCategories,
         addresses:                       address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [],
         phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
       } as ISpreadsheetService,

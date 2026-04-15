@@ -64,6 +64,14 @@
   </table>
   <div class="note">Each row supports one organization phone number.</div>
 
+  <h2>Categories &amp; Eligibilities</h2>
+  <p>These fields apply to the spreadsheet service view (the toggle). They do NOT apply to the organization itself — categories and eligibilities are service-level data only.</p>
+  <table>
+    <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
+    <tr><td>Top Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
+    <tr><td>Top Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
+  </table>
+
   <hr>
 
   <h2>Organization Service Fields</h2>
@@ -84,8 +92,6 @@
     <tr><td>Service Cost</td><td>Service cost</td><td class="optional">No</td></tr>
     <tr><td>Service Wait Time</td><td>Expected wait time</td><td class="optional">No</td></tr>
     <tr><td>Service Internal Notes</td><td>Editor notes for the service</td><td class="optional">No</td></tr>
-    <tr><td>Service Top Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
-    <tr><td>Service Top Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
   </table>
 
   <h2>Service Location Fields</h2>
@@ -105,6 +111,14 @@
     <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
     <tr><td>Service Phone</td><td>Service phone number</td><td class="optional">No</td></tr>
     <tr><td>Service Phone Name</td><td>Label for the service phone</td><td class="optional">No</td></tr>
+  </table>
+
+  <h2>Service Categories &amp; Eligibilities</h2>
+  <p>These apply to the organization service (org.services[0]), not the spreadsheet service toggle.</p>
+  <table>
+    <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
+    <tr><td>Service Top Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
+    <tr><td>Service Top Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
   </table>
 
   <hr>
