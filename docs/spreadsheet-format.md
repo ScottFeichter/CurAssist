@@ -4,7 +4,11 @@
 
 When creating a bucket from a spreadsheet, the first row must contain column headers that match the names listed below. Each subsequent row represents one organization record. The spreadsheet can be `.xlsx`, `.xls`, `.csv`, or `.ods` format.
 
-Headers are case-sensitive and must match exactly. Only the first sheet in the workbook is read. There is no hard limit on the number of rows, but very large spreadsheets (1,000+ rows) may take longer to process.
+Headers are case-sensitive and must match exactly. Only the first sheet in the workbook is read.
+
+Column order does not matter — headers are matched by name, not position. Unrecognized and blank columns are ignored. However, for best results, arrange columns in the order shown below and avoid unnecessary blank or extra columns.
+
+There is no limit on the number of rows. However, very large spreadsheets (3,000+ rows) may experience slower processing or timeouts.
 
 ---
 
