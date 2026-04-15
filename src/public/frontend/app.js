@@ -689,6 +689,26 @@ if (uploadArea) {
 }
 
 /**
+ * Decodes a base64-encoded xlsx report and triggers a browser download.
+ * @param {string} base64 - Base64-encoded file content
+ * @param {string} filename - Suggested download filename
+ */
+function downloadReport(base64, filename) {
+  const bytes = atob(base64);
+  const arr = new Uint8Array(bytes.length);
+  for (let i = 0; i < bytes.length; i++) arr[i] = bytes.charCodeAt(i);
+  const blob = new Blob([arr], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename || 'import_report.xlsx';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
  * Uploads the selected spreadsheet and creates a new bucket.
  * @returns {Promise<void>}
  */
@@ -748,6 +768,9 @@ async function processCreateBucket() {
     if (directSubmit && response.ok) {
       const orgs = data.orgs || [];
       const bucketName = data.bucketName;
+
+      // Download the import report if present
+      if (data.report) downloadReport(data.report, data.reportFilename);
 
       // Browser-side submit loop using the existing SF proxy
       let succeeded = 0;
@@ -834,6 +857,7 @@ async function processCreateBucket() {
     } else if (response.ok) {
       document.getElementById('createBucketProgress').style.display = 'none';
       document.getElementById('createBucketModal').style.display = 'none';
+      if (data.report) downloadReport(data.report, data.reportFilename);
       notify(data.message || 'Bucket created successfully');
       init();
     } else {

@@ -123,3 +123,20 @@ These keys exist in the field maps but are not read by `generateOrgDocuments()`:
 - `org.services[]` → Organization Services sidebar sections
 
 If a field was not stored during import, it will be empty in the form.
+
+---
+
+## Import Report
+
+After processing all rows, `buildReportBuffer()` appends four columns to the original spreadsheet and returns it as an `.xlsx` buffer:
+
+| Column | Description |
+|---|---|
+| Import Status | `Success` or `Failed` |
+| Import Detail | Empty on success; error message on failure |
+| Bucket Name | The bucket the import targeted |
+| Import Date | Timestamp of the import (UTC) |
+
+The report is returned as a base64-encoded string in the JSON response (`report` and `reportFilename` fields). The browser decodes it and triggers an automatic file download.
+
+Each row is processed independently — a failure on one row does not prevent other rows from being created. The notification message shows the success/failure count.

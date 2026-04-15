@@ -57,7 +57,7 @@ export async function createBucketStructure(bucketName: string): Promise<void> {
  * First row is treated as headers.
  * @param fileBuffer - The spreadsheet file buffer
  */
-export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: string[], rows: any[] }> {
+export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: string[], rows: any[], workbook: XLSX.WorkBook }> {
   log.enter('parseSpreadsheet()', log.brack);
   const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
   const sheetName = workbook.SheetNames[0];
@@ -76,7 +76,7 @@ export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: s
   });
 
   log.retrn('parseSpreadsheet()', log.kcarb);
-  return { headers, rows };
+  return { headers, rows, workbook };
 }
 
 /**
@@ -86,15 +86,27 @@ export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: s
  * @param rows - Spreadsheet row data
  * @param progressCallback - Called with progress percentage after each row
  */
+/** Result of a single row import attempt. */
+export interface IRowResult {
+  row: number;
+  status: 'Success' | 'Failed';
+  detail: string;
+}
+
 export async function generateOrgDocuments(
   bucketName: string,
   rows: any[],
   progressCallback: (progress: number) => void,
   createServiceFromOrg: boolean = false
-): Promise<void> {
+): Promise<IRowResult[]> {
   log.enter('generateOrgDocuments()', log.brack);
 
-  const sanitizers: Record<string, (value: any) => string> = {
+  const results: IRowResult[] = [];
+
+  // Reference map of field keys to sanitizer functions.
+  // Not used in code — each sanitizer is called inline below.
+  // Kept as a reference for which sanitizers apply to which fields.
+  const _sanitizers: Record<string, (value: any) => string> = {
     organization_name:                   sanitizeName,
     organization_alternate_name:         sanitizeAlternateName,
     organization_website:                sanitizeWebsite,
@@ -118,6 +130,7 @@ export async function generateOrgDocuments(
     service_internal_notes:              sanitizeInternalNotes,
     service_markdown_notes:              sanitizeMarkdownNotes,
   };
+  void _sanitizers;
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
@@ -246,12 +259,48 @@ export async function generateOrgDocuments(
       history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `imported from spreadsheet` }],
     };
 
-    await Org.create(orgDoc);
+    try {
+      await Org.create(orgDoc);
+      results.push({ row: i, status: 'Success', detail: '' });
+    } catch (err: any) {
+      results.push({ row: i, status: 'Failed', detail: err.message || String(err) });
+    }
 
     progressCallback(Math.round(((i + 1) / rows.length) * 100));
   }
 
   log.retrn('generateOrgDocuments()', log.kcarb);
+  return results;
+}
+
+/**
+ * Appends import status columns to the original workbook and returns an xlsx buffer.
+ * @param workbook - The original parsed workbook
+ * @param results - Per-row import results
+ * @param bucketName - The bucket name used for the import
+ */
+export function buildReportBuffer(workbook: XLSX.WorkBook, results: IRowResult[], bucketName: string): Buffer {
+  log.enter('buildReportBuffer()', log.brack);
+
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const data = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
+  const headers = data[0] as string[];
+  const timestamp = new Date().toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+
+  headers.push('Import Status', 'Import Detail', 'Bucket Name', 'Import Date');
+
+  for (let i = 0; i < results.length; i++) {
+    const dataRow = data[i + 1] || [];
+    dataRow.push(results[i].status, results[i].detail, bucketName, timestamp);
+    data[i + 1] = dataRow;
+  }
+
+  const newSheet = XLSX.utils.aoa_to_sheet(data);
+  workbook.Sheets[workbook.SheetNames[0]] = newSheet;
+
+  const buf = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+  log.retrn('buildReportBuffer()', log.kcarb);
+  return buf;
 }
 
 /**
@@ -535,7 +584,8 @@ console.leave();
 
 // generateOrgDocuments() replaces generateHtmlFiles() — stores data in MongoDB instead of HTML files
 // hydrateTemplate() replaces file reads — injects DB data into the combined template at request time
-// parseSpreadsheet() is unchanged — still reads spreadsheet buffer into row objects
+// parseSpreadsheet() reads spreadsheet buffer into row objects and returns the workbook for report generation
 // createBucketStructure() now creates a Bucket document instead of filesystem directories
+// buildReportBuffer() appends import status columns to the original workbook and returns xlsx buffer
 
 // #endregion ------------------------------------------------------------------
