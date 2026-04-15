@@ -48,6 +48,7 @@ CurAssist/
     curassistDeployFirst.md # Full deployment log and infrastructure notes
     todo.md               # Todo list
     tests.md              # Test coverage documentation
+    spreadsheet-data-flow.md # Internal: how spreadsheet columns map to org/spreadsheetService/services
     .sequelizerc          # Sequelize config (historical reference)
 ```
 
@@ -168,6 +169,7 @@ Only available when `NODE_ENV=development`:
 - `GET /docs/deploy-log` — Full deployment log and infrastructure notes
 - `GET /docs/buckets-map` — Spreadsheet field maps
 - `GET /docs/tests` — Test coverage documentation
+- `GET /docs/spreadsheet-data-flow` — Spreadsheet import data flow (which fields go where)
 
 ### Info (all environments)
 

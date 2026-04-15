@@ -449,9 +449,10 @@ bucketsRouter.post('/create-bucket-spreadsheet-submit', upload.single('spreadshe
     if (!bucketName) return res.status(400).json({ success: false, error: 'Bucket name is required' });
 
     // Create bucket and org documents — same as create-bucket-spreadsheet
+    const createServiceFromOrg = req.body.createServiceFromOrg === 'true';
     await createBucketStructure(bucketName);
     const { rows } = await parseSpreadsheet(file.buffer);
-    await generateOrgDocuments(bucketName, rows, () => {});
+    await generateOrgDocuments(bucketName, rows, () => {}, createServiceFromOrg);
 
     // Return the list of created orgs so the browser can loop and submit each one
     const orgs = await Org.find({ bucket: bucketName, status: 'incomplete' }).select('_id name');
@@ -475,9 +476,10 @@ bucketsRouter.post('/create-bucket-spreadsheet', upload.single('spreadsheet'), a
     if (!file)       return res.status(400).json({ success: false, error: 'No spreadsheet file uploaded' });
     if (!bucketName) return res.status(400).json({ success: false, error: 'Bucket name is required' });
 
+    const createServiceFromOrg = req.body.createServiceFromOrg === 'true';
     await createBucketStructure(bucketName);
     const { rows } = await parseSpreadsheet(file.buffer);
-    await generateOrgDocuments(bucketName, rows, (_progress) => {});
+    await generateOrgDocuments(bucketName, rows, (_progress) => {}, createServiceFromOrg);
 
     log.retrn('POST /api/buckets/create-bucket-spreadsheet', log.kcarb);
     res.json({ success: true, message: 'Bucket created successfully!' });

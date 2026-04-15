@@ -623,6 +623,7 @@ function createBucket() {
   document.getElementById('createBucketName').value = '';
   document.getElementById('createBucketEmpty').checked = false;
   document.getElementById('createBucketDirectSubmit').checked = false;
+  document.getElementById('createServiceFromOrg').checked = false;
   document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   document.getElementById('uploadText').textContent = 'Click to select file or drag and drop';
   document.getElementById('createBucketBtn').disabled = true;
@@ -725,6 +726,7 @@ async function processCreateBucket() {
   const formData = new FormData();
   formData.append('spreadsheet', selectedFile);
   formData.append('bucketName', bucketName);
+  formData.append('createServiceFromOrg', document.getElementById('createServiceFromOrg').checked);
 
   document.getElementById('createBucketBtn').disabled = true;
   document.getElementById('createBucketProgress').style.display = 'block';
@@ -856,6 +858,7 @@ function cancelCreateBucket() {
   document.getElementById('createBucketName').value = '';
   document.getElementById('createBucketEmpty').checked = false;
   document.getElementById('createBucketDirectSubmit').checked = false;
+  document.getElementById('createServiceFromOrg').checked = false;
   document.getElementById('createBucketSpreadsheetSection').style.display = 'block';
   selectedFile = null;
 }
