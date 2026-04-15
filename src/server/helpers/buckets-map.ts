@@ -45,8 +45,8 @@ export const orgFieldMap: Record<string, string> = {
   organization_legal_status: 'Legal Status',
   organiztion_hours: "Hours", // need to work on it
   organization_markdown_notes: 'Markdown Notes',
-  organization_top_categories: 'Top Categories',
-  organization_top_eligibilities: 'Top Eligibilities',
+  organization_top_categories: 'Categories',
+  organization_top_eligibilities: 'Eligibilities',
 };
 
 // Service section fields (using id attributes) — spreadsheet headers prefixed with "Service"
@@ -68,9 +68,9 @@ export const serviceFieldMap: Record<string, string> = {
   service_website: 'Service Website',
   service_hours: 'Service Hours', // need to work on it
   service_markdown_notes: 'Service Markdown Notes',
-  service_top_categories: 'Service Top Categories',
+  service_top_categories: 'Service Categories',
   service_sub_categories: 'Service Sub Categories',
-  service_top_eligibilities: 'Service Top Eligibilities',
+  service_top_eligibilities: 'Service Eligibilities',
   service_sub_eligibilities: 'Service Sub Eligibilities',
   service_belongs_to_org: 'Organization ID', // ID of the org this service belongs to
 };

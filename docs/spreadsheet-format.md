@@ -4,7 +4,7 @@
 
 When creating a bucket from a spreadsheet, the first row must contain column headers that match the names listed below. Each subsequent row represents one organization record. The spreadsheet can be `.xlsx`, `.xls`, `.csv`, or `.ods` format.
 
-Headers are case-sensitive and must match exactly. Only the first sheet in the workbook is read.
+Headers are case-sensitive and must match exactly. Only the first sheet in the workbook is read. There is no hard limit on the number of rows, but very large spreadsheets (1,000+ rows) may take longer to process.
 
 ---
 
@@ -53,8 +53,8 @@ These fields apply to the spreadsheet service view (the toggle). They do NOT app
 
 | Spreadsheet Header | Description | Required |
 |---|---|---|
-| Top Categories | Comma-separated category names | No |
-| Top Eligibilities | Comma-separated eligibility names | No |
+| Categories | Comma-separated category names | No |
+| Eligibilities | Comma-separated eligibility names | No |
 
 ---
 
@@ -111,14 +111,14 @@ These apply to the organization service (org.services[0]), not the spreadsheet s
 
 | Spreadsheet Header | Description | Required |
 |---|---|---|
-| Service Top Categories | Comma-separated category names | No |
-| Service Top Eligibilities | Comma-separated eligibility names | No |
+| Service Categories | Comma-separated category names | No |
+| Service Eligibilities | Comma-separated eligibility names | No |
 
 ---
 
 ## Example
 
-| Name | Address | City | State | Zip | Phone | Top Categories | Service Name | Service Address | Service City | Service State | Service Zip | Service Phone | Service Top Categories |
+| Name | Address | City | State | Zip | Phone | Categories | Service Name | Service Address | Service City | Service State | Service Zip | Service Phone | Service Categories |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Bay Area Food Bank | 123 Main St | San Francisco | CA | 94110 | 415-555-1234 | Food | Food Pantry | 456 Oak Ave | San Francisco | CA | 94102 | 415-555-5678 | Food, Emergency |
 | SF Youth Center | 789 Elm St | San Francisco | CA | 94103 | 415-555-9012 | Youth | | | | | | | |

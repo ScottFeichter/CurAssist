@@ -31,7 +31,7 @@
 
   <p>The first row of the spreadsheet must contain column headers that match the names listed below. Each subsequent row represents one organization record. Supported formats: <strong>.xlsx</strong>, <strong>.xls</strong>, <strong>.csv</strong>, <strong>.ods</strong></p>
 
-  <div class="note">Headers are case-sensitive and must match exactly. Only the first sheet in the workbook is read.</div>
+  <div class="note">Headers are case-sensitive and must match exactly. Only the first sheet in the workbook is read. There is no hard limit on the number of rows, but very large spreadsheets (1,000+ rows) may take longer to process.</div>
 
   <h2>Organization Fields</h2>
   <table>
@@ -68,8 +68,8 @@
   <p>These fields apply to the spreadsheet service view (the toggle). They do NOT apply to the organization itself — categories and eligibilities are service-level data only.</p>
   <table>
     <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
-    <tr><td>Top Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
-    <tr><td>Top Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
+    <tr><td>Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
+    <tr><td>Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
   </table>
 
   <hr>
@@ -117,8 +117,8 @@
   <p>These apply to the organization service (org.services[0]), not the spreadsheet service toggle.</p>
   <table>
     <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
-    <tr><td>Service Top Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
-    <tr><td>Service Top Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
+    <tr><td>Service Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
+    <tr><td>Service Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
   </table>
 
   <hr>
@@ -126,9 +126,9 @@
   <h2>Example</h2>
   <div class="example-table">
     <table>
-      <tr><th>Name</th><th>Address</th><th>City</th><th>State</th><th>Zip</th><th>Phone</th><th>Service Name</th><th>Service Address</th><th>Service City</th><th>Service State</th><th>Service Zip</th><th>Service Phone</th></tr>
-      <tr><td>Bay Area Food Bank</td><td>123 Main St</td><td>San Francisco</td><td>CA</td><td>94110</td><td>415-555-1234</td><td>Food Pantry</td><td>456 Oak Ave</td><td>San Francisco</td><td>CA</td><td>94102</td><td>415-555-5678</td></tr>
-      <tr><td>SF Youth Center</td><td>789 Elm St</td><td>San Francisco</td><td>CA</td><td>94103</td><td>415-555-9012</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><th>Name</th><th>Address</th><th>City</th><th>State</th><th>Zip</th><th>Phone</th><th>Categories</th><th>Service Name</th><th>Service Address</th><th>Service City</th><th>Service State</th><th>Service Zip</th><th>Service Phone</th><th>Service Categories</th></tr>
+      <tr><td>Bay Area Food Bank</td><td>123 Main St</td><td>San Francisco</td><td>CA</td><td>94110</td><td>415-555-1234</td><td>Food</td><td>Food Pantry</td><td>456 Oak Ave</td><td>San Francisco</td><td>CA</td><td>94102</td><td>415-555-5678</td><td>Food, Emergency</td></tr>
+      <tr><td>SF Youth Center</td><td>789 Elm St</td><td>San Francisco</td><td>CA</td><td>94103</td><td>415-555-9012</td><td>Youth</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
     </table>
   </div>
   <div class="note">Row 1: Creates org with address + phone, plus a "Food Pantry" service with its own address + phone (all merged into org's lists for SFSG).<br>Row 2: Creates org only — no service created because "Service Name" is empty.</div>
