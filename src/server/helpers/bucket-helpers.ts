@@ -6,7 +6,7 @@ import path from 'path';
 import * as XLSX from 'xlsx';
 import { Bucket } from '../../database/models/bucket.model';
 import { Org, IOrg, ISpreadsheetService } from '../../database/models/org.model';
-import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap } from './buckets-map';
+import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap, serviceLocationFieldMap, servicePhoneFieldMap } from './buckets-map';
 import {
   sanitizePhoneName,
   sanitizeOrganizationPhones,
@@ -133,20 +133,30 @@ export async function generateOrgDocuments(
     const phoneNum  = sanitizeOrganizationPhones(row[organizationPhoneFieldMap.phone] || '');
     const phoneName = sanitizePhoneName(row[organizationPhoneFieldMap.phone_name] || '');
 
-    const categories    = sanitizeServiceCategories(row[serviceFieldMap.service_top_categories] || '');
-    const eligibilities = sanitizeServiceEligibilitiesList(row[serviceFieldMap.service_top_eligibilities] || '');
+    // Org addresses and phones
+    const orgAddresses: any[] = address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [];
+    const orgPhones: any[]    = phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [];
 
-    const orgDoc: Partial<IOrg> = {
-      name:      name || `New Service ${i + 1}`,
-      bucket:    bucketName,
-      status:    'incomplete',
-      addresses: address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [],
-      phones:    phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
-      notes:     [],
-      schedule:  { schedule_days: [] },
-      services:  [],
-      spreadsheetService: {
-        name:                            sanitizeName(row[serviceFieldMap.service_name] || name),
+    // Build organization service from "Service X" prefixed headers
+    const svcName = sanitizeName(row[serviceFieldMap.service_name] || '');
+    const svcAddr = sanitizeAddress(row[serviceLocationFieldMap.address] || '');
+    const svcCity = sanitizeCity(row[serviceLocationFieldMap.city] || '');
+    const svcState = sanitizeState(row[serviceLocationFieldMap.state] || '');
+    const svcZip  = sanitizeZip(row[serviceLocationFieldMap.zip] || '');
+    const svcPhone = sanitizeOrganizationPhones(row[servicePhoneFieldMap.phone] || '');
+    const svcPhoneName = sanitizePhoneName(row[servicePhoneFieldMap.phone_name] || '');
+    const svcCategories    = sanitizeServiceCategories(row[serviceFieldMap.service_top_categories] || '');
+    const svcEligibilities = sanitizeServiceEligibilitiesList(row[serviceFieldMap.service_top_eligibilities] || '');
+
+    // Merge service address/phone into org arrays (SFSG stores them on the org)
+    if (svcAddr) orgAddresses.push({ address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip });
+    if (svcPhone) orgPhones.push({ number: svcPhone, service_type: svcPhoneName });
+
+    // Only create org.services[0] if any "Service X" columns have data
+    const services: any[] = [];
+    if (svcName) {
+      services.push({
+        name:                            svcName,
         alternate_name:                  sanitizeAlternateName(row[serviceFieldMap.service_alternate_name] || ''),
         email:                           sanitizeEmail(row[serviceFieldMap.service_email] || ''),
         url:                             sanitizeWebsite(row[serviceFieldMap.service_website] || ''),
@@ -160,8 +170,43 @@ export async function generateOrgDocuments(
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
-        eligibilities,
-        categories,
+        eligibilities:                   svcEligibilities,
+        categories:                      svcCategories,
+        addresses:                       svcAddr ? [{ address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip }] : [],
+        phones:                          svcPhone ? [{ number: svcPhone, service_type: svcPhoneName }] : [],
+      });
+    }
+
+    // spreadsheetService always uses org-level headers
+    const ssCategories    = sanitizeServiceCategories(row[orgFieldMap.organization_description] ? '' : '');
+    const ssEligibilities = sanitizeServiceEligibilitiesList('');
+
+    const orgDoc: Partial<IOrg> = {
+      name:      name || `New Service ${i + 1}`,
+      bucket:    bucketName,
+      status:    'incomplete',
+      addresses: orgAddresses,
+      phones:    orgPhones,
+      notes:     [],
+      schedule:  { schedule_days: [] },
+      services,
+      spreadsheetService: {
+        name:                            name,
+        alternate_name:                  sanitizeAlternateName(row[orgFieldMap.organization_alternate_name] || ''),
+        email:                           sanitizeEmail(row[orgFieldMap.organization_email] || ''),
+        url:                             sanitizeWebsite(row[orgFieldMap.organization_website] || ''),
+        fee:                             '',
+        wait_time:                       '',
+        application_process:             '',
+        required_documents:              '',
+        interpretation_services:         '',
+        internal_note:                   sanitizeInternalNotes(row[orgFieldMap.organization_internal_notes] || ''),
+        clinician_actions:               '',
+        notes:                           [],
+        schedule:                        { schedule_days: [] },
+        shouldInheritScheduleFromParent: true,
+        eligibilities:                   [],
+        categories:                      [],
         addresses:                       address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [],
         phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
       } as ISpreadsheetService,
