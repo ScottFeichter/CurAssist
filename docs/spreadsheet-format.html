@@ -23,14 +23,12 @@
     .faq .faq-body { padding: 10px 14px; font-size: 13px; color: #555; }
 
     /* Main table */
-    .table-wrapper { max-height: 70vh; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 6px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    thead th { background: #3d7ef0; color: white; text-align: left; padding: 10px 12px; font-weight: 600; position: sticky; top: 0; z-index: 1; }
+    thead th { background: #3d7ef0; color: white; text-align: left; padding: 10px 12px; font-weight: 600; }
     td { padding: 8px 12px; border-bottom: 1px solid #eee; }
     tr:hover { background: #f5f8ff; }
     .required { color: #c4243a; font-weight: 600; }
     .optional { color: #888; }
-    .section-label td { background: #f0f4ff; font-weight: 700; color: #1a5bb8; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 12px; }
 
     /* Example table */
     .example-table { overflow-x: auto; margin-top: 16px; }
@@ -49,6 +47,8 @@
   <p class="subtitle">Required column headers for creating a bucket from a spreadsheet upload.</p>
   <hr>
 
+  <details open>
+    <summary style="font-size:16px; font-weight:700; cursor:pointer; margin-bottom:12px;">FAQ</summary>
   <div class="faq">
     <details>
       <summary>File format and general rules</summary>
@@ -83,16 +83,15 @@
       <div class="faq-body">These apply to the organization service (org.services[0]), not the spreadsheet service toggle.</div>
     </details>
   </div>
+  </details>
 
   <hr>
 
-  <div class="table-wrapper">
-    <table>
+  <table>
       <thead>
         <tr><th>Spreadsheet Header</th><th>Description</th><th>Required</th></tr>
       </thead>
       <tbody>
-        <tr class="section-label"><td colspan="3">Organization</td></tr>
         <tr><td>Name</td><td>Organization name</td><td class="required">Yes</td></tr>
         <tr><td>Nickname</td><td>Alternate name</td><td class="optional">No</td></tr>
         <tr><td>Website</td><td>Organization website URL</td><td class="optional">No</td></tr>
@@ -101,22 +100,18 @@
         <tr><td>Legal Status</td><td>Legal status</td><td class="optional">No</td></tr>
         <tr><td>Internal Notes</td><td>Notes for editors (not displayed to users)</td><td class="optional">No</td></tr>
 
-        <tr class="section-label"><td colspan="3">Organization Location</td></tr>
         <tr><td>Location Name</td><td>Name of the location</td><td class="optional">No</td></tr>
         <tr><td>Address</td><td>Street address</td><td class="optional">No</td></tr>
         <tr><td>City</td><td>City</td><td class="optional">No</td></tr>
         <tr><td>State</td><td>State (e.g. CA)</td><td class="optional">No</td></tr>
         <tr><td>Zip</td><td>Postal code</td><td class="optional">No</td></tr>
 
-        <tr class="section-label"><td colspan="3">Organization Phone</td></tr>
         <tr><td>Phone</td><td>Phone number (10 digits, auto-formatted)</td><td class="optional">No</td></tr>
         <tr><td>Phone Name</td><td>Label for the phone (e.g. "Main", "Fax")</td><td class="optional">No</td></tr>
 
-        <tr class="section-label"><td colspan="3">Categories &amp; Eligibilities (Spreadsheet Service)</td></tr>
         <tr><td>Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
         <tr><td>Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
 
-        <tr class="section-label"><td colspan="3">Organization Service</td></tr>
         <tr><td>Service Name</td><td>Service name (triggers service creation)</td><td class="optional">No</td></tr>
         <tr><td>Service Nickname</td><td>Service alternate name</td><td class="optional">No</td></tr>
         <tr><td>Service Email</td><td>Service email</td><td class="optional">No</td></tr>
@@ -131,23 +126,19 @@
         <tr><td>Service Wait Time</td><td>Expected wait time</td><td class="optional">No</td></tr>
         <tr><td>Service Internal Notes</td><td>Editor notes for the service</td><td class="optional">No</td></tr>
 
-        <tr class="section-label"><td colspan="3">Service Location</td></tr>
         <tr><td>Service Location Name</td><td>Name of the service location</td><td class="optional">No</td></tr>
         <tr><td>Service Address</td><td>Service street address</td><td class="optional">No</td></tr>
         <tr><td>Service City</td><td>Service city</td><td class="optional">No</td></tr>
         <tr><td>Service State</td><td>Service state (e.g. CA)</td><td class="optional">No</td></tr>
         <tr><td>Service Zip</td><td>Service postal code</td><td class="optional">No</td></tr>
 
-        <tr class="section-label"><td colspan="3">Service Phone</td></tr>
         <tr><td>Service Phone</td><td>Service phone number</td><td class="optional">No</td></tr>
         <tr><td>Service Phone Name</td><td>Label for the service phone</td><td class="optional">No</td></tr>
 
-        <tr class="section-label"><td colspan="3">Service Categories &amp; Eligibilities</td></tr>
         <tr><td>Service Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
         <tr><td>Service Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
       </tbody>
     </table>
-  </div>
 
   <hr>
 
