@@ -57,7 +57,7 @@ export async function createBucketStructure(bucketName: string): Promise<void> {
  * First row is treated as headers.
  * @param fileBuffer - The spreadsheet file buffer
  */
-export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: string[], rows: any[] }> {
+export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: string[], rows: any[], workbook: XLSX.WorkBook }> {
   log.enter('parseSpreadsheet()', log.brack);
   const workbook = XLSX.read(fileBuffer, { type: 'buffer' });
   const sheetName = workbook.SheetNames[0];
@@ -76,7 +76,7 @@ export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: s
   });
 
   log.retrn('parseSpreadsheet()', log.kcarb);
-  return { headers, rows };
+  return { headers, rows, workbook };
 }
 
 /**
@@ -86,14 +86,27 @@ export async function parseSpreadsheet(fileBuffer: Buffer): Promise<{ headers: s
  * @param rows - Spreadsheet row data
  * @param progressCallback - Called with progress percentage after each row
  */
+/** Result of a single row import attempt. */
+export interface IRowResult {
+  row: number;
+  status: 'Success' | 'Failed';
+  detail: string;
+}
+
 export async function generateOrgDocuments(
   bucketName: string,
   rows: any[],
-  progressCallback: (progress: number) => void
-): Promise<void> {
+  progressCallback: (progress: number) => void,
+  createServiceFromOrg: boolean = false
+): Promise<IRowResult[]> {
   log.enter('generateOrgDocuments()', log.brack);
 
-  const sanitizers: Record<string, (value: any) => string> = {
+  const results: IRowResult[] = [];
+
+  // Reference map of field keys to sanitizer functions.
+  // Not used in code — each sanitizer is called inline below.
+  // Kept as a reference for which sanitizers apply to which fields.
+  const _sanitizers: Record<string, (value: any) => string> = {
     organization_name:                   sanitizeName,
     organization_alternate_name:         sanitizeAlternateName,
     organization_website:                sanitizeWebsite,
@@ -117,6 +130,7 @@ export async function generateOrgDocuments(
     service_internal_notes:              sanitizeInternalNotes,
     service_markdown_notes:              sanitizeMarkdownNotes,
   };
+  void _sanitizers;
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i];
@@ -134,7 +148,7 @@ export async function generateOrgDocuments(
     const phoneName = sanitizePhoneName(row[organizationPhoneFieldMap.phone_name] || '');
 
     // Org addresses and phones
-    const orgAddresses: any[] = address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [];
+    const orgAddresses: any[] = address1 ? [{ name: locName, address_1: address1, city, state_province: state, postal_code: zip }] : [];
     const orgPhones: any[]    = phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [];
 
     // Build organization service from "Service X" prefixed headers
@@ -149,7 +163,8 @@ export async function generateOrgDocuments(
     const svcEligibilities = sanitizeServiceEligibilitiesList(row[serviceFieldMap.service_top_eligibilities] || '');
 
     // Merge service address/phone into org arrays (SFSG stores them on the org)
-    if (svcAddr) orgAddresses.push({ address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip });
+    const svcLocName = sanitizeLocationName(row[serviceLocationFieldMap.location_name] || '');
+    if (svcAddr) orgAddresses.push({ name: svcLocName, address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip });
     if (svcPhone) orgPhones.push({ number: svcPhone, service_type: svcPhoneName });
 
     // Only create org.services[0] if any "Service X" columns have data
@@ -172,7 +187,7 @@ export async function generateOrgDocuments(
         shouldInheritScheduleFromParent: true,
         eligibilities:                   svcEligibilities,
         categories:                      svcCategories,
-        addresses:                       svcAddr ? [{ address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip }] : [],
+        addresses:                       svcAddr ? [{ name: svcLocName, address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip }] : [],
         phones:                          svcPhone ? [{ number: svcPhone, service_type: svcPhoneName }] : [],
       });
     }
@@ -181,17 +196,10 @@ export async function generateOrgDocuments(
     const ssCategories    = sanitizeServiceCategories(row[orgFieldMap.organization_top_categories] || '');
     const ssEligibilities = sanitizeServiceEligibilitiesList(row[orgFieldMap.organization_top_eligibilities] || '');
 
-    const orgDoc: Partial<IOrg> = {
-      name:      name || `New Service ${i + 1}`,
-      bucket:    bucketName,
-      status:    'incomplete',
-      addresses: orgAddresses,
-      phones:    orgPhones,
-      notes:     [],
-      schedule:  { schedule_days: [] },
-      services,
-      spreadsheetService: {
-        name:                            name,
+    // Build org-level service from org data when requested
+    if (createServiceFromOrg && name) {
+      services.push({
+        name,
         alternate_name:                  sanitizeAlternateName(row[orgFieldMap.organization_alternate_name] || ''),
         email:                           sanitizeEmail(row[orgFieldMap.organization_email] || ''),
         url:                             sanitizeWebsite(row[orgFieldMap.organization_website] || ''),
@@ -207,18 +215,108 @@ export async function generateOrgDocuments(
         shouldInheritScheduleFromParent: true,
         eligibilities:                   ssEligibilities,
         categories:                      ssCategories,
-        addresses:                       address1 ? [{ address_1: address1, city, state_province: state, postal_code: zip }] : [],
+        addresses:                       address1 ? [{ name: locName, address_1: address1, city, state_province: state, postal_code: zip }] : [],
+        phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
+      });
+    }
+
+    const orgDoc: Partial<IOrg> = {
+      name:             name || `New Service ${i + 1}`,
+      alternate_name:   sanitizeAlternateName(row[orgFieldMap.organization_alternate_name] || ''),
+      website:          sanitizeWebsite(row[orgFieldMap.organization_website] || ''),
+      email:            sanitizeEmail(row[orgFieldMap.organization_email] || ''),
+      long_description: sanitizeDescription(row[orgFieldMap.organization_description] || ''),
+      legal_status:     sanitizeOrganizationLegalStatus(row[orgFieldMap.organization_legal_status] || ''),
+      internal_note:    sanitizeInternalNotes(row[orgFieldMap.organization_internal_notes] || ''),
+      bucket:    bucketName,
+      status:    'incomplete',
+      addresses: orgAddresses,
+      phones:    orgPhones,
+      notes:     [],
+      schedule:  { schedule_days: [] },
+      services,
+      spreadsheetService: {
+        name:                            name,
+        alternate_name:                  sanitizeAlternateName(row[orgFieldMap.organization_alternate_name] || ''),
+        email:                           sanitizeEmail(row[orgFieldMap.organization_email] || ''),
+        url:                             sanitizeWebsite(row[orgFieldMap.organization_website] || ''),
+        long_description:                sanitizeDescription(row[orgFieldMap.organization_description] || ''),
+        fee:                             '',
+        wait_time:                       '',
+        application_process:             '',
+        required_documents:              '',
+        interpretation_services:         '',
+        internal_note:                   sanitizeInternalNotes(row[orgFieldMap.organization_internal_notes] || ''),
+        clinician_actions:               '',
+        notes:                           [],
+        schedule:                        { schedule_days: [] },
+        shouldInheritScheduleFromParent: true,
+        eligibilities:                   ssEligibilities,
+        categories:                      ssCategories,
+        addresses:                       address1 ? [{ name: locName, address_1: address1, city, state_province: state, postal_code: zip }] : [],
         phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
       } as ISpreadsheetService,
       history: [{ action: 'created', by: 'unknown', at: new Date(), detail: `imported from spreadsheet` }],
     };
 
-    await Org.create(orgDoc);
+    try {
+      await Org.create(orgDoc);
+      results.push({ row: i, status: 'Success', detail: '' });
+    } catch (err: any) {
+      results.push({ row: i, status: 'Failed', detail: err.message || String(err) });
+    }
 
     progressCallback(Math.round(((i + 1) / rows.length) * 100));
   }
 
   log.retrn('generateOrgDocuments()', log.kcarb);
+  return results;
+}
+
+/** Result of a single SFSG submission attempt. */
+export interface ISfsgResult {
+  row: number;
+  status: 'Success' | 'Failed' | 'Skipped';
+  detail: string;
+  sfsgId?: number;
+}
+
+/**
+ * Appends import status columns to the original workbook and returns an xlsx buffer.
+ * @param workbook - The original parsed workbook
+ * @param results - Per-row DB creation results
+ * @param bucketName - The bucket name used for the import
+ * @param sfsgResults - Optional per-row SFSG submission results (direct submit only)
+ */
+export function buildReportBuffer(workbook: XLSX.WorkBook, results: IRowResult[], bucketName: string, sfsgResults?: ISfsgResult[]): Buffer {
+  log.enter('buildReportBuffer()', log.brack);
+
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const data = XLSX.utils.sheet_to_json(sheet, { header: 1 }) as any[][];
+  const headers = data[0] as string[];
+  const timestamp = new Date().toISOString().replace('T', ' ').replace(/\.\d+Z$/, '');
+
+  headers.push('DB Status', 'DB Detail');
+  if (sfsgResults) headers.push('SFSG Status', 'SFSG Detail', 'SFSG Org ID');
+  headers.push('Bucket Name', 'Import Date');
+
+  for (let i = 0; i < results.length; i++) {
+    const dataRow = data[i + 1] || [];
+    dataRow.push(results[i].status, results[i].detail);
+    if (sfsgResults) {
+      const sfsg = sfsgResults[i] || { status: 'Skipped', detail: 'No SFSG result', sfsgId: '' };
+      dataRow.push(sfsg.status, sfsg.detail, sfsg.sfsgId || '');
+    }
+    dataRow.push(bucketName, timestamp);
+    data[i + 1] = dataRow;
+  }
+
+  const newSheet = XLSX.utils.aoa_to_sheet(data);
+  workbook.Sheets[workbook.SheetNames[0]] = newSheet;
+
+  const buf = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+  log.retrn('buildReportBuffer()', log.kcarb);
+  return buf;
 }
 
 /**
@@ -502,7 +600,8 @@ console.leave();
 
 // generateOrgDocuments() replaces generateHtmlFiles() — stores data in MongoDB instead of HTML files
 // hydrateTemplate() replaces file reads — injects DB data into the combined template at request time
-// parseSpreadsheet() is unchanged — still reads spreadsheet buffer into row objects
+// parseSpreadsheet() reads spreadsheet buffer into row objects and returns the workbook for report generation
 // createBucketStructure() now creates a Bucket document instead of filesystem directories
+// buildReportBuffer() appends import status columns to the original workbook and returns xlsx buffer
 
 // #endregion ------------------------------------------------------------------

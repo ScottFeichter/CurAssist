@@ -48,6 +48,7 @@ CurAssist/
     curassistDeployFirst.md # Full deployment log and infrastructure notes
     todo.md               # Todo list
     tests.md              # Test coverage documentation
+    spreadsheet-data-flow.md # Internal: how spreadsheet columns map to org/spreadsheetService/services
     .sequelizerc          # Sequelize config (historical reference)
 ```
 
@@ -168,6 +169,7 @@ Only available when `NODE_ENV=development`:
 - `GET /docs/deploy-log` — Full deployment log and infrastructure notes
 - `GET /docs/buckets-map` — Spreadsheet field maps
 - `GET /docs/tests` — Test coverage documentation
+- `GET /docs/spreadsheet-data-flow` — Spreadsheet import data flow (which fields go where)
 
 ### Info (all environments)
 
@@ -185,8 +187,9 @@ Only available when `NODE_ENV=development`:
 - `POST /api/buckets/create-file` — Create blank org or copy existing one
 - `POST /api/buckets/import-file` — Direct import from SF org ID
 - `POST /api/buckets/create-bucket-empty` — Create a named empty bucket
-- `POST /api/buckets/create-bucket-spreadsheet` — Create new bucket from spreadsheet upload
-- `POST /api/buckets/create-bucket-spreadsheet-submit` — Create bucket from spreadsheet, return org list for browser-side SFSG submission
+- `POST /api/buckets/create-bucket-spreadsheet` — Create new bucket from spreadsheet upload; returns import report as base64 xlsx
+- `POST /api/buckets/create-bucket-spreadsheet-submit` — Create bucket from spreadsheet, return org list for browser-side SFSG submission; returns import report as base64 xlsx
+- `POST /api/buckets/build-report` — Build combined import report from DB + SFSG results; returns xlsx as base64
 - `DELETE /api/buckets/delete` — Delete a single org
 - `DELETE /api/buckets/:bucket` — Delete entire bucket and all its orgs
 
