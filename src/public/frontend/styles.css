@@ -272,7 +272,7 @@
       flex: 1;
       overflow: hidden;
       padding: 20px;
-      background: white url('Images/CAlogo.png') center center no-repeat;
+      background: white;
       background-size: 300px auto;
       min-width: 0;
     }
