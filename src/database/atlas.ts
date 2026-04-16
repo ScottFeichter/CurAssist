@@ -35,6 +35,7 @@ export const connectToAtlas = async (): Promise<void> => {
   } catch (error) {
     log.blank();
     console.error('❌ Failed to connect to MongoDB Atlas:', error);
+    log.warni(`⚠️  Database connection failed — app will not start: ${error instanceof Error ? error.message : error}`);
     log.blank();
     process.exit(1);
   }

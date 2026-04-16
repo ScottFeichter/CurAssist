@@ -59,6 +59,76 @@ let currentSubdir = '';
 let currentFiles = [];  // now array of { _id, name } objects
 let currentIndex = 0;
 let csrfToken = '';
+let isDirty = false;
+let _iframeObserver = null;
+
+function markDirty() {
+  isDirty = true;
+}
+
+function clearDirty() {
+  isDirty = false;
+}
+
+/**
+ * Attaches input/change listeners and a MutationObserver to the iframe document
+ * so any user edit sets the dirty flag.
+ */
+function observeIframe(iframeDoc) {
+  if (_iframeObserver) _iframeObserver.disconnect();
+
+  iframeDoc.addEventListener('input', markDirty);
+  iframeDoc.addEventListener('change', markDirty);
+
+  _iframeObserver = new MutationObserver(markDirty);
+  _iframeObserver.observe(iframeDoc.body, { childList: true, subtree: true });
+}
+
+/**
+ * If dirty, shows the unsaved-changes modal and returns a Promise that resolves
+ * to true (proceed) or false (cancel). Saves first if user clicks Save & Continue.
+ * If not dirty, resolves to true immediately.
+ */
+function guardUnsaved() {
+  if (!isDirty) return Promise.resolve(true);
+
+  return new Promise(resolve => {
+    const modal = document.getElementById('unsavedModal');
+    modal.style.display = 'block';
+
+    function cleanup() {
+      modal.style.display = 'none';
+      document.getElementById('unsavedSaveBtn').removeEventListener('click', onSave);
+      document.getElementById('unsavedDiscardBtn').removeEventListener('click', onDiscard);
+      document.getElementById('unsavedCancelBtn').removeEventListener('click', onCancel);
+    }
+
+    function onSave() {
+      cleanup();
+      saveFile(true).then(() => { clearDirty(); resolve(true); });
+    }
+    function onDiscard() {
+      cleanup();
+      clearDirty();
+      resolve(true);
+    }
+    function onCancel() {
+      cleanup();
+      resolve(false);
+    }
+
+    document.getElementById('unsavedSaveBtn').addEventListener('click', onSave);
+    document.getElementById('unsavedDiscardBtn').addEventListener('click', onDiscard);
+    document.getElementById('unsavedCancelBtn').addEventListener('click', onCancel);
+  });
+}
+
+window.addEventListener('beforeunload', function(e) {
+  if (isDirty) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
 
 /**
  * Reads the XSRF-TOKEN cookie and returns its decoded value.
@@ -116,6 +186,10 @@ async function init() {
 async function loadBucket() {
   const bucket = document.getElementById('bucketSelect').value;
   if (!bucket) return;
+  if (!(await guardUnsaved())) {
+    document.getElementById('bucketSelect').value = currentBucket;
+    return;
+  }
 
   currentBucket = bucket;
   document.getElementById('fileCount').textContent = 'File 0 of 0';
@@ -141,6 +215,10 @@ async function loadBucket() {
 async function loadSubdir() {
   const subdir = document.getElementById('subdirSelect').value;
   if (!subdir) return;
+  if (!(await guardUnsaved())) {
+    document.getElementById('subdirSelect').value = currentSubdir;
+    return;
+  }
 
   currentSubdir = subdir;
   currentFiles = await fetch(`${API_BASE}/buckets/${currentBucket}/${subdir}/files`).then(r => r.json());
@@ -158,7 +236,7 @@ async function loadSubdir() {
 
   if (currentFiles.length > 0) {
     fileSelect.selectedIndex = 1;
-    loadFile(0);
+    loadFile(0, true);
   } else {
     document.getElementById('fileCount').textContent = 'File 0 of 0';
   }
@@ -169,8 +247,13 @@ async function loadSubdir() {
  * @param {number} index
  * @returns {Promise<void>}
  */
-async function loadFile(index) {
+async function loadFile(index, skipGuard = false) {
   if (index < 0 || index >= currentFiles.length) return;
+  if (!skipGuard && !(await guardUnsaved())) {
+    const fileSelect = document.getElementById('fileInfo');
+    fileSelect.selectedIndex = currentIndex + 1;
+    return;
+  }
 
   currentIndex = index;
   const file = currentFiles[index];
@@ -186,6 +269,8 @@ async function loadFile(index) {
     const sfIdEl = doc?.getElementById('organization_sfsg_id');
     const sfsg_id = sfIdEl ? sfIdEl.value : 'TBD';
     console.log('[LOAD] File loaded:', file.name, '| Atlas _id:', orgId, '| SFSG sfsg_id:', sfsg_id);
+    clearDirty();
+    observeIframe(doc);
   };
 
   const fileSelect = document.getElementById('fileInfo');
@@ -269,6 +354,7 @@ async function saveFile(silent = false) {
 
     if (!res.ok) throw new Error('Server returned ' + res.status);
 
+    clearDirty();
     if (!silent) {
       document.getElementById('saveFeedbackMessage').textContent = 'File saved successfully.';
       document.getElementById('saveFeedbackModal').style.display = 'block';

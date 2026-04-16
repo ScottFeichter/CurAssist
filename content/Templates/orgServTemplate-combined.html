@@ -4317,9 +4317,22 @@
                     initServiceModals(serviceRoot);
                     // Also init on any hydrated service divs in orgServicesDiv
                     const orgServicesDiv = document.getElementById('orgServicesDiv');
+                    const servicesList = document.getElementById('servicesList');
                     if (orgServicesDiv) {
                       Array.from(orgServicesDiv.children).forEach(function(svcDiv) {
                         initServiceModals(svcDiv);
+                        // Wire up Remove Service button for hydrated services
+                        const removeBtn = svcDiv.querySelector('#service--deactivation');
+                        if (removeBtn) {
+                          removeBtn.addEventListener('click', function() {
+                            var svcId = svcDiv.id;
+                            svcDiv.remove();
+                            if (servicesList) {
+                              var navItem = servicesList.querySelector('[data-service-id="' + svcId + '"]');
+                              if (navItem) navItem.remove();
+                            }
+                          });
+                        }
                       });
                     }
                   });
