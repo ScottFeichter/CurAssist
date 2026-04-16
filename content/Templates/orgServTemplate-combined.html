@@ -668,7 +668,21 @@
   }
 
   .sidebar-resizer:hover {
-    background: #276ce5;
+    background: rgba(0,0,0,0.15);
+  }
+
+  @media screen and (max-width: 900px) {
+    .app-components-edit-EditSidebar-module__sidebar--npORK {
+      width: 15.625rem !important;
+      height: 100vh !important;
+      z-index: auto !important;
+    }
+  }
+
+  @media screen and (max-width: 767px) {
+    .app-components-edit-EditSidebar-module__sidebar--npORK {
+      top: 0 !important;
+    }
   }
 
   .app-components-edit-EditSidebar-module__sidebarContent--zw_PI {
@@ -1631,6 +1645,7 @@
     
     if (sidebar && toggleBtn) {
       toggleBtn.addEventListener('click', function() {
+        sidebar.style.width = '';
         sidebar.classList.toggle('collapsed');
         toggleBtn.textContent = sidebar.classList.contains('collapsed') ? '▶' : '◀';
       });
@@ -1640,21 +1655,29 @@
     const resizer = document.getElementById('sidebarResizer');
     if (sidebar && resizer) {
       let isResizing = false;
+      let startX = 0;
+      let startWidth = 0;
       
       resizer.addEventListener('mousedown', function(e) {
         isResizing = true;
+        startX = e.clientX;
+        startWidth = sidebar.getBoundingClientRect().width;
+        sidebar.style.transition = 'none';
         document.body.style.cursor = 'ew-resize';
       });
       
       document.addEventListener('mousemove', function(e) {
         if (!isResizing) return;
-        const newWidth = e.clientX;
+        const newWidth = startWidth + (e.clientX - startX);
         if (newWidth >= 160 && newWidth <= 640) {
           sidebar.style.width = newWidth + 'px';
         }
       });
       
       document.addEventListener('mouseup', function() {
+        if (isResizing) {
+          sidebar.style.transition = '';
+        }
         isResizing = false;
         document.body.style.cursor = '';
       });
