@@ -540,15 +540,15 @@
       background: linear-gradient(135deg, #2a6ad8, #1248a0);
     }
 
-    .unsaved-cancel-btn {
-      background: white;
-      color: #3d7ef0;
+    .save-btn {
+      background: linear-gradient(135deg, #2d9e2d, #1a6b1a);
+      color: white;
       font-weight: 600;
-      border: 2px solid #3d7ef0;
+      border: none;
     }
 
-    .unsaved-cancel-btn:hover {
-      background: #f0f5ff;
+    .save-btn:hover {
+      background: linear-gradient(135deg, #258025, #145214);
     }
 
     .submit-btn {
