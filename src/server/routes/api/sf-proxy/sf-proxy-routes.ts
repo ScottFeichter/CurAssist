@@ -45,7 +45,7 @@ sfProxyRouter.post('/*', async (req: Request, res: Response) => {
 
   log.infor(`sf-proxy POST -> ${url}`);
   log.infor(`sf-proxy cookies present: ${!!cookieHeader}`);
-  log.infor(`sf-proxy request body: ${JSON.stringify(req.body).substring(0, 500)}`);
+  log.infor(`sf-proxy request body: ${JSON.stringify(req.body)}`);
 
   try {
     const sfRes = await fetch(url, {
@@ -61,8 +61,10 @@ sfProxyRouter.post('/*', async (req: Request, res: Response) => {
     });
 
     log.infor(`sf-proxy SFSG response status: ${sfRes.status}`);
-    const data = await sfRes.json().catch(() => ({}));
-    log.infor(`sf-proxy SFSG response body: ${JSON.stringify(data).substring(0, 500)}`);
+    const responseText = await sfRes.text();
+    log.infor(`sf-proxy SFSG response raw text: ${responseText}`);
+    let data;
+    try { data = JSON.parse(responseText); } catch { data = { raw: responseText.substring(0, 2000) }; }
     console.super('SF Proxy Response', sfRes.status, data);
     log.retrn('sf-proxy POST', log.kcarb);
     res.status(sfRes.status).json(data);

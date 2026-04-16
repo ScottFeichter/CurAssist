@@ -614,7 +614,10 @@ function cancelDelete() {
  * Submit file - Show confirmation modal, or warn if org already has a sfsg_id.
  */
 function submitFile() {
+  console.log('[SUBMIT] submitFile called');
+  console.log('[SUBMIT] currentFiles:', currentFiles.length, 'currentIndex:', currentIndex);
   if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
+  console.log('[SUBMIT] currentSubdir:', currentSubdir);
   if (currentSubdir === 'Complete') {
     document.getElementById('alreadyCompleteModal').style.display = 'block';
     return;
@@ -622,6 +625,7 @@ function submitFile() {
   const iframe = document.getElementById('formFrame');
   const sfsgIdEl = iframe.contentDocument?.getElementById('organization_sfsg_id');
   const sfsgId = sfsgIdEl ? sfsgIdEl.value.trim() : 'TBD';
+  console.log('[SUBMIT] existing sfsg_id:', sfsgId);
   if (sfsgId && sfsgId !== 'TBD') {
     document.getElementById('submitWarnSfsgId').textContent = sfsgId;
     document.getElementById('submitWarnModal').style.display = 'block';
@@ -856,6 +860,10 @@ async function processCreateBucket() {
       const bucketName = data.bucketName;
       const dbResults = data.dbResults || [];
       const workbookBase64 = data.workbookBase64;
+      console.log('[DIRECT SUBMIT] Starting browser-side submit loop');
+      console.log('[DIRECT SUBMIT] orgs count:', orgs.length);
+      console.log('[DIRECT SUBMIT] dbResults count:', dbResults.length);
+      console.log('[DIRECT SUBMIT] bucketName:', bucketName);
 
       // Browser-side submit loop using the existing SF proxy
       let succeeded = 0;
@@ -901,12 +909,20 @@ async function processCreateBucket() {
             body: JSON.stringify(orgBody)
           });
           if (!orgRes.ok) {
-            const err = await orgRes.json().catch(() => ({}));
-            throw new Error(`SFSG ${orgRes.status}: ${JSON.stringify(err)}`);
+            const errText = await orgRes.text();
+            console.log('[DIRECT SUBMIT] SFSG create org error status:', orgRes.status);
+            console.log('[DIRECT SUBMIT] SFSG create org error raw body:', errText);
+            let errJson;
+            try { errJson = JSON.parse(errText); } catch { errJson = { raw: errText.substring(0, 1000) }; }
+            throw new Error(`SFSG ${orgRes.status}: ${JSON.stringify(errJson)}`);
           }
           const orgData = await orgRes.json();
+          console.log('[DIRECT SUBMIT] SFSG create org response:', JSON.stringify(orgData).substring(0, 500));
           const sfsg_id = orgData.resources?.[0]?.resource?.id;
-          if (!sfsg_id) throw new Error('No org ID returned from SFSG');
+          if (!sfsg_id) {
+            console.log('[DIRECT SUBMIT] No org ID in response. Full orgData:', JSON.stringify(orgData));
+            throw new Error('No org ID returned from SFSG');
+          }
 
           // Step 2 — create services if any
           if (services.length > 0) {
@@ -918,8 +934,12 @@ async function processCreateBucket() {
               body: JSON.stringify({ services })
             });
             if (!svcRes.ok) {
-              const err = await svcRes.json().catch(() => ({}));
-              throw new Error(`Services failed ${svcRes.status}: ${JSON.stringify(err)}`);
+              const errText = await svcRes.text();
+              console.log('[DIRECT SUBMIT] SFSG create services error status:', svcRes.status);
+              console.log('[DIRECT SUBMIT] SFSG create services error raw body:', errText);
+              let errJson;
+              try { errJson = JSON.parse(errText); } catch { errJson = { raw: errText.substring(0, 1000) }; }
+              throw new Error(`Services failed ${svcRes.status}: ${JSON.stringify(errJson)}`);
             }
           }
 
