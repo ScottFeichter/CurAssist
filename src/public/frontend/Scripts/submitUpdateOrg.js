@@ -28,9 +28,12 @@ async function submitUpdateOrg(payload, existingSfsgId) {
   console.log('[SUBMIT] change_request response status:', res.status);
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    console.log('[SUBMIT] change_request error body:', JSON.stringify(err));
-    throw new Error(`Failed to submit change request: ${res.status} ${JSON.stringify(err)}`);
+    const errText = await res.text();
+    console.log('[SUBMIT] change_request error status:', res.status);
+    console.log('[SUBMIT] change_request error raw body:', errText);
+    let errJson;
+    try { errJson = JSON.parse(errText); } catch { errJson = { raw: errText.substring(0, 1000) }; }
+    throw new Error(`Failed to submit change request: ${res.status} ${JSON.stringify(errJson)}`);
   }
 
   const data = await res.json();

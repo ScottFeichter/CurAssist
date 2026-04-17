@@ -26,9 +26,12 @@ async function submitService(payload) {
   console.log('[SUBMIT] SFSG create service response status:', res.status);
 
   if (!res.ok) {
-    const err = await res.json().catch(() => ({}));
-    console.log('[SUBMIT] SFSG create service error body:', JSON.stringify(err));
-    throw new Error(`Failed to post service: ${res.status} ${JSON.stringify(err)}`);
+    const errText = await res.text();
+    console.log('[SUBMIT] SFSG create service error status:', res.status);
+    console.log('[SUBMIT] SFSG create service error raw body:', errText);
+    let errJson;
+    try { errJson = JSON.parse(errText); } catch { errJson = { raw: errText.substring(0, 1000) }; }
+    throw new Error(`Failed to post service: ${res.status} ${JSON.stringify(errJson)}`);
   }
 
   const data = await res.json();

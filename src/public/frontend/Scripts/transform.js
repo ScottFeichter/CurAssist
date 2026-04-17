@@ -139,6 +139,7 @@ function transformService(svc) {
  * @returns {{ orgBody: Object, services: Object[] }}
  */
 function transformNewOrg(payload) {
+  console.log('[TRANSFORM] transformNewOrg input:', JSON.stringify(payload).substring(0, 500));
   const org = payload.organization;
   const services = Object.values(org.services || {}).map(transformService);
 
@@ -156,7 +157,11 @@ function transformNewOrg(payload) {
   if (org.organization_legal_status)   resource.legal_status     = org.organization_legal_status;
   if (org.organization_internal_notes) resource.internal_note    = org.organization_internal_notes;
 
-  return { orgBody: { resources: [resource] }, services };
+  const result = { orgBody: { resources: [resource] }, services };
+  console.log('[TRANSFORM] transformNewOrg output orgBody:', JSON.stringify(result.orgBody, null, 2));
+  console.log('[TRANSFORM] transformNewOrg output services count:', services.length);
+  if (services.length) console.log('[TRANSFORM] first service:', JSON.stringify(services[0]).substring(0, 300));
+  return result;
 }
 
 /**
@@ -165,9 +170,12 @@ function transformNewOrg(payload) {
  * @returns {{ orgId: string, servicesBody: { services: Object[] } }}
  */
 function transformServiceOnly(payload) {
+  console.log('[TRANSFORM] transformServiceOnly input:', JSON.stringify(payload).substring(0, 500));
   const svc = payload.service;
   const orgId = svc.service_belongs_to_org;
   const transformed = transformService(svc);
+  console.log('[TRANSFORM] transformServiceOnly orgId:', orgId);
+  console.log('[TRANSFORM] transformServiceOnly output:', JSON.stringify(transformed).substring(0, 300));
   return { orgId, servicesBody: { services: [transformed] } };
 }
 

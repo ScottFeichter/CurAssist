@@ -614,7 +614,10 @@ function cancelDelete() {
  * Submit file - Show confirmation modal, or warn if org already has a sfsg_id.
  */
 function submitFile() {
+  console.log('[SUBMIT] submitFile called');
+  console.log('[SUBMIT] currentFiles:', currentFiles.length, 'currentIndex:', currentIndex);
   if (!currentFiles[currentIndex]) { alert('No file selected'); return; }
+  console.log('[SUBMIT] currentSubdir:', currentSubdir);
   if (currentSubdir === 'Complete') {
     document.getElementById('alreadyCompleteModal').style.display = 'block';
     return;
@@ -622,6 +625,7 @@ function submitFile() {
   const iframe = document.getElementById('formFrame');
   const sfsgIdEl = iframe.contentDocument?.getElementById('organization_sfsg_id');
   const sfsgId = sfsgIdEl ? sfsgIdEl.value.trim() : 'TBD';
+  console.log('[SUBMIT] existing sfsg_id:', sfsgId);
   if (sfsgId && sfsgId !== 'TBD') {
     document.getElementById('submitWarnSfsgId').textContent = sfsgId;
     document.getElementById('submitWarnModal').style.display = 'block';
@@ -856,6 +860,10 @@ async function processCreateBucket() {
       const bucketName = data.bucketName;
       const dbResults = data.dbResults || [];
       const workbookBase64 = data.workbookBase64;
+      console.log('[DIRECT SUBMIT] Starting browser-side submit loop');
+      console.log('[DIRECT SUBMIT] orgs count:', orgs.length);
+      console.log('[DIRECT SUBMIT] dbResults count:', dbResults.length);
+      console.log('[DIRECT SUBMIT] bucketName:', bucketName);
 
       // Browser-side submit loop using the existing SF proxy
       let succeeded = 0;
@@ -885,45 +893,12 @@ async function processCreateBucket() {
 
           // Collect org data from the parsed document
           const payload = { organization: collectOrganization(doc) };
-          const locs = doc.querySelectorAll('#organization_locations .location-row');
-          console.log('[BATCH SUBMIT] location rows found:', locs.length, locs.length > 0 ? 'first row dataset:' + JSON.stringify(locs[0].dataset) : '');
           console.log('[BATCH SUBMIT] collected payload for', org.name, ':', JSON.stringify(payload).substring(0, 300));
-          const { orgBody, services } = transformNewOrg(payload);
-          // SFSG rejects populated addresses on initial create — strip them
-          if (orgBody.resources?.[0]) orgBody.resources[0].addresses = [];
-          console.log('[BATCH SUBMIT] orgBody:', JSON.stringify(orgBody).substring(0, 300));
 
-          // Step 1 — create org via SF proxy
-          const orgRes = await fetch(`${API_BASE}/sf/resources`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
-            credentials: 'include',
-            body: JSON.stringify(orgBody)
-          });
-          if (!orgRes.ok) {
-            const err = await orgRes.json().catch(() => ({}));
-            throw new Error(`SFSG ${orgRes.status}: ${JSON.stringify(err)}`);
-          }
-          const orgData = await orgRes.json();
-          const sfsg_id = orgData.resources?.[0]?.resource?.id;
-          if (!sfsg_id) throw new Error('No org ID returned from SFSG');
+          // Use the same submitNewOrg flow as single-file submit
+          const sfsg_id = await submitNewOrg(payload);
 
-          // Step 2 — create services if any
-          if (services.length > 0) {
-            services.forEach((svc, idx) => svc.id = -(idx + 2));
-            const svcRes = await fetch(`${API_BASE}/sf/resources/${sfsg_id}/services`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
-              credentials: 'include',
-              body: JSON.stringify({ services })
-            });
-            if (!svcRes.ok) {
-              const err = await svcRes.json().catch(() => ({}));
-              throw new Error(`Services failed ${svcRes.status}: ${JSON.stringify(err)}`);
-            }
-          }
-
-          // Step 3 — write sfsg_id back to Atlas
+          // Write sfsg_id back to Atlas and move to complete
           await fetch(`${API_BASE}/buckets/submit`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
