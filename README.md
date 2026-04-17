@@ -195,9 +195,15 @@ Only available when `NODE_ENV=development`:
 
 ### SF Service Guide Proxy
 
-All SF API calls are proxied through `/api/sf/*` to avoid CORS issues. The server forwards requests to `https://www.sfserviceguide.org/api/*`.
+All SF API calls are proxied through `/api/sf/*` to the SF Service Guide at `https://www.sfserviceguide.org/api/*`. The proxy exists for two reasons:
+
+1. **CORS** — the browser cannot POST directly to sfserviceguide.org from our domain. The proxy makes the call server-side, bypassing CORS.
+2. **Cookies** — SFSG requires session cookies on write requests (POST). These are not login credentials — SFSG has no authentication or login. The cookies are standard session cookies that SFSG sets when any page on sfserviceguide.org is visited. The proxy obtains these automatically by making a preflight GET to `https://www.sfserviceguide.org/organizations/new` before each POST, extracting the `Set-Cookie` headers from that response, and forwarding them on the actual API call.
+
+**Cookie extraction note:** Node’s built-in fetch (undici) handles `Set-Cookie` headers inconsistently across versions. The proxy tries three extraction methods as fallbacks: `getSetCookie()`, `raw()['set-cookie']`, and `headers.get('set-cookie')`. The preflight uses `redirect: 'manual'` to capture cookies from redirect responses.
 
 - `POST /api/sf/*` — Proxy any POST to the SF Service Guide API
+- `GET /api/sf/v2/resources/:id` — Proxy a GET to read an org from SFSG
 
 ## Testing
 
@@ -238,7 +244,18 @@ Origin: https://www.sfserviceguide.org
 Referer: https://www.sfserviceguide.org/organizations/new
 ```
 
-Authentication is cookie-based (session cookies from sfserviceguide.org). No API key is used — requests rely on the user's active browser session being forwarded.
+SFSG requires session cookies on write requests but has no login or authentication. The cookies are standard session cookies set by sfserviceguide.org on any page visit. The proxy obtains these automatically via a preflight GET request before each POST — no credentials, API keys, or user login are involved.
+
+### SFSG Create Constraints
+
+SFSG rejects populated `addresses`, `phones`, and `notes` arrays on initial org creation (returns 500). The submit flow must be two steps:
+
+1. **Create org** — scalar fields only (`name`, `website`, `long_description`, `email`, `legal_status`, `alternate_name`) with empty arrays for `addresses`, `phones`, `notes`
+2. **Change request** — immediately follow up with `POST /api/resources/:id/change_requests` to add addresses, phones, and notes
+
+Accepted on create: `name`, `schedule`, `website`, `long_description`, `email`, `legal_status`, `alternate_name`, empty `addresses[]`, empty `phones[]`, empty `notes[]`
+
+Must be added via change_request after create: populated `addresses`, `phones`, `notes`
 
 ### Endpoints Used
 
@@ -310,7 +327,9 @@ The submit flow (triggered by the "Submit" button) is handled in `src/public/fro
 
 1. `collector.js` — extracts form field values from the iframe DOM
 2. `transform.js` — maps form data to SF API payload shape
-3. `submitNewOrg.js` — POSTs org, then POSTs services if any
+3. `submitNewOrg.js` — POSTs org (scalars only), then change_request (addresses/phones/notes), then services
 4. `submitService.js` — POSTs a standalone service to an existing org
+
+The batch/direct submit path (`create-bucket-spreadsheet-submit`) reuses `submitNewOrg()` for each org — single source of truth for the SFSG submit logic.
 
 Sample captured requests/responses are in `src/public/frontend/requestSamples/`.
