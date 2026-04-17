@@ -893,57 +893,12 @@ async function processCreateBucket() {
 
           // Collect org data from the parsed document
           const payload = { organization: collectOrganization(doc) };
-          const locs = doc.querySelectorAll('#organization_locations .location-row');
-          console.log('[BATCH SUBMIT] location rows found:', locs.length, locs.length > 0 ? 'first row dataset:' + JSON.stringify(locs[0].dataset) : '');
           console.log('[BATCH SUBMIT] collected payload for', org.name, ':', JSON.stringify(payload).substring(0, 300));
-          const { orgBody, services } = transformNewOrg(payload);
-          // SFSG rejects populated addresses on initial create — strip them
-          if (orgBody.resources?.[0]) orgBody.resources[0].addresses = [];
-          console.log('[BATCH SUBMIT] orgBody:', JSON.stringify(orgBody).substring(0, 300));
 
-          // Step 1 — create org via SF proxy
-          const orgRes = await fetch(`${API_BASE}/sf/resources`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
-            credentials: 'include',
-            body: JSON.stringify(orgBody)
-          });
-          if (!orgRes.ok) {
-            const errText = await orgRes.text();
-            console.log('[DIRECT SUBMIT] SFSG create org error status:', orgRes.status);
-            console.log('[DIRECT SUBMIT] SFSG create org error raw body:', errText);
-            let errJson;
-            try { errJson = JSON.parse(errText); } catch { errJson = { raw: errText.substring(0, 1000) }; }
-            throw new Error(`SFSG ${orgRes.status}: ${JSON.stringify(errJson)}`);
-          }
-          const orgData = await orgRes.json();
-          console.log('[DIRECT SUBMIT] SFSG create org response:', JSON.stringify(orgData).substring(0, 500));
-          const sfsg_id = orgData.resources?.[0]?.resource?.id;
-          if (!sfsg_id) {
-            console.log('[DIRECT SUBMIT] No org ID in response. Full orgData:', JSON.stringify(orgData));
-            throw new Error('No org ID returned from SFSG');
-          }
+          // Use the same submitNewOrg flow as single-file submit
+          const sfsg_id = await submitNewOrg(payload);
 
-          // Step 2 — create services if any
-          if (services.length > 0) {
-            services.forEach((svc, idx) => svc.id = -(idx + 2));
-            const svcRes = await fetch(`${API_BASE}/sf/resources/${sfsg_id}/services`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
-              credentials: 'include',
-              body: JSON.stringify({ services })
-            });
-            if (!svcRes.ok) {
-              const errText = await svcRes.text();
-              console.log('[DIRECT SUBMIT] SFSG create services error status:', svcRes.status);
-              console.log('[DIRECT SUBMIT] SFSG create services error raw body:', errText);
-              let errJson;
-              try { errJson = JSON.parse(errText); } catch { errJson = { raw: errText.substring(0, 1000) }; }
-              throw new Error(`Services failed ${svcRes.status}: ${JSON.stringify(errJson)}`);
-            }
-          }
-
-          // Step 3 — write sfsg_id back to Atlas
+          // Write sfsg_id back to Atlas and move to complete
           await fetch(`${API_BASE}/buckets/submit`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'XSRF-Token': getCsrfToken() },
