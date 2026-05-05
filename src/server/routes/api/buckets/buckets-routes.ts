@@ -173,6 +173,8 @@ bucketsRouter.post('/save', async (req: Request, res: Response, next: NextFuncti
       svc.service_belongs_to_org = fields.service_belongs_to_org;
       if (Array.isArray(fields.service_top_categories))    svc.categories    = [...(fields.service_top_categories || []), ...(fields.service_sub_categories || [])];
       if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = [...(fields.service_top_eligibilities || []), ...(fields.service_sub_eligibilities || [])];
+      if (Array.isArray(fields.service_sub_categories))    svc.sub_categories    = fields.service_sub_categories;
+      if (Array.isArray(fields.service_sub_eligibilities)) svc.sub_eligibilities = fields.service_sub_eligibilities;
       if (Array.isArray(fields.service_phones))    svc.phones    = fields.service_phones.filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
       if (Array.isArray(fields.service_locations)) svc.addresses = fields.service_locations.map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' }));
       org.markModified('spreadsheetService');
@@ -198,6 +200,8 @@ bucketsRouter.post('/save', async (req: Request, res: Response, next: NextFuncti
           internal_note:           svcFields.service_internal_notes || '',
           categories:              [...(svcFields.service_top_categories || []), ...(svcFields.service_sub_categories || [])],
           eligibilities:           [...(svcFields.service_top_eligibilities || []), ...(svcFields.service_sub_eligibilities || [])],
+          sub_categories:          svcFields.service_sub_categories || [],
+          sub_eligibilities:       svcFields.service_sub_eligibilities || [],
           phones:                  (svcFields.service_phones || []).filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' })),
           addresses:               (svcFields.service_locations || []).map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' })),
           notes:                   (svcFields.service_markdown_notes || []).map((n: string) => ({ note: n })),

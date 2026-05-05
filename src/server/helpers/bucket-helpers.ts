@@ -502,23 +502,49 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
     }
 
     if (svc.categories?.length) {
-      const pillsHtml = svc.categories.map((c: any) =>
-        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
-      ).join('');
-      html = html.replace(
-        /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-      );
+      const subCats = new Set(svc.sub_categories || []);
+      const topCats = svc.categories.filter((c: any) => !subCats.has(c));
+      if (topCats.length) {
+        const pillsHtml = topCats.map((c: any) =>
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+        ).join('');
+        html = html.replace(
+          /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+          `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        );
+      }
+      if (subCats.size) {
+        const pillsHtml = [...subCats].map((c: any) =>
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+        ).join('');
+        html = html.replace(
+          /(<div[^>]*id="service_sub_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+          `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        );
+      }
     }
 
     if (svc.eligibilities?.length) {
-      const pillsHtml = svc.eligibilities.map((e: any) =>
-        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
-      ).join('');
-      html = html.replace(
-        /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-      );
+      const subEligibs = new Set(svc.sub_eligibilities || []);
+      const topEligibs = svc.eligibilities.filter((e: any) => !subEligibs.has(e));
+      if (topEligibs.length) {
+        const pillsHtml = topEligibs.map((e: any) =>
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+        ).join('');
+        html = html.replace(
+          /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+          `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        );
+      }
+      if (subEligibs.size) {
+        const pillsHtml = [...subEligibs].map((e: any) =>
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+        ).join('');
+        html = html.replace(
+          /(<div[^>]*id="service_sub_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+          `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        );
+      }
     }
 
     if (svc.service_belongs_to_org) {
@@ -575,24 +601,50 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
 
         // Categories as pills
         if (svc.categories?.length) {
-          const pillsHtml = svc.categories.map((c: any) =>
-            `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
-          ).join('');
-          s = s.replace(
-            /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-            `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-          );
+          const subCats = new Set(svc.sub_categories || []);
+          const topCats = svc.categories.filter((c: any) => !subCats.has(c));
+          if (topCats.length) {
+            const pillsHtml = topCats.map((c: any) =>
+              `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+            ).join('');
+            s = s.replace(
+              /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+              `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+            );
+          }
+          if (subCats.size) {
+            const pillsHtml = [...subCats].map((c: any) =>
+              `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+            ).join('');
+            s = s.replace(
+              /(<div[^>]*id="service_sub_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+              `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+            );
+          }
         }
 
         // Eligibilities as pills
         if (svc.eligibilities?.length) {
-          const pillsHtml = svc.eligibilities.map((e: any) =>
-            `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
-          ).join('');
-          s = s.replace(
-            /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-            `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-          );
+          const subEligibs = new Set(svc.sub_eligibilities || []);
+          const topEligibs = svc.eligibilities.filter((e: any) => !subEligibs.has(e));
+          if (topEligibs.length) {
+            const pillsHtml = topEligibs.map((e: any) =>
+              `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+            ).join('');
+            s = s.replace(
+              /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+              `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+            );
+          }
+          if (subEligibs.size) {
+            const pillsHtml = [...subEligibs].map((e: any) =>
+              `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+            ).join('');
+            s = s.replace(
+              /(<div[^>]*id="service_sub_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+              `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+            );
+          }
         }
 
         return s;

@@ -71,6 +71,8 @@ export interface ISpreadsheetService {
   shouldInheritScheduleFromParent: boolean;
   eligibilities:                   string[];
   categories:                      string[];
+  sub_eligibilities?:              string[];
+  sub_categories?:                 string[];
   addresses:                       IAddress[];
   phones:                          IPhone[];
   /** SFSG org ID this service belongs to — filled by volunteer or from spreadsheet */
@@ -101,6 +103,8 @@ export interface IService {
   shouldInheritScheduleFromParent: boolean;
   eligibilities:                   string[];
   categories:                      string[];
+  sub_eligibilities?:              string[];
+  sub_categories?:                 string[];
   addresses:                       IAddress[];
   phones:                          IPhone[];
 }
@@ -199,6 +203,8 @@ const SpreadsheetServiceSchema = new Schema<ISpreadsheetService>({
   shouldInheritScheduleFromParent: { type: Boolean, default: true },
   eligibilities:                   { type: [String], default: [] },
   categories:                      { type: [String], default: [] },
+  sub_eligibilities:               { type: [String], default: [] },
+  sub_categories:                  { type: [String], default: [] },
   addresses:                       { type: [AddressSchema], default: [] },
   phones:                          { type: [PhoneSchema], default: [] },
   service_belongs_to_org:          { type: String },
@@ -225,6 +231,8 @@ const ServiceSchema = new Schema<IService>({
   shouldInheritScheduleFromParent: { type: Boolean, default: true },
   eligibilities:                   { type: [String], default: [] },
   categories:                      { type: [String], default: [] },
+  sub_eligibilities:               { type: [String], default: [] },
+  sub_categories:                  { type: [String], default: [] },
   addresses:                       { type: [AddressSchema], default: [] },
   phones:                          { type: [PhoneSchema], default: [] },
 }, { _id: false });
