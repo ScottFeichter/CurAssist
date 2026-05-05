@@ -86,6 +86,19 @@ function collectPills(root, id) {
 }
 
 /**
+ * Returns an empty hours object.
+ * @returns {Object}
+ */
+function collectHoursEmpty() {
+  const dayKeys = ['M', 'T', 'W', 'Th', 'F', 'Sa', 'Su'];
+  const hours = {};
+  dayKeys.forEach(key => {
+    hours[key] = { start: { time: '', meridiem: '' }, end: { time: '', meridiem: '' } };
+  });
+  return hours;
+}
+
+/**
  * Collects hours from all .day-group elements in the root.
  * @param {Document|Element} root
  * @returns {Object.<string, { start: { time: string, meridiem: string }, end: { time: string, meridiem: string } }>}
@@ -159,6 +172,10 @@ function collectService(root) {
  * @returns {Object}
  */
 function collectOrganization(root) {
+  // Collect org-level hours from the org section only (not from service divs)
+  const orgHoursSection = root.querySelector('.edit--section--list--item.hours');
+  const orgHours = orgHoursSection ? collectHours(orgHoursSection) : collectHoursEmpty();
+
   const org = {
     organization_internal_notes: val(root, 'organization_internal_notes'),
     organization_name:           val(root, 'organization_name'),
@@ -169,6 +186,7 @@ function collectOrganization(root) {
     organization_legal_status:   val(root, 'organization_legal_status'),
     organization_locations:      collectLocations(root, 'organization_locations'),
     organization_phones:         collectPhones(root, 'organization_phones'),
+    organization_hours:          orgHours,
     organization_markdown_notes: collectNotes(root, 'organization_markdown_notes'),
     services: {}
   };

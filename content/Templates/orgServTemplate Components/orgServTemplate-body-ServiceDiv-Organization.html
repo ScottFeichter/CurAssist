@@ -1470,6 +1470,9 @@
                     if (orgServicesDiv) {
                       Array.from(orgServicesDiv.children).forEach(function(svcDiv) {
                         initServiceModals(svcDiv);
+                        if (typeof window.setupServiceAutocomplete === 'function') {
+                          window.setupServiceAutocomplete(svcDiv);
+                        }
                         // Wire up Remove Service button for hydrated services
                         const removeBtn = svcDiv.querySelector('#service--deactivation');
                         if (removeBtn) {

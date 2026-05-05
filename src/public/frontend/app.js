@@ -893,7 +893,7 @@ async function processCreateBucket() {
 
           // Collect org data from the parsed document
           const payload = { organization: collectOrganization(doc) };
-          console.log('[BATCH SUBMIT] collected payload for', org.name, ':', JSON.stringify(payload).substring(0, 300));
+          console.log('[BATCH SUBMIT] collected payload for', org.name, ':', JSON.stringify(payload, null, 2));
 
           // Use the same submitNewOrg flow as single-file submit
           const sfsg_id = await submitNewOrg(payload);

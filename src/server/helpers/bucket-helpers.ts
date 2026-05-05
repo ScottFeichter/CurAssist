@@ -36,6 +36,14 @@ import {
 const { injectInput, injectTextarea, injectPhoneList, injectLocationDiv } = require('../../../content/Templates/inject-values');
 // #endregion ------------------------------------------------------------------
 
+/** Converts minutes from midnight to "HH:MM" 24h format. */
+function minutesToTime(minutes: number): string {
+  if (!minutes && minutes !== 0) return '';
+  const hh = Math.floor(minutes / 60).toString().padStart(2, '0');
+  const mm = (minutes % 60).toString().padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
 console.enter();
 
 // #region ===================== HELPERS =======================================
@@ -409,6 +417,26 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
   html = injectInput(html,    'organization_legal_status',   org.legal_status     || '');
   html = injectTextarea(html, 'organization_description',    org.long_description || '');
   html = injectTextarea(html, 'organization_internal_notes', org.internal_note    || '');
+
+  // ── Org schedule/hours ─────────────────────────────────────────────────────
+  if (org.schedule?.schedule_days?.length) {
+    const dayIndex: Record<string, number> = { Monday: 0, Tuesday: 1, Wednesday: 2, Thursday: 3, Friday: 4, Saturday: 5, Sunday: 6 };
+    const times: [string, string][] = Array(7).fill(null).map(() => ['', '']);
+    for (const sd of org.schedule.schedule_days) {
+      const idx = dayIndex[sd.day];
+      if (idx != null) times[idx] = [minutesToTime(sd.opens_at), minutesToTime(sd.closes_at)];
+    }
+    // Replace only the first 14 time inputs (7 days x 2) which are the org-level hours
+    let timeIdx = 0;
+    html = html.replace(/(<input type="time" value=")(")/g, (match, prefix, suffix) => {
+      if (timeIdx >= 14) return match;
+      const dayPos = Math.floor(timeIdx / 2);
+      const isEnd = timeIdx % 2 === 1;
+      timeIdx++;
+      const val = isEnd ? times[dayPos][1] : times[dayPos][0];
+      return val ? `${prefix}${val}"` : match;
+    });
+  }
 
   // ── Org markdown notes ─────────────────────────────────────────────────────
   if (org.notes?.length) {

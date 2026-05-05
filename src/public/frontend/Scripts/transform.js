@@ -91,11 +91,10 @@ function transformNotes(notes) {
 function transformPhones(phones) {
   return phones
     .filter(p => p.phone_number)
-    .map(p => {
-      const phone = { number: p.phone_number };
-      if (p.phone_name) phone.service_type = p.phone_name;
-      return phone;
-    });
+    .map(p => ({
+      number: p.phone_number.replace(/[^\d+]/g, ''),
+      service_type: p.phone_name || 'voice'
+    }));
 }
 
 // #endregion ------------------------------------------------------------------
@@ -139,7 +138,7 @@ function transformService(svc) {
  * @returns {{ orgBody: Object, services: Object[] }}
  */
 function transformNewOrg(payload) {
-  console.log('[TRANSFORM] transformNewOrg input:', JSON.stringify(payload).substring(0, 500));
+  console.log('[TRANSFORM] transformNewOrg input:', JSON.stringify(payload, null, 2));
   const org = payload.organization;
   const services = Object.values(org.services || {}).map(transformService);
 
@@ -150,17 +149,20 @@ function transformNewOrg(payload) {
     notes:     transformNotes(org.organization_markdown_notes),
     schedule:  { schedule_days: [] }
   };
-  if (org.organization_alternate_name) resource.alternate_name   = org.organization_alternate_name;
   if (org.organization_email)          resource.email            = org.organization_email;
   if (org.organization_website)        resource.website          = org.organization_website;
   if (org.organization_description)    resource.long_description = org.organization_description;
   if (org.organization_legal_status)   resource.legal_status     = org.organization_legal_status;
+  if (org.organization_alternate_name) resource.alternate_name   = org.organization_alternate_name;
   if (org.organization_internal_notes) resource.internal_note    = org.organization_internal_notes;
+  // NOTE: SFSG ignores alternate_name and internal_note on create.
+  // They are set here for payload completeness but are actually applied
+  // via a change_request in submitNewOrg.js Step 3.
 
   const result = { orgBody: { resources: [resource] }, services };
   console.log('[TRANSFORM] transformNewOrg output orgBody:', JSON.stringify(result.orgBody, null, 2));
   console.log('[TRANSFORM] transformNewOrg output services count:', services.length);
-  if (services.length) console.log('[TRANSFORM] first service:', JSON.stringify(services[0]).substring(0, 300));
+  if (services.length) console.log('[TRANSFORM] first service:', JSON.stringify(services[0], null, 2));
   return result;
 }
 
