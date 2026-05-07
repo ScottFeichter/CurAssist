@@ -5,7 +5,7 @@ import { extendedConsole as console } from '../../../../streams/consoles/customC
 import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { Bucket } from '../../../../database/models/bucket.model';
 import { Org } from '../../../../database/models/org.model';
-import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, normalizeSFSGStringArray, buildReportBuffer } from '../../../helpers/bucket-helpers';
+import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, splitSFSGCategories, splitSFSGEligibilities, buildReportBuffer } from '../../../helpers/bucket-helpers';
 import * as XLSX from 'xlsx';
 // #endregion ------------------------------------------------------------------
 
@@ -18,6 +18,13 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 /** The fixed set of subdirectories — backed by org status field in MongoDB. */
 const SUBDIRS = ['incomplete', 'pending', 'complete'];
+
+/** Converts a 24h time string ("HH:MM") to minutes from midnight. */
+function timeToMinutes(timeStr: string): number {
+  if (!timeStr) return 0;
+  const [hh, mm] = timeStr.split(':').map(Number);
+  return (hh || 0) * 60 + (mm || 0);
+}
 
 // GET /api/buckets — List all bucket names
 bucketsRouter.get('/', async (_req: Request, res: Response, next: NextFunction) => {
@@ -130,12 +137,24 @@ bucketsRouter.post('/save', async (req: Request, res: Response, next: NextFuncti
       }));
     }
 
-    // ── Service fields ──────────────────────────────────────────────────────────
-    // service_belongs_to_org present = service mode (spreadsheetService)
-    // otherwise = org mode (org.services[0])
-    const isServiceMode = fields.service_belongs_to_org != null;
+    // ── Org hours/schedule ──────────────────────────────────────────────────────
+    if (fields.organization_hours) {
+      const dayMap: Record<string, string> = { M: 'Monday', T: 'Tuesday', W: 'Wednesday', Th: 'Thursday', F: 'Friday', Sa: 'Saturday', Su: 'Sunday' };
+      const schedule_days: any[] = [];
+      for (const [key, val] of Object.entries(fields.organization_hours) as [string, any][]) {
+        if (!val.start.time && !val.end.time) continue;
+        schedule_days.push({
+          day: dayMap[key] || key,
+          opens_at: timeToMinutes(val.start.time),
+          closes_at: timeToMinutes(val.end.time)
+        });
+      }
+      org.schedule = { schedule_days };
+      org.markModified('schedule');
+    }
 
-    if (isServiceMode) {
+    // ── Spreadsheet service mode (fields.service_belongs_to_org present) ──────
+    if (fields.service_belongs_to_org != null) {
       if (!org.spreadsheetService) org.spreadsheetService = { notes: [], schedule: { schedule_days: [] }, shouldInheritScheduleFromParent: true, eligibilities: [], categories: [], addresses: [], phones: [] } as any;
       const svc = org.spreadsheetService as any;
       if (fields.service_name                    != null) svc.name                    = fields.service_name;
@@ -154,29 +173,54 @@ bucketsRouter.post('/save', async (req: Request, res: Response, next: NextFuncti
       svc.service_belongs_to_org = fields.service_belongs_to_org;
       if (Array.isArray(fields.service_top_categories))    svc.categories    = [...(fields.service_top_categories || []), ...(fields.service_sub_categories || [])];
       if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = [...(fields.service_top_eligibilities || []), ...(fields.service_sub_eligibilities || [])];
+      if (Array.isArray(fields.service_sub_categories))    svc.sub_categories    = fields.service_sub_categories;
+      if (Array.isArray(fields.service_sub_eligibilities)) svc.sub_eligibilities = fields.service_sub_eligibilities;
       if (Array.isArray(fields.service_phones))    svc.phones    = fields.service_phones.filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
       if (Array.isArray(fields.service_locations)) svc.addresses = fields.service_locations.map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' }));
       org.markModified('spreadsheetService');
-    } else {
-      if (org.services.length === 0) org.services.push({ name: org.name } as any);
-      const svc = org.services[0] as any;
-      if (fields.service_name                    != null) svc.name                    = fields.service_name;
-      if (fields.service_alternate_name          != null) svc.alternate_name          = fields.service_alternate_name;
-      if (fields.service_email                   != null) svc.email                   = fields.service_email;
-      if (fields.service_website                 != null) svc.url                     = fields.service_website;
-      if (fields.service_cost                    != null) svc.fee                     = fields.service_cost;
-      if (fields.service_wait_time               != null) svc.wait_time               = fields.service_wait_time;
-      if (fields.service_description             != null) svc.long_description        = fields.service_description;
-      if (fields.service_short_description       != null) svc.short_description       = fields.service_short_description;
-      if (fields.service_application_process     != null) svc.application_process     = fields.service_application_process;
-      if (fields.service_required_documents      != null) svc.required_documents      = fields.service_required_documents;
-      if (fields.service_interpretation_services != null) svc.interpretation_services = fields.service_interpretation_services;
-      if (fields.service_clinician_actions       != null) svc.clinician_actions       = fields.service_clinician_actions;
-      if (fields.service_internal_notes          != null) svc.internal_note           = fields.service_internal_notes;
-      if (Array.isArray(fields.service_top_categories))    svc.categories    = [...(fields.service_top_categories || []), ...(fields.service_sub_categories || [])];
-      if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = [...(fields.service_top_eligibilities || []), ...(fields.service_sub_eligibilities || [])];
-      if (Array.isArray(fields.service_phones))    svc.phones    = fields.service_phones.filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
-      if (Array.isArray(fields.service_locations)) svc.addresses = fields.service_locations.map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' }));
+    }
+
+    // ── Org services (nested in fields.services) ────────────────────────────────
+    if (fields.services && typeof fields.services === 'object') {
+      const svcEntries = Object.values(fields.services) as any[];
+      org.services = svcEntries.map((svcFields: any) => {
+        const svc: any = {
+          name:                    svcFields.service_name || '',
+          alternate_name:          svcFields.service_alternate_name || '',
+          email:                   svcFields.service_email || '',
+          url:                     svcFields.service_website || '',
+          fee:                     svcFields.service_cost || '',
+          wait_time:               svcFields.service_wait_time || '',
+          long_description:        svcFields.service_description || '',
+          short_description:       svcFields.service_short_description || '',
+          application_process:     svcFields.service_application_process || '',
+          required_documents:      svcFields.service_required_documents || '',
+          interpretation_services: svcFields.service_interpretation_services || '',
+          clinician_actions:       svcFields.service_clinician_actions || '',
+          internal_note:           svcFields.service_internal_notes || '',
+          categories:              [...(svcFields.service_top_categories || []), ...(svcFields.service_sub_categories || [])],
+          eligibilities:           [...(svcFields.service_top_eligibilities || []), ...(svcFields.service_sub_eligibilities || [])],
+          sub_categories:          svcFields.service_sub_categories || [],
+          sub_eligibilities:       svcFields.service_sub_eligibilities || [],
+          phones:                  (svcFields.service_phones || []).filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' })),
+          addresses:               (svcFields.service_locations || []).map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' })),
+          notes:                   (svcFields.service_markdown_notes || []).map((n: string) => ({ note: n })),
+          schedule:                { schedule_days: [] as any[] }
+        };
+        // Convert service hours
+        if (svcFields.service_hours) {
+          const dayMap: Record<string, string> = { M: 'Monday', T: 'Tuesday', W: 'Wednesday', Th: 'Thursday', F: 'Friday', Sa: 'Saturday', Su: 'Sunday' };
+          for (const [key, val] of Object.entries(svcFields.service_hours) as [string, any][]) {
+            if (!val.start.time && !val.end.time) continue;
+            svc.schedule.schedule_days.push({
+              day: dayMap[key] || key,
+              opens_at: timeToMinutes(val.start.time),
+              closes_at: timeToMinutes(val.end.time)
+            });
+          }
+        }
+        return svc;
+      });
       org.markModified('services');
     }
 
@@ -302,8 +346,8 @@ bucketsRouter.post('/import-file-resolve', async (req: Request, res: Response, n
         notes:    (s.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
         schedule: s.schedule || { schedule_days: [] },
         shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
-        eligibilities: normalizeSFSGStringArray(s.eligibilities),
-        categories:    normalizeSFSGStringArray(s.categories),
+        ...splitSFSGEligibilities(s.eligibilities),
+        ...splitSFSGCategories(s.categories),
         addresses: (s.addresses || []).map((a: any) => ({ address_1: a.address_1 || '', city: a.city || '', state_province: a.state_province || '', postal_code: a.postal_code || '' })),
         phones:    (s.phones    || []).map((p: any) => ({ number: p.number || '', service_type: p.service_type || p.description || '' }))
       })),
@@ -395,8 +439,8 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
         notes:    (s.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
         schedule: s.schedule || { schedule_days: [] },
         shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
-        eligibilities: normalizeSFSGStringArray(s.eligibilities),
-        categories:    normalizeSFSGStringArray(s.categories),
+        ...splitSFSGEligibilities(s.eligibilities),
+        ...splitSFSGCategories(s.categories),
         addresses: (s.addresses || []).map((a: any) => ({
           address_1:      a.address_1      || '',
           address_2:      a.address_2      || '',

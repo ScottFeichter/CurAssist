@@ -86,7 +86,7 @@ The full submit flow is not tested because it requires a live SFSG session:
 `POST /api/buckets/import-file` is not tested because it requires mocking the SFSG API. The following routes are also not tested:
 - `POST /api/buckets/create-bucket-empty`
 - `POST /api/buckets/create-bucket-spreadsheet`
-- `POST /api/buckets/create-bucket-spreadsheet-submit` (requires mocking SFSG API and live session cookies)
+- `POST /api/buckets/create-bucket-spreadsheet-submit` (requires mocking SFSG API)
 - `importMultipleFiles` frontend flow
 
 **Known normalization:** The SFSG API returns `addresses`, `phones`, `notes`, `categories`, and `eligibilities` as objects with extra fields. These are normalized to match the Mongoose schema on import via `normalizeSFSGStringArray()` and explicit field mapping.
