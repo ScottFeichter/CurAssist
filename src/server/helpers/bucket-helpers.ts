@@ -216,6 +216,8 @@ export async function generateOrgDocuments(
     const svcPhoneName = sanitizePhoneName(row[servicePhoneFieldMap.phone_name] || '');
     const svcCategories    = sanitizeServiceCategories(row[serviceFieldMap.service_top_categories] || '');
     const svcEligibilities = sanitizeServiceEligibilitiesList(row[serviceFieldMap.service_top_eligibilities] || '');
+    const svcCatSplit      = splitCategoryNames(svcCategories);
+    const svcEligSplit     = splitEligibilityNames(svcEligibilities);
 
     // Merge service address/phone into org arrays (SFSG stores them on the org)
     const svcLocName = sanitizeLocationName(row[serviceLocationFieldMap.location_name] || '');
@@ -240,8 +242,10 @@ export async function generateOrgDocuments(
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
-        eligibilities:                   svcEligibilities,
-        categories:                      svcCategories,
+        eligibilities:                   svcEligSplit.eligibilities,
+        sub_eligibilities:               svcEligSplit.sub_eligibilities,
+        categories:                      svcCatSplit.categories,
+        sub_categories:                  svcCatSplit.sub_categories,
         addresses:                       svcAddr ? [{ name: svcLocName, address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip }] : [],
         phones:                          svcPhone ? [{ number: svcPhone, service_type: svcPhoneName }] : [],
       });
@@ -250,6 +254,8 @@ export async function generateOrgDocuments(
     // spreadsheetService uses org-level headers including Top Categories / Top Eligibilities
     const ssCategories    = sanitizeServiceCategories(row[orgFieldMap.organization_top_categories] || '');
     const ssEligibilities = sanitizeServiceEligibilitiesList(row[orgFieldMap.organization_top_eligibilities] || '');
+    const ssCatSplit      = splitCategoryNames(ssCategories);
+    const ssEligSplit     = splitEligibilityNames(ssEligibilities);
 
     // Build org-level service from org data when requested
     if (createServiceFromOrg && name) {
@@ -268,8 +274,10 @@ export async function generateOrgDocuments(
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
-        eligibilities:                   ssEligibilities,
-        categories:                      ssCategories,
+        eligibilities:                   ssEligSplit.eligibilities,
+        sub_eligibilities:               ssEligSplit.sub_eligibilities,
+        categories:                      ssCatSplit.categories,
+        sub_categories:                  ssCatSplit.sub_categories,
         addresses:                       address1 ? [{ name: locName, address_1: address1, city, state_province: state, postal_code: zip }] : [],
         phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
       });
@@ -306,8 +314,10 @@ export async function generateOrgDocuments(
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
-        eligibilities:                   ssEligibilities,
-        categories:                      ssCategories,
+        eligibilities:                   ssEligSplit.eligibilities,
+        sub_eligibilities:               ssEligSplit.sub_eligibilities,
+        categories:                      ssCatSplit.categories,
+        sub_categories:                  ssCatSplit.sub_categories,
         addresses:                       address1 ? [{ name: locName, address_1: address1, city, state_province: state, postal_code: zip }] : [],
         phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
       } as ISpreadsheetService,
@@ -381,6 +391,34 @@ export function buildReportBuffer(workbook: XLSX.WorkBook, results: IRowResult[]
  */
 export function normalizeSFSGStringArray(items: any[]): string[] {
   return (items || []).map((item: any) => typeof item === 'string' ? item : item?.name).filter(Boolean);
+}
+
+/**
+ * Splits a plain string array of category names into top and sub using topCategoryNames set.
+ * For spreadsheet import where values are just name strings.
+ */
+export function splitCategoryNames(names: string[]): { categories: string[], sub_categories: string[] } {
+  const categories: string[] = [];
+  const sub_categories: string[] = [];
+  for (const name of names) {
+    if (topCategoryNames.has(name)) categories.push(name);
+    if (!topCategoryNames.has(name)) sub_categories.push(name);
+  }
+  return { categories, sub_categories };
+}
+
+/**
+ * Splits a plain string array of eligibility names into top and sub using topEligibilityNames set.
+ * For spreadsheet import where values are just name strings.
+ */
+export function splitEligibilityNames(names: string[]): { eligibilities: string[], sub_eligibilities: string[] } {
+  const eligibilities: string[] = [];
+  const sub_eligibilities: string[] = [];
+  for (const name of names) {
+    if (topEligibilityNames.has(name)) eligibilities.push(name);
+    if (!topEligibilityNames.has(name)) sub_eligibilities.push(name);
+  }
+  return { eligibilities, sub_eligibilities };
 }
 
 /**
