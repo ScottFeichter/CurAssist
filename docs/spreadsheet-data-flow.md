@@ -108,8 +108,8 @@ These keys exist in the field maps but are not read by `generateOrgDocuments()`:
 | `service_short_description` | Service Short Description | Only read for organization service, not toggle service |
 | `service_markdown_notes` | Service Markdown Notes | Not implemented |
 | `service_hours` | Service Hours | Not implemented |
-| `service_sub_categories` | Service Sub Categories | Not implemented |
-| `service_sub_eligibilities` | Service Sub Eligibilities | Not implemented |
+| `service_sub_categories` | Service Sub Categories | Auto-split from Categories/Service Categories using lookup tables |
+| `service_sub_eligibilities` | Service Sub Eligibilities | Auto-split from Eligibilities/Service Eligibilities using lookup tables |
 | `service_belongs_to_org` | Organization ID | Not read during generation (set manually by volunteer) |
 
 ---

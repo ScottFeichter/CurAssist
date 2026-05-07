@@ -53,12 +53,14 @@ Each row supports one organization phone number.
 
 ## Categories & Eligibilities
 
-These fields apply to the toggle service view. They do NOT apply to the organization itself — categories and eligibilities are service-level data only.
+These fields apply to the toggle service view (and the org service if "Create service from org" is checked). They do NOT apply to the organization itself — categories and eligibilities are service-level data only.
+
+Values are automatically split into top-level and sub-level based on built-in lookup tables. You do not need separate columns for top/sub — just list all values comma-separated and the system handles the classification.
 
 | Spreadsheet Header | Description | Required |
 |---|---|---|
-| Categories | Comma-separated category names | No |
-| Eligibilities | Comma-separated eligibility names | No |
+| Categories | Comma-separated category names (auto-split into top/sub) | No |
+| Eligibilities | Comma-separated eligibility names (auto-split into top/sub) | No |
 
 ---
 
@@ -128,7 +130,7 @@ These apply to the organization service, not the toggle service.
 | SF Youth Center | 789 Elm St | San Francisco | CA | 94103 | 415-555-9012 | Youth | | | | | | | |
 
 - Row 1: Creates org with address + phone, plus a "Food Pantry" service with its own address + phone (all merged into org's lists for SFSG).
-- Row 2: Creates org only — no service created because "Service Name" is empty. "Top Categories" goes to the toggle service.
+- Row 2: Creates org only — no service created because "Service Name" is empty. Categories go to the toggle service.
 
 ---
 
@@ -140,7 +142,7 @@ These apply to the organization service, not the toggle service.
 | State | Converted to uppercase |
 | Phone | 10-digit numbers formatted with dashes |
 | Address, City | Converted to title case |
-| Categories, Eligibilities | Split on commas into individual items |
+| Categories, Eligibilities | Split on commas into individual items; auto-classified into top/sub |
 
 ---
 
