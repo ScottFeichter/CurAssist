@@ -17,9 +17,9 @@ function transformCategories(topCats, subCats) {
   return [...topCats, ...subCats]
     .map(name => {
       const id = categoryLookup[name] ?? null;
-      return { name, id, top_level: false, featured: false };
+      return { name, id, top_level: topCategoryNames.has(name), featured: false };
     })
-    .filter(c => c.id !== null);
+    .filter(c => c.id !== null || c.name);
 }
 
 /**
@@ -34,7 +34,7 @@ function transformEligibilities(topEligibs, subEligibs) {
       const id = eligibilityLookup[name] ?? null;
       return { name, id, feature_rank: null };
     })
-    .filter(e => e.id !== null);
+    .filter(e => e.id !== null || e.name);
 }
 
 /**
@@ -49,11 +49,22 @@ function transformHours(service_hours) {
     if (!val.start.time && !val.end.time) continue;
     schedule_days.push({
       day:        dayMap[key],
-      opens_at:   val.start.time || null,
-      closes_at:  val.end.time   || null
+      opens_at:   timeToHHMM(val.start.time),
+      closes_at:  timeToHHMM(val.end.time)
     });
   }
   return { schedule_days };
+}
+
+/**
+ * Converts "HH:MM" 24h string to HHMM integer for SFSG (e.g. "08:00" -> 800, "17:00" -> 1700).
+ * @param {string} timeStr
+ * @returns {number|null}
+ */
+function timeToHHMM(timeStr) {
+  if (!timeStr) return null;
+  const [hh, mm] = timeStr.split(':').map(Number);
+  return hh * 100 + mm;
 }
 
 /**
@@ -147,7 +158,7 @@ function transformNewOrg(payload) {
     addresses: transformLocations(org.organization_locations),
     phones:    transformPhones(org.organization_phones),
     notes:     transformNotes(org.organization_markdown_notes),
-    schedule:  { schedule_days: [] }
+    schedule:  org.organization_hours ? transformHours(org.organization_hours) : { schedule_days: [] }
   };
   if (org.organization_email)          resource.email            = org.organization_email;
   if (org.organization_website)        resource.website          = org.organization_website;

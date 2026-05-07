@@ -72,6 +72,27 @@ async function submitNewOrg(payload) {
 
     const svcData = await svcRes.json();
     console.log('[SUBMIT] Services created:', JSON.stringify(svcData, null, 2));
+
+    // Step 2b — service change_requests for fields SFSG ignores on service create
+    const createdServices = svcData.services || [];
+    const orgServices = Object.values(payload.organization.services || {});
+    for (let i = 0; i < createdServices.length; i++) {
+      const svcId = createdServices[i]?.service?.id;
+      const srcSvc = orgServices[i];
+      if (!svcId || !srcSvc) continue;
+      const svcChangeFields = {};
+      if (srcSvc.service_short_description) svcChangeFields.short_description = srcSvc.service_short_description;
+      if (srcSvc.service_internal_notes)    svcChangeFields.internal_note = srcSvc.service_internal_notes;
+      if (Object.keys(svcChangeFields).length > 0) {
+        console.log('[SUBMIT] Step 2b — service change_request for svc', svcId, ':', JSON.stringify(svcChangeFields));
+        const svcCrRes = await fetch(`${SF_API}/services/${svcId}/change_requests`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ change_request: svcChangeFields })
+        });
+        console.log('[SUBMIT] Service change_request status:', svcCrRes.status);
+      }
+    }
   }
 
   // Step 3 — change request for fields SFSG ignores on create

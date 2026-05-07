@@ -1,6 +1,6 @@
 the fields in org services do not appear to be being save when we do the save
 
-when creating file from existing file somehow the original is being deleted
+when creating file from existing file it doesn't pull up the new file it goes to first file in list
 
 when changing the name of organization the spreadsheet service name does not change with it - should it?
 

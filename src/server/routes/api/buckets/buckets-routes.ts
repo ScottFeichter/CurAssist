@@ -5,7 +5,7 @@ import { extendedConsole as console } from '../../../../streams/consoles/customC
 import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { Bucket } from '../../../../database/models/bucket.model';
 import { Org } from '../../../../database/models/org.model';
-import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, normalizeSFSGStringArray, buildReportBuffer } from '../../../helpers/bucket-helpers';
+import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, splitSFSGCategories, splitSFSGEligibilities, buildReportBuffer } from '../../../helpers/bucket-helpers';
 import * as XLSX from 'xlsx';
 // #endregion ------------------------------------------------------------------
 
@@ -346,8 +346,8 @@ bucketsRouter.post('/import-file-resolve', async (req: Request, res: Response, n
         notes:    (s.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
         schedule: s.schedule || { schedule_days: [] },
         shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
-        eligibilities: normalizeSFSGStringArray(s.eligibilities),
-        categories:    normalizeSFSGStringArray(s.categories),
+        ...splitSFSGEligibilities(s.eligibilities),
+        ...splitSFSGCategories(s.categories),
         addresses: (s.addresses || []).map((a: any) => ({ address_1: a.address_1 || '', city: a.city || '', state_province: a.state_province || '', postal_code: a.postal_code || '' })),
         phones:    (s.phones    || []).map((p: any) => ({ number: p.number || '', service_type: p.service_type || p.description || '' }))
       })),
@@ -439,8 +439,8 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
         notes:    (s.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
         schedule: s.schedule || { schedule_days: [] },
         shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
-        eligibilities: normalizeSFSGStringArray(s.eligibilities),
-        categories:    normalizeSFSGStringArray(s.categories),
+        ...splitSFSGEligibilities(s.eligibilities),
+        ...splitSFSGCategories(s.categories),
         addresses: (s.addresses || []).map((a: any) => ({
           address_1:      a.address_1      || '',
           address_2:      a.address_2      || '',

@@ -36,6 +36,53 @@ import {
 const { injectInput, injectTextarea, injectPhoneList, injectLocationDiv } = require('../../../content/Templates/inject-values');
 // #endregion ------------------------------------------------------------------
 
+/** Top-level category names (mirrors browser-side topCategoryNames in lookup-tables.js) */
+const topCategoryNames = new Set([
+  "Arts, Culture & Identity",
+  "Childcare",
+  "Family Support",
+  "Health & Wellness",
+  "Sports & Recreation",
+  "Youth Workforce & Life Skills",
+  "sfsg-domesticviolence",
+  "sfsg-finance",
+  "sfsg-food",
+  "sfsg-health",
+  "sfsg-housing",
+  "sfsg-hygiene",
+  "sfsg-internet",
+  "sfsg-jobs",
+  "sfsg-lgbtqa",
+  "sfsg-longtermhousing",
+  "sfsg-shelter",
+  "sfsg-substanceuse",
+  "Ucsf-foodinsecurity",
+  "ucsf-immigration",
+  "Ucsf-intimatepartnerviolence",
+  "Ucsf-mentalhealth",
+  "Ucsf-shelter",
+  "Ucsf-substanceabuse",
+]);
+
+/** Top-level eligibility names (broad groupings/demographics) */
+const topEligibilityNames = new Set([
+  "Age",
+  "Children",
+  "Education Level",
+  "Elementary School",
+  "Employment Status",
+  "Ethnicity",
+  "Family Status",
+  "Financial Status",
+  "Gender",
+  "Health Concerns",
+  "Housing Status",
+  "Immigration Status",
+  "Justice Involvement",
+  "Middle School",
+  "Preteens",
+]);
+
 /** Converts minutes from midnight to "HH:MM" 24h format. */
 function minutesToTime(minutes: number): string {
   if (!minutes && minutes !== 0) return '';
@@ -337,6 +384,42 @@ export function normalizeSFSGStringArray(items: any[]): string[] {
 }
 
 /**
+ * Splits a SFSG categories array into top and sub based on the top_level flag.
+ * Uses SFSG's top_level boolean. Items in topCategoryNames go in both arrays.
+ */
+export function splitSFSGCategories(items: any[]): { categories: string[], sub_categories: string[] } {
+  const categories: string[] = [];
+  const sub_categories: string[] = [];
+  for (const item of (items || [])) {
+    const name = typeof item === 'string' ? item : item?.name;
+    if (!name) continue;
+    const isTop = typeof item === 'object' ? item.top_level : topCategoryNames.has(name);
+    if (isTop) categories.push(name);
+    if (!isTop) sub_categories.push(name);
+    // If name is in both top set and appears as sub from SFSG, put in both
+    if (!isTop && topCategoryNames.has(name)) categories.push(name);
+    if (isTop && !topCategoryNames.has(name)) sub_categories.push(name);
+  }
+  return { categories, sub_categories };
+}
+
+/**
+ * Splits a SFSG eligibilities array into top and sub based on topEligibilityNames set.
+ * Names in the set go to eligibilities. Names not in the set go to sub_eligibilities.
+ */
+export function splitSFSGEligibilities(items: any[]): { eligibilities: string[], sub_eligibilities: string[] } {
+  const eligibilities: string[] = [];
+  const sub_eligibilities: string[] = [];
+  for (const item of (items || [])) {
+    const name = typeof item === 'string' ? item : item?.name;
+    if (!name) continue;
+    if (topEligibilityNames.has(name)) eligibilities.push(name);
+    if (!topEligibilityNames.has(name)) sub_eligibilities.push(name);
+  }
+  return { eligibilities, sub_eligibilities };
+}
+
+/**
  * Transforms an IOrg document into the SF Service Guide API payload shape.
  * Mirrors the browser-side transformNewOrg() in transform.js.
  * @param org - The org document to transform
@@ -362,8 +445,8 @@ export function transformOrgToSFPayload(org: IOrg): { orgBody: any, services: an
     phones:                         (svc.phones || []).map(p => ({ number: p.number, ...(p.service_type ? { service_type: p.service_type } : {}), ...(p.extension ? { extension: p.extension } : {}) })),
     schedule:                       svc.schedule                 || { schedule_days: [] },
     notes:                          svc.notes                    || [],
-    categories:                     (svc.categories || []).map(name => ({ name, id: null, top_level: false, featured: false })),
-    eligibilities:                  (svc.eligibilities || []).map(name => ({ name, id: null, feature_rank: null })),
+    categories:                     [...(svc.categories || []), ...(svc.sub_categories || [])].map(name => ({ name, id: null, top_level: topCategoryNames.has(name), featured: false })),
+    eligibilities:                  [...(svc.eligibilities || []), ...(svc.sub_eligibilities || [])].map(name => ({ name, id: null, feature_rank: null })),
     shouldInheritScheduleFromParent: svc.shouldInheritScheduleFromParent ?? true
   }));
 
