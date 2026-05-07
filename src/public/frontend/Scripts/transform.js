@@ -17,9 +17,9 @@ function transformCategories(topCats, subCats) {
   return [...topCats, ...subCats]
     .map(name => {
       const id = categoryLookup[name] ?? null;
-      return { name, id, top_level: false, featured: false };
+      return { name, id, top_level: topCategoryNames.has(name), featured: false };
     })
-    .filter(c => c.id !== null);
+    .filter(c => c.id !== null || c.name);
 }
 
 /**
@@ -34,7 +34,7 @@ function transformEligibilities(topEligibs, subEligibs) {
       const id = eligibilityLookup[name] ?? null;
       return { name, id, feature_rank: null };
     })
-    .filter(e => e.id !== null);
+    .filter(e => e.id !== null || e.name);
 }
 
 /**
@@ -49,11 +49,22 @@ function transformHours(service_hours) {
     if (!val.start.time && !val.end.time) continue;
     schedule_days.push({
       day:        dayMap[key],
-      opens_at:   val.start.time || null,
-      closes_at:  val.end.time   || null
+      opens_at:   timeToHHMM(val.start.time),
+      closes_at:  timeToHHMM(val.end.time)
     });
   }
   return { schedule_days };
+}
+
+/**
+ * Converts "HH:MM" 24h string to HHMM integer for SFSG (e.g. "08:00" -> 800, "17:00" -> 1700).
+ * @param {string} timeStr
+ * @returns {number|null}
+ */
+function timeToHHMM(timeStr) {
+  if (!timeStr) return null;
+  const [hh, mm] = timeStr.split(':').map(Number);
+  return hh * 100 + mm;
 }
 
 /**
@@ -91,11 +102,10 @@ function transformNotes(notes) {
 function transformPhones(phones) {
   return phones
     .filter(p => p.phone_number)
-    .map(p => {
-      const phone = { number: p.phone_number };
-      if (p.phone_name) phone.service_type = p.phone_name;
-      return phone;
-    });
+    .map(p => ({
+      number: p.phone_number.replace(/[^\d+]/g, ''),
+      service_type: p.phone_name || 'voice'
+    }));
 }
 
 // #endregion ------------------------------------------------------------------
@@ -139,7 +149,7 @@ function transformService(svc) {
  * @returns {{ orgBody: Object, services: Object[] }}
  */
 function transformNewOrg(payload) {
-  console.log('[TRANSFORM] transformNewOrg input:', JSON.stringify(payload).substring(0, 500));
+  console.log('[TRANSFORM] transformNewOrg input:', JSON.stringify(payload, null, 2));
   const org = payload.organization;
   const services = Object.values(org.services || {}).map(transformService);
 
@@ -148,19 +158,22 @@ function transformNewOrg(payload) {
     addresses: transformLocations(org.organization_locations),
     phones:    transformPhones(org.organization_phones),
     notes:     transformNotes(org.organization_markdown_notes),
-    schedule:  { schedule_days: [] }
+    schedule:  org.organization_hours ? transformHours(org.organization_hours) : { schedule_days: [] }
   };
-  if (org.organization_alternate_name) resource.alternate_name   = org.organization_alternate_name;
   if (org.organization_email)          resource.email            = org.organization_email;
   if (org.organization_website)        resource.website          = org.organization_website;
   if (org.organization_description)    resource.long_description = org.organization_description;
   if (org.organization_legal_status)   resource.legal_status     = org.organization_legal_status;
+  if (org.organization_alternate_name) resource.alternate_name   = org.organization_alternate_name;
   if (org.organization_internal_notes) resource.internal_note    = org.organization_internal_notes;
+  // NOTE: SFSG ignores alternate_name and internal_note on create.
+  // They are set here for payload completeness but are actually applied
+  // via a change_request in submitNewOrg.js Step 3.
 
   const result = { orgBody: { resources: [resource] }, services };
   console.log('[TRANSFORM] transformNewOrg output orgBody:', JSON.stringify(result.orgBody, null, 2));
   console.log('[TRANSFORM] transformNewOrg output services count:', services.length);
-  if (services.length) console.log('[TRANSFORM] first service:', JSON.stringify(services[0]).substring(0, 300));
+  if (services.length) console.log('[TRANSFORM] first service:', JSON.stringify(services[0], null, 2));
   return result;
 }
 

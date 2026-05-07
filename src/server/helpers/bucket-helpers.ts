@@ -36,6 +36,61 @@ import {
 const { injectInput, injectTextarea, injectPhoneList, injectLocationDiv } = require('../../../content/Templates/inject-values');
 // #endregion ------------------------------------------------------------------
 
+/** Top-level category names (mirrors browser-side topCategoryNames in lookup-tables.js) */
+const topCategoryNames = new Set([
+  "Arts, Culture & Identity",
+  "Childcare",
+  "Family Support",
+  "Health & Wellness",
+  "Sports & Recreation",
+  "Youth Workforce & Life Skills",
+  "sfsg-domesticviolence",
+  "sfsg-finance",
+  "sfsg-food",
+  "sfsg-health",
+  "sfsg-housing",
+  "sfsg-hygiene",
+  "sfsg-internet",
+  "sfsg-jobs",
+  "sfsg-lgbtqa",
+  "sfsg-longtermhousing",
+  "sfsg-shelter",
+  "sfsg-substanceuse",
+  "Ucsf-foodinsecurity",
+  "ucsf-immigration",
+  "Ucsf-intimatepartnerviolence",
+  "Ucsf-mentalhealth",
+  "Ucsf-shelter",
+  "Ucsf-substanceabuse",
+]);
+
+/** Top-level eligibility names (broad groupings/demographics) */
+const topEligibilityNames = new Set([
+  "Age",
+  "Children",
+  "Education Level",
+  "Elementary School",
+  "Employment Status",
+  "Ethnicity",
+  "Family Status",
+  "Financial Status",
+  "Gender",
+  "Health Concerns",
+  "Housing Status",
+  "Immigration Status",
+  "Justice Involvement",
+  "Middle School",
+  "Preteens",
+]);
+
+/** Converts minutes from midnight to "HH:MM" 24h format. */
+function minutesToTime(minutes: number): string {
+  if (!minutes && minutes !== 0) return '';
+  const hh = Math.floor(minutes / 60).toString().padStart(2, '0');
+  const mm = (minutes % 60).toString().padStart(2, '0');
+  return `${hh}:${mm}`;
+}
+
 console.enter();
 
 // #region ===================== HELPERS =======================================
@@ -329,6 +384,42 @@ export function normalizeSFSGStringArray(items: any[]): string[] {
 }
 
 /**
+ * Splits a SFSG categories array into top and sub based on the top_level flag.
+ * Uses SFSG's top_level boolean. Items in topCategoryNames go in both arrays.
+ */
+export function splitSFSGCategories(items: any[]): { categories: string[], sub_categories: string[] } {
+  const categories: string[] = [];
+  const sub_categories: string[] = [];
+  for (const item of (items || [])) {
+    const name = typeof item === 'string' ? item : item?.name;
+    if (!name) continue;
+    const isTop = typeof item === 'object' ? item.top_level : topCategoryNames.has(name);
+    if (isTop) categories.push(name);
+    if (!isTop) sub_categories.push(name);
+    // If name is in both top set and appears as sub from SFSG, put in both
+    if (!isTop && topCategoryNames.has(name)) categories.push(name);
+    if (isTop && !topCategoryNames.has(name)) sub_categories.push(name);
+  }
+  return { categories, sub_categories };
+}
+
+/**
+ * Splits a SFSG eligibilities array into top and sub based on topEligibilityNames set.
+ * Names in the set go to eligibilities. Names not in the set go to sub_eligibilities.
+ */
+export function splitSFSGEligibilities(items: any[]): { eligibilities: string[], sub_eligibilities: string[] } {
+  const eligibilities: string[] = [];
+  const sub_eligibilities: string[] = [];
+  for (const item of (items || [])) {
+    const name = typeof item === 'string' ? item : item?.name;
+    if (!name) continue;
+    if (topEligibilityNames.has(name)) eligibilities.push(name);
+    if (!topEligibilityNames.has(name)) sub_eligibilities.push(name);
+  }
+  return { eligibilities, sub_eligibilities };
+}
+
+/**
  * Transforms an IOrg document into the SF Service Guide API payload shape.
  * Mirrors the browser-side transformNewOrg() in transform.js.
  * @param org - The org document to transform
@@ -354,8 +445,8 @@ export function transformOrgToSFPayload(org: IOrg): { orgBody: any, services: an
     phones:                         (svc.phones || []).map(p => ({ number: p.number, ...(p.service_type ? { service_type: p.service_type } : {}), ...(p.extension ? { extension: p.extension } : {}) })),
     schedule:                       svc.schedule                 || { schedule_days: [] },
     notes:                          svc.notes                    || [],
-    categories:                     (svc.categories || []).map(name => ({ name, id: null, top_level: false, featured: false })),
-    eligibilities:                  (svc.eligibilities || []).map(name => ({ name, id: null, feature_rank: null })),
+    categories:                     [...(svc.categories || []), ...(svc.sub_categories || [])].map(name => ({ name, id: null, top_level: topCategoryNames.has(name), featured: false })),
+    eligibilities:                  [...(svc.eligibilities || []), ...(svc.sub_eligibilities || [])].map(name => ({ name, id: null, feature_rank: null })),
     shouldInheritScheduleFromParent: svc.shouldInheritScheduleFromParent ?? true
   }));
 
@@ -409,6 +500,26 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
   html = injectInput(html,    'organization_legal_status',   org.legal_status     || '');
   html = injectTextarea(html, 'organization_description',    org.long_description || '');
   html = injectTextarea(html, 'organization_internal_notes', org.internal_note    || '');
+
+  // ── Org schedule/hours ─────────────────────────────────────────────────────
+  if (org.schedule?.schedule_days?.length) {
+    const dayIndex: Record<string, number> = { Monday: 0, Tuesday: 1, Wednesday: 2, Thursday: 3, Friday: 4, Saturday: 5, Sunday: 6 };
+    const times: [string, string][] = Array(7).fill(null).map(() => ['', '']);
+    for (const sd of org.schedule.schedule_days) {
+      const idx = dayIndex[sd.day];
+      if (idx != null) times[idx] = [minutesToTime(sd.opens_at), minutesToTime(sd.closes_at)];
+    }
+    // Replace only the first 14 time inputs (7 days x 2) which are the org-level hours
+    let timeIdx = 0;
+    html = html.replace(/(<input type="time" value=")(")/g, (match, prefix, suffix) => {
+      if (timeIdx >= 14) return match;
+      const dayPos = Math.floor(timeIdx / 2);
+      const isEnd = timeIdx % 2 === 1;
+      timeIdx++;
+      const val = isEnd ? times[dayPos][1] : times[dayPos][0];
+      return val ? `${prefix}${val}"` : match;
+    });
+  }
 
   // ── Org markdown notes ─────────────────────────────────────────────────────
   if (org.notes?.length) {
@@ -474,23 +585,49 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
     }
 
     if (svc.categories?.length) {
-      const pillsHtml = svc.categories.map((c: any) =>
-        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
-      ).join('');
-      html = html.replace(
-        /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-      );
+      const subCats = new Set(svc.sub_categories || []);
+      const topCats = svc.categories.filter((c: any) => !subCats.has(c));
+      if (topCats.length) {
+        const pillsHtml = topCats.map((c: any) =>
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+        ).join('');
+        html = html.replace(
+          /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+          `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        );
+      }
+      if (subCats.size) {
+        const pillsHtml = [...subCats].map((c: any) =>
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+        ).join('');
+        html = html.replace(
+          /(<div[^>]*id="service_sub_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+          `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        );
+      }
     }
 
     if (svc.eligibilities?.length) {
-      const pillsHtml = svc.eligibilities.map((e: any) =>
-        `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
-      ).join('');
-      html = html.replace(
-        /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-        `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-      );
+      const subEligibs = new Set(svc.sub_eligibilities || []);
+      const topEligibs = svc.eligibilities.filter((e: any) => !subEligibs.has(e));
+      if (topEligibs.length) {
+        const pillsHtml = topEligibs.map((e: any) =>
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+        ).join('');
+        html = html.replace(
+          /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+          `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        );
+      }
+      if (subEligibs.size) {
+        const pillsHtml = [...subEligibs].map((e: any) =>
+          `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+        ).join('');
+        html = html.replace(
+          /(<div[^>]*id="service_sub_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+          `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+        );
+      }
     }
 
     if (svc.service_belongs_to_org) {
@@ -547,24 +684,50 @@ export async function hydrateTemplate(org: IOrg): Promise<string> {
 
         // Categories as pills
         if (svc.categories?.length) {
-          const pillsHtml = svc.categories.map((c: any) =>
-            `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
-          ).join('');
-          s = s.replace(
-            /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-            `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-          );
+          const subCats = new Set(svc.sub_categories || []);
+          const topCats = svc.categories.filter((c: any) => !subCats.has(c));
+          if (topCats.length) {
+            const pillsHtml = topCats.map((c: any) =>
+              `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+            ).join('');
+            s = s.replace(
+              /(<div[^>]*id="service_top_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+              `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+            );
+          }
+          if (subCats.size) {
+            const pillsHtml = [...subCats].map((c: any) =>
+              `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${c}</span></div>`
+            ).join('');
+            s = s.replace(
+              /(<div[^>]*id="service_sub_categories"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+              `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+            );
+          }
         }
 
         // Eligibilities as pills
         if (svc.eligibilities?.length) {
-          const pillsHtml = svc.eligibilities.map((e: any) =>
-            `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
-          ).join('');
-          s = s.replace(
-            /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
-            `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
-          );
+          const subEligibs = new Set(svc.sub_eligibilities || []);
+          const topEligibs = svc.eligibilities.filter((e: any) => !subEligibs.has(e));
+          if (topEligibs.length) {
+            const pillsHtml = topEligibs.map((e: any) =>
+              `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+            ).join('');
+            s = s.replace(
+              /(<div[^>]*id="service_top_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+              `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+            );
+          }
+          if (subEligibs.size) {
+            const pillsHtml = [...subEligibs].map((e: any) =>
+              `<div class="Select-value"><span class="Select-value-icon" aria-hidden="true">×</span><span class="Select-value-label">${e}</span></div>`
+            ).join('');
+            s = s.replace(
+              /(<div[^>]*id="service_sub_eligibilities"[^>]*>)(\s*)(<div class="Select-placeholder">)/,
+              `$1${pillsHtml}<div class="Select-placeholder" style="display:none;">`
+            );
+          }
         }
 
         return s;
