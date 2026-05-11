@@ -5,7 +5,7 @@ import { extendedConsole as console } from '../../../../streams/consoles/customC
 import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { Bucket } from '../../../../database/models/bucket.model';
 import { Org } from '../../../../database/models/org.model';
-import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, splitSFSGCategories, splitSFSGEligibilities, buildReportBuffer } from '../../../helpers/bucket-helpers';
+import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, splitSFSGCategories, splitSFSGEligibilities, buildReportBuffer } from '../../../helpers/helpers-index';
 import * as XLSX from 'xlsx';
 // #endregion ------------------------------------------------------------------
 

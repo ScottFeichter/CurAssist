@@ -18,7 +18,7 @@ import {
   sanitizeServiceWaitTime,
   sanitizeServiceCategories,
   sanitizeServiceEligibilitiesList,
-} from '../../server/helpers/bucket-sanitizers';
+} from '../../server/data-integrity/sanitizer-validation-controller';
 // #endregion ------------------------------------------------------------------
 
 // #region ====================== TESTS ========================================

@@ -11,6 +11,13 @@ CurAssist/
   src/
     entry.ts              # Server entry point
     server/               # Express server, routes, helpers
+    data-integrity/       # Field-level sanitization and validation (per-field modules)
+      sanitizer-controller.ts
+      shared/             # Fields used by both org and service
+      location/           # Address component sanitizers
+      phone/              # Phone component sanitizers
+      organization/       # Org-only field sanitizers
+      service/            # Service-only field sanitizers
     database/             # MongoDB models and Atlas connection
       atlas.ts            # Mongoose connect/disconnect
       models/

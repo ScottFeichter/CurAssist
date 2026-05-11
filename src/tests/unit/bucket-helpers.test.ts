@@ -7,7 +7,7 @@ import {
   normalizeSFSGStringArray,
   buildReportBuffer,
   transformOrgToSFPayload,
-} from '../../server/helpers/bucket-helpers';
+} from '../../server/helpers/helpers-index';
 import { IOrg } from '../../database/models/org.model';
 import mongoose from 'mongoose';
 import * as XLSX from 'xlsx';

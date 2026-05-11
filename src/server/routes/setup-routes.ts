@@ -7,7 +7,7 @@ import express, { Request, Response, NextFunction, Application } from 'express';
 // import SEQUELIZE from '../../database/sequelize';
 import apiRouter from './api/api-router';
 import { routeCatchAll } from './setups/catchAll-unmatched-routes';
-import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap, serviceLocationFieldMap } from '../helpers/buckets-map';
+import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap, serviceLocationFieldMap } from '../helpers/buckets-map/buckets-map';
 
 
 

@@ -73,7 +73,7 @@ describe('GET /api/csrf/restore', () => {
 
   it('sets XSRF-TOKEN cookie', async () => {
     const res = await request(app).get('/api/csrf/restore');
-    const cookies = res.headers['set-cookie'] as string[];
+    const cookies = res.headers['set-cookie'] as unknown as string[];
     expect(cookies.some((c) => c.includes('XSRF-TOKEN'))).toBe(true);
   });
 });
