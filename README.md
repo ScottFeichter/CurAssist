@@ -19,7 +19,7 @@ CurAssist/
     public/
       frontend/           # Frontend static files (index.html, app.js, Scripts/)
         Scripts/          # submit/transform/collector logic
-        requestSamples/   # Captured SF API request/response samples
+        sfsgRequestSamples/   # Captured SF API request/response samples
     tests/
       unit/               # Unit tests (sanitizers, transform logic)
       integration/        # Integration tests (API routes via supertest + mongodb-memory-server)
@@ -44,6 +44,7 @@ CurAssist/
   docs/
     deployment-DB-noS3.md # Current MongoDB-based deployment notes
     deployment-S3-noDB.md # Original file-based deployment (historical reference)
+    ssh-and-nginx.md      # SSH connection guide, PEM key, Nginx reverse proxy config
     db2bOrNot2b.md        # Database migration decision log
     curassistDeployFirst.md # Full deployment log and infrastructure notes
     todo.md               # Todo list
@@ -324,4 +325,4 @@ The submit flow (triggered by the "Submit" button) is handled in `src/public/fro
 
 The batch/direct submit path (`create-bucket-spreadsheet-submit`) reuses `submitNewOrg()` for each org — single source of truth for the SFSG submit logic.
 
-Sample captured requests/responses are in `src/public/frontend/requestSamples/`.
+Sample captured requests/responses are in `src/public/frontend/sfsgRequestSamples/`.

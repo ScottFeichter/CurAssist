@@ -6,7 +6,6 @@ when changing the name of organization the spreadsheet service name does not cha
 
 when adding an address from an organization it seems to make 4 copies of it in the service
 
-
 when saving should the bucket files refresh but still stay on the current file? also for create? delete? currently I have to refresh the browser
 
 they actually might be saving...but the file list seems to put some new things at top and somethings at bottom in other words not following the alphabetical

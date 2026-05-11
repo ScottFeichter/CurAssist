@@ -14,7 +14,7 @@ import { setupPostRouteMiddleware } from '../../server/middlewares/setup-post-ro
  */
 export function createTestApp(): Application {
   const app = express();
-  app.use(express.json({ limit: '10mb' }));
+  app.use(express.json({ limit: '50mb' }));
   setupPreRouteMiddleware(app);
   setupRoutes(app);
   setupPostRouteMiddleware(app);

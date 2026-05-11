@@ -72,17 +72,17 @@ logger.transports.forEach(transport => {
 logger.on('error', (error) => {
 
 
-// Log to console as a fallback
-console.error('Logger error:', error);
+    // Log to console as a fallback
+    console.error('Logger error:', error);
 
 
-// Optionally write to a fallback file
-fs.appendFileSync('logger-errors.txt',
-    `${new Date().toISOString()} - Logger Error: ${error}\n`);
+    // Optionally write to a fallback file
+    fs.appendFileSync('logger-errors.txt',
+        `${new Date().toISOString()} - Logger Error: ${error}\n`);
 
 
-// Optionally notify your error tracking service
-// errorTrackingService.notify(error);
+    // Optionally notify your error tracking service
+    // errorTrackingService.notify(error);
 
 });
 

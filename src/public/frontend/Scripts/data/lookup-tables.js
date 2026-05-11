@@ -52,7 +52,7 @@ const topEligibilityNames = new Set([
 
 const categoryLookup = {
   // Top categories
-  "Arts, Culture & Identity":        356,
+  "Arts, Culture & Identity":         356,
   "Childcare":                        102,
   "Family Support":                   359,
   "Health & Wellness":                360,

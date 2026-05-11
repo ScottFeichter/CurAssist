@@ -92,11 +92,43 @@ pm2 save
 ```
 
 ### Nginx + HTTPS
+
+**What is Nginx and why do we use it?**
+
+Nginx is a reverse proxy that sits between the internet and our Express app. Incoming requests hit Nginx on ports 80/443, and Nginx forwards them to Express on localhost:5555. We use it because:
+
+- **SSL termination** — Nginx handles HTTPS certificates (Let's Encrypt) so Express doesn't have to
+- **Security** — Express never binds to a public port directly; Nginx shields it
+- **Static performance** — Nginx is optimized for serving static assets and handling slow clients
+- **Standard port binding** — binding to ports 80/443 requires root; Nginx runs as root, Express runs as a normal user
+
+**Install and configure:**
 ```bash
 sudo dnf install nginx certbot python3-certbot-nginx -y
-# Configure Nginx to proxy port 443 → localhost:5555
 sudo certbot --nginx -d sfsgcurassist.com
 ```
+
+**Set body size limit:**
+
+Nginx defaults to a 1MB request body limit (`client_max_body_size`). Our Express app allows up to 50MB (`express.json({ limit: '50mb' })`), so Nginx must match or exceed that — otherwise large spreadsheet uploads get rejected with `413 Request Entity Too Large` before Express ever sees them.
+
+Add this inside the `server` block (typically `/etc/nginx/conf.d/default.conf` or the server block in `/etc/nginx/nginx.conf`):
+
+```nginx
+client_max_body_size 50m;
+```
+
+Then validate and reload:
+```bash
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+To change the limit later, edit the value in both places:
+1. Nginx config — `client_max_body_size <size>;`
+2. Express — `express.json({ limit: '<size>' })` in the server setup
+
+The effective limit is whichever is lowest in the chain: **Client → Nginx → Express**.
 
 ---
 
