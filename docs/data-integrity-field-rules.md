@@ -77,12 +77,12 @@ This document tracks the sanitization and validation rules for every field acros
 | SFSG → DB | Trust exactly as-is, no modification. |
 | DB → SFSG | Strip HTML, normalize line breaks, trim (SFSG expects plain text in notes). |
 
-### hours
+### hours ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Trim. If value present, caller appends "See spreadsheet for hours details" to internal notes. Too many freeform formats to parse. |
+| SFSG → DB | Trust as-is (same `{ schedule_days: [{ day, opens_at, closes_at }] }` format we store). |
+| DB → SFSG | Pass-through (same format SFSG expects). Conversion from form HH:MM to minutes handled in save route. |
 
 ---
 
