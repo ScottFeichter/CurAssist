@@ -1,12 +1,20 @@
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
 
+// #region ===================== CONSTRAINTS ====================================
+
 export const constraints = {
   required: false,
 };
 
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== INCOMING (Spreadsheet → DB) ====================
+
 /**
- * Sanitizes a phone number. Strips non-digits and formats as XXX-XXX-XXXX if 10 digits.
- * If not 10 digits, keeps the original cleaned value.
+ * Sanitizes a phone number from a spreadsheet.
+ * Strips non-digits, validates exactly 10 digits, stores as digits only.
+ * Rejects if not 10 digits after stripping.
+ *
  * @param value - Raw cell value from spreadsheet
  */
 export function sanitizeIncoming(value: any): SanitizeResult {
@@ -14,19 +22,43 @@ export function sanitizeIncoming(value: any): SanitizeResult {
   if (!cleaned) return { valid: true, value: '', errors: [] };
 
   const digits = cleaned.replace(/\D/g, '');
-  const formatted = digits.length === 10
-    ? `${digits.slice(0, 3)}-${digits.slice(3, 6)}-${digits.slice(6, 10)}`
-    : cleaned;
 
-  return { valid: true, value: formatted, errors: [] };
+  if (digits.length !== 10) {
+    return { valid: false, value: cleaned, errors: [`Invalid phone: "${cleaned}" must be 10 digits (got ${digits.length})`] };
+  }
+
+  return { valid: true, value: digits, errors: [] };
 }
+
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== INCOMING FROM SFSG (SFSG → DB) =================
+
+/**
+ * Sanitizes a phone number imported from the SFSG API.
+ * SFSG returns formatted "(415) 766-6092" — strip to digits for consistent storage.
+ *
+ * @param value - Phone number from SFSG API response
+ */
+export function sanitizeIncomingFromSFSG(value: any): string {
+  if (value === null || value === undefined) return '';
+  return String(value).replace(/\D/g, '');
+}
+
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== OUTGOING (DB → SFSG) ===========================
 
 /**
  * Prepares phone number for SFSG API.
- * SFSG expects digits only (no dashes). Strips formatting.
- * @param value - Value from MongoDB (formatted as XXX-XXX-XXXX)
+ * SFSG create endpoint expects digits only: "4157716600".
+ * Strips any formatting in case of manually entered data.
+ *
+ * @param value - Phone number from MongoDB
  */
 export function sanitizeOutgoing(value: string): string {
   if (!value) return '';
   return value.replace(/\D/g, '');
 }
+
+// #endregion ------------------------------------------------------------------

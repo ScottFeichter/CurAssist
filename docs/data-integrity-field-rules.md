@@ -88,58 +88,58 @@ This document tracks the sanitization and validation rules for every field acros
 
 ## Location Fields
 
-### location_name
+### location_name ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Trim + Title Case. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Trim + Title Case (matches SFSG format: "North Beach", "Office"). |
 
-### address
+### address ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Trim + Title Case. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Trim + Title Case (matches SFSG format: "1170 Columbus Avenue"). |
 
-### city
+### city ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Trim + Title Case. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Trim + Title Case (matches SFSG format: "San Francisco"). |
 
-### state
+### state ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Trim, uppercase. Accepts 2-letter codes or full state names ("California" → "CA"). Rejects unrecognized values. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Trim + uppercase (matches SFSG format: "CA"). |
 
-### zip
+### zip ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Trim. Accepts "94103" or "94103-1234" — strips -XXXX suffix, stores 5 digits only. Rejects if not 5 digits. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Trim (should already be 5 digits). |
 
 ---
 
 ## Phone Fields
 
-### phone_number
+### phone_number ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Strip non-digits, validate exactly 10 digits, store digits only ("4155551234"). Reject if not 10 digits. |
+| SFSG → DB | Strip formatting to digits only (SFSG returns "(415) 766-6092", we store "4157666092"). |
+| DB → SFSG | Digits only — strip any formatting (SFSG create expects "4157716600"). |
 
-### phone_name
+### phone_name ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Trim only — pass through as-entered (SFSG stores mixed case). |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Trim. Defaults to "voice" if empty (SFSG requires service_type — omitting causes 500). |
 
 ---
 

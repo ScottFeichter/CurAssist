@@ -1,9 +1,17 @@
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
 
+// #region ===================== CONSTRAINTS ====================================
+
 export const constraints = { required: false };
 
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== INCOMING (Spreadsheet → DB) ====================
+
 /**
- * Sanitizes a street address. Converts to Title Case.
+ * Sanitizes a street address from a spreadsheet.
+ * Trims and converts to Title Case.
+ *
  * @param value - Raw cell value from spreadsheet
  */
 export function sanitizeIncoming(value: any): SanitizeResult {
@@ -19,10 +27,40 @@ export function sanitizeIncoming(value: any): SanitizeResult {
   return { valid: true, value: titleCase, errors: [] };
 }
 
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== INCOMING FROM SFSG (SFSG → DB) =================
+
 /**
- * Prepares address for SFSG API. Pass-through (already title-cased).
- * @param value - Value from MongoDB
+ * Sanitizes an address imported from the SFSG API.
+ * Trusts SFSG as-is — no modification.
+ *
+ * @param value - Address from SFSG API response
+ */
+export function sanitizeIncomingFromSFSG(value: any): string {
+  if (value === null || value === undefined) return '';
+  return String(value);
+}
+
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== OUTGOING (DB → SFSG) ===========================
+
+/**
+ * Prepares address for SFSG API.
+ * Trims and converts to Title Case (matches SFSG format: "1170 Columbus Avenue").
+ *
+ * @param value - Address from MongoDB
  */
 export function sanitizeOutgoing(value: string): string {
-  return value || '';
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  return trimmed
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
+
+// #endregion ------------------------------------------------------------------
