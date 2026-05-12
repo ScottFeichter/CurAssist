@@ -15,6 +15,31 @@ export const constraints = {
 
 // #endregion ------------------------------------------------------------------
 
+// #region ===================== HELPERS ========================================
+
+/**
+ * Ensures a URL has a trailing slash after the domain (if no path exists).
+ * SFSG stores URLs with trailing slash: "https://kaiming.org/"
+ */
+function ensureTrailingSlash(url: string): string {
+  if (!url) return '';
+  try {
+    const parsed = new URL(url);
+    if (parsed.pathname === '' || parsed.pathname === '/') {
+      return parsed.origin + '/' + (parsed.search || '') + (parsed.hash || '');
+    }
+    return url;
+  } catch {
+    // If URL parsing fails, just add slash if not present after domain
+    if (!url.endsWith('/') && !url.includes('/', url.indexOf('//') + 2)) {
+      return url + '/';
+    }
+    return url;
+  }
+}
+
+// #endregion ------------------------------------------------------------------
+
 // #region ===================== INCOMING (Spreadsheet → DB) ====================
 
 /**
@@ -31,13 +56,14 @@ export const constraints = {
  *   - Random text that doesn't match a URL pattern
  *   - Values like "none", "N/A", single words without a dot
  *
+ * Normalizes to lowercase with trailing slash to match SFSG format.
+ *
  * @param value - Raw cell value from spreadsheet
  * @returns SanitizeResult with normalized URL or errors
  */
 export function sanitizeIncoming(value: any): SanitizeResult {
   const cleaned = sanitizeValue(value);
 
-  // Empty is valid (field is optional)
   if (!cleaned) return { valid: true, value: '', errors: [] };
 
   const lower = cleaned.toLowerCase();
@@ -58,14 +84,32 @@ export function sanitizeIncoming(value: any): SanitizeResult {
   if (/^https?:\/\//i.test(normalized)) {
     // Already has protocol — keep as-is
   } else if (/^www\./i.test(normalized)) {
-    // Has www but no protocol — prepend https://
     normalized = 'https://' + normalized;
   } else {
-    // Bare domain — prepend https://
     normalized = 'https://' + normalized;
   }
 
+  // Lowercase and ensure trailing slash (match SFSG format)
+  normalized = normalized.toLowerCase();
+  normalized = ensureTrailingSlash(normalized);
+
   return { valid: true, value: normalized, errors: [] };
+}
+
+// #endregion ------------------------------------------------------------------
+
+// #region ===================== INCOMING FROM SFSG (SFSG → DB) =================
+
+/**
+ * Sanitizes a website value imported from the SFSG API.
+ * Trusts SFSG as-is — no trimming, no modification.
+ *
+ * @param value - Website from SFSG API response
+ * @returns Value exactly as SFSG provided it
+ */
+export function sanitizeIncomingFromSFSG(value: any): string {
+  if (value === null || value === undefined) return '';
+  return String(value);
 }
 
 // #endregion ------------------------------------------------------------------
@@ -74,19 +118,31 @@ export function sanitizeIncoming(value: any): SanitizeResult {
 
 /**
  * Prepares a website value for the SFSG API call.
- * SFSG expects a full URL with protocol (https:// or http://).
- * The incoming sanitizer already normalizes to this format,
- * so outgoing just passes through. If somehow a bare domain
- * is in the DB, it prepends https://.
+ * SFSG expects lowercase URL with protocol and trailing slash.
+ * Ensures https:// prefix, lowercases, adds trailing slash if needed.
  *
  * @param value - Website value from MongoDB
  * @returns URL ready for SFSG API payload
  */
 export function sanitizeOutgoing(value: string): string {
   if (!value) return '';
-  if (/^https?:\/\//i.test(value)) return value;
-  if (/^www\./i.test(value)) return 'https://' + value;
-  return 'https://' + value;
+
+  let url = value;
+
+  // Ensure protocol
+  if (/^https?:\/\//i.test(url)) {
+    // has protocol
+  } else if (/^www\./i.test(url)) {
+    url = 'https://' + url;
+  } else {
+    url = 'https://' + url;
+  }
+
+  // Lowercase and trailing slash
+  url = url.toLowerCase();
+  url = ensureTrailingSlash(url);
+
+  return url;
 }
 
 // #endregion ------------------------------------------------------------------

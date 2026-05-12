@@ -36,17 +36,39 @@ export function sanitizeIncoming(value: any): SanitizeResult {
 
 // #endregion ------------------------------------------------------------------
 
+// #region ===================== INCOMING FROM SFSG (SFSG → DB) =================
+
+/**
+ * Sanitizes a name value imported from the SFSG API.
+ * Trusts SFSG casing as-is — only trims whitespace.
+ *
+ * @param value - Name from SFSG API response
+ * @returns Trimmed name
+ */
+export function sanitizeIncomingFromSFSG(value: any): string {
+  return sanitizeValue(value);
+}
+
+// #endregion ------------------------------------------------------------------
+
 // #region ===================== OUTGOING (DB → SFSG) ===========================
 
 /**
  * Prepares a name value for the SFSG API call.
- * SFSG accepts names as-is. No additional transformation needed.
+ * Applies trim + Title Case in case the value was manually entered unsanitized.
  *
  * @param value - Name value from MongoDB
- * @returns Name ready for SFSG API payload
+ * @returns Title-cased name ready for SFSG API payload
  */
 export function sanitizeOutgoing(value: string): string {
-  return value || '';
+  if (!value) return '';
+  const trimmed = value.trim();
+  if (!trimmed) return '';
+  return trimmed
+    .toLowerCase()
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
 }
 
 // #endregion ------------------------------------------------------------------

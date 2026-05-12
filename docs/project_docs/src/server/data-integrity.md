@@ -100,6 +100,7 @@ The controller provides:
 ## Adding a New Field
 
 1. Create a folder under the appropriate section (shared/location/phone/organization/service)
-2. Create `field-name.sanitizer.ts` with `constraints`, `sanitizeIncoming`, `sanitizeOutgoing`
-3. Import in `sanitizer-controller.ts` and add to `incoming`/`outgoing` objects
-4. Add a legacy export if `bucket-helpers.ts` uses the old function name
+2. Create `field-name.sanitizer.ts` with `constraints`, `sanitizeIncoming`, `sanitizeIncomingFromSFSG`, `sanitizeOutgoing`
+3. Import in `sanitizer-validation-controller.ts` and add to `incoming`/`outgoing` objects
+4. Add a legacy export if needed for backward compatibility
+5. Update `docs/data-integrity-field-rules.md` with the rules for all three directions

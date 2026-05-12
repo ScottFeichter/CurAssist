@@ -3,7 +3,7 @@
  * Maintains backward compatibility with existing imports throughout the codebase.
  */
 
-export { createBucketStructure, parseSpreadsheet } from './spreadsheet-parser/spreadsheet-parser';
+export { createBucketStructure, parseSpreadsheet, validateHeaders, normalizeHeaders } from './spreadsheet-parser/spreadsheet-parser';
 export { generateOrgDocuments } from './generate-org-documents/generate-org-documents';
 export type { IRowResult } from './report-builder/report-builder';
 export type { ISfsgResult } from './report-builder/report-builder';
