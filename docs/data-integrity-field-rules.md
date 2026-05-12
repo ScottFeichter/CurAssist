@@ -145,12 +145,12 @@ This document tracks the sanitization and validation rules for every field acros
 
 ## Organization-Only Fields
 
-### legal_status
+### legal_status ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Trim only — preserves original casing/formatting ("501(c)(3)", "Nonprofit"). |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Trim only — SFSG accepts plain string as-is. |
 
 ---
 
