@@ -2,7 +2,7 @@ import { extendedConsole as console } from '../../../streams/consoles/customCons
 import { log } from '../../../utils/logger/logger-setup/logger-wrapper';
 import { Org, IOrg, ISpreadsheetService } from '../../../database/models/org.model';
 import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap, serviceLocationFieldMap, servicePhoneFieldMap } from '../buckets-map/buckets-map';
-import { splitCategoryNames, splitEligibilityNames } from '../category-eligibility-helpers/category-eligibility-helpers';
+import { extractSFSGCategories, extractSFSGEligibilities } from '../category-eligibility-helpers/category-eligibility-helpers';
 import {
   sanitizePhoneName,
   sanitizeOrganizationPhones,
@@ -75,8 +75,6 @@ export async function generateOrgDocuments(
     const svcPhoneName = sanitizePhoneName(row[servicePhoneFieldMap.phone_name] || '');
     const svcCategories    = sanitizeServiceCategories(row[serviceFieldMap.service_top_categories] || '');
     const svcEligibilities = sanitizeServiceEligibilitiesList(row[serviceFieldMap.service_top_eligibilities] || '');
-    const svcCatSplit      = splitCategoryNames(svcCategories);
-    const svcEligSplit     = splitEligibilityNames(svcEligibilities);
 
     const svcLocName = sanitizeLocationName(row[serviceLocationFieldMap.location_name] || '');
     if (svcAddr) orgAddresses.push({ name: svcLocName, address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip });
@@ -99,10 +97,8 @@ export async function generateOrgDocuments(
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
-        eligibilities:                   svcEligSplit.eligibilities,
-        sub_eligibilities:               svcEligSplit.sub_eligibilities,
-        categories:                      svcCatSplit.categories,
-        sub_categories:                  svcCatSplit.sub_categories,
+        eligibilities:                   svcEligibilities,
+        categories:                      svcCategories,
         addresses:                       svcAddr ? [{ name: svcLocName, address_1: svcAddr, city: svcCity, state_province: svcState, postal_code: svcZip }] : [],
         phones:                          svcPhone ? [{ number: svcPhone, service_type: svcPhoneName }] : [],
       });
@@ -110,8 +106,6 @@ export async function generateOrgDocuments(
 
     const ssCategories    = sanitizeServiceCategories(row[orgFieldMap.organization_top_categories] || '');
     const ssEligibilities = sanitizeServiceEligibilitiesList(row[orgFieldMap.organization_top_eligibilities] || '');
-    const ssCatSplit      = splitCategoryNames(ssCategories);
-    const ssEligSplit     = splitEligibilityNames(ssEligibilities);
 
     if (createServiceFromOrg && name) {
       services.push({
@@ -129,10 +123,8 @@ export async function generateOrgDocuments(
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
-        eligibilities:                   ssEligSplit.eligibilities,
-        sub_eligibilities:               ssEligSplit.sub_eligibilities,
-        categories:                      ssCatSplit.categories,
-        sub_categories:                  ssCatSplit.sub_categories,
+        eligibilities:                   ssEligibilities,
+        categories:                      ssCategories,
         addresses:                       address1 ? [{ name: locName, address_1: address1, city, state_province: state, postal_code: zip }] : [],
         phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
       });
@@ -169,10 +161,8 @@ export async function generateOrgDocuments(
         notes:                           [],
         schedule:                        { schedule_days: [] },
         shouldInheritScheduleFromParent: true,
-        eligibilities:                   ssEligSplit.eligibilities,
-        sub_eligibilities:               ssEligSplit.sub_eligibilities,
-        categories:                      ssCatSplit.categories,
-        sub_categories:                  ssCatSplit.sub_categories,
+        eligibilities:                   ssEligibilities,
+        categories:                      ssCategories,
         addresses:                       address1 ? [{ name: locName, address_1: address1, city, state_province: state, postal_code: zip }] : [],
         phones:                          phoneNum ? [{ number: phoneNum, service_type: phoneName }] : [],
       } as ISpreadsheetService,

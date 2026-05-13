@@ -1,9 +1,7 @@
 // #region ===================== IMPORTS =======================================
 import {
-  splitCategoryNames,
-  splitEligibilityNames,
-  splitSFSGCategories,
-  splitSFSGEligibilities,
+  extractSFSGCategories,
+  extractSFSGEligibilities,
   normalizeSFSGStringArray,
   buildReportBuffer,
   transformOrgToSFPayload,
@@ -41,10 +39,10 @@ function makeOrg(overrides: Partial<IOrg> = {}): IOrg {
       notes: [],
       schedule: { schedule_days: [] },
       shouldInheritScheduleFromParent: true,
-      eligibilities: ['Adults'],
-      categories: ['Food'],
-      sub_eligibilities: ['Seniors'],
-      sub_categories: ['Groceries'],
+      eligibilities: ['Adults', 'Seniors'],
+      categories: ['Food', 'Groceries'],
+      sub_eligibilities: [],
+      sub_categories: [],
       addresses: [],
       phones: [{ number: '415-555-9999', service_type: 'voice' }],
     }],
@@ -61,75 +59,40 @@ function makeOrg(overrides: Partial<IOrg> = {}): IOrg {
 
 // #region ====================== TESTS ========================================
 
-describe('splitCategoryNames', () => {
-  it('separates top-level categories from sub-categories', () => {
-    const result = splitCategoryNames(['Health & Wellness', 'Groceries', 'Childcare']);
-    expect(result.categories).toContain('Health & Wellness');
-    expect(result.categories).toContain('Childcare');
-    expect(result.sub_categories).toContain('Groceries');
-  });
-
-  it('returns empty arrays for empty input', () => {
-    const result = splitCategoryNames([]);
-    expect(result.categories).toEqual([]);
-    expect(result.sub_categories).toEqual([]);
-  });
-});
-
-describe('splitEligibilityNames', () => {
-  it('separates top-level eligibilities from sub-eligibilities', () => {
-    const result = splitEligibilityNames(['Age', 'Seniors', 'Gender']);
-    expect(result.eligibilities).toContain('Age');
-    expect(result.eligibilities).toContain('Gender');
-    expect(result.sub_eligibilities).toContain('Seniors');
-  });
-
-  it('returns empty arrays for empty input', () => {
-    const result = splitEligibilityNames([]);
-    expect(result.eligibilities).toEqual([]);
-    expect(result.sub_eligibilities).toEqual([]);
-  });
-});
-
-describe('splitSFSGCategories', () => {
-  it('splits SFSG category objects by top_level flag', () => {
+describe('extractSFSGCategories', () => {
+  it('extracts names from SFSG category objects', () => {
     const items = [
       { name: 'Food', id: 1, top_level: true, featured: false },
       { name: 'Groceries', id: 2, top_level: false, featured: false },
     ];
-    const result = splitSFSGCategories(items);
-    expect(result.categories).toContain('Food');
-    expect(result.sub_categories).toContain('Groceries');
+    const result = extractSFSGCategories(items);
+    expect(result).toContain('Food');
+    expect(result).toContain('Groceries');
   });
 
   it('handles null/undefined input', () => {
-    const result = splitSFSGCategories(null as any);
-    expect(result.categories).toEqual([]);
-    expect(result.sub_categories).toEqual([]);
+    expect(extractSFSGCategories(null as any)).toEqual([]);
   });
 
   it('handles plain string arrays', () => {
-    const result = splitSFSGCategories(['Health & Wellness', 'Unknown Sub']);
-    expect(result.categories).toContain('Health & Wellness');
-    expect(result.sub_categories).toContain('Unknown Sub');
+    const result = extractSFSGCategories(['Health & Wellness', 'Food']);
+    expect(result).toEqual(['Health & Wellness', 'Food']);
   });
 });
 
-describe('splitSFSGEligibilities', () => {
-  it('splits SFSG eligibility objects by topEligibilityNames set', () => {
+describe('extractSFSGEligibilities', () => {
+  it('extracts names from SFSG eligibility objects', () => {
     const items = [
       { name: 'Age', id: 1 },
       { name: 'Seniors', id: 2 },
     ];
-    const result = splitSFSGEligibilities(items);
-    expect(result.eligibilities).toContain('Age');
-    expect(result.sub_eligibilities).toContain('Seniors');
+    const result = extractSFSGEligibilities(items);
+    expect(result).toContain('Age');
+    expect(result).toContain('Seniors');
   });
 
   it('handles null/undefined input', () => {
-    const result = splitSFSGEligibilities(null as any);
-    expect(result.eligibilities).toEqual([]);
-    expect(result.sub_eligibilities).toEqual([]);
+    expect(extractSFSGEligibilities(null as any)).toEqual([]);
   });
 });
 

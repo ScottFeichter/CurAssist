@@ -8,10 +8,16 @@ export function normalizeSFSGStringArray(items: any[]): string[] {
   return (items || []).map((item: any) => typeof item === 'string' ? item : item?.name).filter(Boolean);
 }
 
-/**
- * Splits a plain string array of category names into top and sub using topCategoryNames set.
- * For spreadsheet import where values are just name strings.
- */
+// #region ===================== DORMANT — TOP/SUB SPLIT ========================
+// The following split functions are commented out. They separated categories and
+// eligibilities into "top" and "sub" arrays — a CurAssist-side concept that SFSG
+// does not yet support. Keeping the code here in case we reimplement later.
+//
+// To reactivate: uncomment the functions and update generate-org-documents.ts,
+// buckets-routes.ts, hydrate-template.ts, and the frontend collector/transform
+// to use the split arrays again.
+
+/*
 export function splitCategoryNames(names: string[]): { categories: string[], sub_categories: string[] } {
   const categories: string[] = [];
   const sub_categories: string[] = [];
@@ -22,10 +28,6 @@ export function splitCategoryNames(names: string[]): { categories: string[], sub
   return { categories, sub_categories };
 }
 
-/**
- * Splits a plain string array of eligibility names into top and sub using topEligibilityNames set.
- * For spreadsheet import where values are just name strings.
- */
 export function splitEligibilityNames(names: string[]): { eligibilities: string[], sub_eligibilities: string[] } {
   const eligibilities: string[] = [];
   const sub_eligibilities: string[] = [];
@@ -36,10 +38,6 @@ export function splitEligibilityNames(names: string[]): { eligibilities: string[
   return { eligibilities, sub_eligibilities };
 }
 
-/**
- * Splits a SFSG categories array into top and sub based on the top_level flag.
- * Uses SFSG's top_level boolean. Items in topCategoryNames go in both arrays.
- */
 export function splitSFSGCategories(items: any[]): { categories: string[], sub_categories: string[] } {
   const categories: string[] = [];
   const sub_categories: string[] = [];
@@ -55,10 +53,6 @@ export function splitSFSGCategories(items: any[]): { categories: string[], sub_c
   return { categories, sub_categories };
 }
 
-/**
- * Splits a SFSG eligibilities array into top and sub based on topEligibilityNames set.
- * Names in the set go to eligibilities. Names not in the set go to sub_eligibilities.
- */
 export function splitSFSGEligibilities(items: any[]): { eligibilities: string[], sub_eligibilities: string[] } {
   const eligibilities: string[] = [];
   const sub_eligibilities: string[] = [];
@@ -70,3 +64,25 @@ export function splitSFSGEligibilities(items: any[]): { eligibilities: string[],
   }
   return { eligibilities, sub_eligibilities };
 }
+*/
+
+// Non-splitting versions for current use:
+
+/**
+ * Extracts category names from a SFSG categories array (flat, no split).
+ */
+export function extractSFSGCategories(items: any[]): string[] {
+  return normalizeSFSGStringArray(items);
+}
+
+/**
+ * Extracts eligibility names from a SFSG eligibilities array (flat, no split).
+ */
+export function extractSFSGEligibilities(items: any[]): string[] {
+  return normalizeSFSGStringArray(items);
+}
+
+// #endregion ------------------------------------------------------------------
+
+// Re-export the Sets for use by transform (still needed for top_level flag outgoing)
+export { topCategoryNames, topEligibilityNames };

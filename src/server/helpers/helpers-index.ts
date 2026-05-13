@@ -8,6 +8,6 @@ export { generateOrgDocuments } from './generate-org-documents/generate-org-docu
 export type { IRowResult } from './report-builder/report-builder';
 export type { ISfsgResult } from './report-builder/report-builder';
 export { buildReportBuffer } from './report-builder/report-builder';
-export { normalizeSFSGStringArray, splitCategoryNames, splitEligibilityNames, splitSFSGCategories, splitSFSGEligibilities } from './category-eligibility-helpers/category-eligibility-helpers';
+export { normalizeSFSGStringArray, extractSFSGCategories, extractSFSGEligibilities, topCategoryNames, topEligibilityNames } from './category-eligibility-helpers/category-eligibility-helpers';
 export { transformOrgToSFPayload } from './transform-org-to-sf-payload/transform-org-to-sf-payload';
 export { hydrateTemplate } from './hydrate-template/hydrate-template';

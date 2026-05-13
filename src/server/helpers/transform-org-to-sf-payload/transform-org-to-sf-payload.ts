@@ -31,8 +31,8 @@ export function transformOrgToSFPayload(org: IOrg): { orgBody: any, services: an
     phones:                         (svc.phones || []).map(p => ({ number: p.number, ...(p.service_type ? { service_type: p.service_type } : {}), ...(p.extension ? { extension: p.extension } : {}) })),
     schedule:                       svc.schedule                 || { schedule_days: [] },
     notes:                          svc.notes                    || [],
-    categories:                     [...(svc.categories || []), ...(svc.sub_categories || [])].map(name => ({ name, id: null, top_level: topCategoryNames.has(name), featured: false })),
-    eligibilities:                  [...(svc.eligibilities || []), ...(svc.sub_eligibilities || [])].map(name => ({ name, id: null, feature_rank: null })),
+    categories:                     (svc.categories || []).map(name => ({ name, id: null, top_level: topCategoryNames.has(name), featured: false })),
+    eligibilities:                  (svc.eligibilities || []).map(name => ({ name, id: null, feature_rank: null })),
     shouldInheritScheduleFromParent: svc.shouldInheritScheduleFromParent ?? true
   }));
 
