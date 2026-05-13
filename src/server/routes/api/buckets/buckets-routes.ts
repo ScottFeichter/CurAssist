@@ -5,7 +5,7 @@ import { extendedConsole as console } from '../../../../streams/consoles/customC
 import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { Bucket } from '../../../../database/models/bucket.model';
 import { Org } from '../../../../database/models/org.model';
-import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, splitSFSGCategories, splitSFSGEligibilities, buildReportBuffer } from '../../../helpers/bucket-helpers';
+import { createBucketStructure, parseSpreadsheet, generateOrgDocuments, hydrateTemplate, transformOrgToSFPayload, extractSFSGCategories, extractSFSGEligibilities, buildReportBuffer } from '../../../helpers/helpers-index';
 import * as XLSX from 'xlsx';
 // #endregion ------------------------------------------------------------------
 
@@ -171,10 +171,8 @@ bucketsRouter.post('/save', async (req: Request, res: Response, next: NextFuncti
       if (fields.service_clinician_actions       != null) svc.clinician_actions       = fields.service_clinician_actions;
       if (fields.service_internal_notes          != null) svc.internal_note           = fields.service_internal_notes;
       svc.service_belongs_to_org = fields.service_belongs_to_org;
-      if (Array.isArray(fields.service_top_categories))    svc.categories    = [...(fields.service_top_categories || []), ...(fields.service_sub_categories || [])];
-      if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = [...(fields.service_top_eligibilities || []), ...(fields.service_sub_eligibilities || [])];
-      if (Array.isArray(fields.service_sub_categories))    svc.sub_categories    = fields.service_sub_categories;
-      if (Array.isArray(fields.service_sub_eligibilities)) svc.sub_eligibilities = fields.service_sub_eligibilities;
+      if (Array.isArray(fields.service_top_categories))    svc.categories    = fields.service_top_categories || [];
+      if (Array.isArray(fields.service_top_eligibilities)) svc.eligibilities = fields.service_top_eligibilities || [];
       if (Array.isArray(fields.service_phones))    svc.phones    = fields.service_phones.filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' }));
       if (Array.isArray(fields.service_locations)) svc.addresses = fields.service_locations.map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' }));
       org.markModified('spreadsheetService');
@@ -198,10 +196,8 @@ bucketsRouter.post('/save', async (req: Request, res: Response, next: NextFuncti
           interpretation_services: svcFields.service_interpretation_services || '',
           clinician_actions:       svcFields.service_clinician_actions || '',
           internal_note:           svcFields.service_internal_notes || '',
-          categories:              [...(svcFields.service_top_categories || []), ...(svcFields.service_sub_categories || [])],
-          eligibilities:           [...(svcFields.service_top_eligibilities || []), ...(svcFields.service_sub_eligibilities || [])],
-          sub_categories:          svcFields.service_sub_categories || [],
-          sub_eligibilities:       svcFields.service_sub_eligibilities || [],
+          categories:              svcFields.service_top_categories || [],
+          eligibilities:           svcFields.service_top_eligibilities || [],
           phones:                  (svcFields.service_phones || []).filter((p: any) => p.phone_number).map((p: any) => ({ number: p.phone_number, service_type: p.phone_name || '' })),
           addresses:               (svcFields.service_locations || []).map((l: any) => ({ address_1: l.address_1 || '', address_2: l.address_2 || '', city: l.city || '', state_province: l.state || '', postal_code: l.zip || '' })),
           notes:                   (svcFields.service_markdown_notes || []).map((n: string) => ({ note: n })),
@@ -346,8 +342,8 @@ bucketsRouter.post('/import-file-resolve', async (req: Request, res: Response, n
         notes:    (s.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
         schedule: s.schedule || { schedule_days: [] },
         shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
-        ...splitSFSGEligibilities(s.eligibilities),
-        ...splitSFSGCategories(s.categories),
+        eligibilities: extractSFSGEligibilities(s.eligibilities),
+        categories: extractSFSGCategories(s.categories),
         addresses: (s.addresses || []).map((a: any) => ({ address_1: a.address_1 || '', city: a.city || '', state_province: a.state_province || '', postal_code: a.postal_code || '' })),
         phones:    (s.phones    || []).map((p: any) => ({ number: p.number || '', service_type: p.service_type || p.description || '' }))
       })),
@@ -439,8 +435,8 @@ bucketsRouter.post('/import-file', async (req: Request, res: Response, next: Nex
         notes:    (s.notes || []).map((n: any) => ({ note: typeof n === 'string' ? n : n.note || '' })),
         schedule: s.schedule || { schedule_days: [] },
         shouldInheritScheduleFromParent: s.shouldInheritScheduleFromParent ?? true,
-        ...splitSFSGEligibilities(s.eligibilities),
-        ...splitSFSGCategories(s.categories),
+        eligibilities: extractSFSGEligibilities(s.eligibilities),
+        categories: extractSFSGCategories(s.categories),
         addresses: (s.addresses || []).map((a: any) => ({
           address_1:      a.address_1      || '',
           address_2:      a.address_2      || '',

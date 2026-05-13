@@ -15,15 +15,13 @@ customConsoles_1.extendedConsole.enter();
 // #region ====================== START ========================================
 // This helps the startup sequence initiate env-module.ts
 customConsoles_1.extendedConsole.assert(env_module_1.requiredEnvVars, 'Missing requiredEnvVars');
-// Test custom winston loggers only if not in production
-if (process.env.NODE_ENV !== 'production') {
-    logger_1.default.infor('=== CurAssist Starting ===');
-    logger_1.default.infor(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    (0, logger_directories_1.createLogDirectories)();
-    (0, logger_trials_1.testLoggers)();
-    (0, logger_trials_1.testLogWrappers)();
-    customConsoles_1.extendedConsole.infor(`Logger and log wrappers successfully created!`);
-}
+// Ensure log directories exist in all environments
+(0, logger_directories_1.createLogDirectories)();
+logger_1.default.infor('=== CurAssist Starting ===');
+logger_1.default.infor(`Environment: ${process.env.NODE_ENV || 'production'}`);
+(0, logger_trials_1.testLoggers)();
+(0, logger_trials_1.testLogWrappers)();
+customConsoles_1.extendedConsole.infor(`Logger and log wrappers successfully created!`);
 (0, server_1.start)(server_1.SERVER);
 // #endregion ------------------------------------------------------------------
 customConsoles_1.extendedConsole.leave();

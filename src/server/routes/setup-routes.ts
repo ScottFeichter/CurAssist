@@ -7,7 +7,7 @@ import express, { Request, Response, NextFunction, Application } from 'express';
 // import SEQUELIZE from '../../database/sequelize';
 import apiRouter from './api/api-router';
 import { routeCatchAll } from './setups/catchAll-unmatched-routes';
-import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap, serviceLocationFieldMap } from '../helpers/buckets-map';
+import { orgFieldMap, serviceFieldMap, organizationLocationFieldMap, organizationPhoneFieldMap, serviceLocationFieldMap } from '../helpers/buckets-map/buckets-map';
 
 
 
@@ -29,7 +29,6 @@ export const setupRoutes = (SERVER: Application) => {
 
   // Dev-only documentation routes
   if (process.env.NODE_ENV !== 'production') {
-    SERVER.use('/docs/typedocs', express.static(join(__dirname, '../../../docs/typedocs')));
     SERVER.get('/docs/readme', (_req: Request, res: Response) => {
       res.sendFile(join(__dirname, '../../../README.md'));
     });
@@ -53,6 +52,10 @@ export const setupRoutes = (SERVER: Application) => {
       res.send(`<!DOCTYPE html><html><head><title>Buckets Map</title><style>body{font-family:monospace;padding:20px;}h2{margin-top:30px;}pre{background:#f4f4f4;padding:16px;border-radius:4px;}</style></head><body><h1>Buckets Field Maps</h1>${Object.entries(maps).map(([name, map]) => `<h2>${name}</h2><pre>${JSON.stringify(map, null, 2)}</pre>`).join('')}</body></html>`);
     });
   }
+
+
+  // TypeDoc API documentation — available in all environments
+  SERVER.use('/docs/typedocs', express.static(join(__dirname, '../../../docs/typedocs')));
 
 
   // Info page — available in all environments

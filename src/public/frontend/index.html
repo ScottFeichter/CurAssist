@@ -487,12 +487,45 @@
     </div>
   </div>
 
-  <script src="Scripts/lookup-tables.js"></script>
-  <script src="Scripts/transform.js"></script>
-  <script src="Scripts/submitNewOrg.js"></script>
-  <script src="Scripts/submitUpdateOrg.js"></script>
-  <script src="Scripts/submitService.js"></script>
-  <script src="Scripts/collector.js"></script>
-  <script src="app.js"></script>
+  <!-- Core -->
+  <script src="Scripts/core/state.js"></script>
+  <script src="Scripts/core/csrf.js"></script>
+  <script src="Scripts/core/notifications.js"></script>
+  <script src="Scripts/core/dirty-flag.js"></script>
+
+  <!-- Data -->
+  <script src="Scripts/data/lookup-tables.js"></script>
+
+  <!-- Submit -->
+  <script src="Scripts/submit/collector.js"></script>
+  <script src="Scripts/submit/transform.js"></script>
+  <script src="Scripts/submit/submitNewOrg.js"></script>
+  <script src="Scripts/submit/submitService.js"></script>
+  <script src="Scripts/submit/submitUpdateOrg.js"></script>
+  <script src="Scripts/submit/submit-flow.js"></script>
+
+  <!-- Operations -->
+  <script src="Scripts/operations/save.js"></script>
+  <script src="Scripts/operations/move.js"></script>
+  <script src="Scripts/operations/copy.js"></script>
+  <script src="Scripts/operations/delete-file.js"></script>
+  <script src="Scripts/operations/create-file.js"></script>
+
+  <!-- Buckets -->
+  <script src="Scripts/buckets/create-bucket.js"></script>
+  <script src="Scripts/buckets/delete-bucket.js"></script>
+  <script src="Scripts/buckets/import-bucket.js"></script>
+
+  <!-- Import -->
+  <script src="Scripts/import/import-file.js"></script>
+
+  <!-- Navigation -->
+  <script src="Scripts/navigation/navigation.js"></script>
+
+  <!-- UI -->
+  <script src="Scripts/ui/sidebar.js"></script>
+
+  <!-- App entry point (calls init) -->
+  <script src="Scripts/app.js"></script>
 </body>
 </html>
