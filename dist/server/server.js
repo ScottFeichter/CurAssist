@@ -14,7 +14,6 @@ const setup_post_route_middleware_1 = require("./middlewares/setup-post-route-mi
 // import SEQUELIZE from '../../database/sequelize';
 const env_module_1 = require("../config/env-module");
 const atlas_1 = require("../database/atlas");
-const cors_1 = __importDefault(require("cors"));
 // #endregion ------------------------------------------------------------------
 customConsoles_1.extendedConsole.enter();
 // #region ====================== START ========================================
@@ -33,9 +32,6 @@ exports.SERVER = (0, express_1.default)();
 const start = async (SERVER) => {
     logger_wrapper_1.log.enter("start()", logger_wrapper_1.log.brack);
     try {
-        // Middleware
-        SERVER.use((0, cors_1.default)());
-        SERVER.use(express_1.default.json({ limit: '50mb' }));
         // Add setup middleware and set up routes
         (0, setup_pre_route_middleware_1.setupPreRouteMiddleware)(SERVER);
         (0, setup_routes_1.setupRoutes)(SERVER);

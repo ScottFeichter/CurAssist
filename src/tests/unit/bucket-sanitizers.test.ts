@@ -18,7 +18,7 @@ import {
   sanitizeServiceWaitTime,
   sanitizeServiceCategories,
   sanitizeServiceEligibilitiesList,
-} from '../../server/helpers/bucket-sanitizers';
+} from '../../server/data-integrity/sanitizer-validation-controller';
 // #endregion ------------------------------------------------------------------
 
 // #region ====================== TESTS ========================================
@@ -44,11 +44,11 @@ describe('bucket-sanitizers', () => {
 
   // ── sanitizeOrganizationPhones ───────────────────────────────────────────────
   describe('sanitizeOrganizationPhones', () => {
-    it('formats 10-digit number with dashes', () => {
-      expect(sanitizeOrganizationPhones('4155551234')).toBe('415-555-1234');
+    it('returns 10 digits only', () => {
+      expect(sanitizeOrganizationPhones('4155551234')).toBe('4155551234');
     });
-    it('strips non-digits before formatting', () => {
-      expect(sanitizeOrganizationPhones('(415) 555-1234')).toBe('415-555-1234');
+    it('strips non-digits', () => {
+      expect(sanitizeOrganizationPhones('(415) 555-1234')).toBe('4155551234');
     });
     it('returns original if not 10 digits', () => {
       expect(sanitizeOrganizationPhones('555-1234')).toBe('555-1234');
@@ -84,8 +84,8 @@ describe('bucket-sanitizers', () => {
 
   // ── sanitizePhoneName ────────────────────────────────────────────────────────
   describe('sanitizePhoneName', () => {
-    it('converts to sentence case', () => {
-      expect(sanitizePhoneName('MAIN LINE')).toBe('Main line');
+    it('trims and passes through as-is', () => {
+      expect(sanitizePhoneName('MAIN LINE')).toBe('MAIN LINE');
     });
     it('handles empty string', () => {
       expect(sanitizePhoneName('')).toBe('');

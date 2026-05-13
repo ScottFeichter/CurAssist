@@ -1,5 +1,5 @@
 // #region ===================== IMPORTS =======================================
-import { hydrateTemplate } from '../../server/helpers/bucket-helpers';
+import { hydrateTemplate } from '../../server/helpers/helpers-index';
 import { IOrg } from '../../database/models/org.model';
 import mongoose from 'mongoose';
 // #endregion ------------------------------------------------------------------

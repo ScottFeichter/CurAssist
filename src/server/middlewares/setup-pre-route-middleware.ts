@@ -44,7 +44,7 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
     SERVER.use((req, res, next) => {
       const noTimeoutRoutes = ['/api/buckets/create-bucket-spreadsheet', '/api/buckets/import'];
       if (noTimeoutRoutes.some(r => req.path.startsWith(r))) return next();
-      timeout('5s')(req, res, next);
+      timeout('10s')(req, res, next);
     });
 
     // Checks if request has timed out before proceeding
@@ -57,8 +57,8 @@ export const setupPreRouteMiddleware = (SERVER: Application) => {
 
   // #region =============== PARSING MIDDLEWARE ================================
     SERVER.use(cookieParser());
-    SERVER.use(express.json({ limit: '10mb' }));
-    SERVER.use(express.urlencoded({ extended: true, limit: '10mb' }));
+    SERVER.use(express.json({ limit: '50mb' }));
+    SERVER.use(express.urlencoded({ extended: true, limit: '50mb' }));
     SERVER.use(compression());
   // #endregion ----------------------------------------------------------------
 

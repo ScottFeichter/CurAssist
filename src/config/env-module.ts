@@ -26,7 +26,7 @@ console.infor(`envVarsFilePath:      ---------->  ${envVarsFilePath}`);
 const environmentVariables = config({ path: path.resolve(process.cwd(), envVarsFilePath) });
 
 
-// Confirming the environment variables
+// Logging the environment variables 
 console.super("environmentVariables", environmentVariables);
 
 

@@ -19,18 +19,15 @@ console.enter();
 console.assert(requiredEnvVars, 'Missing requiredEnvVars');
 
 
-// Test custom winston loggers only if not in production
-if (process.env.NODE_ENV !== 'production') {
-  logger.infor('=== CurAssist Starting ===');
-  logger.infor(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  createLogDirectories();
-  testLoggers();
-  testLogWrappers();
+// Ensure log directories exist in all environments
+createLogDirectories();
 
-  console.infor(`Logger and log wrappers successfully created!`);
-}
+logger.infor('=== CurAssist Starting ===');
+logger.infor(`Environment: ${process.env.NODE_ENV || 'production'}`);
 
-
+testLoggers();
+testLogWrappers();
+console.infor(`Logger and log wrappers successfully created!`);
 
 
 

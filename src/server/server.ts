@@ -1,15 +1,16 @@
 // #region ===================== IMPORTS =======================================
 import { extendedConsole as console } from '../streams/consoles/customConsoles';
 import { log } from '../utils/logger/logger-setup/logger-wrapper';
+
 import express, { Application } from 'express';
 import { setupPreRouteMiddleware } from './middlewares/setup-pre-route-middleware';
 import { setupRoutes } from './routes/setup-routes';
 import { setupPostRouteMiddleware } from './middlewares/setup-post-route-middleware';
+
 // import SEQUELIZE from '../../database/sequelize';
 import { SERVER_PORT } from '../config/env-module';
 import { connectToAtlas } from '../database/atlas';
 
-import cors from 'cors';
 import path from 'path';
 import logger from '../utils/logger/logger';
 // #endregion ------------------------------------------------------------------
@@ -39,10 +40,6 @@ export const start = async (SERVER: Application) => {
   log.enter("start()", log.brack);
 
   try {
-
-    // Middleware
-    SERVER.use(cors());
-    SERVER.use(express.json({ limit: '50mb' }));
 
     // Add setup middleware and set up routes
     setupPreRouteMiddleware(SERVER);
