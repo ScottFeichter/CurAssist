@@ -156,54 +156,54 @@ This document tracks the sanitization and validation rules for every field acros
 
 ## Service-Only Fields
 
-### short_description
+### short_description ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Strip HTML, trim. Reject if > 1000 chars. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Strip HTML, trim (SFSG expects plain text). |
 
-### application_process
+### application_process ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Strip HTML, trim. Reject if > 1000 chars. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Strip HTML, trim (SFSG expects plain text). |
 
-### required_documents
+### required_documents ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Strip HTML, trim. Reject if > 1000 chars. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Strip HTML, trim (SFSG expects plain text). |
 
-### interpretation_services
+### interpretation_services ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Strip HTML, trim. Reject if > 1000 chars. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Strip HTML, trim (SFSG expects plain text). |
 
-### clinician_actions
+### clinician_actions ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Strip HTML, trim. Reject if > 1000 chars. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Strip HTML, trim (SFSG expects plain text). |
 
-### cost (fee)
+### cost (fee) ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Strip HTML, trim. Reject if > 1000 chars. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Strip HTML, trim (SFSG expects plain text). |
 
-### wait_time
+### wait_time ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Strip HTML, trim. Reject if > 1000 chars. |
+| SFSG → DB | Trust exactly as-is, no modification. |
+| DB → SFSG | Strip HTML, trim (SFSG expects plain text). |
 
 ### categories
 | Direction | Rule |
