@@ -12,7 +12,7 @@ CurAssist/
     entry.ts              # Server entry point
     server/               # Express server, routes, helpers
     data-integrity/       # Field-level sanitization and validation (per-field modules)
-      sanitizer-controller.ts
+      sanitizer-validation-controller.ts
       shared/             # Fields used by both org and service
       location/           # Address component sanitizers
       phone/              # Phone component sanitizers

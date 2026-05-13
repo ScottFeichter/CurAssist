@@ -205,19 +205,19 @@ This document tracks the sanitization and validation rules for every field acros
 | SFSG → DB | Trust exactly as-is, no modification. |
 | DB → SFSG | Strip HTML, trim (SFSG expects plain text). |
 
-### categories
+### categories ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Split comma-separated string into flat array. No top/sub distinction. |
+| SFSG → DB | Extract names from SFSG objects `[{ name, id, top_level }]` into flat string array. |
+| DB → SFSG | Pass-through flat array — transform layer handles converting to SFSG objects with `{ name, id, top_level, featured }`. |
 
-### eligibilities
+### eligibilities ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | TODO |
-| SFSG → DB | TODO |
-| DB → SFSG | TODO |
+| Spreadsheet → DB | Split comma-separated string into flat array. No top/sub distinction. |
+| SFSG → DB | Extract names from SFSG objects `[{ name, id, feature_rank }]` into flat string array. |
+| DB → SFSG | Pass-through flat array — transform layer handles converting to SFSG objects with `{ name, id, feature_rank }`. |
 
 ---
 

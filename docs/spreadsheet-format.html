@@ -71,8 +71,8 @@
         <tr><td>Zip</td><td>Postal code</td><td class="optional">No</td></tr>
         <tr><td>Phone</td><td>Phone number (10 digits, auto-formatted)</td><td class="optional">No</td></tr>
         <tr><td>Phone Name</td><td>Label for the phone (e.g. "Main", "Fax")</td><td class="optional">No</td></tr>
-        <tr><td>Categories</td><td>Comma-separated category names (auto-split into top/sub)</td><td class="optional">No</td></tr>
-        <tr><td>Eligibilities</td><td>Comma-separated eligibility names (auto-split into top/sub)</td><td class="optional">No</td></tr>
+        <tr><td>Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
+        <tr><td>Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
         <tr><td>Service Name</td><td>Service name (triggers service creation)</td><td class="optional">No</td></tr>
         <tr><td>Service Nickname</td><td>Service alternate name</td><td class="optional">No</td></tr>
         <tr><td>Service Email</td><td>Service email</td><td class="optional">No</td></tr>
@@ -126,7 +126,7 @@
         <tr><td>State</td><td>Converted to uppercase</td></tr>
         <tr><td>Phone</td><td>10-digit numbers formatted with dashes</td></tr>
         <tr><td>Address, City</td><td>Converted to title case</td></tr>
-        <tr><td>Categories, Eligibilities</td><td>Split on commas into individual items; auto-classified into top/sub</td></tr>
+        <tr><td>Categories, Eligibilities</td><td>Split on commas into individual items</td></tr>
       </table>
     </div>
   </details>
@@ -143,7 +143,7 @@
       </details>
       <details>
         <summary>Header matching and column order</summary>
-        <div class="faq-body">Headers are case-sensitive and must match exactly. Only the first sheet in the workbook is read.<br><br>Column order does not matter — headers are matched by name, not position. Unrecognized and blank columns are ignored. However, for best results, arrange columns in the order shown below and avoid unnecessary blank or extra columns.</div>
+        <div class="faq-body">Headers are matched case-insensitively ("name" matches "Name"). Whitespace is trimmed. Only the first sheet in the workbook is read.<br><br>Column order does not matter — headers are matched by name, not position. Unrecognized columns are reported as warnings with suggestions. However, for best results, arrange columns in the order shown below and avoid unnecessary blank or extra columns.</div>
       </details>
       <details>
         <summary>Row limits</summary>
@@ -155,7 +155,7 @@
       </details>
       <details>
         <summary>Categories and Eligibilities</summary>
-        <div class="faq-body">Categories and eligibilities are service-level data in SFSG. These fields apply to the toggle service view (and the org service if "Create service from org" is checked). They do NOT apply to the organization itself. Values are automatically classified into top-level and sub-level based on built-in lookup tables.</div>
+        <div class="faq-body">Categories and eligibilities are service-level data in SFSG. These fields apply to the toggle service view (and the org service if "Create service from org" is checked). They do NOT apply to the organization itself.</div>
       </details>
       <details>
         <summary>Organization Service fields</summary>
@@ -170,6 +170,23 @@
         <div class="faq-body">These apply to the organization service created from the "Service" prefixed columns, not the toggle service.</div>
       </details>
     </div>
+  </details>
+
+  <hr>
+
+  <!-- Developer Documentation -->
+  <details class="section">
+    <summary>Developer Documentation</summary>
+    <p style="font-size:13px; color:#555;">Internal documentation and API reference for the CurAssist application.</p>
+    <table>
+      <thead>
+        <tr><th>Resource</th><th>Description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><a href="/docs/typedocs" target="_blank">TypeDoc API Docs</a></td><td>Auto-generated API documentation from source code comments</td></tr>
+        <tr><td><a href="/test" target="_blank">Backend Test Page</a></td><td>Links to all backend endpoints and test routes</td></tr>
+      </tbody>
+    </table>
   </details>
 
 </body>
