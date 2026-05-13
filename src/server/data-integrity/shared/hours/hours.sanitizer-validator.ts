@@ -1,4 +1,10 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
 
 // #region ===================== CONSTRAINTS ====================================
 
@@ -8,29 +14,28 @@ export const constraints = { required: false };
 
 // #region ===================== CONTROLLER ====================================
 
-/**
- * Hours from spreadsheets are freeform text (too many formats to parse).
- * Returns the trimmed value — caller should note "See spreadsheet for hours details".
- */
-export function sanitizeIncoming(value: any): SanitizeResult {
+// -----------------------------------------------------------------------------
+export function hoursSanitizeValidateIncomingFromSpreadsheet(value: any): SanitizeResult {
+  log.enter("hoursSanitizeValidateIncomingFromSpreadsheet()", log.brack);
   const cleaned = sanitizeValue(value);
   const errors = validate(cleaned);
-  if (errors.length) return { valid: false, value: cleaned, errors };
+  if (errors.length) { log.retrn("hoursSanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: false, value: cleaned, errors }; }
+  log.retrn("hoursSanitizeValidateIncomingFromSpreadsheet()", log.kcarb);
   return { valid: true, value: cleaned, errors: [] };
 }
 
-/**
- * SFSG returns { schedule_days: [...] } — same format we store. Trust as-is.
- */
-export function sanitizeIncomingFromSFSG(value: any): any {
+// -----------------------------------------------------------------------------
+export function hoursSanitizeValidateIncomingFromSFSG(value: any): any {
+  log.enter("hoursSanitizeValidateIncomingFromSFSG()", log.brack);
+  log.retrn("hoursSanitizeValidateIncomingFromSFSG()", log.kcarb);
   if (!value) return { schedule_days: [] };
   return value;
 }
 
-/**
- * Pass-through — DB already stores in SFSG-compatible format.
- */
-export function sanitizeOutgoing(value: any): any {
+// -----------------------------------------------------------------------------
+export function hoursSanitizeValidateOutgoingToSFSG(value: any): any {
+  log.enter("hoursSanitizeValidateOutgoingToSFSG()", log.brack);
+  log.retrn("hoursSanitizeValidateOutgoingToSFSG()", log.kcarb);
   if (!value) return { schedule_days: [] };
   return value;
 }
@@ -39,14 +44,19 @@ export function sanitizeOutgoing(value: any): any {
 
 // #region ===================== VALIDATORS ====================================
 
-function validate(value: string): string[] {
-  return [];
-}
+// -----------------------------------------------------------------------------
+function validate(value: string): string[] { return []; }
 
 // #endregion ------------------------------------------------------------------
 
 // #region ===================== SANITIZERS =====================================
 
-// No sanitization needed — hours are either freeform (spreadsheet) or structured (SFSG/form).
+// No sanitization — hours are freeform (spreadsheet) or structured (SFSG/form).
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();
+
+// #region ====================== NOTES ========================================
 
 // #endregion ------------------------------------------------------------------

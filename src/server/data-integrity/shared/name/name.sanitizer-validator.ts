@@ -1,4 +1,10 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
 
 // #region ===================== CONSTRAINTS ====================================
 
@@ -10,33 +16,51 @@ export const constraints = {
 
 // #region ===================== CONTROLLER ====================================
 
+// -----------------------------------------------------------------------------
 /**
  * Validates and sanitizes an organization or service name from a spreadsheet.
  * Required field — empty value is invalid. Converts to Title Case.
  */
-export function sanitizeIncoming(value: any): SanitizeResult {
+export function nameSanitizeValidateIncomingFromSpreadsheet(value: any): SanitizeResult {
+  log.enter("nameSanitizeValidateIncomingFromSpreadsheet()", log.brack);
   const cleaned = sanitizeValue(value);
   const errors = validate(cleaned);
-  if (errors.length) return { valid: false, value: cleaned, errors };
+  if (errors.length) {
+    log.retrn("nameSanitizeValidateIncomingFromSpreadsheet()", log.kcarb);
+    return { valid: false, value: cleaned, errors };
+  }
+  log.retrn("nameSanitizeValidateIncomingFromSpreadsheet()", log.kcarb);
   return { valid: true, value: toTitleCase(cleaned), errors: [] };
 }
 
+// -----------------------------------------------------------------------------
 /**
  * Sanitizes a name imported from the SFSG API.
  * Trusts SFSG casing — just trims.
  */
-export function sanitizeIncomingFromSFSG(value: any): string {
+export function nameSanitizeValidateIncomingFromSFSG(value: any): string {
+  log.enter("nameSanitizeValidateIncomingFromSFSG()", log.brack);
+  log.retrn("nameSanitizeValidateIncomingFromSFSG()", log.kcarb);
   return sanitizeValue(value);
 }
 
+// -----------------------------------------------------------------------------
 /**
  * Prepares a name for the SFSG API.
  * Trims and applies Title Case in case of manually entered unsanitized data.
  */
-export function sanitizeOutgoing(value: string): string {
-  if (!value) return '';
+export function nameSanitizeValidateOutgoingToSFSG(value: string): string {
+  log.enter("nameSanitizeValidateOutgoingToSFSG()", log.brack);
+  if (!value) {
+    log.retrn("nameSanitizeValidateOutgoingToSFSG()", log.kcarb);
+    return '';
+  }
   const trimmed = value.trim();
-  if (!trimmed) return '';
+  if (!trimmed) {
+    log.retrn("nameSanitizeValidateOutgoingToSFSG()", log.kcarb);
+    return '';
+  }
+  log.retrn("nameSanitizeValidateOutgoingToSFSG()", log.kcarb);
   return toTitleCase(trimmed);
 }
 
@@ -44,6 +68,7 @@ export function sanitizeOutgoing(value: string): string {
 
 // #region ===================== VALIDATORS ====================================
 
+// -----------------------------------------------------------------------------
 /**
  * Validates a name value. Returns array of error messages (empty if valid).
  */
@@ -57,6 +82,7 @@ function validate(value: string): string[] {
 
 // #region ===================== SANITIZERS =====================================
 
+// -----------------------------------------------------------------------------
 /**
  * Converts a string to Title Case.
  */
@@ -67,5 +93,11 @@ function toTitleCase(value: string): string {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();
+
+// #region ====================== NOTES ========================================
 
 // #endregion ------------------------------------------------------------------

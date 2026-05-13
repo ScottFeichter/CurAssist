@@ -1,4 +1,10 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
 
 // #region ===================== CONSTRAINTS ====================================
 
@@ -28,25 +34,44 @@ const validStateCodes = new Set(Object.values(stateNameToCode));
 
 // #region ===================== CONTROLLER ====================================
 
-export function sanitizeIncoming(value: any): SanitizeResult {
+// -----------------------------------------------------------------------------
+/**
+ * Validates and sanitizes a state from a spreadsheet.
+ * Accepts 2-letter codes or full names. Converts to uppercase 2-letter code.
+ */
+export function stateSanitizeValidateIncomingFromSpreadsheet(value: any): SanitizeResult {
+  log.enter("stateSanitizeValidateIncomingFromSpreadsheet()", log.brack);
   const cleaned = sanitizeValue(value);
-  if (!cleaned) return { valid: true, value: '', errors: [] };
-
+  if (!cleaned) { log.retrn("stateSanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: true, value: '', errors: [] }; }
   const resolved = resolveState(cleaned);
   if (!resolved) {
     const errors = validate(cleaned);
+    log.retrn("stateSanitizeValidateIncomingFromSpreadsheet()", log.kcarb);
     return { valid: false, value: cleaned, errors };
   }
+  log.retrn("stateSanitizeValidateIncomingFromSpreadsheet()", log.kcarb);
   return { valid: true, value: resolved, errors: [] };
 }
 
-export function sanitizeIncomingFromSFSG(value: any): string {
+// -----------------------------------------------------------------------------
+/**
+ * Sanitizes a state imported from the SFSG API. Trusts as-is.
+ */
+export function stateSanitizeValidateIncomingFromSFSG(value: any): string {
+  log.enter("stateSanitizeValidateIncomingFromSFSG()", log.brack);
+  log.retrn("stateSanitizeValidateIncomingFromSFSG()", log.kcarb);
   if (value === null || value === undefined) return '';
   return String(value);
 }
 
-export function sanitizeOutgoing(value: string): string {
-  if (!value) return '';
+// -----------------------------------------------------------------------------
+/**
+ * Prepares state for SFSG API. Trims and uppercases.
+ */
+export function stateSanitizeValidateOutgoingToSFSG(value: string): string {
+  log.enter("stateSanitizeValidateOutgoingToSFSG()", log.brack);
+  if (!value) { log.retrn("stateSanitizeValidateOutgoingToSFSG()", log.kcarb); return ''; }
+  log.retrn("stateSanitizeValidateOutgoingToSFSG()", log.kcarb);
   return value.trim().toUpperCase();
 }
 
@@ -54,6 +79,7 @@ export function sanitizeOutgoing(value: string): string {
 
 // #region ===================== VALIDATORS ====================================
 
+// -----------------------------------------------------------------------------
 function validate(value: string): string[] {
   return [`Invalid state: "${value}" is not a recognized US state code or name`];
 }
@@ -62,15 +88,18 @@ function validate(value: string): string[] {
 
 // #region ===================== SANITIZERS =====================================
 
-/**
- * Resolves a state value to a 2-letter code. Accepts codes or full names.
- * Returns null if unrecognized.
- */
+// -----------------------------------------------------------------------------
 function resolveState(value: string): string | null {
   const upper = value.toUpperCase();
   if (upper.length === 2 && validStateCodes.has(upper)) return upper;
   const code = stateNameToCode[value.toLowerCase()];
   return code || null;
 }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();
+
+// #region ====================== NOTES ========================================
 
 // #endregion ------------------------------------------------------------------

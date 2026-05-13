@@ -1,4 +1,10 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
 
 // #region ===================== CONSTRAINTS ====================================
 
@@ -8,21 +14,30 @@ export const constraints = { required: false };
 
 // #region ===================== CONTROLLER ====================================
 
-export function sanitizeIncoming(value: any): SanitizeResult {
+// -----------------------------------------------------------------------------
+export function citySanitizeValidateIncomingFromSpreadsheet(value: any): SanitizeResult {
+  log.enter("citySanitizeValidateIncomingFromSpreadsheet()", log.brack);
   const cleaned = sanitizeValue(value);
-  if (!cleaned) return { valid: true, value: '', errors: [] };
+  if (!cleaned) { log.retrn("citySanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: true, value: '', errors: [] }; }
   const errors = validate(cleaned);
-  if (errors.length) return { valid: false, value: cleaned, errors };
+  if (errors.length) { log.retrn("citySanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: false, value: cleaned, errors }; }
+  log.retrn("citySanitizeValidateIncomingFromSpreadsheet()", log.kcarb);
   return { valid: true, value: toTitleCase(cleaned), errors: [] };
 }
 
-export function sanitizeIncomingFromSFSG(value: any): string {
+// -----------------------------------------------------------------------------
+export function citySanitizeValidateIncomingFromSFSG(value: any): string {
+  log.enter("citySanitizeValidateIncomingFromSFSG()", log.brack);
+  log.retrn("citySanitizeValidateIncomingFromSFSG()", log.kcarb);
   if (value === null || value === undefined) return '';
   return String(value);
 }
 
-export function sanitizeOutgoing(value: string): string {
-  if (!value) return '';
+// -----------------------------------------------------------------------------
+export function citySanitizeValidateOutgoingToSFSG(value: string): string {
+  log.enter("citySanitizeValidateOutgoingToSFSG()", log.brack);
+  if (!value) { log.retrn("citySanitizeValidateOutgoingToSFSG()", log.kcarb); return ''; }
+  log.retrn("citySanitizeValidateOutgoingToSFSG()", log.kcarb);
   return toTitleCase(value.trim());
 }
 
@@ -30,6 +45,7 @@ export function sanitizeOutgoing(value: string): string {
 
 // #region ===================== VALIDATORS ====================================
 
+// -----------------------------------------------------------------------------
 function validate(value: string): string[] {
   return [];
 }
@@ -38,8 +54,15 @@ function validate(value: string): string[] {
 
 // #region ===================== SANITIZERS =====================================
 
+// -----------------------------------------------------------------------------
 function toTitleCase(value: string): string {
   return value.toLowerCase().split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
 }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();
+
+// #region ====================== NOTES ========================================
 
 // #endregion ------------------------------------------------------------------

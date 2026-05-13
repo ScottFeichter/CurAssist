@@ -1,4 +1,10 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
 
 // #region ===================== CONSTRAINTS ====================================
 
@@ -8,22 +14,31 @@ export const constraints = { required: false, pattern: /^\d{5}$/ };
 
 // #region ===================== CONTROLLER ====================================
 
-export function sanitizeIncoming(value: any): SanitizeResult {
+// -----------------------------------------------------------------------------
+export function zipSanitizeValidateIncomingFromSpreadsheet(value: any): SanitizeResult {
+  log.enter("zipSanitizeValidateIncomingFromSpreadsheet()", log.brack);
   const cleaned = sanitizeValue(value);
-  if (!cleaned) return { valid: true, value: '', errors: [] };
+  if (!cleaned) { log.retrn("zipSanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: true, value: '', errors: [] }; }
   const fiveDigit = stripSuffix(cleaned);
   const errors = validate(fiveDigit, cleaned);
-  if (errors.length) return { valid: false, value: cleaned, errors };
+  if (errors.length) { log.retrn("zipSanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: false, value: cleaned, errors }; }
+  log.retrn("zipSanitizeValidateIncomingFromSpreadsheet()", log.kcarb);
   return { valid: true, value: fiveDigit, errors: [] };
 }
 
-export function sanitizeIncomingFromSFSG(value: any): string {
+// -----------------------------------------------------------------------------
+export function zipSanitizeValidateIncomingFromSFSG(value: any): string {
+  log.enter("zipSanitizeValidateIncomingFromSFSG()", log.brack);
+  log.retrn("zipSanitizeValidateIncomingFromSFSG()", log.kcarb);
   if (value === null || value === undefined) return '';
   return String(value);
 }
 
-export function sanitizeOutgoing(value: string): string {
-  if (!value) return '';
+// -----------------------------------------------------------------------------
+export function zipSanitizeValidateOutgoingToSFSG(value: string): string {
+  log.enter("zipSanitizeValidateOutgoingToSFSG()", log.brack);
+  if (!value) { log.retrn("zipSanitizeValidateOutgoingToSFSG()", log.kcarb); return ''; }
+  log.retrn("zipSanitizeValidateOutgoingToSFSG()", log.kcarb);
   return value.trim();
 }
 
@@ -31,11 +46,10 @@ export function sanitizeOutgoing(value: string): string {
 
 // #region ===================== VALIDATORS ====================================
 
+// -----------------------------------------------------------------------------
 function validate(fiveDigit: string, original: string): string[] {
   const errors: string[] = [];
-  if (!constraints.pattern.test(fiveDigit)) {
-    errors.push(`Invalid zip: "${original}" must be 5 digits (with optional -XXXX suffix)`);
-  }
+  if (!constraints.pattern.test(fiveDigit)) errors.push(`Invalid zip: "${original}" must be 5 digits (with optional -XXXX suffix)`);
   return errors;
 }
 
@@ -43,11 +57,13 @@ function validate(fiveDigit: string, original: string): string[] {
 
 // #region ===================== SANITIZERS =====================================
 
-/**
- * Strips the optional -XXXX suffix from a zip code.
- */
-function stripSuffix(value: string): string {
-  return value.split('-')[0].trim();
-}
+// -----------------------------------------------------------------------------
+function stripSuffix(value: string): string { return value.split('-')[0].trim(); }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();
+
+// #region ====================== NOTES ========================================
 
 // #endregion ------------------------------------------------------------------

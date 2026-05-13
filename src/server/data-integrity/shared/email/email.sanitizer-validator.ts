@@ -1,4 +1,10 @@
+// #region ===================== IMPORTS =======================================
+import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
+import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
+// #endregion ------------------------------------------------------------------
+
+console.enter();
 
 // #region ===================== CONSTRAINTS ====================================
 
@@ -11,35 +17,42 @@ export const constraints = {
 
 // #region ===================== CONTROLLER ====================================
 
+// -----------------------------------------------------------------------------
 /**
  * Validates and sanitizes an email from a spreadsheet.
  * Trims, lowercases, validates format. Clears "none"/"N/A".
  */
-export function sanitizeIncoming(value: any): SanitizeResult {
+export function emailSanitizeValidateIncomingFromSpreadsheet(value: any): SanitizeResult {
+  log.enter("emailSanitizeValidateIncomingFromSpreadsheet()", log.brack);
   const cleaned = toLowerTrimmed(sanitizeValue(value));
-  if (!cleaned) return { valid: true, value: '', errors: [] };
-  if (isNonValue(cleaned)) return { valid: true, value: '', errors: [] };
-
+  if (!cleaned) { log.retrn("emailSanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: true, value: '', errors: [] }; }
+  if (isNonValue(cleaned)) { log.retrn("emailSanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: true, value: '', errors: [] }; }
   const errors = validate(cleaned);
-  if (errors.length) return { valid: false, value: cleaned, errors };
+  if (errors.length) { log.retrn("emailSanitizeValidateIncomingFromSpreadsheet()", log.kcarb); return { valid: false, value: cleaned, errors }; }
+  log.retrn("emailSanitizeValidateIncomingFromSpreadsheet()", log.kcarb);
   return { valid: true, value: cleaned, errors: [] };
 }
 
+// -----------------------------------------------------------------------------
 /**
  * Sanitizes an email imported from the SFSG API.
  * Trusts SFSG as-is — no modification.
  */
-export function sanitizeIncomingFromSFSG(value: any): string {
+export function emailSanitizeValidateIncomingFromSFSG(value: any): string {
+  log.enter("emailSanitizeValidateIncomingFromSFSG()", log.brack);
+  log.retrn("emailSanitizeValidateIncomingFromSFSG()", log.kcarb);
   if (value === null || value === undefined) return '';
   return String(value);
 }
 
+// -----------------------------------------------------------------------------
 /**
- * Prepares email for SFSG API.
- * Trims and lowercases.
+ * Prepares email for SFSG API. Trims and lowercases.
  */
-export function sanitizeOutgoing(value: string): string {
-  if (!value) return '';
+export function emailSanitizeValidateOutgoingToSFSG(value: string): string {
+  log.enter("emailSanitizeValidateOutgoingToSFSG()", log.brack);
+  if (!value) { log.retrn("emailSanitizeValidateOutgoingToSFSG()", log.kcarb); return ''; }
+  log.retrn("emailSanitizeValidateOutgoingToSFSG()", log.kcarb);
   return toLowerTrimmed(value);
 }
 
@@ -47,17 +60,17 @@ export function sanitizeOutgoing(value: string): string {
 
 // #region ===================== VALIDATORS ====================================
 
+// -----------------------------------------------------------------------------
 /**
  * Validates an email against the pattern.
  */
 function validate(value: string): string[] {
   const errors: string[] = [];
-  if (!constraints.pattern.test(value)) {
-    errors.push(`Invalid email: "${value}" does not match email format`);
-  }
+  if (!constraints.pattern.test(value)) errors.push(`Invalid email: "${value}" does not match email format`);
   return errors;
 }
 
+// -----------------------------------------------------------------------------
 /**
  * Checks if value is a non-email placeholder.
  */
@@ -69,11 +82,18 @@ function isNonValue(value: string): boolean {
 
 // #region ===================== SANITIZERS =====================================
 
+// -----------------------------------------------------------------------------
 /**
  * Trims and lowercases a string.
  */
 function toLowerTrimmed(value: string): string {
   return value.trim().toLowerCase();
 }
+
+// #endregion ------------------------------------------------------------------
+
+console.leave();
+
+// #region ====================== NOTES ========================================
 
 // #endregion ------------------------------------------------------------------
