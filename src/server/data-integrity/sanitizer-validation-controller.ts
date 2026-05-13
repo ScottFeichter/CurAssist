@@ -3,39 +3,39 @@ import { extendedConsole as console } from '../../streams/consoles/customConsole
 import { log } from '../../utils/logger/logger-setup/logger-wrapper';
 
 // Shared
-import { sanitizeIncoming as sanitizeNameIncoming, sanitizeOutgoing as sanitizeNameOutgoing } from './shared/name/name.sanitizer';
-import { sanitizeIncoming as sanitizeAlternateNameIncoming, sanitizeOutgoing as sanitizeAlternateNameOutgoing } from './shared/alternate-name/alternate-name.sanitizer';
-import { sanitizeIncoming as sanitizeWebsiteIncoming, sanitizeOutgoing as sanitizeWebsiteOutgoing } from './shared/website/website.sanitizer';
-import { sanitizeIncoming as sanitizeEmailIncoming, sanitizeOutgoing as sanitizeEmailOutgoing } from './shared/email/email.sanitizer';
-import { sanitizeIncoming as sanitizeDescriptionIncoming, sanitizeOutgoing as sanitizeDescriptionOutgoing } from './shared/description/description.sanitizer';
-import { sanitizeIncoming as sanitizeInternalNotesIncoming, sanitizeOutgoing as sanitizeInternalNotesOutgoing } from './shared/internal-notes/internal-notes.sanitizer';
-import { sanitizeIncoming as sanitizeMarkdownNotesIncoming, sanitizeOutgoing as sanitizeMarkdownNotesOutgoing } from './shared/markdown-notes/markdown-notes.sanitizer';
-import { sanitizeIncoming as sanitizeHoursIncoming, sanitizeOutgoing as sanitizeHoursOutgoing } from './shared/hours/hours.sanitizer';
+import { sanitizeIncoming as sanitizeNameIncoming, sanitizeOutgoing as sanitizeNameOutgoing } from './shared/name/name.sanitizer-validator';
+import { sanitizeIncoming as sanitizeAlternateNameIncoming, sanitizeOutgoing as sanitizeAlternateNameOutgoing } from './shared/alternate-name/alternate-name.sanitizer-validator';
+import { sanitizeIncoming as sanitizeWebsiteIncoming, sanitizeOutgoing as sanitizeWebsiteOutgoing } from './shared/website/website.sanitizer-validator';
+import { sanitizeIncoming as sanitizeEmailIncoming, sanitizeOutgoing as sanitizeEmailOutgoing } from './shared/email/email.sanitizer-validator';
+import { sanitizeIncoming as sanitizeDescriptionIncoming, sanitizeOutgoing as sanitizeDescriptionOutgoing } from './shared/description/description.sanitizer-validator';
+import { sanitizeIncoming as sanitizeInternalNotesIncoming, sanitizeOutgoing as sanitizeInternalNotesOutgoing } from './shared/internal-notes/internal-notes.sanitizer-validator';
+import { sanitizeIncoming as sanitizeMarkdownNotesIncoming, sanitizeOutgoing as sanitizeMarkdownNotesOutgoing } from './shared/markdown-notes/markdown-notes.sanitizer-validator';
+import { sanitizeIncoming as sanitizeHoursIncoming, sanitizeOutgoing as sanitizeHoursOutgoing } from './shared/hours/hours.sanitizer-validator';
 
 // Location
-import { sanitizeIncoming as sanitizeLocationNameIncoming, sanitizeOutgoing as sanitizeLocationNameOutgoing } from './location/location-name/location-name.sanitizer';
-import { sanitizeIncoming as sanitizeAddressIncoming, sanitizeOutgoing as sanitizeAddressOutgoing } from './location/address/address.sanitizer';
-import { sanitizeIncoming as sanitizeCityIncoming, sanitizeOutgoing as sanitizeCityOutgoing } from './location/city/city.sanitizer';
-import { sanitizeIncoming as sanitizeStateIncoming, sanitizeOutgoing as sanitizeStateOutgoing } from './location/state/state.sanitizer';
-import { sanitizeIncoming as sanitizeZipIncoming, sanitizeOutgoing as sanitizeZipOutgoing } from './location/zip/zip.sanitizer';
+import { sanitizeIncoming as sanitizeLocationNameIncoming, sanitizeOutgoing as sanitizeLocationNameOutgoing } from './location/location-name/location-name.sanitizer-validator';
+import { sanitizeIncoming as sanitizeAddressIncoming, sanitizeOutgoing as sanitizeAddressOutgoing } from './location/address/address.sanitizer-validator';
+import { sanitizeIncoming as sanitizeCityIncoming, sanitizeOutgoing as sanitizeCityOutgoing } from './location/city/city.sanitizer-validator';
+import { sanitizeIncoming as sanitizeStateIncoming, sanitizeOutgoing as sanitizeStateOutgoing } from './location/state/state.sanitizer-validator';
+import { sanitizeIncoming as sanitizeZipIncoming, sanitizeOutgoing as sanitizeZipOutgoing } from './location/zip/zip.sanitizer-validator';
 
 // Phone
-import { sanitizeIncoming as sanitizePhoneNumberIncoming, sanitizeOutgoing as sanitizePhoneNumberOutgoing } from './phone/phone-number/phone-number.sanitizer';
-import { sanitizeIncoming as sanitizePhoneNameIncoming, sanitizeOutgoing as sanitizePhoneNameOutgoing } from './phone/phone-name/phone-name.sanitizer';
+import { sanitizeIncoming as sanitizePhoneNumberIncoming, sanitizeOutgoing as sanitizePhoneNumberOutgoing } from './phone/phone-number/phone-number.sanitizer-validator';
+import { sanitizeIncoming as sanitizePhoneNameIncoming, sanitizeOutgoing as sanitizePhoneNameOutgoing } from './phone/phone-name/phone-name.sanitizer-validator';
 
 // Organization
-import { sanitizeIncoming as sanitizeLegalStatusIncoming, sanitizeOutgoing as sanitizeLegalStatusOutgoing } from './organization/legal-status/legal-status.sanitizer';
+import { sanitizeIncoming as sanitizeLegalStatusIncoming, sanitizeOutgoing as sanitizeLegalStatusOutgoing } from './organization/legal-status/legal-status.sanitizer-validator';
 
 // Service
-import { sanitizeIncoming as sanitizeShortDescriptionIncoming, sanitizeOutgoing as sanitizeShortDescriptionOutgoing } from './service/short-description/short-description.sanitizer';
-import { sanitizeIncoming as sanitizeApplicationProcessIncoming, sanitizeOutgoing as sanitizeApplicationProcessOutgoing } from './service/application-process/application-process.sanitizer';
-import { sanitizeIncoming as sanitizeRequiredDocumentsIncoming, sanitizeOutgoing as sanitizeRequiredDocumentsOutgoing } from './service/required-documents/required-documents.sanitizer';
-import { sanitizeIncoming as sanitizeInterpretationServicesIncoming, sanitizeOutgoing as sanitizeInterpretationServicesOutgoing } from './service/interpretation-services/interpretation-services.sanitizer';
-import { sanitizeIncoming as sanitizeClinicianActionsIncoming, sanitizeOutgoing as sanitizeClinicianActionsOutgoing } from './service/clinician-actions/clinician-actions.sanitizer';
-import { sanitizeIncoming as sanitizeCostIncoming, sanitizeOutgoing as sanitizeCostOutgoing } from './service/cost/cost.sanitizer';
-import { sanitizeIncoming as sanitizeWaitTimeIncoming, sanitizeOutgoing as sanitizeWaitTimeOutgoing } from './service/wait-time/wait-time.sanitizer';
-import { sanitizeIncoming as sanitizeCategoriesIncoming, sanitizeOutgoing as sanitizeCategoriesOutgoing } from './service/categories/categories.sanitizer';
-import { sanitizeIncoming as sanitizeEligibilitiesIncoming, sanitizeOutgoing as sanitizeEligibilitiesOutgoing } from './service/eligibilities/eligibilities.sanitizer';
+import { sanitizeIncoming as sanitizeShortDescriptionIncoming, sanitizeOutgoing as sanitizeShortDescriptionOutgoing } from './service/short-description/short-description.sanitizer-validator';
+import { sanitizeIncoming as sanitizeApplicationProcessIncoming, sanitizeOutgoing as sanitizeApplicationProcessOutgoing } from './service/application-process/application-process.sanitizer-validator';
+import { sanitizeIncoming as sanitizeRequiredDocumentsIncoming, sanitizeOutgoing as sanitizeRequiredDocumentsOutgoing } from './service/required-documents/required-documents.sanitizer-validator';
+import { sanitizeIncoming as sanitizeInterpretationServicesIncoming, sanitizeOutgoing as sanitizeInterpretationServicesOutgoing } from './service/interpretation-services/interpretation-services.sanitizer-validator';
+import { sanitizeIncoming as sanitizeClinicianActionsIncoming, sanitizeOutgoing as sanitizeClinicianActionsOutgoing } from './service/clinician-actions/clinician-actions.sanitizer-validator';
+import { sanitizeIncoming as sanitizeCostIncoming, sanitizeOutgoing as sanitizeCostOutgoing } from './service/cost/cost.sanitizer-validator';
+import { sanitizeIncoming as sanitizeWaitTimeIncoming, sanitizeOutgoing as sanitizeWaitTimeOutgoing } from './service/wait-time/wait-time.sanitizer-validator';
+import { sanitizeIncoming as sanitizeCategoriesIncoming, sanitizeOutgoing as sanitizeCategoriesOutgoing } from './service/categories/categories.sanitizer-validator';
+import { sanitizeIncoming as sanitizeEligibilitiesIncoming, sanitizeOutgoing as sanitizeEligibilitiesOutgoing } from './service/eligibilities/eligibilities.sanitizer-validator';
 // #endregion ------------------------------------------------------------------
 
 

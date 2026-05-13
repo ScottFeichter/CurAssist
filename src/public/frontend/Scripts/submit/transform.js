@@ -8,13 +8,12 @@ const SF_API = '/api/sf';
 // #region ===================== HELPERS =======================================
 
 /**
- * Merges top-level and sub categories, resolves IDs from lookup table, filters unknowns.
- * @param {string[]} topCats
- * @param {string[]} subCats
+ * Resolves category names to SFSG objects with IDs and top_level flag.
+ * @param {string[]} categories
  * @returns {{ name: string, id: number|null, top_level: boolean, featured: boolean }[]}
  */
-function transformCategories(topCats, subCats) {
-  return [...topCats, ...subCats]
+function transformCategories(categories) {
+  return categories
     .map(name => {
       const id = categoryLookup[name] ?? null;
       return { name, id, top_level: topCategoryNames.has(name), featured: false };
@@ -23,13 +22,12 @@ function transformCategories(topCats, subCats) {
 }
 
 /**
- * Merges top-level and sub eligibilities, resolves IDs from lookup table, filters unknowns.
- * @param {string[]} topEligibs
- * @param {string[]} subEligibs
+ * Resolves eligibility names to SFSG objects with IDs.
+ * @param {string[]} eligibilities
  * @returns {{ name: string, id: number|null, feature_rank: null }[]}
  */
-function transformEligibilities(topEligibs, subEligibs) {
-  return [...topEligibs, ...subEligibs]
+function transformEligibilities(eligibilities) {
+  return eligibilities
     .map(name => {
       const id = eligibilityLookup[name] ?? null;
       return { name, id, feature_rank: null };
@@ -125,8 +123,8 @@ function transformService(svc) {
     phones:       transformPhones(svc.service_phones || []),
     schedule:     transformHours(svc.service_hours),
     notes:        transformNotes(svc.service_markdown_notes),
-    categories:   transformCategories(svc.service_top_categories, svc.service_sub_categories),
-    eligibilities: transformEligibilities(svc.service_top_eligibilities, svc.service_sub_eligibilities),
+    categories:   transformCategories(svc.service_top_categories || []),
+    eligibilities: transformEligibilities(svc.service_top_eligibilities || []),
     shouldInheritScheduleFromParent: false
   };
   if (svc.service_alternate_name)           service.alternate_name          = svc.service_alternate_name;

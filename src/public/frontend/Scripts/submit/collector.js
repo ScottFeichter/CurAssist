@@ -159,9 +159,9 @@ function collectService(root) {
     service_phones:                collectPhones(root, 'service_phones'),
     service_hours:                 collectHours(root),
     service_top_eligibilities:     collectPills(root, 'service_top_eligibilities'),
-    service_sub_eligibilities:     collectPills(root, 'service_sub_eligibilities'),
+    // service_sub_eligibilities:  collectPills(root, 'service_sub_eligibilities'), // DORMANT — top/sub split removed
     service_top_categories:        collectPills(root, 'service_top_categories'),
-    service_sub_categories:        collectPills(root, 'service_sub_categories'),
+    // service_sub_categories:     collectPills(root, 'service_sub_categories'),   // DORMANT — top/sub split removed
     service_markdown_notes:        collectNotes(root, 'service_markdown_notes')
   };
 }
