@@ -34,6 +34,7 @@ CurAssist/
   content/
     Templates/            # Combined HTML template and build scripts
   scripts/
+    build-lookup-tables.js # Fetches SFSG categories/eligibilities and generates lookup tables
     typedoc-runner.js     # TypeDoc wrapper with formatted output
   logs/                   # Winston rotating log files (gitignored)
   dist/                   # Compiled output (gitignored)
@@ -121,7 +122,7 @@ Then open browser to: `http://localhost:5555`
 
 | Script | Description |
 |--------|-------------|
-| `npm run build` | Builds combined template, compiles TypeScript, copies views/public, generates TypeDoc |
+| `npm run build` | Fetches SFSG lookup tables, builds combined template, compiles TypeScript, copies views/public, generates TypeDoc |
 | `npm run dev` | Runs full build then starts dev runner |
 | `npm start` | Starts production server from compiled output |
 | `npm run watch` | Watches TypeScript files and recompiles on change |

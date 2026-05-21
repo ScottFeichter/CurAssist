@@ -208,14 +208,14 @@ This document tracks the sanitization and validation rules for every field acros
 ### categories ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | Split comma-separated string into flat array. No top/sub distinction. |
+| Spreadsheet → DB | Split comma-separated string into flat array. Each name validated against SFSG category list (built from API at build time). Row rejected if any name is unrecognized — all mismatches reported. |
 | SFSG → DB | Extract names from SFSG objects `[{ name, id, top_level }]` into flat string array. |
 | DB → SFSG | Pass-through flat array — transform layer handles converting to SFSG objects with `{ name, id, top_level, featured }`. |
 
 ### eligibilities ✅ DONE
 | Direction | Rule |
 |-----------|------|
-| Spreadsheet → DB | Split comma-separated string into flat array. No top/sub distinction. |
+| Spreadsheet → DB | Split comma-separated string into flat array. Each name validated against SFSG eligibility list (built from API at build time). Row rejected if any name is unrecognized — all mismatches reported. |
 | SFSG → DB | Extract names from SFSG objects `[{ name, id, feature_rank }]` into flat string array. |
 | DB → SFSG | Pass-through flat array — transform layer handles converting to SFSG objects with `{ name, id, feature_rank }`. |
 

@@ -75,7 +75,7 @@
         <tr><td>Categories</td><td>Comma-separated category names</td><td class="optional">No</td></tr>
         <tr><td>Eligibilities</td><td>Comma-separated eligibility names</td><td class="optional">No</td></tr>
         <tr><td>Service Name</td><td>Service name (triggers service creation)</td><td class="optional">No</td></tr>
-        <tr><td>Service Nickname</td><td>Service alternate name</td><td class="optional">No</td></tr>
+        <tr><td>Service Alternate Name</td><td>Service alternate name</td><td class="optional">No</td></tr>
         <tr><td>Service Email</td><td>Service email</td><td class="optional">No</td></tr>
         <tr><td>Service Website</td><td>Service website URL</td><td class="optional">No</td></tr>
         <tr><td>Service Description</td><td>Full service description</td><td class="optional">No</td></tr>
@@ -127,7 +127,7 @@
         <tr><td>State</td><td>Converted to uppercase</td></tr>
         <tr><td>Phone</td><td>10-digit numbers formatted with dashes</td></tr>
         <tr><td>Address, City</td><td>Converted to title case</td></tr>
-        <tr><td>Categories, Eligibilities</td><td>Split on commas into individual items</td></tr>
+        <tr><td>Categories, Eligibilities</td><td>Split on commas into individual items; validated against SFSG</td></tr>
       </table>
     </div>
   </details>
@@ -156,7 +156,7 @@
       </details>
       <details>
         <summary>Categories and Eligibilities</summary>
-        <div class="faq-body">Categories and eligibilities are service-level data in SFSG. These fields apply to the toggle service view (and the org service if "Create service from org" is checked). They do NOT apply to the organization itself.</div>
+        <div class="faq-body">Categories and eligibilities are service-level data in SFSG. These fields apply to the toggle service view (and the org service if "Create service from org" is checked). They do NOT apply to the organization itself.<br><br><strong>Validation:</strong> Every category and eligibility name is validated against the live SF Service Guide API. If any name doesn't match an entry in SFSG, the entire row is rejected. The import report will list all unrecognized names.</div>
       </details>
       <details>
         <summary>Organization Service fields</summary>

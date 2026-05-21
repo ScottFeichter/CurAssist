@@ -11,7 +11,7 @@ Tests every sanitizer function in `src/server/helpers/bucket-sanitizers.ts` in i
 - `sanitizeState` — uppercase conversion
 - `sanitizeAddress`, `sanitizeCity` — title case conversion
 - `sanitizePhoneName` — sentence case conversion
-- `sanitizeServiceCategories`, `sanitizeServiceEligibilitiesList` — comma-split to array, empty filtering
+- `sanitizeServiceCategories`, `sanitizeServiceEligibilitiesList` — comma-split to array, empty filtering, validation against SFSG lookup (rejects unknown names)
 - All pass-through sanitizers (`sanitizeAlternateName`, `sanitizeWebsite`, `sanitizeEmail`, `sanitizeDescription`, `sanitizeInternalNotes`, `sanitizeZip`, `sanitizeOrganizationLegalStatus`, `sanitizeServiceShortDescription`, `sanitizeServiceCost`, `sanitizeServiceWaitTime`) — trim and return string, handle null
 
 **`hydrateTemplate.test.ts`** (21 tests)
