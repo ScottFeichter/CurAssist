@@ -45,7 +45,7 @@ Maps service-level fields (spreadsheet headers prefixed with "Service"):
 | Key | Spreadsheet Column |
 |-----|-------------------|
 | `service_name` | `'Service Name'` |
-| `service_alternate_name` | `'Service Nickname'` |
+| `service_alternate_name` | `'Service Alternate Name'` |
 | `service_email` | `'Service Email'` |
 | `service_description` | `'Service Description'` |
 | `service_top_categories` | `'Service Categories'` |

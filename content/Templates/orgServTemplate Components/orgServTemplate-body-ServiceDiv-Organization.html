@@ -721,7 +721,7 @@
 <!--------------------------------------------------------------------- Top Eligibility  ---------------------------------------------------------------------------->
                               <li class="edit--section--list--item">
                                 <label for="eligibilityTopDropdown">
-                                  Top Eligibility
+                                  Eligibility
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
@@ -743,7 +743,8 @@
                                 </div>
                               </li>
 
-<!--------------------------------------------------------------------- Sub Eligibility  ---------------------------------------------------------------------------->
+<!-- DISABLED: Sub Eligibility (not currently in use)
+<!~~ Sub Eligibility ~~>
                               <li class="edit--section--list--item">
                                 <label for="eligibilitySubDropdown">
                                   Sub Eligibility
@@ -767,6 +768,7 @@
                                   </div>
                                 </div>
                               </li>
+END DISABLED -->
 
 
 <!--------------------------------------------------------------------- Cost  ---------------------------------------------------------------------------->
@@ -832,7 +834,7 @@
 <!--------------------------------------------------------------------- Top Categories  ---------------------------------------------------------------------------->
                               <li class="edit--section--list--item">
                                 <label for="categoryTopDropdown">
-                                  Top Categories
+                                  Categories
                                 </label>
                                 <div class="Select is-clearable is-searchable Select--multi">
                                   <div class="Select-control">
@@ -854,7 +856,8 @@
                                 </div>
                               </li>
 
-<!--------------------------------------------------------------------- Sub Categories  ---------------------------------------------------------------------------->
+<!-- DISABLED: Sub Categories (not currently in use)
+<!~~ Sub Categories ~~>
                               <li class="edit--section--list--item">
                                 <label for="categorySubDropdown">
                                   Sub Categories
@@ -878,6 +881,7 @@
                                   </div>
                                 </div>
                               </li>
+END DISABLED -->
 
 <!---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------->
                             </ul>
@@ -889,7 +893,7 @@
 
 <!------------------------------------------------------------------------------ SERVICE SECTION: CSS ------------------------------------------------------------------------------->
 
-                  
+
 
 <!------------------------------------------------------------------------------ SERVICE SECTION: MODALS ------------------------------------------------------------------------------->
 
@@ -1661,9 +1665,9 @@
 
                     window.setupServiceAutocomplete = function(root) {
                       setupAutocomplete('categoryTopDropdown', topCategory, root);
-                      setupAutocomplete('categorySubDropdown', subCategory, root);
+                      //DISABLED: setupAutocomplete('categorySubDropdown', subCategory, root);
                       setupAutocomplete('eligibilityTopDropdown', topEligibility, root);
-                      setupAutocomplete('eligibilitySubDropdown', subEligibility, root);
+                      //DISABLED: setupAutocomplete('eligibilitySubDropdown', subEligibility, root);
                     };
 
                     function setupAutocomplete(inputId, dataObject, root) {

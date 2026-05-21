@@ -53,7 +53,7 @@ export const orgFieldMap: Record<string, string> = {
 export const serviceFieldMap: Record<string, string> = {
   service_internal_notes: 'Service Internal Notes',
   service_name: 'Service Name',
-  service_alternate_name: 'Service Nickname',
+  service_alternate_name: 'Service Alternate Name',
   service_locations: 'Service Locations', // Special: uses serviceLocationFieldMap for actual data
   service_email: 'Service Email',
   service_description: 'Service Description',
