@@ -243,7 +243,7 @@ export async function buildReportBuffer(results: IRowResult[], bucketName: strin
           cellValue = 'n/a';
           color = COLOR_BLUE;
         } else {
-          cellValue = 'failure';
+          cellValue = sfsg.detail ? `failure: ${sfsg.detail}` : 'failure';
           color = COLOR_RED;
         }
       } else {
