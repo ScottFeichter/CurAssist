@@ -16,7 +16,7 @@ function transformCategories(categories) {
   return categories
     .map(name => {
       const id = categoryLookup[name] ?? null;
-      return { name, id, top_level: topCategoryNames.has(name), featured: false };
+      return { name, id, top_level: false, featured: false };
     })
     .filter(c => c.id !== null || c.name);
 }
