@@ -50,7 +50,4 @@ The Organization Markdown note is not coming through to CurAssist from spreadshe
 
 The Service Address and Service Phone info comes through but it does not show up on the service it is only in the organization
 
-
-
-
-TO BE CONTINUED: CATEGORIES ELIGIBILITIES INVESTIGATION
+Clinical Actions is not getting through from CurAssist to SFSG
