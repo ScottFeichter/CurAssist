@@ -143,7 +143,7 @@ describe('POST /api/buckets/build-report', () => {
       .set('XSRF-Token', csrfToken)
       .send({
         workbookBase64,
-        dbResults: [{ row: 0, status: 'Success', detail: '' }],
+        dbResults: [{ row: 0, status: 'Success', detail: '', fields: {} }],
         sfsgResults: [{ row: 0, status: 'Success', detail: '', sfsgId: 999 }],
         bucketName: 'Report Test'
       });

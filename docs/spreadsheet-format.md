@@ -55,12 +55,12 @@ Each row supports one organization phone number.
 
 These fields apply to the toggle service view (and the org service if "Create service from org" is checked). They do NOT apply to the organization itself — categories and eligibilities are service-level data only.
 
-Values are automatically split into top-level and sub-level based on built-in lookup tables. You do not need separate columns for top/sub — just list all values comma-separated and the system handles the classification.
+Values must be valid SF Service Guide category/eligibility names. The system validates every name against the live SFSG API at build time. If any name doesn't match, the row is rejected and the import report lists all unrecognized names.
 
 | Spreadsheet Header | Description | Required |
 |---|---|---|
-| Categories | Comma-separated category names (auto-split into top/sub) | No |
-| Eligibilities | Comma-separated eligibility names (auto-split into top/sub) | No |
+| Categories | Comma-separated category names (validated against SFSG) | No |
+| Eligibilities | Comma-separated eligibility names (validated against SFSG) | No |
 
 ---
 
@@ -71,7 +71,7 @@ Each row can optionally include service data using "Service" prefixed headers. I
 | Spreadsheet Header | Description | Required |
 |---|---|---|
 | Service Name | Service name (triggers service creation if present) | No |
-| Service Nickname | Service alternate name | No |
+| Service Alternate Name | Service alternate name | No |
 | Service Email | Service email | No |
 | Service Website | Service website URL | No |
 | Service Description | Full service description | No |
@@ -142,7 +142,7 @@ These apply to the organization service, not the toggle service.
 | State | Converted to uppercase |
 | Phone | 10-digit numbers formatted with dashes |
 | Address, City | Converted to title case |
-| Categories, Eligibilities | Split on commas into individual items; auto-classified into top/sub |
+| Categories, Eligibilities | Split on commas into individual items; validated against SFSG |
 
 ---
 

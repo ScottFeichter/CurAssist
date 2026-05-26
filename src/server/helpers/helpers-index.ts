@@ -7,6 +7,7 @@ export { createBucketStructure, parseSpreadsheet, validateHeaders, normalizeHead
 export { generateOrgDocuments } from './generate-org-documents/generate-org-documents';
 export type { IRowResult } from './report-builder/report-builder';
 export type { ISfsgResult } from './report-builder/report-builder';
+export type { IFieldResult } from './report-builder/report-builder';
 export { buildReportBuffer } from './report-builder/report-builder';
 export { normalizeSFSGStringArray, extractSFSGCategories, extractSFSGEligibilities, topCategoryNames, topEligibilityNames } from './category-eligibility-helpers/category-eligibility-helpers';
 export { transformOrgToSFPayload } from './transform-org-to-sf-payload/transform-org-to-sf-payload';

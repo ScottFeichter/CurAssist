@@ -4,7 +4,7 @@
   "description": "Backend for CurAssist workflow app",
   "main": "dist/entry.js",
   "scripts": {
-    "build": "node content/Templates/build-template.js && tsc && cp -r src/views dist/ && cp -r src/public dist/ && node scripts/typedoc-runner.js",
+    "build": "node scripts/build-lookup-tables.js && node content/Templates/build-template.js && tsc && cp -r src/views dist/ && cp -r src/public dist/ && node scripts/typedoc-runner.js",
     "start": "node dist/entry.js",
     "dev": "npm run build && node dev-runner.js",
     "watch": "tsc --watch",
@@ -25,6 +25,7 @@
     "csurf": "^1.11.0",
     "dotenv": "^17.3.0",
     "ejs": "^4.0.1",
+    "exceljs": "^4.4.0",
     "express": "^4.18.2",
     "express-rate-limit": "^8.2.1",
     "express-session": "^1.19.0",
