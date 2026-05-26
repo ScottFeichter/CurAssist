@@ -518,10 +518,9 @@ bucketsRouter.post('/build-report', async (req: Request, res: Response, next: Ne
   log.enter('POST /api/buckets/build-report', log.brack);
   try {
     const { workbookBase64, dbResults, sfsgResults, bucketName } = req.body;
-    if (!workbookBase64 || !dbResults || !bucketName) return res.status(400).json({ success: false, error: 'Missing required fields' });
+    if (!dbResults || !bucketName) return res.status(400).json({ success: false, error: 'Missing required fields' });
 
-    const workbook = XLSX.read(Buffer.from(workbookBase64, 'base64'), { type: 'buffer' });
-    const reportBuffer = buildReportBuffer(workbook, dbResults, bucketName, sfsgResults);
+    const reportBuffer = await buildReportBuffer(dbResults, bucketName, sfsgResults);
     const report = reportBuffer.toString('base64');
     const reportFilename = `${bucketName.replace(/[^a-zA-Z0-9._-]/g, '_')}_report.xlsx`;
 
@@ -545,12 +544,12 @@ bucketsRouter.post('/create-bucket-spreadsheet', upload.single('spreadsheet'), a
 
     const createServiceFromOrg = req.body.createServiceFromOrg === 'true';
     await createBucketStructure(bucketName);
-    const { rows, workbook } = await parseSpreadsheet(file.buffer);
+    const { rows } = await parseSpreadsheet(file.buffer);
     const results = await generateOrgDocuments(bucketName, rows, (_progress) => {}, createServiceFromOrg);
 
     const succeeded = results.filter(r => r.status === 'Success').length;
     const failed = results.filter(r => r.status === 'Failed').length;
-    const reportBuffer = buildReportBuffer(workbook, results, bucketName);
+    const reportBuffer = await buildReportBuffer(results, bucketName);
     const report = reportBuffer.toString('base64');
     const reportFilename = `${bucketName.replace(/[^a-zA-Z0-9._-]/g, '_')}_report.xlsx`;
 

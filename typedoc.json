@@ -3,6 +3,7 @@
   "entryPointStrategy": "expand",
   "out": "docs/typedocs",
   "name": "CurAssist",
+  "favicon": "src/public/frontend/Images/CAfav.png",
   "excludePrivate": true,
   "excludeProtected": true,
   "exclude": ["**/*.d.ts", "**/node_modules/**", "**/dist/**"],

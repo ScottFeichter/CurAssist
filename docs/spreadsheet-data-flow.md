@@ -58,7 +58,7 @@ These require a "Service Name" value to be present in the row. Without it, no se
 | Spreadsheet Header | Organization Service field |
 |---|---|
 | Service Name | `name` |
-| Service Nickname | `alternate_name` |
+| Service Alternate Name | `alternate_name` |
 | Service Email | `email` |
 | Service Website | `url` |
 | Service Cost | `fee` |
@@ -108,8 +108,8 @@ These keys exist in the field maps but are not read by `generateOrgDocuments()`:
 | `service_short_description` | Service Short Description | Only read for organization service, not toggle service |
 | `service_markdown_notes` | Service Markdown Notes | Not implemented |
 | `service_hours` | Service Hours | Not implemented |
-| `service_sub_categories` | Service Sub Categories | Auto-split from Categories/Service Categories using lookup tables |
-| `service_sub_eligibilities` | Service Sub Eligibilities | Auto-split from Eligibilities/Service Eligibilities using lookup tables |
+| `service_sub_categories` | Service Sub Categories | Removed — no longer splitting top/sub |
+| `service_sub_eligibilities` | Service Sub Eligibilities | Removed — no longer splitting top/sub |
 | `service_belongs_to_org` | Organization ID | Not read during generation (set manually by volunteer) |
 
 ---

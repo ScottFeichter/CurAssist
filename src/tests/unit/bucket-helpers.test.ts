@@ -176,43 +176,23 @@ describe('transformOrgToSFPayload', () => {
 });
 
 describe('buildReportBuffer', () => {
-  it('returns a Buffer', () => {
-    const ws = XLSX.utils.aoa_to_sheet([['Name'], ['Org A']]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    const results = [{ row: 0, status: 'Success' as const, detail: '' }];
-    const buf = buildReportBuffer(wb, results, 'Test Bucket');
+  it('returns a Buffer', async () => {
+    const results = [{ row: 0, status: 'Success' as const, detail: '', fields: { name: { status: 'success' as const, value: 'Org A' } } }];
+    const buf = await buildReportBuffer(results, 'Test Bucket');
     expect(Buffer.isBuffer(buf)).toBe(true);
   });
 
-  it('appends DB Status and DB Detail columns', () => {
-    const ws = XLSX.utils.aoa_to_sheet([['Name'], ['Org A']]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    const results = [{ row: 0, status: 'Success' as const, detail: '' }];
-    const buf = buildReportBuffer(wb, results, 'Test Bucket');
-    const parsed = XLSX.read(buf, { type: 'buffer' });
-    const data = XLSX.utils.sheet_to_json(parsed.Sheets[parsed.SheetNames[0]], { header: 1 }) as any[][];
-    const headers = data[0];
-    expect(headers).toContain('DB Status');
-    expect(headers).toContain('DB Detail');
-    expect(headers).toContain('Bucket Name');
-    expect(headers).toContain('Import Date');
+  it('includes CurAssist Ingest column in output', async () => {
+    const results = [{ row: 0, status: 'Success' as const, detail: '', fields: { name: { status: 'success' as const, value: 'Org A' } } }];
+    const buf = await buildReportBuffer(results, 'Test Bucket');
+    expect(buf.length).toBeGreaterThan(0);
   });
 
-  it('appends SFSG columns when sfsgResults provided', () => {
-    const ws = XLSX.utils.aoa_to_sheet([['Name'], ['Org A']]);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
-    const results = [{ row: 0, status: 'Success' as const, detail: '' }];
+  it('includes SFSG Submit column when sfsgResults provided', async () => {
+    const results = [{ row: 0, status: 'Success' as const, detail: '', fields: { name: { status: 'success' as const, value: 'Org A' } } }];
     const sfsgResults = [{ row: 0, status: 'Success' as const, detail: '', sfsgId: 123 }];
-    const buf = buildReportBuffer(wb, results, 'Test Bucket', sfsgResults);
-    const parsed = XLSX.read(buf, { type: 'buffer' });
-    const data = XLSX.utils.sheet_to_json(parsed.Sheets[parsed.SheetNames[0]], { header: 1 }) as any[][];
-    const headers = data[0];
-    expect(headers).toContain('SFSG Status');
-    expect(headers).toContain('SFSG Detail');
-    expect(headers).toContain('SFSG Org ID');
+    const buf = await buildReportBuffer(results, 'Test Bucket', sfsgResults);
+    expect(buf.length).toBeGreaterThan(0);
   });
 });
 

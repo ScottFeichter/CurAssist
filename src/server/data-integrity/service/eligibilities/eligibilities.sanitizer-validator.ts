@@ -2,6 +2,7 @@
 import { extendedConsole as console } from '../../../../streams/consoles/customConsoles';
 import { log } from '../../../../utils/logger/logger-setup/logger-wrapper';
 import { SanitizeResult, sanitizeValue } from '../../sanitizer-validation-controller';
+import { validEligibilityNames } from '../../../helpers/lookup-tables/generated-lookups';
 // #endregion ------------------------------------------------------------------
 
 console.enter();
@@ -46,7 +47,11 @@ export function eligibilitiesSanitizeValidateOutgoingToSFSG(value: string[]): st
 // #region ===================== VALIDATORS ====================================
 
 // -----------------------------------------------------------------------------
-function validate(items: string[]): string[] { return []; }
+function validate(items: string[]): string[] {
+  const invalid = items.filter(name => !validEligibilityNames.has(name));
+  if (!invalid.length) return [];
+  return invalid.map(name => `Unknown eligibility: "${name}"`);
+}
 
 // #endregion ------------------------------------------------------------------
 
