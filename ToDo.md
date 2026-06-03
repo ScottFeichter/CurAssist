@@ -1,15 +1,30 @@
-the fields in org services do not appear to be being save when we do the save
+general UI
+=========================
 
-when creating file from existing file it doesn't pull up the new file it goes to first file in list
+the locations in org services do not appear to be being save when we do the save also they are making like a circular reference or something
+
+        - when adding an address from an organization it seems to make 4 copies of it in the service
+
+
 
 when changing the name of organization the spreadsheet service name does not change with it - should it?
 
-when adding an address from an organization it seems to make 4 copies of it in the service
 
-when saving should the bucket files refresh but still stay on the current file? also for create? delete? currently I have to refresh the browser
 
-they actually might be saving...but the file list seems to put some new things at top and somethings at bottom in other words not following the alphabetical
+when changing the name of an organization it does not change the file name in the drop down unless I refresh browser
 
+        - when saving should the bucket files refresh but still stay on the current file? also for create? delete? currently I have to refresh the browser
+
+        - when creating file from existing file it doesn't pull up the new file it goes to first file in list
+
+        - they actually might be saving...but the file list seems to put some new things at top and somethings at bottom in other words not following the alphabetical?
+
+
+
+
+
+scripts
+=========================
 write in automated Deactivation script for when done with a test batch to deactivate timely
 
 
@@ -51,3 +66,16 @@ The Organization Markdown note is not coming through to CurAssist from spreadshe
 The Service Address and Service Phone info comes through but it does not show up on the service it is only in the organization
 
 Clinical Actions is not getting through from CurAssist to SFSG
+
+
+
+
+tab control
+=========================
+the tabing focus works but when opening a model it doesn't focus in the modal
+
+also how to have the first press of tab go in to the app rather than around the horn of the browser tabs etc...
+
+also keys to go from ui controls to actual record fields
+
+and make one of those modes where the key shortcuts show up in the ui
