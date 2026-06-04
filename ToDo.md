@@ -75,7 +75,8 @@ The Service Address and Service Phone info comes through but it does not show up
 Clinical Actions is not getting through from CurAssist to SFSG
 
 
-
+Catagory and Eligibility enhancements
+=========================
 Categories should be 2 fields Top Catagory and Sub Catagories. There must be at least one Top and one Sub and the Sub must have its Top listed.
 
-Same with eligibility. 
+Same with eligibility.
