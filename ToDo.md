@@ -20,15 +20,22 @@ when changing the name of an organization it does not change the file name in th
         - they actually might be saving...but the file list seems to put some new things at top and somethings at bottom in other words not following the alphabetical?
 
 
+tab control
+=========================
+the tabing focus works but when opening a model it doesn't focus in the modal
+
+also how to have the first press of tab go in to the app rather than around the horn of the browser tabs etc...
+
+also keys to go from ui controls to actual record fields
+
+and make one of those modes where the key shortcuts show up in the ui
+
 
 
 
 scripts
 =========================
 write in automated Deactivation script for when done with a test batch to deactivate timely
-
-
-
 
 
 
@@ -69,13 +76,6 @@ Clinical Actions is not getting through from CurAssist to SFSG
 
 
 
+Categories should be 2 fields Top Catagory and Sub Catagories. There must be at least one Top and one Sub and the Sub must have its Top listed.
 
-tab control
-=========================
-the tabing focus works but when opening a model it doesn't focus in the modal
-
-also how to have the first press of tab go in to the app rather than around the horn of the browser tabs etc...
-
-also keys to go from ui controls to actual record fields
-
-and make one of those modes where the key shortcuts show up in the ui
+Same with eligibility. 
